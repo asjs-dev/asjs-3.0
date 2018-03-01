@@ -1,0 +1,9 @@
+{
+	"supportedLanguages": [ "en" ],
+	"selectedLanguage": "en",
+	"elements": {
+		"title": {
+			"en": "<AS/JS> - External Application"
+		}
+	}
+}
