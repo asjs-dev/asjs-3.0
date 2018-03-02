@@ -13,7 +13,7 @@ function(_scope) {
     if (!child) return null;
     if (child.parent) child.parent.removeChild(child);
     _children.push(child);
-    _el.append(child.el);
+    _el.appendChild(child.el);
     child.parent = _scope;
     return child;
   }
