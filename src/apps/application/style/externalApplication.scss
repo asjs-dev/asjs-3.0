@@ -1,0 +1,43 @@
+.external-application-view {
+  background-color : rgba($black, $alpha-4);
+
+  .container {
+    border-radius    : 5px;
+    background-color : $white;
+    top              : 20px;
+    left             : 20px;
+
+    .close-button {
+      top    : 10px;
+      width  : 30px;
+      height : 30px;
+      cursor : pointer;
+      
+      &::after {
+        position    : absolute;
+        line-height : 30px;
+        width       : 30px;
+        height      : 30px;
+        text-align  : center;
+        color       : $grey-330;
+        font-size   : 0.3rem;
+        font-weight : 700;
+        cursor      : pointer;
+        content     : "✕";
+      }
+    }
+
+    .title-label {
+      top           : 10px;
+      left          : 10px;
+      color         : $grey-330;
+      font-size     : 0.2rem;
+      font-weight   : 600;
+      height        : 30px;
+      line-height   : 30px;
+      text-overflow : ellipsis;
+      white-space   : nowrap;
+      overflow      : hidden;
+    }
+  }
+}

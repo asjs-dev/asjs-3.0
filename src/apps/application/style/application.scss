@@ -1,0 +1,11 @@
+sourcePath("./src/apps/");
+
+require("../common/style/lib/normalize.scss");
+
+require("../common/style/_mixins.scss");
+require("../common/style/_variables.scss");
+
+require("application/style/base.scss");
+require("application/style/content.scss");
+require("application/style/externalApplication.scss");
+require("application/style/notificationWindow.scss");

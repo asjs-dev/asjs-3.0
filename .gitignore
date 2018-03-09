@@ -1,2 +1,2 @@
-build.asjs.3.0.php
-build.external.php
+builder_config/*
+build.sh
