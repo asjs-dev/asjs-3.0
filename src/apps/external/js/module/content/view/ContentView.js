@@ -1,6 +1,6 @@
-require("com/dataUtils/Language.js");
-require("application/js/view/AbstractView.js");
-require("external/js/module/content/ContentMediator.js");
+require("../../../../../com/dataUtils/Language.js");
+require("../../../../../application/js/view/AbstractView.js");
+require("../ContentMediator.js");
 
 var ContentView = createClass(
 "ContentView",

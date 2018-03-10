@@ -1,4 +1,4 @@
-require("display/form/asjs.AbstractTextElement.js");
+require("./asjs.AbstractTextElement.js");
 
 ASJS.TextArea = createClass(
 "TextArea",

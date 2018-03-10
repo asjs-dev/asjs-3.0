@@ -1,6 +1,6 @@
-require("event/asjs.EventDispatcher.js");
-require("geom/asjs.Rectangle.js");
-require("utils/asjs.CSS.js");
+require("../event/asjs.EventDispatcher.js");
+require("../geom/asjs.Rectangle.js");
+require("../utils/asjs.CSS.js");
 
 ASJS.Tag = createClass(
 "Tag",

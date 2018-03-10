@@ -1,4 +1,4 @@
-require("net/asjs.Loader.js");
+require("./asjs.Loader.js");
 
 ASJS.ScriptLoader = createClass(
 "ScriptLoader",

@@ -1,4 +1,4 @@
-require("display/media/asjs.AbstractMediaPlayer.js");
+require("../media/asjs.AbstractMediaPlayer.js");
 
 ASJS.VideoPlayer = createClass(
 "VideoPlayer",

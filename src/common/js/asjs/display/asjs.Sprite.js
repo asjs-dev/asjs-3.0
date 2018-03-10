@@ -1,5 +1,5 @@
-require("display/asjs.DisplayObject.js");
-require("geom/asjs.Rectangle.js");
+require("./asjs.DisplayObject.js");
+require("../geom/asjs.Rectangle.js");
 
 ASJS.Sprite = createClass(
 "Sprite",

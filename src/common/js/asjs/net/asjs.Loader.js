@@ -1,7 +1,7 @@
-require("event/asjs.EventDispatcher.js");
-require("event/asjs.LoaderEvent.js");
-require("net/asjs.RequestMethod.js");
-require("utils/asjs.LZW.js");
+require("./asjs.RequestMethod.js");
+require("../event/asjs.EventDispatcher.js");
+require("../event/asjs.LoaderEvent.js");
+require("../utils/asjs.LZW.js");
 
 ASJS.Loader = createClass(
 "Loader",

@@ -1,5 +1,5 @@
-require("event/asjs.EventDispatcher.js");
-require("event/asjs.WindowEvent.js");
+require("../event/asjs.EventDispatcher.js");
+require("../event/asjs.WindowEvent.js");
 
 ASJS.Window = createSingletonClass(
 "Window",

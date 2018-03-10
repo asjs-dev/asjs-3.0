@@ -1,5 +1,5 @@
-require("geom/asjs.Point.js");
-require("geom/asjs.Rectangle.js");
+require("../../../geom/asjs.Point.js");
+require("../../../geom/asjs.Rectangle.js");
 
 ASJS.BitmapBounds = {};
 rof(ASJS.BitmapBounds, "execute", function(bitmap) {

@@ -1,6 +1,6 @@
-require("com/dataUtils/Language.js");
-require("application/js/view/AbstractView.js");
-require("application/js/module/externalApplication/ExternalApplicationMediator.js");
+require("../../../../../com/dataUtils/Language.js");
+require("../../../view/AbstractView.js");
+require("../ExternalApplicationMediator.js");
 
 var ExternalApplicationView = createClass(
 "ExternalApplicationView",

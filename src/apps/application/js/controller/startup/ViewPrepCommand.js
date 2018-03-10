@@ -1,6 +1,6 @@
-require("application/js/module/content/ContentMediator.js");
-require("application/js/module/externalApplication/ExternalApplicationMediator.js");
-require("application/js/module/notificationWindow/NotificationWindowMediator.js");
+require("../../module/content/ContentMediator.js");
+require("../../module/externalApplication/ExternalApplicationMediator.js");
+require("../../module/notificationWindow/NotificationWindowMediator.js");
 
 var ViewPrepCommand = createClass(
 "ViewPrepCommand",

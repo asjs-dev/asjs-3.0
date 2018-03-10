@@ -1,8 +1,6 @@
-sourcePath("./src/apps/");
-
-require("com/dataUtils/Language.js");
-require("com/dataUtils/Config.js");
-require("external/js/controller/StartupCommand.js");
+require("../../com/dataUtils/Language.js");
+require("../../com/dataUtils/Config.js");
+require("./controller/StartupCommand.js");
 
 var Application = createClass(
 "Application",

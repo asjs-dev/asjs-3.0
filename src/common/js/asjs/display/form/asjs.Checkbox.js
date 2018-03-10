@@ -1,6 +1,6 @@
-require("display/form/asjs.FormElement.js");
-require("display/asjs.DisplayObject.js");
-require("event/asjs.Event.js");
+require("./asjs.FormElement.js");
+require("../asjs.DisplayObject.js");
+require("../../event/asjs.Event.js");
 
 ASJS.Checkbox = createClass(
 "Checkbox",

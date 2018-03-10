@@ -1,5 +1,5 @@
-require("com/dataUtils/Language.js");
-require("application/js/module/content/ContentMediator.js");
+require("../../../../../../com/dataUtils/Language.js");
+require("../../ContentMediator.js");
 
 var Box = createClass(
 "Box",

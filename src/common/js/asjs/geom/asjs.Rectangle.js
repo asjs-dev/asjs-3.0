@@ -1,4 +1,4 @@
-require("geom/asjs.Point.js");
+require("./asjs.Point.js");
 
 ASJS.Rectangle = createClass(
 "Rectangle",

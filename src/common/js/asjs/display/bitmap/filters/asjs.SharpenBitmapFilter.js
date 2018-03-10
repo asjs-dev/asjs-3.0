@@ -1,4 +1,4 @@
-require("display/bitmap/filters/asjs.AbstractConvoluteBitmapFilter.js");
+require("./asjs.AbstractConvoluteBitmapFilter.js");
 
 ASJS.SharpenBitmapFilter = createClass(
 "SharpenBitmapFilter",

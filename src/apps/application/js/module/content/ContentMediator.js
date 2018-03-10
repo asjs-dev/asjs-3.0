@@ -1,9 +1,9 @@
-require("com/dataUtils/Language.js");
-require("application/js/mediator/AbstractResizeMediator.js");
-require("application/js/module/content/view/ContentView.js");
-require("application/js/module/notificationWindow/NotificationWindowMediator.js");
-require("application/js/module/notificationWindow/model/vo/NotificationWindowDataVo.js");
-require("application/js/module/externalApplication/ExternalApplicationMediator.js");
+require("../../../../com/dataUtils/Language.js");
+require("../../mediator/AbstractResizeMediator.js");
+require("./view/ContentView.js");
+require("../notificationWindow/NotificationWindowMediator.js");
+require("../notificationWindow/model/vo/NotificationWindowDataVo.js");
+require("../externalApplication/ExternalApplicationMediator.js");
 
 var ContentMediator = createClass(
 "ContentMediator",

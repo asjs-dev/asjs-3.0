@@ -1,5 +1,3 @@
-sourcePath("src/common/js/asjs/");
-
 require("core/asjs.Core.js");
 require("core/asjs.Polyfill.js");
 

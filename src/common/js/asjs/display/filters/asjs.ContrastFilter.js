@@ -1,4 +1,4 @@
-require("display/filters/asjs.AbstractFilter.js");
+require("./asjs.AbstractFilter.js");
 
 ASJS.ContrastFilter = createClass(
 "ContrastFilter",

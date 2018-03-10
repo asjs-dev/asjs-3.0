@@ -1,4 +1,4 @@
-require("mvc/asjs.NotificationHandler.js");
+require("./asjs.NotificationHandler.js");
 
 ASJS.NotificationDispatcher = createClass(
 "NotificationDispatcher",

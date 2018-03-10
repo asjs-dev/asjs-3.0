@@ -1,4 +1,4 @@
-require("display/bitmap/filters/asjs.AbstractBitmapFilter.js");
+require("./asjs.AbstractBitmapFilter.js");
 
 ASJS.CutoutBitmapFilter = createClass(
 "CutoutBitmapFilter",

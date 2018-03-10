@@ -1,5 +1,5 @@
-require("application/js/mediator/AbstractResizeMediator.js");
-require("external/js/module/content/view/ContentView.js");
+require("../../../../application/js/mediator/AbstractResizeMediator.js");
+require("./view/ContentView.js");
 
 var ContentMediator = createClass(
 "ContentMediator",

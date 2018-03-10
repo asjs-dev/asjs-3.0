@@ -1,4 +1,4 @@
-require("com/commons/compressor/LZW.js");
+require("../compressor/LZW.js");
 
 var FileSaver = {};
 rof(FileSaver, "save", function(fileName, data, compress) {

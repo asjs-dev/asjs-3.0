@@ -1,5 +1,5 @@
-require("mvc/asjs.NotificationDispatcher.js");
-require("display/asjs.Sprite.js");
+require("../asjs.NotificationDispatcher.js");
+require("../../display/asjs.Sprite.js");
 
 ASJS.AbstractMediator = createClass(
 "AbstractMediator",

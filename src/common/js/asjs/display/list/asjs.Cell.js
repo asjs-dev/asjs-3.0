@@ -1,5 +1,5 @@
-require("display/asjs.Sprite.js");
-require("event/asjs.MouseEvent.js");
+require("../asjs.Sprite.js");
+require("../../event/asjs.MouseEvent.js");
 
 ASJS.Cell = createClass(
 "Cell",

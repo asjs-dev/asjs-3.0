@@ -1,7 +1,7 @@
-require("display/form/asjs.FormElement.js");
-require("utils/asjs.Keyboard.js");
-require("event/asjs.Event.js");
-require("event/asjs.KeyboardEvent.js");
+require("./asjs.FormElement.js");
+require("../../utils/asjs.Keyboard.js");
+require("../../event/asjs.Event.js");
+require("../../event/asjs.KeyboardEvent.js");
 
 ASJS.AbstractTextElement = createClass(
 "AbstractTextElement",

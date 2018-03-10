@@ -1,4 +1,4 @@
-require("display/asjs.Tag.js");
+require("../asjs.Tag.js");
 
 ASJS.Source = createClass(
 "Source",

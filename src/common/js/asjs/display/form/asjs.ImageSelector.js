@@ -1,4 +1,4 @@
-require("display/form/asjs.FileSelector.js");
+require("./asjs.FileSelector.js");
 
 ASJS.ImageSelector = createClass(
 "ImageSelector",

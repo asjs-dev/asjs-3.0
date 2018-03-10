@@ -1,8 +1,8 @@
-require("com/dataUtils/Config.js");
-require("com/dataUtils/Language.js");
-require("application/js/controller/startup/EnvironmentCommand.js");
-require("application/js/controller/startup/ViewPrepCommand.js");
-require("application/js/controller/service/LoadJSONServiceCommand.js");
+require("../../../com/dataUtils/Config.js");
+require("../../../com/dataUtils/Language.js");
+require("./startup/EnvironmentCommand.js");
+require("./startup/ViewPrepCommand.js");
+require("./service/LoadJSONServiceCommand.js");
 
 var StartupCommand = createClass(
 "StartupCommand",

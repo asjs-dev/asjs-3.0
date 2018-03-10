@@ -1,5 +1,5 @@
-require("display/form/asjs.FormElement.js");
-require("display/asjs.PrimitiveDisplayObject.js");
+require("./asjs.FormElement.js");
+require("../asjs.PrimitiveDisplayObject.js");
 
 ASJS.DropDownOption = createClass(
 "DropDownOption",

@@ -1,5 +1,5 @@
-require("display/form/asjs.FormElement.js");
-require("display/asjs.Sprite.js");
+require("./asjs.FormElement.js");
+require("../asjs.Sprite.js");
 
 ASJS.DropDown = createClass(
 "DropDown",

@@ -1,4 +1,4 @@
-require("core/asjs.Polyfill.js");
+require("../core/asjs.Polyfill.js");
 
 ASJS.EventDispatcher = createClass(
 "EventDispatcher",

@@ -1,5 +1,5 @@
-require("display/asjs.Sprite.js");
-require("display/list/asjs.Cell.js");
+require("../asjs.Sprite.js");
+require("./asjs.Cell.js");
 
 ASJS.CustomList = createClass(
 "CustomList",

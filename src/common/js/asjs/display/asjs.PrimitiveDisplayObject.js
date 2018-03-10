@@ -1,5 +1,5 @@
-require("display/asjs.Tag.js");
-require("utils/asjs.CSS.js");
+require("./asjs.Tag.js");
+require("../utils/asjs.CSS.js");
 
 ASJS.PrimitiveDisplayObject = createClass(
 "PrimitiveDisplayObject",

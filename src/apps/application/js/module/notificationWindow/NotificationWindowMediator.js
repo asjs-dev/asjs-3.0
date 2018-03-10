@@ -1,7 +1,7 @@
-require("com/dataUtils/Language.js");
-require("application/js/mediator/AbstractResizeMediator.js");
-require("application/js/module/notificationWindow/view/NotificationWindowView.js");
-require("application/js/module/notificationWindow/model/vo/NotificationWindowDataVo.js");
+require("../../../../com/dataUtils/Language.js");
+require("../../mediator/AbstractResizeMediator.js");
+require("./view/NotificationWindowView.js");
+require("./model/vo/NotificationWindowDataVo.js");
 
 var NotificationWindowMediator = createClass(
 "NotificationWindowMediator",

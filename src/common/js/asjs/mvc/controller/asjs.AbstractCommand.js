@@ -1,4 +1,4 @@
-require("mvc/asjs.NotificationDispatcher.js");
+require("../asjs.NotificationDispatcher.js");
 
 ASJS.AbstractCommand = createClass(
 "AbstractCommand",

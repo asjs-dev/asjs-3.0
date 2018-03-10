@@ -1,4 +1,4 @@
-require("display/form/asjs.FormElement.js");
+require("./asjs.FormElement.js");
 
 ASJS.Button = createClass(
 "Button",

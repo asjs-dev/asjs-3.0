@@ -1,6 +1,4 @@
-sourcePath("./src/apps/");
-
-require("application/js/controller/StartupCommand.js");
+require("./controller/StartupCommand.js");
 
 var Application = createClass(
 "Application",

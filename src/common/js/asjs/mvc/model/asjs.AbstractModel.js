@@ -1,4 +1,4 @@
-require("event/asjs.EventDispatcher.js");
+require("../../event/asjs.EventDispatcher.js");
 
 ASJS.AbstractModel = createClass(
 "AbstractModel",

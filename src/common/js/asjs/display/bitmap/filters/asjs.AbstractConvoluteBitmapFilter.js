@@ -1,5 +1,5 @@
-require("display/bitmap/filters/asjs.AbstractBitmapFilter.js");
-require("display/bitmap/asjs.Bitmap.js");
+require("./asjs.AbstractBitmapFilter.js");
+require("../asjs.Bitmap.js");
 
 ASJS.AbstractConvoluteBitmapFilter = createClass(
 "AbstractConvoluteBitmapFilter",

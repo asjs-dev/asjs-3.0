@@ -1,5 +1,5 @@
-require("display/bitmap/filters/asjs.AbstractBitmapFilter.js");
-require("geom/asjs.Point.js");
+require("./asjs.AbstractBitmapFilter.js");
+require("../../../geom/asjs.Point.js");
 
 ASJS.MaskBitmapFilter = createClass(
 "MaskBitmapFilter",

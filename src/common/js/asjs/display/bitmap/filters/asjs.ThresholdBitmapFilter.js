@@ -1,5 +1,5 @@
-require("display/bitmap/filters/asjs.AbstractBitmapFilter.js");
-require("display/bitmap/utils/asjs.Color.js");
+require("./asjs.AbstractBitmapFilter.js");
+require("../utils/asjs.Color.js");
 
 ASJS.ThresholdBitmapFilter = createClass(
 "ThresholdBitmapFilter",

@@ -1,6 +1,6 @@
-require("net/asjs.Loader.js");
-require("display/asjs.Head.js");
-require("display/asjs.Tag.js");
+require("./asjs.Loader.js");
+require("../display/asjs.Head.js");
+require("../display/asjs.Tag.js");
 
 ASJS.StyleLoader = createClass(
 "StyleLoader",

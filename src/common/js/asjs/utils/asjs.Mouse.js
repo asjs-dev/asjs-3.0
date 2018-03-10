@@ -1,5 +1,5 @@
-require("event/asjs.MouseEvent.js");
-require("geom/asjs.Point.js");
+require("../event/asjs.MouseEvent.js");
+require("../geom/asjs.Point.js");
 
 ASJS.Mouse = createSingletonClass(
 "Mouse",

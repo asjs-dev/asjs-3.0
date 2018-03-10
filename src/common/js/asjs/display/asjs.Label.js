@@ -1,4 +1,4 @@
-require("display/asjs.DisplayObject.js");
+require("./asjs.DisplayObject.js");
 
 ASJS.Label = createClass(
 "Label",

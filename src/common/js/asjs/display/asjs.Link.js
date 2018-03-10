@@ -1,4 +1,4 @@
-require("display/asjs.Sprite.js");
+require("./asjs.Sprite.js");
 
 ASJS.Link = createClass(
 "Link",

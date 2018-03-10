@@ -1,5 +1,5 @@
-require("application/js/mediator/AbstractResizeMediator.js");
-require("application/js/module/externalApplication/view/ExternalApplicationView.js");
+require("../../mediator/AbstractResizeMediator.js");
+require("./view/ExternalApplicationView.js");
 
 var ExternalApplicationMediator = createClass(
 "ExternalApplicationMediator",

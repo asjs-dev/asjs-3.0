@@ -1,4 +1,4 @@
-require("org/commons/media/Media.js");
+require("../media/Media.js");
 
 var PitchDetect = createClass(
 "PitchDetect",

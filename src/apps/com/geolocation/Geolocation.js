@@ -1,4 +1,4 @@
-require("org/commons/geolocation/GeolocationData.js");
+require("./GeolocationData.js");
 
 var Geolocation = createSingletonClass(
 "Geolocaton",

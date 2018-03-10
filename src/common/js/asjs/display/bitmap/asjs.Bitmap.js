@@ -1,7 +1,7 @@
-require("display/asjs.DisplayObject.js");
-require("display/asjs.Image.js");
-require("display/bitmap/utils/asjs.Color.js");
-require("geom/asjs.GeomUtils.js");
+require("../asjs.DisplayObject.js");
+require("../asjs.Image.js");
+require("../bitmap/utils/asjs.Color.js");
+require("../../geom/asjs.GeomUtils.js");
 
 ASJS.Bitmap = createClass(
 "Bitmap",

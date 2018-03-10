@@ -1,4 +1,4 @@
-require("utils/asjs.Cycler.js");
+require("../../utils/asjs.Cycler.js");
 
 ASJS.Easing = createClass(
 "Easing",

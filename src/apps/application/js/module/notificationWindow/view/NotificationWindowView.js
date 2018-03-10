@@ -1,5 +1,5 @@
-require("application/js/view/AbstractView.js");
-require("application/js/module/notificationWindow/NotificationWindowMediator.js");
+require("../../../view/AbstractView.js");
+require("../NotificationWindowMediator.js");
 
 var NotificationWindowView = createClass(
 "NotificationWindowView",

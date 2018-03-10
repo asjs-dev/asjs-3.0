@@ -1,4 +1,4 @@
-require("geom/asjs.Point.js");
+require("./asjs.Point.js");
 
 ASJS.GeomUtils = {};
 cnst(ASJS.GeomUtils, "THETA", Math.PI / 180);

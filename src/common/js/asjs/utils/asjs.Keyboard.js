@@ -1,5 +1,5 @@
-require("event/asjs.KeyboardEvent.js");
-require("event/asjs.FocusEvent.js");
+require("../event/asjs.KeyboardEvent.js");
+require("../event/asjs.FocusEvent.js");
 
 ASJS.Keyboard = createClass(
 "Keyboard",

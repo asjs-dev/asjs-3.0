@@ -1,7 +1,7 @@
-require("display/asjs.PrimitiveDisplayObject.js");
-require("utils/asjs.Mouse.js");
-require("geom/asjs.Rectangle.js");
-require("geom/asjs.GeomUtils.js");
+require("./asjs.PrimitiveDisplayObject.js");
+require("../utils/asjs.Mouse.js");
+require("../geom/asjs.Rectangle.js");
+require("../geom/asjs.GeomUtils.js");
 
 ASJS.DisplayObject = createClass(
 "DisplayObject",
