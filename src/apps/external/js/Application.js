@@ -1,5 +1,5 @@
-require("../../com/dataUtils/Language.js");
-require("../../com/dataUtils/Config.js");
+require("../../common/dataUtils/Language.js");
+require("../../common/dataUtils/Config.js");
 require("./controller/StartupCommand.js");
 
 var Application = createClass(

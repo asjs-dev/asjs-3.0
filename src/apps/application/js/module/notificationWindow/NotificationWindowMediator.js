@@ -1,4 +1,4 @@
-require("../../../../com/dataUtils/Language.js");
+require("../../../../common/dataUtils/Language.js");
 require("../../mediator/AbstractResizeMediator.js");
 require("./view/NotificationWindowView.js");
 require("./model/vo/NotificationWindowDataVo.js");

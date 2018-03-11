@@ -7,27 +7,29 @@ AbstractResizeMediator,
 function(_scope, _super) {
   var _externalApplicationView = new ExternalApplicationView();
   var _loader                  = new ASJS.ScriptLoader();
-  
+
   _scope.new = function(root) {
     _super.new(root);
     _super.protected.addHandler(ExternalApplicationMediator.SHOW, onShow);
     _super.protected.addHandler(ExternalApplicationMediator.HIDE, onHide);
-    
+
     _externalApplicationView.addEventListener(ExternalApplicationMediator.CLOSE, onClose);
 
     _loader.addEventListener(ASJS.LoaderEvent.LOAD, onLoadExternalApplication);
     _loader.addEventListener(ASJS.LoaderEvent.PROGRESS, onProgressExternalApplication);
   }
-  
+
   function onShow() {
-    if (!_super.protected.view.contains(_externalApplicationView)) _super.protected.view.addChild(_externalApplicationView);
+    if (!_super.protected.view.contains(_externalApplicationView))
+      _super.protected.view.addChild(_externalApplicationView);
     loadExternalApplication();
 
     _super.protected.showView();
   }
 
   function onHide() {
-    if (_super.protected.view.contains(_externalApplicationView)) _super.protected.view.removeChild(_externalApplicationView);
+    if (_super.protected.view.contains(_externalApplicationView))
+      _super.protected.view.removeChild(_externalApplicationView);
     unloadExternalApplication();
   }
 

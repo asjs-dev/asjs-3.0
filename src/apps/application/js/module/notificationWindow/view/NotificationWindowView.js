@@ -11,10 +11,10 @@ function(_scope, _super) {
   var _content          = new ASJS.Sprite();
   var _okButton         = new ASJS.Button();
   var _cancelButton     = new ASJS.Button();
-  
+
   _scope.new = function() {
     _super.new();
-    
+
     _scope.addClass("notification-window-view");
     _scope.setCSS("position", "fixed");
 
@@ -40,7 +40,7 @@ function(_scope, _super) {
     });
     _cancelButton.addClass("button");
   }
-  
+
   _scope.hideWindow = function() {
     _super.protected.animateTo(0, function() {
       _scope.dispatchEvent(NotificationWindowMediator.HIDE);
@@ -76,8 +76,14 @@ function(_scope, _super) {
   _scope.render = function() {
     _scope.setSize(stage.stageWidth, stage.stageHeight);
 
-    _window.setSize(Math.max(150, Math.min(stage.stageWidth, _notificationItem.width)), Math.max(150, Math.min(stage.stageHeight, _notificationItem.height)));
-    _window.move((stage.stageWidth - _window.width) * 0.5, Math.max(0, (stage.stageHeight - _window.height) * 0.5));
+    _window.setSize(
+      Math.max(150, Math.min(stage.stageWidth, _notificationItem.width)),
+      Math.max(150, Math.min(stage.stageHeight, _notificationItem.height))
+    );
+    _window.move(
+      (stage.stageWidth - _window.width) * 0.5,
+      Math.max(0, (stage.stageHeight - _window.height) * 0.5)
+    );
     _window.render();
 
     _title.move(_window.x + 25, _window.y + 10);
@@ -89,13 +95,17 @@ function(_scope, _super) {
 
     _okButton.width = _window.width * 0.5 - 20;
     if (hasOkButton()) {
-      _okButton.x = _window.x + (hasCancelButton() ? _window.width * 0.5 - 10 - _okButton.width : ((_window.width - _okButton.width) * 0.5));
+      _okButton.x = _window.x + (hasCancelButton()
+        ? _window.width * 0.5 - 10 - _okButton.width
+        : ((_window.width - _okButton.width) * 0.5));
       _okButton.y = _window.y + _window.height - _okButton.height - 30;
     }
 
     _cancelButton.width = _okButton.width;
     if (hasCancelButton()) {
-      _cancelButton.x = _window.x + (hasOkButton() ? _window.width * 0.5 + 10 : ((_window.width - _cancelButton.width) * 0.5));
+      _cancelButton.x = _window.x + (hasOkButton()
+        ? _window.width * 0.5 + 10
+        : ((_window.width - _cancelButton.width) * 0.5));
       _cancelButton.y = _window.y + _window.height - _cancelButton.height - 30;
     }
   }

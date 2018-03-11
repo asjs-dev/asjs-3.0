@@ -1,5 +1,5 @@
-require("../../../com/dataUtils/Config.js");
-require("../../../com/dataUtils/Language.js");
+require("../../../common/dataUtils/Config.js");
+require("../../../common/dataUtils/Language.js");
 require("./startup/EnvironmentCommand.js");
 require("./startup/ViewPrepCommand.js");
 require("./service/LoadJSONServiceCommand.js");
@@ -9,25 +9,25 @@ var StartupCommand = createClass(
 ASJS.AbstractCommand,
 function(_scope) {
   var priv = {};
-  
+
   cnst(priv, "JSON_PATH", "data/");
-  
+
   var _config   = Config.instance;
   var _language = Language.instance;
   var _app;
-  
+
   _scope.execute = function(app) {
     _app = app;
     loadConfig();
   }
-  
+
   function loadJSON(url, callback) {
     (new LoadJSONServiceCommand())
       .execute(url)
       .then(callback)
       .catch(onLoadError);
   }
-  
+
   function loadConfig() {
     loadJSON(priv.JSON_PATH + "config.dat", function(response) {
       _config.data = response;
@@ -46,7 +46,7 @@ function(_scope) {
     (new EnvironmentCommand()).execute();
     (new ViewPrepCommand()).execute(_app);
   }
-  
+
   function onLoadError(data) {
     throw new Error("JSON load error");
   }

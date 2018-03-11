@@ -1,4 +1,4 @@
-require("../../../../../com/dataUtils/Language.js");
+require("../../../../../common/dataUtils/Language.js");
 require("../../../view/AbstractView.js");
 require("../ExternalApplicationMediator.js");
 
@@ -8,16 +8,16 @@ AbstractView,
 function(_scope, _super) {
   var _language = Language.instance;
   var _mouse    = ASJS.Mouse.instance;
-  
+
   var _container   = new ASJS.Sprite();
   var _title       = new ASJS.Label();
   var _closeButton = new ASJS.DisplayObject();
-  
+
   var _externalApplication;
-  
+
   _scope.new = function() {
     _super.new();
-    
+
     _scope.addClass("external-application-view");
     _scope.setCSS("position", "fixed");
 
@@ -30,12 +30,12 @@ function(_scope, _super) {
     _closeButton.addClass("close-button");
     _closeButton.addEventListener(ASJS.MouseEvent.CLICK, onCloseClick);
     _container.addChild(_closeButton);
-    
+
     requestAnimationFrame(_scope.render);
   }
-  
+
   set(_scope, "title", function(v) { _title.text = v; });
-  
+
   _scope.render = function() {
     _scope.setSize(stage.stageWidth, stage.stageHeight);
     _container.setSize(_scope.width - _container.x * 2, _scope.height - _container.y * 2);
@@ -46,10 +46,13 @@ function(_scope, _super) {
 
     if (_externalApplication && _container.contains(_externalApplication)) {
       _externalApplication.move(10, _closeButton.y * 2 + _closeButton.height);
-      _externalApplication.setSize(_container.width - _externalApplication.x * 2, _container.height - _externalApplication.y - _closeButton.y);
+      _externalApplication.setSize(
+        _container.width - _externalApplication.x * 2,
+        _container.height - _externalApplication.y - _closeButton.y
+      );
     }
   }
-  
+
   _scope.addExternalApplication = function(externalApplication) {
     _scope.removeExternalApplication();
     _externalApplication = externalApplication;

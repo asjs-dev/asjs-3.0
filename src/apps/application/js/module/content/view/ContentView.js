@@ -1,4 +1,4 @@
-require("../../../../../com/dataUtils/Language.js");
+require("../../../../../common/dataUtils/Language.js");
 require("../../../view/AbstractView.js");
 require("../ContentMediator.js");
 require("./assets/Box.js");
@@ -15,13 +15,13 @@ function(_scope, _super) {
   var _animatedSprite            = new ASJS.DisplayObject();
   var _drag                      = false;
   var _blurFilter                = new ASJS.BlurFilter();
-  
+
   _scope.new = function() {
     _super.new();
     _scope.addClass("content-view");
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
     _scope.addEventListener(ASJS.Stage.REMOVED_FROM_STAGE, removedFromStage);
-    
+
     _background.addClass("background");
     _background.setCSS("position", "fixed");
     _background.alpha = 0.5;
@@ -33,16 +33,19 @@ function(_scope, _super) {
     _scope.addChild(_animatedSprite);
 
     _animatedSprite.addEventListener(ASJS.MouseEvent.CLICK, onAnimatedSpriteClick);
-    _animatedSprite.addEventListener(ASJS.MouseEvent.MOUSE_DOWN + " " + ASJS.MouseEvent.TOUCH_START, onAnimatedSpriteMouseDown);
-    
+    _animatedSprite.addEventListener(
+      ASJS.MouseEvent.MOUSE_DOWN + " " + ASJS.MouseEvent.TOUCH_START,
+      onAnimatedSpriteMouseDown
+    );
+
     _externalApplicationButton.label = _language.getText("show_external_application_button_label");
     _externalApplicationButton.addClass("button show-external-application-button");
     _externalApplicationButton.addEventListener(ASJS.MouseEvent.CLICK, onExternalApplicationButtonClick);
     _scope.addChild(_externalApplicationButton);
-    
+
     requestAnimationFrame(_scope.render);
   }
-  
+
   _scope.render = function() {
     _background.setSize(stage.stageWidth, stage.stageHeight);
     _externalApplicationButton.x = _box.x = (stage.stageWidth - _box.width) * 0.5;
@@ -54,10 +57,10 @@ function(_scope, _super) {
     stage.addEventListener(ASJS.MouseEvent.MOUSE_MOVE + " " + ASJS.MouseEvent.TOUCH_MOVE, onStageMouseMove);
 
     _scope.addEventListener(ASJS.MouseEvent.CLICK, onMouseClick);
-    
+
     playFireworksAnimation();
   }
-  
+
   function removedFromStage() {
     stage.removeEventListener(ASJS.MouseEvent.MOUSE_UP + " " + ASJS.MouseEvent.TOUCH_END,    onDragStop);
     stage.removeEventListener(ASJS.MouseEvent.MOUSE_LEAVE,                                   onDragStop);
@@ -95,7 +98,7 @@ function(_scope, _super) {
 
   function onStageMouseMove() {
     _blurFilter.value = (Math.max(0, stage.stageHeight / (stage.stageHeight - _mouse.mouseY)) / 10);
-    
+
     _background.filters = [_blurFilter];
     if (!_drag) return;
     _animatedSprite.move(_mouse.mouseX - _animatedSprite.width * 0.5, _mouse.mouseY - _animatedSprite.height * 0.5);
@@ -105,7 +108,7 @@ function(_scope, _super) {
     var hitTest = _box.hitTest(new ASJS.Point(_mouse.mouseX, _mouse.mouseY));
     _box.label.text = _language.getText(hitTest ? "hit_test_inside" : "hit_test_outside");
   }
-  
+
   function onExternalApplicationButtonClick() {
     _scope.dispatchEvent(ContentMediator.ON_SHOW_EXTERNAL_APPLICATION);
   }
