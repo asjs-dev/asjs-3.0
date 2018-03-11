@@ -50,7 +50,7 @@ function(_scope, _super) {
   set(_scope, "method", function(v) { _method = v; });
 
   set(_scope, "responseType", function(v) { _responseType = v; });
-  
+
   set(_scope, "compressed", function(v) { _compressed = v; });
 
   _scope.unload = function() {
@@ -121,7 +121,8 @@ function(_scope, _super) {
   };
 
   function onLoad(e) {
-    _scope.dispatchEvent(ASJS.LoaderEvent.LOAD, e);
+    if (_scope.status >= 400) onError(e);
+    else _scope.dispatchEvent(ASJS.LoaderEvent.LOAD, e);
   };
 
   function onAbort(e) {

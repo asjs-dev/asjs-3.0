@@ -8,12 +8,6 @@ var StartupCommand = createClass(
 "StartupCommand",
 ASJS.AbstractCommand,
 function(_scope) {
-  var priv = {};
-
-  cnst(priv, "JSON_PATH", "data/");
-
-  var _config   = Config.instance;
-  var _language = Language.instance;
   var _app;
 
   _scope.execute = function(app) {
@@ -21,23 +15,16 @@ function(_scope) {
     loadConfig();
   }
 
-  function loadJSON(url, callback) {
-    (new LoadJSONServiceCommand())
-      .execute(url)
-      .then(callback)
-      .catch(onLoadError);
-  }
-
   function loadConfig() {
-    loadJSON(priv.JSON_PATH + "config.dat", function(response) {
-      _config.data = response;
+    loadJSON("config.dat", function(response) {
+      Config.instance.data = response;
       loadLanguage();
     });
   }
 
   function loadLanguage() {
-    loadJSON(priv.JSON_PATH + "language.dat", function(response) {
-      _language.data = response;
+    loadJSON("language.dat", function(response) {
+      Language.instance.data = response;
       initApplication();
     });
   }
@@ -45,6 +32,13 @@ function(_scope) {
   function initApplication() {
     (new EnvironmentCommand()).execute();
     (new ViewPrepCommand()).execute(_app);
+  }
+
+  function loadJSON(url, callback) {
+    (new LoadJSONServiceCommand())
+      .execute("data/" + url)
+      .then(callback)
+      .catch(onLoadError);
   }
 
   function onLoadError(data) {
