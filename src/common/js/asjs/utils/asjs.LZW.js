@@ -3,6 +3,7 @@ ASJS.LZW = createSingletonClass(
 ASJS.BaseClass,
 function(_scope) {
   _scope.compress = function(uncompressed) {
+    uncompressed = unescape(encodeURIComponent(uncompressed));
     var i;
     var dictSize = 256;
     var dictionary = [];
@@ -52,7 +53,7 @@ function(_scope) {
       dictionary[dictSize++] = w + charAt(entry, 0);
       w = entry;
     }
-    return result;
+    return decodeURIComponent(escape(result));
   }
 
   function charAt(string, index){

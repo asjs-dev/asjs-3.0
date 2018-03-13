@@ -7,10 +7,10 @@ function(_scope) {
 
     var loader = new ASJS.Loader();
         //loader.responseType = "json";
-        loader.compressed   = true;
+        loader.compressed = true;
         loader.method = ASJS.RequestMethod.GET;
         loader.addEventListener(ASJS.LoaderEvent.LOAD, function(e) {
-          dfd.resolve(JSON.parse(loader.content));
+          dfd.resolve(JSON.parse(decodeURI(loader.content)));
           loader.unload();
         });
         loader.addEventListener(ASJS.LoaderEvent.ERROR, function(e) {

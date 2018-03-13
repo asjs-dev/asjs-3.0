@@ -6,10 +6,12 @@ function(_scope, _super) {
 
   get(_scope, "selectedLanguage", function() { return _super.data.selectedLanguage; });
 
+  get(_scope, "defaultLanguage", function() { return _super.data.defaultLanguage; });
+
   _scope.getText = function(k, o) {
     var i = _scope.get("elements")[k];
-    if (!empty(i) && !empty(i[_scope.selectedLanguage])) {
-      var text = i[_scope.selectedLanguage];
+    if (!empty(i) && (!empty(i[_scope.selectedLanguage]) || !empty(i[_scope.defaultLanguage]))) {
+      var text = i[_scope.selectedLanguage] || i[_scope.defaultLanguage];
       if (o) {
         for (var id in o) {
           text = text.replace("{{" + id + "}}", o[id]);
@@ -17,6 +19,7 @@ function(_scope, _super) {
       }
       return text;
     }
-    return "";
+    console.warn("Missing translation:", k);
+    return k;
   }
 });
