@@ -18,6 +18,7 @@ function(_scope, _super) {
 
   _scope.new = function() {
     _super.new();
+    
     _scope.addClass("content-view");
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
     _scope.addEventListener(ASJS.Stage.REMOVED_FROM_STAGE, removedFromStage);

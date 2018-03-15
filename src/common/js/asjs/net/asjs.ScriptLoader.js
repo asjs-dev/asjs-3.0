@@ -24,16 +24,9 @@ function(_scope, _super) {
     _super.load(url);
   }
 
-  function getPreparateScript() {
-    var regex = /ASJS\.start\(([ a-zA-Z0-9]*)\)/g;
-    var m = regex.exec(_super.content);
-    if (m) return _super.content.split(m[0]).join("return " + m[1]);
-    return _super.content.split("ASJS.start(").join("return ASJS.start(");
-  }
-
   function getScript() {
     try {
-      return Function("return " + getPreparateScript())();
+      return Function(_super.content)();
     } catch (e) {
       trace("The external script must be wrapped");
     }

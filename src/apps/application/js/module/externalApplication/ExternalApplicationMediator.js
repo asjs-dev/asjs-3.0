@@ -50,7 +50,7 @@ function(_scope, _super) {
   }
 
   function onLoadExternalApplication(e) {
-    _externalApplicationView.addExternalApplication(new _loader.content());
+    _externalApplicationView.addExternalApplication(_loader.content);
     _loader.unload();
   }
 

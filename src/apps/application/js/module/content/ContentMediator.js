@@ -11,20 +11,21 @@ AbstractResizeMediator,
 function(_scope, _super) {
   var _language    = Language.instance;
   var _contentView = new ContentView();
-  
+
   _scope.new = function(root) {
     _super.new(root);
-    _super.protected.addHandler(ContentMediator.SHOW, onShow);
     
+    _super.protected.addHandler(ContentMediator.SHOW, onShow);
+
     _contentView.addEventListener(ContentMediator.ON_SHOW_NOTIFICATION_WINDOW,  showNotificationWindow);
     _contentView.addEventListener(ContentMediator.ON_SHOW_EXTERNAL_APPLICATION, showExternalApplication);
   }
-  
+
   function onShow() {
     _super.protected.showView();
     if (!_super.protected.view.contains(_contentView)) _super.protected.view.addChild(_contentView);
   }
-  
+
   function showNotificationWindow() {
     var notificationWindowDataVo         = new NotificationWindowDataVo();
         notificationWindowDataVo.title   = _language.getText("notification_title");
@@ -32,7 +33,7 @@ function(_scope, _super) {
         notificationWindowDataVo.height  = 230;
     _scope.sendNotification(NotificationWindowMediator.SHOW, notificationWindowDataVo);
   }
-  
+
   function showExternalApplication() {
     _scope.sendNotification(ExternalApplicationMediator.SHOW);
   }

@@ -6,10 +6,9 @@ var ASJS = (function() {
 
   var _sourcePath     = "";
   var _includedScript = {};
-  var _initedClasses  = [];
 
   _scope.sourcePath = function(v) {
-    if (_sourcePath == "") _sourcePath = v;
+    _sourcePath = v;
   }
 
   _scope.import = function(f) {
@@ -27,14 +26,11 @@ var ASJS = (function() {
       stage = ASJS.Stage.instance;
       stage.clear();
     }
-    if (_initedClasses.indexOf(b) === -1) {
-      trace("<AS/JS> core version: 3.0.1.{{version}}");
-      _initedClasses.push(b);
-      try {
-        stage.addChild(new b());
-      } catch (e) {
-        trace(e);
-      }
+    trace("<AS/JS> core version: 3.0.1.{{version}}");
+    try {
+      stage.addChild(new b());
+    } catch (e) {
+      trace(e);
     }
     return b;
   }
@@ -134,7 +130,7 @@ var createClass = function(name, base, body) {
       del(this, "protected");
     }
   }
-  
+
   return Function("var a=arguments;var name=a[0];var base=a[1];var body=a[2];var setup=a[3];var "+name+"=function(){setup.apply(this,[name,base,body,arguments]);};"+name+".prototype=Object.create(base.prototype);"+name+".prototype.constructor="+name+";return "+name+";")(name, base, body, setup);
 }
 var c0 = createClass;

@@ -55,7 +55,7 @@ function(_scope, _super) {
 
   _scope.addExternalApplication = function(externalApplication) {
     _scope.removeExternalApplication();
-    _externalApplication = externalApplication;
+    _externalApplication = new externalApplication();
     _externalApplication.addEventListener(ASJS.LoaderEvent.LOAD, function() {
       _externalApplication.addEventListener(ASJS.LoaderEvent.LOAD);
       _scope.title = _externalApplication.title;
