@@ -1,5 +1,5 @@
-require("../../../common/dataUtils/Config.js");
-require("../../../common/dataUtils/Language.js");
+require("../../../../common/js/common/dataUtils/Config.js");
+require("../../../../common/js/common/dataUtils/Language.js");
 require("./startup/EnvironmentCommand.js");
 require("./startup/ViewPrepCommand.js");
 require("./service/LoadJSONServiceCommand.js");

@@ -1,4 +1,4 @@
-require("../../../../common/dataUtils/Language.js");
+require("../../../../../common/js/common/dataUtils/Language.js");
 require("../../mediator/AbstractResizeMediator.js");
 require("./view/ContentView.js");
 require("../notificationWindow/NotificationWindowMediator.js");
@@ -14,7 +14,7 @@ function(_scope, _super) {
 
   _scope.new = function(root) {
     _super.new(root);
-    
+
     _super.protected.addHandler(ContentMediator.SHOW, onShow);
 
     _contentView.addEventListener(ContentMediator.ON_SHOW_NOTIFICATION_WINDOW,  showNotificationWindow);

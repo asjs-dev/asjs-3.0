@@ -1,4 +1,4 @@
-require("../../../../../common/dataUtils/Language.js");
+require("../../../../../../common/js/common/dataUtils/Language.js");
 require("../../../view/AbstractView.js");
 require("../ExternalApplicationMediator.js");
 

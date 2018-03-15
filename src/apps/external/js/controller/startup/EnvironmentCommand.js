@@ -1,6 +1,6 @@
-require("../../../../common/urlParser/URLParser.js");
-require("../../../../common/dataUtils/Language.js");
-require("../../../../common/dataUtils/Cookies.js");
+require("../../../../../common/js/common/urlParser/URLParser.js");
+require("../../../../../common/js/common/dataUtils/Language.js");
+require("../../../../../common/js/common/dataUtils/Cookies.js");
 
 var EnvironmentCommand = createClass(
 "EnvironmentCommand",
