@@ -8,7 +8,7 @@ function(_scope, _super) {
 
   get(_scope, "content", function() {
     if (!_content && _super.content !== "") {
-      _content = getScript();
+      _content = Function(_super.content)();
       _scope.free();
     }
     return _content;
@@ -22,13 +22,5 @@ function(_scope, _super) {
   _scope.load = function(url) {
     _scope.unload();
     _super.load(url);
-  }
-
-  function getScript() {
-    try {
-      return Function(_super.content)();
-    } catch (e) {
-      trace("The external script must be wrapped");
-    }
   }
 });
