@@ -1,7 +1,7 @@
 require("../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../common/js/mediator/AbstractResizeMediator.js");
 require("./view/NotificationWindowView.js");
-require("./model/vo/NotificationWindowDataVo.js");
+require("./vo/NotificationWindowDataVo.js");
 
 var NotificationWindowMediator = createClass(
 "NotificationWindowMediator",

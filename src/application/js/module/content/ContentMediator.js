@@ -2,7 +2,7 @@ require("../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../common/js/mediator/AbstractResizeMediator.js");
 require("./view/ContentView.js");
 require("../notificationWindow/NotificationWindowMediator.js");
-require("../notificationWindow/model/vo/NotificationWindowDataVo.js");
+require("../notificationWindow/vo/NotificationWindowDataVo.js");
 require("../externalApplication/ExternalApplicationMediator.js");
 
 var ContentMediator = createClass(
