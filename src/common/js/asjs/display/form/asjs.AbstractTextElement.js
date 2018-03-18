@@ -34,13 +34,13 @@ function(_scope, _super) {
     ASJS.Keyboard.F9
   ];
   var _restrict;
-  
-  _scope.new = function() {
-    _super.new();
+
+  _scope.new = function(tag) {
+    _super.new(tag);
     _scope.addEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
     _scope.addEventListener(ASJS.Event.CHANGE, onChange);
   }
-  
+
   prop(_scope, "readonly", {
     get: function() { return _scope.getAttr("readonly"); },
     set: function(v) {
@@ -76,7 +76,7 @@ function(_scope, _super) {
       else _scope.removeAttr("autofocus");
     }
   });
-  
+
   function onKeyUp(e) {
     checkRestrict();
   }
@@ -84,7 +84,7 @@ function(_scope, _super) {
   function onChange() {
     checkRestrict();
   }
-  
+
   function checkRestrict() {
     if (_restrict) _scope.val = _scope.val.replace(new RegExp("(?!" + _restrict + ").", "g"), '');
   }
