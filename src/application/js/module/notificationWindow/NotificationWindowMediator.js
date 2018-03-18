@@ -9,17 +9,17 @@ AbstractResizeMediator,
 function(_scope, _super) {
   var _language = Language.instance;
 
-  var _pool                   = [];
-  var _showed                 = false;
-  var _defaultOkLabel         = "";
-  var _defaultCancelLabel     = "";
-  var _notificationWindowView = new NotificationWindowView();
+  var _pool               = [];
+  var _showed             = false;
+  var _defaultOkLabel     = "";
+  var _defaultCancelLabel = "";
+  var _view               = new NotificationWindowView();
 
   _scope.new = function(root) {
     _super.new(root);
     _super.protected.addHandler(NotificationWindowMediator.SHOW, onShow);
 
-    _notificationWindowView.addEventListener(NotificationWindowMediator.HIDE, hide);
+    _view.addEventListener(NotificationWindowMediator.HIDE, hide);
     _defaultOkLabel     = _language.getText('notification_ok_button');
     _defaultCancelLabel = _language.getText('notification_cancel_button');
   }
@@ -41,7 +41,7 @@ function(_scope, _super) {
   }
 
   function hideWindow() {
-    _super.protected.view.removeChild(_notificationWindowView);
+    _super.protected.view.removeChild(_view);
     _showed = false;
   }
 
@@ -49,9 +49,9 @@ function(_scope, _super) {
     var notificationItem = _pool[0];
     _pool.shift();
     _showed = true;
-    _notificationWindowView.showWindow(notificationItem);
+    _view.showWindow(notificationItem);
 
-    if (!_super.protected.view.contains(_notificationWindowView)) _super.protected.view.addChild(_notificationWindowView);
+    if (!_super.protected.view.contains(_view)) _super.protected.view.addChild(_view);
 
     _super.protected.showView();
   }

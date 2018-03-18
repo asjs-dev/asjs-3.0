@@ -9,21 +9,21 @@ var ContentMediator = createClass(
 "ContentMediator",
 AbstractResizeMediator,
 function(_scope, _super) {
-  var _language    = Language.instance;
-  var _contentView = new ContentView();
+  var _language = Language.instance;
+  var _view     = new ContentView();
 
   _scope.new = function(root) {
     _super.new(root);
 
     _super.protected.addHandler(ContentMediator.SHOW, onShow);
 
-    _contentView.addEventListener(ContentMediator.ON_SHOW_NOTIFICATION_WINDOW,  showNotificationWindow);
-    _contentView.addEventListener(ContentMediator.ON_SHOW_EXTERNAL_APPLICATION, showExternalApplication);
+    _view.addEventListener(ContentMediator.ON_SHOW_NOTIFICATION_WINDOW,  showNotificationWindow);
+    _view.addEventListener(ContentMediator.ON_SHOW_EXTERNAL_APPLICATION, showExternalApplication);
   }
 
   function onShow() {
     _super.protected.showView();
-    if (!_super.protected.view.contains(_contentView)) _super.protected.view.addChild(_contentView);
+    if (!_super.protected.view.contains(_view)) _super.protected.view.addChild(_view);
   }
 
   function showNotificationWindow() {

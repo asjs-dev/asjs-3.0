@@ -5,31 +5,31 @@ var ExternalApplicationMediator = createClass(
 "ExternalApplicationMediator",
 AbstractResizeMediator,
 function(_scope, _super) {
-  var _externalApplicationView = new ExternalApplicationView();
-  var _loader                  = new ASJS.ScriptLoader();
+  var _view   = new ExternalApplicationView();
+  var _loader = new ASJS.ScriptLoader();
 
   _scope.new = function(root) {
     _super.new(root);
     _super.protected.addHandler(ExternalApplicationMediator.SHOW, onShow);
     _super.protected.addHandler(ExternalApplicationMediator.HIDE, onHide);
 
-    _externalApplicationView.addEventListener(ExternalApplicationMediator.CLOSE, onClose);
+    _view.addEventListener(ExternalApplicationMediator.CLOSE, onClose);
 
     _loader.addEventListener(ASJS.LoaderEvent.LOAD, onLoadExternalApplication);
     _loader.addEventListener(ASJS.LoaderEvent.PROGRESS, onProgressExternalApplication);
   }
 
   function onShow() {
-    if (!_super.protected.view.contains(_externalApplicationView))
-      _super.protected.view.addChild(_externalApplicationView);
+    if (!_super.protected.view.contains(_view))
+      _super.protected.view.addChild(_view);
     loadExternalApplication();
 
     _super.protected.showView();
   }
 
   function onHide() {
-    if (_super.protected.view.contains(_externalApplicationView))
-      _super.protected.view.removeChild(_externalApplicationView);
+    if (_super.protected.view.contains(_view))
+      _super.protected.view.removeChild(_view);
     unloadExternalApplication();
   }
 
@@ -44,18 +44,18 @@ function(_scope, _super) {
   }
 
   function unloadExternalApplication() {
-    _externalApplicationView.removeExternalApplication();
+    _view.removeExternalApplication();
     _loader.cancel();
     _loader.unload();
   }
 
   function onLoadExternalApplication(e) {
-    _externalApplicationView.addExternalApplication(_loader.content);
+    _view.addExternalApplication(_loader.content);
     _loader.unload();
   }
 
   function onProgressExternalApplication(e) {
-    _externalApplicationView.title = ((e.detail.loaded / e.detail.total) * 100) + "%";
+    _view.title = ((e.detail.loaded / e.detail.total) * 100) + "%";
   }
 });
 msg(ExternalApplicationMediator, "SHOW",  "show");

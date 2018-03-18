@@ -1,9 +1,9 @@
-require("../../common/style/lib/normalize.scss");
+@import "../../common/style/lib/normalize.scss";
 
-require("../../common/style/_mixins.scss");
-require("../../common/style/_variables.scss");
+@import "../../common/style/_mixins.scss";
+@import "../../common/style/_variables.scss";
 
-require("./base.scss");
-require("./content.scss");
-require("./externalApplication.scss");
-require("./notificationWindow.scss");
+@import "./base.scss";
+@import "./content.scss";
+@import "./externalApplication.scss";
+@import "./notificationWindow.scss";
