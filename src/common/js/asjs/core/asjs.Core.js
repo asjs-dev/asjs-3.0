@@ -60,9 +60,13 @@ var get = function(t, n, v) {
   prop(t, n, {get: v});
 };
 
+var g = get;
+
 var set = function(t, n, v) {
   prop(t, n, {set: v});
 };
+
+var s = set;
 
 var constant = function(t, n, v) {
   prop(t, n, {value: v});
@@ -128,6 +132,7 @@ var createClass = function(name, base, body) {
         del(this, "new");
       }
       del(this, "protected");
+      del(this, "prot");
     }
   }
 
@@ -150,5 +155,5 @@ ASJS.BaseClass = c0(
 Object,
 function(_scope, _super) {
   _scope.new = function() {};
-  _scope.protected = {};
+  _scope.prot = _scope.protected = {};
 });
