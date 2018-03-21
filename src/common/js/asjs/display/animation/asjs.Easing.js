@@ -16,11 +16,11 @@ function(_scope) {
   var _duration;
   var _stepCallback;
   var _completeCallback;
-  
+
   _scope.new = function() {
     _scope.stop();
   }
-  
+
   _scope.stop = function() {
     _isPlaying = false;
     _cycler.removeCallback(update);
@@ -45,7 +45,7 @@ function(_scope) {
 
     letsPlay();
   }
-  
+
   function letsPlay() {
     if (_isPlaying) return;
     _step = 0;
