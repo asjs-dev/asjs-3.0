@@ -8,7 +8,7 @@ function(_scope, _super) {
 
   get(_scope, "content", function() {
     if (!_content && _super.content !== "") {
-      _content = Function(_super.content)();
+      _content = Function((_super.content.indexOf("(function()") === 0 ? "return" : "") + _super.content)();
       _scope.free();
     }
     return _content;
