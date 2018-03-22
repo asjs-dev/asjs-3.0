@@ -8,7 +8,7 @@ ASJS.FormElement,
 function(_scope, _super) {
   var _checkbox = new ASJS.DisplayObject("input");
   var _label    = new ASJS.DisplayObject();
-  
+
   _scope.new = function() {
     _super.new("label");
     _checkbox.setAttr("type", "checkbox");
@@ -19,14 +19,13 @@ function(_scope, _super) {
     _label.enabled = false;
     _scope.addChild(_label);
   }
-  
+
   get(_scope, "label", function() { return _label; });
 
   get(_scope, "checkbox", function() { return _checkbox; });
-  
+
   set(_scope, "enabled", function(v) {
     _super.enabled = _checkbox.enabled = v;
-    _scope.render();
   });
 
   prop(_scope, "name", {

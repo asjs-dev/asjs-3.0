@@ -7,7 +7,7 @@ ASJS.FormElement,
 function(_scope, _super) {
   var _radio = new ASJS.DisplayObject("input");
   var _label = new ASJS.DisplayObject();
-  
+
   _scope.new = function() {
     _super.new("label");
     _radio.setAttr("type", "radio");
@@ -18,12 +18,11 @@ function(_scope, _super) {
     _label.enabled = false;
     _scope.addChild(_label);
   }
-  
+
   get(_scope, "radio", function() { return _radio; });
 
   set(_scope, "enabled", function(v) {
     _super.enabled = _radio.enabled = v;
-    _scope.render();
   });
 
   prop(_scope, "name", {
@@ -43,6 +42,4 @@ function(_scope, _super) {
     get: function() { return _radio.value; },
     set: function(v) { _radio.value = v; }
   });
-  
-  _scope.render = function() {};
 });
