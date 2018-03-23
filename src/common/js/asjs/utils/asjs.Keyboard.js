@@ -34,7 +34,9 @@ function(_scope) {
   };
 
   function onBlur() {
-    for (var k in _pressedKeys) _pressedKeys[k] = false;
+    map(_pressedKeys, function(k) {
+      return false;
+    });
   };
 
   function onKeyDown(e) {

@@ -36,9 +36,9 @@ function(_scope) {
     _stepCallback = stepCallback;
     _completeCallback = completeCallback;
 
-    iterateParameters(function(k) {
+    map(_to, function(k, item) {
       _from[k] = _target[k];
-      _change[k] = _to[k] - _from[k];
+      _change[k] = item - _from[k];
     });
 
     if (!ASJS.Easing[_type]) _type = "linearTween";
@@ -58,24 +58,20 @@ function(_scope) {
 
     if (_step >= _duration) {
       _scope.stop();
-      iterateParameters(function(k) {
-        _target[k] = _to[k];
+      map(_to, function(k, item) {
+        _target[k] = item;
       });
       if (_stepCallback) _stepCallback();
       if (_completeCallback) _completeCallback();
       return;
     }
 
-    iterateParameters(function(k) {
+    map(_to, function(k) {
       _target[k] = ASJS.Easing[_type](_step, _from[k], _change[k], _duration);
     });
 
     if (_stepCallback) _stepCallback();
     _step++;
-  }
-
-  function iterateParameters(callback) {
-    for (var k in _to) callback(k);
   }
 });
 rof(ASJS.Easing, "linearTween", function(t, b, c, d) {

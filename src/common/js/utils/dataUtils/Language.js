@@ -13,9 +13,9 @@ function(_scope, _super) {
     if (!empty(i) && (!empty(i[_scope.selectedLanguage]) || !empty(i[_scope.defaultLanguage]))) {
       var text = i[_scope.selectedLanguage] || i[_scope.defaultLanguage];
       if (o) {
-        for (var id in o) {
-          text = text.replace("{{" + id + "}}", o[id]);
-        }
+        map(o, function(id, item) {
+          text = text.replace("{{" + id + "}}", item);
+        });
       }
       return text;
     }

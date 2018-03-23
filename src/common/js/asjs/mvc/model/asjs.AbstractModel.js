@@ -44,10 +44,10 @@ function(_scope) {
   }
 
   function merge(oData, nData) {
-    for (var nk in nData) {
-      if (tis(oData[nk], "object")) merge(oData[nk], nData[nk]);
-      else oData[nk] = nData[nk];
-    }
+    map(nData, function(k, item) {
+      if (tis(oData[k], "object")) merge(oData[k], item);
+      else oData[k] = item;
+    });
   }
 });
 msg(ASJS.AbstractModel, "CHANGED", "changed");

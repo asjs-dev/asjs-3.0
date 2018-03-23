@@ -85,11 +85,11 @@ function(_scope) {
   };
 });
 rof(ASJS.EventDispatcher, "createEvent", function(event, data, bubble) {
-  return !tis(event, "string") 
-    ? event 
+  return !tis(event, "string")
+    ? event
     : new CustomEvent(ASJS.Polyfill.instance.convertEventType(event), {
-        detail: data, 
-        cancelable: true, 
+        detail: data,
+        cancelable: true,
         bubbles: empty(bubble) ? true : bubble
     });
 });

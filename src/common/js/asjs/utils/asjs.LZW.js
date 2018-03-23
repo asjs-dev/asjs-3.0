@@ -12,7 +12,7 @@ function(_scope) {
     }
     var w = "";
     var result = [];
-    for (i = 0; i < uncompressed.length; i++) {
+    map(uncompressed, function(i) {
       var c = charAt(uncompressed, i);
       var wc = w + c;
       if (!empty(dictionary[wc])) {
@@ -22,7 +22,7 @@ function(_scope) {
         dictionary[wc] = dictSize++;
         w = c;
       }
-    }
+    });
     if (w != "") {
       result.push(dictionary[w]);
     }
@@ -65,14 +65,12 @@ function(_scope) {
   }
 
   function toBinary(codes) {
-    var i;
     var dictionaryCount = 256;
     var bits = 8;
     var ret = "";
     var rest = 0;
     var restLength = 0;
-    for (i = 0; i < codes.length; i++) {
-      var code = codes[i];
+    map(codes, function(i, code) {
       rest = (rest << bits) + code;
       restLength += bits;
       dictionaryCount++;
@@ -84,18 +82,17 @@ function(_scope) {
         ret += String.fromCharCode(rest >> restLength);
         rest &= (1 << restLength) - 1;
       }
-    }
+    });
     return ret + (restLength ? String.fromCharCode(rest << (8 - restLength)) : "");
   }
 
   function fromBinary(binary) {
-    var i;
     var dictionaryCount = 256;
     var bits = 8;
     var codes = [];
     var rest = 0;
     var restLength = 0;
-    for (i = 0; i < binary.length; i++) {
+    map(binary, function(i) {
       rest = (rest << 8) + binary.charCodeAt(i);
       restLength += 8;
       if (restLength >= bits) {
@@ -107,7 +104,7 @@ function(_scope) {
           bits++;
         }
       }
-    }
+    });
     return codes;
   }
 });

@@ -82,6 +82,14 @@ var msg = message;
 var readOnlyFunction = cnst;
 var rof = readOnlyFunction;
 
+var map = function(object, callback) {
+  var key;
+  for (key in object) {
+    var value = callback(key, object[key]);
+    if (value !== undefined) object[key] = value;
+  }
+}
+
 var extendProperties = function(t) {
   var s = {};
   for (var k in t) {

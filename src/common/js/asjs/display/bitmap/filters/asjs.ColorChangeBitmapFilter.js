@@ -12,7 +12,7 @@ function(_scope) {
       _scope.palette[color.hex] = ASJS.Color.hexToRgb(palette[key]);
     }
   }
-  
+
   _scope.execute = function(pixels) {
     var d = pixels.data;
     var i = -4;
@@ -21,19 +21,19 @@ function(_scope) {
     while ((i += 4) < l) {
       var originalColor = new ASJS.Color(d[i], d[i + 1], d[i + 2], d[i + 3]);
       var hexValue = originalColor.hex;
-      
+
       if (_scope.palette[hexValue]) {
         var selectedColor = _scope.palette[hexValue];
-      
+
         d[i] = selectedColor.r;
         d[i + 1] = selectedColor.g;
         d[i + 2] = selectedColor.b;
         d[i + 3] = selectedColor.a;
       }
     }
-    
+
     _scope.palette = {};
-    
+
     return pixels;
   }
 });
