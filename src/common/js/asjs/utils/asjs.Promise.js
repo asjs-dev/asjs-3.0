@@ -9,17 +9,22 @@ function(_scope) {
   var _calledReject    = false;
   var _calledFinally   = false;
 
+  var _rejectData;
+  var _resolveData;
+
   _scope.resolve = function(data) {
     _calledResolve = true;
     _calledFinally = true;
-    callResolve(data);
+    _resolveData = data;
+    callResolve();
     callFinally();
   }
 
   _scope.reject = function(data) {
     _calledReject = true;
     _calledFinally = true;
-    callReject(data);
+    _rejectData = data;
+    callReject();
     callFinally();
   }
 
@@ -47,18 +52,18 @@ function(_scope) {
     return _scope;
   }
 
-  function callResolve(resolveData) {
+  function callResolve() {
     if (!_calledResolve) return;
-    while (_resolveFunction.length > 0) _resolveFunction.shift()(resolveData);
+    while (_resolveFunction.length > 0) _resolveFunction.shift()(_resolveData);
   }
 
-  function callReject(rejectData) {
+  function callReject() {
     if (!_calledReject) return;
-    while (_rejectFunction.length > 0) _rejectFunction.shift()(rejectData);
+    while (_rejectFunction.length > 0) _rejectFunction.shift()(_rejectData);
   }
-  
+
   function callFinally() {
     if (!_calledFinally) return;
-    while (_finallyFunction.length > 0) _finallyFunction.shift()();
+    while (_finallyFunction.length > 0) _finallyFunction.shift()(_resolveData || _rejectData);
   }
 });

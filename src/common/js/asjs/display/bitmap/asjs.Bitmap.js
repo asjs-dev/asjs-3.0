@@ -1,17 +1,17 @@
+require("../../geom/asjs.GeomUtils.js");
+require("../bitmap/utils/asjs.Color.js");
 require("../asjs.DisplayObject.js");
 require("../asjs.Image.js");
-require("../bitmap/utils/asjs.Color.js");
-require("../../geom/asjs.GeomUtils.js");
 
 ASJS.Bitmap = createClass(
 "Bitmap",
 ASJS.DisplayObject,
 function(_scope, _super) {
   var priv = {};
-  
+
   cnst(priv, "TARGET_FILL", "targetFill");
   cnst(priv, "TARGET_STROKE", "targetStroke");
-  
+
   var _filtersReady = true;
   var _drawLine     = false;
   var _drawFill     = false;
@@ -19,13 +19,13 @@ function(_scope, _super) {
   var _context;
   var _bitmapFilters;
   var _original;
-  
+
   _scope.new = function(bitmapWidth, bitmapHeight) {
     _super.new("canvas");
     if (!getContext()) throw new Error("ASJS.Bitmap (canvas) is not supported in your browser!");
     _scope.setBitmapSize(bitmapWidth, bitmapHeight);
   }
-  
+
   prop(_scope, "keepOriginal", {
     get: function() { return _keepOriginal; },
     set: function(v) { _keepOriginal = v; }
@@ -58,7 +58,7 @@ function(_scope, _super) {
     get: function() { return getContext().globalAlpha; },
     set: function(v) { getContext().globalAlpha = v; }
   });
-  
+
   _scope.beginLineColorStyle = function(size, rgb, alpha, miterLimit, lineJoin, lineCap) {
     beginPath();
     setLineStyle(size, miterLimit, lineJoin, lineCap);
@@ -128,18 +128,18 @@ function(_scope, _super) {
   _scope.lineTo = function(x, y) {
     getContext().lineTo(x, y);
   }
-  
+
   _scope.quadraticCurveTo = function(cp1x, cp1y, x, y) {
     getContext().quadraticCurveTo(cp1x, cp1y, x, y);
   }
-  
+
   _scope.bezierCurveTo = function(cp1x, cp1y, cp2x, cp2y, x, y) {
     getContext().bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
   }
 
   _scope.drawRect = function(x, y, w, h) {
     var ctx = getContext();
-    if (_drawFill) ctx.fillRect(x, y, w, h); 
+    if (_drawFill) ctx.fillRect(x, y, w, h);
     if (_drawLine) ctx.strokeRect(x, y, w, h);
   }
 
@@ -239,7 +239,7 @@ function(_scope, _super) {
     if (_original) bmp.drawImage(_original, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     return bmp;
   }
-  
+
   function beginPath() {
     getContext().beginPath();
     _drawLine = true;
@@ -306,7 +306,7 @@ function(_scope, _super) {
   function executeFilters() {
     if (!_filtersReady) return;
     _filtersReady = false;
-    
+
     var l = _scope.bitmapFilters.length;
 
     if (l == 0) return;

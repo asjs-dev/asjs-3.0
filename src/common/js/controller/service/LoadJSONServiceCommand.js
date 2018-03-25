@@ -6,11 +6,11 @@ function(_scope) {
     var dfd = new ASJS.Promise();
 
     var loader = new ASJS.Loader();
-        //loader.responseType = "json";
-        loader.compressed = true;
+        loader.responseType = "json";
+        loader.compressed   = true;
         loader.method = ASJS.RequestMethod.GET;
         loader.addEventListener(ASJS.LoaderEvent.LOAD, function(e) {
-          dfd.resolve(JSON.parse(decodeURI(loader.content)));
+          dfd.resolve(loader.content);
           loader.unload();
         });
         loader.addEventListener(ASJS.LoaderEvent.ERROR, function(e) {

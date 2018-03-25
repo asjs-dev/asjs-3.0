@@ -7,7 +7,7 @@ var EnvironmentCommand = createClass(
 ASJS.AbstractCommand,
 function(_scope) {
   var _language  = Language.instance;
-  var _cookies   = Cookies.instance;
+  var _cookies   = Cookies;
   var _urlParser = URLParser.instance;
 
   _scope.execute = function() {

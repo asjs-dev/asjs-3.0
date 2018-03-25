@@ -26,7 +26,7 @@ function(_scope) {
     var l = handlers.length;
     while (++i < l) {
       if (handlers[i]) {
-        handlers[i](data);
+        handlers[i](data, type);
       } else {
         handlers.splice(i, 1);
         l--;

@@ -1,5 +1,5 @@
-require("./asjs.FormElement.js");
 require("../asjs.DisplayObject.js");
+require("./asjs.FormElement.js");
 
 ASJS.RadioButton = createClass(
 "RadioButton",

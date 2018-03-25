@@ -1,8 +1,8 @@
+require("../event/asjs.LoaderEvent.js");
+require("../geom/asjs.Rectangle.js");
+require("../geom/asjs.Point.js");
 require("./asjs.Sprite.js");
 require("./asjs.Image.js");
-require("../geom/asjs.Point.js");
-require("../geom/asjs.Rectangle.js");
-require("../event/asjs.LoaderEvent.js");
 
 ASJS.Scale9Grid = createClass(
 "Scale9Grid",

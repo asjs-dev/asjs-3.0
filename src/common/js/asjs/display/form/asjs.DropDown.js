@@ -1,20 +1,20 @@
-require("./asjs.FormElement.js");
 require("../asjs.Sprite.js");
+require("./asjs.FormElement.js");
 
 ASJS.DropDown = createClass(
 "DropDown",
 ASJS.FormElement,
 function(_scope, _super) {
   var _select = new ASJS.Sprite("select");
-  
+
   _scope.new = function() {
     _super.new();
     _scope.setCSS("overflow", "hidden");
     _scope.addChild(_select);
   }
-  
+
   get(_scope, "select", function() { return _select; });
-  
+
   set(_scope, "enabled", function(v) {
     _super.enabled = _select.enabled = v;
     _scope.render();
@@ -29,7 +29,7 @@ function(_scope, _super) {
     get: function() { return _select.el.value; },
     set: function(v) { _select.el.value = v; }
   });
-  
+
   _scope.clearOptions = function() {
     _select.clear();
   }

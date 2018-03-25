@@ -1,5 +1,5 @@
-require("./asjs.AbstractBitmapFilter.js");
 require("../asjs.Bitmap.js");
+require("./asjs.AbstractBitmapFilter.js");
 
 ASJS.AbstractConvoluteBitmapFilter = createClass(
 "AbstractConvoluteBitmapFilter",
@@ -8,14 +8,14 @@ function(_scope, _super) {
   _scope.new = function(opaque) {
     _scope.opaque = opaque;
   }
-  
+
   get(_super.protected, "matrix", function() { return [1]; });
-  
+
   _scope.execute = function(pixels) {
     var d = pixels.data;
     return convolute(pixels);
   }
-  
+
   function convolute(pixels) {
     var weights = _super.protected.matrix;
     var side = Math.round(Math.sqrt(weights.length));
@@ -41,12 +41,12 @@ function(_scope, _super) {
         var sy = y;
         var sx = x;
         var dstOff = (y * w + x) * 4;
-    
+
         var r = 0;
         var g = 0;
         var b = 0;
         var a = 0;
-    
+
         var cy = -1;
         while (++cy < side) {
           var cx = -1;

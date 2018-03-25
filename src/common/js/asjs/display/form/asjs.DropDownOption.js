@@ -1,5 +1,5 @@
-require("./asjs.FormElement.js");
 require("../asjs.PrimitiveDisplayObject.js");
+require("./asjs.FormElement.js");
 
 ASJS.DropDownOption = createClass(
 "DropDownOption",
@@ -12,7 +12,7 @@ function(_scope, _super) {
     _scope.disabled = disabled || false;
     _scope.selected = selected || false;
   }
-  
+
   prop(_scope, "value", {
     get: function() { return _scope.getAttr("value"); },
     set: function(v) { _scope.setAttr("value", v); }

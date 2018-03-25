@@ -1,6 +1,6 @@
 require("../display/asjs.Head.js");
-require("../utils/asjs.CSS.js");
 require("../core/asjs.Polyfill.js");
+require("../utils/asjs.CSS.js");
 
 ASJS.CSS = createSingletonClass(
 "CSS",

@@ -1,5 +1,5 @@
-require("./asjs.AbstractBitmapFilter.js");
 require("../utils/asjs.Color.js");
+require("./asjs.AbstractBitmapFilter.js");
 
 ASJS.ColorChangeBitmapFilter = createClass(
 "ColorChangeBitmapFilter",

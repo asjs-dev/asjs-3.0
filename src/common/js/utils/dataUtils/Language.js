@@ -1,12 +1,12 @@
 var Language = createSingletonClass(
 "Language",
 ASJS.AbstractModel,
-function(_scope, _super) {
-  get(_scope, "supportedLanguages", function() { return _super.data.supportedLanguages; });
+function(_scope) {
+  get(_scope, "supportedLanguages", function() { return _scope.get("supportedLanguages"); });
 
-  get(_scope, "selectedLanguage", function() { return _super.data.selectedLanguage; });
+  get(_scope, "selectedLanguage", function() { return _scope.get("selectedLanguage"); });
 
-  get(_scope, "defaultLanguage", function() { return _super.data.defaultLanguage; });
+  get(_scope, "defaultLanguage", function() { return _scope.get("defaultLanguage"); });
 
   _scope.getText = function(k, o) {
     var i = _scope.get("elements")[k];

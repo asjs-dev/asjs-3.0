@@ -1,7 +1,7 @@
-require("./asjs.RequestMethod.js");
 require("../event/asjs.EventDispatcher.js");
 require("../event/asjs.LoaderEvent.js");
 require("../utils/asjs.LZW.js");
+require("./asjs.RequestMethod.js");
 
 ASJS.Loader = createClass(
 "Loader",
@@ -74,9 +74,9 @@ function(_scope, _super) {
     _url = url;
 
     _request.open(_method, _url, _async, _username, _password);
-    _request.responseType = _responseType;
+    _request.responseType = _compressed ? "text" : _responseType;
     for (var k in _headers) _request.setRequestHeader(k, _headers[k]);
-    _request.send(_data);
+    _request.send(_compressed ? ASJS.LZW.instance.compress(_data) : _data);
   };
 
   _scope.free = function() {

@@ -1,6 +1,6 @@
-require("../../module/content/ContentMediator.js");
 require("../../module/externalApplication/ExternalApplicationMediator.js");
 require("../../module/notificationWindow/NotificationWindowMediator.js");
+require("../../module/content/ContentMediator.js");
 
 var ViewPrepCommand = createClass(
 "ViewPrepCommand",
@@ -14,4 +14,3 @@ function(_scope) {
     _scope.sendNotification(ContentMediator.SHOW);
   }
 });
-

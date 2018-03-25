@@ -1,5 +1,5 @@
-require("./asjs.AbstractBitmapFilter.js");
 require("../../../geom/asjs.Point.js");
+require("./asjs.AbstractBitmapFilter.js");
 
 ASJS.MaskBitmapFilter = createClass(
 "MaskBitmapFilter",
@@ -11,7 +11,7 @@ function(_scope) {
     _scope.invert = invert;
     _scope.cutout = empty(cutout) ? true : cutout;
   }
-  
+
   _scope.execute = function(pixels) {
     var srcD = pixels.data;
     var maskPixels = _scope.mask.getImageData(0, 0, _scope.mask.bitmapWidth, _scope.mask.bitmapHeight);
@@ -38,7 +38,7 @@ function(_scope) {
         var j = ((srcPixelPos.y - _scope.pos.y) * maskW + (srcPixelPos.x - _scope.pos.x)) * 4;
         var sA = srcD[i + 3];
         var mA = maskD[j + 3];
-    
+
         srcD[i + 3] = Math.floor(sA * ((_scope.invert ? (255 - mA) : mA) / 255));
       } else if (_scope.cutout) srcD[i + 3] = 0;
     }

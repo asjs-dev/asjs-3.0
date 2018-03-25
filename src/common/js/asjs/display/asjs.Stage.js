@@ -1,7 +1,7 @@
-require("./asjs.Sprite.js");
-require("./asjs.Window.js");
 require("../event/asjs.WindowEvent.js");
 require("../utils/asjs.Mouse.js");
+require("./asjs.Window.js");
+require("./asjs.Sprite.js");
 
 ASJS.Stage = createSingletonClass(
 "Stage",

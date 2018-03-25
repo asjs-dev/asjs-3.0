@@ -1,5 +1,5 @@
-require("./asjs.DisplayObject.js");
 require("./bitmap/asjs.Bitmap.js");
+require("./asjs.DisplayObject.js");
 
 ASJS.Image = createClass(
 "Image",

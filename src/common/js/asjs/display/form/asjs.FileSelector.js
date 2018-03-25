@@ -1,7 +1,7 @@
-require("./asjs.FormElement.js");
-require("../asjs.DisplayObject.js");
 require("../../event/asjs.Event.js");
 require("../../event/asjs.MouseEvent.js");
+require("../asjs.DisplayObject.js");
+require("./asjs.FormElement.js");
 
 ASJS.FileSelector = createClass(
 "FileSelector",

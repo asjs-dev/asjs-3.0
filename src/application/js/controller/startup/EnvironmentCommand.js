@@ -1,14 +1,14 @@
 require("../../../../common/js/utils/urlParser/URLParser.js");
 require("../../../../common/js/utils/dataUtils/Language.js");
-require("../../../../common/js/utils/dataUtils/Config.js");
 require("../../../../common/js/utils/dataUtils/Cookies.js");
+require("../../../../common/js/utils/dataUtils/Config.js");
 
 var EnvironmentCommand = createClass(
 "EnvironmentCommand",
 ASJS.AbstractCommand,
 function(_scope) {
   var _language  = Language.instance;
-  var _cookies   = Cookies.instance;
+  var _cookies   = Cookies;
   var _cycler    = ASJS.Cycler.instance;
   var _config    = Config.instance;
   var _urlParser = URLParser.instance;
