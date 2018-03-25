@@ -240,6 +240,14 @@ function(_scope, _super) {
     return bmp;
   }
 
+  _scope.save = function() {
+    getContext().save();
+  }
+
+  _scope.restore = function() {
+    getContext().restore();
+  }
+
   function beginPath() {
     getContext().beginPath();
     _drawLine = true;

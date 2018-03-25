@@ -83,28 +83,28 @@ function(_scope, _super) {
   });
 
   prop(_scope, "alpha", {
-    get: function() { return parseFloat(_scope.getCSS("opacity")); },
+    get: function() { return parseFloat(_scope.getCSS("opacity") || 0); },
     set: function(v) { _scope.setCSS("opacity", v); }
   });
 
   prop(_scope, "x", {
-    get: function() { return (parseFloat(_scope.getCSS("left")) || 0) - (_scope.width - _scope.width / _scaleX) * 0.5; },
-    set: function(v) { _scope.setCSS("left", v + (_scope.width - _scope.width / _scaleX) * 0.5); }
+    get: function() { return parseFloat(_scope.getCSS("left") || 0); },
+    set: function(v) { _scope.setCSS("left", !tis(v, "number") ? v : parseFloat(v)); }
   });
 
   prop(_scope, "y", {
-    get: function() { return (parseFloat(_scope.getCSS("top")) || 0) - (_scope.height - _scope.height / _scaleY) * 0.5; },
-    set: function(v) { _scope.setCSS("top", v + (_scope.height - _scope.height / _scaleY) * 0.5); }
+    get: function() { return parseFloat(_scope.getCSS("top") || 0); },
+    set: function(v) { _scope.setCSS("top", !tis(v, "number") ? v : parseFloat(v)); }
   });
 
   prop(_scope, "width", {
-    get: function() { return parseFloat(_scope.getCSS("width") || 0) * _scaleX; },
-    set: function(v) { _scope.setCSS("width", !tis(v, "number") ? v : (parseFloat(v) / _scaleX)); }
+    get: function() { return parseFloat(_scope.getCSS("width") || 0); },
+    set: function(v) { _scope.setCSS("width", !tis(v, "number") ? v : parseFloat(v)); }
   });
 
   prop(_scope, "height", {
-    get: function() { return parseFloat(_scope.getCSS("height") || 0) * _scaleY; },
-    set: function(v) { _scope.setCSS("height", !tis(v, "number") ? v : (parseFloat(v) / _scaleY)); }
+    get: function() { return parseFloat(_scope.getCSS("height") || 0); },
+    set: function(v) { _scope.setCSS("height", !tis(v, "number") ? v : parseFloat(v)); }
   });
 
   prop(_scope, "rotation", {
@@ -119,8 +119,6 @@ function(_scope, _super) {
     get: function() { return _scaleX; },
     set: function(v) {
       _scaleX = parseFloat(v);
-      var oW = _scope.width / _scaleX;
-      _scope.x += (_scope.width - oW) * 0.5;
       drawTransform();
     }
   });
@@ -129,8 +127,6 @@ function(_scope, _super) {
     get: function() { return _scaleY; },
     set: function(v) {
       _scaleY = parseFloat(v);
-      var oH = _scope.height / _scaleY;
-      _scope.y += (_scope.height - oH) * 0.5;
       drawTransform();
     }
   });
