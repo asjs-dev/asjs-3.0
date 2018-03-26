@@ -38,6 +38,6 @@ function(_scope, _super) {
     _scope.sendNotification(ExternalApplicationMediator.SHOW);
   }
 });
-msg(ContentMediator, "SHOW",                         "show");
-msg(ContentMediator, "ON_SHOW_EXTERNAL_APPLICATION", "onShowExternalApplication");
-msg(ContentMediator, "ON_SHOW_NOTIFICATION_WINDOW",  "onShowNotificationWindow");
+msg(ContentMediator, "SHOW");
+msg(ContentMediator, "ON_SHOW_EXTERNAL_APPLICATION");
+msg(ContentMediator, "ON_SHOW_NOTIFICATION_WINDOW");

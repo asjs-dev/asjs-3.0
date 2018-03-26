@@ -50,5 +50,5 @@ function(_scope) {
     });
   }
 });
-msg(ASJS.AbstractModel, "CHANGED", "changed");
-msg(ASJS.AbstractModel, "CLEARED", "cleared");
+msg(ASJS.AbstractModel, "CHANGED");
+msg(ASJS.AbstractModel, "CLEARED");

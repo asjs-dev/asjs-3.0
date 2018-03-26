@@ -45,4 +45,4 @@ function(_scope, _super) {
     });
   }
 });
-msg(ASJS.Cell, "CLICK", "click");
+msg(ASJS.Cell, "CLICK");

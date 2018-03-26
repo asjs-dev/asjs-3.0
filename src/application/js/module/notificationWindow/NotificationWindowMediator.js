@@ -55,5 +55,5 @@ function(_scope, _super) {
     _super.protected.showView();
   }
 });
-msg(NotificationWindowMediator, "SHOW", "show");
-msg(NotificationWindowMediator, "HIDE", "hide");
+msg(NotificationWindowMediator, "SHOW");
+msg(NotificationWindowMediator, "HIDE");

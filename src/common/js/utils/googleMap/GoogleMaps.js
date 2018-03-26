@@ -7,7 +7,7 @@ function(_scope, _super) {
   var _zoom = 4;
   var _options = {};
   var _map;
-  
+
   _scope.new = function() {
     _super.new("p");
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
@@ -31,7 +31,7 @@ function(_scope, _super) {
     _map = new google.maps.Map(_scope.el, _scope.options);
     _map.addListener('center_changed', onCenterChanged);
   }
-  
+
   get(_scope, "map", function() { return _map; });
 
   prop(_scope, "options", {
@@ -64,7 +64,7 @@ function(_scope, _super) {
       _map.setZoom(_zoom);
     }
   });
-  
+
   _scope.setPosition = function(latitude, longitude) {
     _latitude = latitude;
     _longitude = longitude;
@@ -75,7 +75,7 @@ function(_scope, _super) {
     google.maps.event.clearListeners(_map, 'center_changed');
     _map = null;
   }
-  
+
   function onCenterChanged() {
     var latLng = _map.getCenter();
     _latitude = latLng.lat();
@@ -86,4 +86,4 @@ function(_scope, _super) {
     google.maps.event.trigger(_map, 'resize');
   }
 });
-msg(GoogleMap, "CLICK", "click");
+msg(GoogleMap, "CLICK");

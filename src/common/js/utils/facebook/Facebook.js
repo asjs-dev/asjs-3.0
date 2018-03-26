@@ -4,15 +4,15 @@ ASJS.Sprite,
 function(_scope, _super) {
   var _facebookAppId;
   var _version;
-  
+
   _scope.new = function(facebookAppId, version) {
     _super.new();
     _scope.setAttr("id", "fb-root");
     stage.addChild(_scope);
-    
+
     _facebookAppId = facebookAppId;
     _version = version;
-    
+
     var script = new ASJS.Tag('script');
         script.setAttr("type",  "text/javascript");
         script.setAttr("async", "true");
@@ -21,7 +21,7 @@ function(_scope, _super) {
 
     window.fbAsyncInit = onFBAsyncInit;
   }
-  
+
   _scope.login = function() {
     FB.login(onLoginStatus);
   }
@@ -40,7 +40,7 @@ function(_scope, _super) {
     };
     FB.ui(obj, onPostFeed);
   }
-  
+
   function onPostFeed(response) {
     _scope.dispatchEvent(Facebook.POST_COMPLETE, response);
   }
@@ -78,8 +78,8 @@ function(_scope, _super) {
     }
   }
 });
-msg(Facebook, "CONNECTED",      "connected");
-msg(Facebook, "NOT_AUTHORIZED", "notAuthorized");
-msg(Facebook, "UNKNOW",         "unknow");
-msg(Facebook, "LOGOUT",         "logout");
-msg(Facebook, "POST_COMPLETE",  "postComplete");
+msg(Facebook, "CONNECTED");
+msg(Facebook, "NOT_AUTHORIZED");
+msg(Facebook, "UNKNOW");
+msg(Facebook, "LOGOUT");
+msg(Facebook, "POST_COMPLETE");

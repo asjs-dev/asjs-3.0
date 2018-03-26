@@ -73,9 +73,9 @@ var constant = function(t, n, v) {
 }
 var cnst = constant;
 
-var message = function(t, n, v) {
-  if (!empty(t.name)) cnst(t, n, t.name + "_" + v);
-  else cnst(t, n, v + "_" + Date.now() + message.id++);
+var message = function(t, n) {
+  if (!empty(t.name)) cnst(t, n, t.name + "_" + n);
+  else cnst(t, n, n + "_" + Date.now() + message.id++);
 };
 message.id = 0;
 var msg = message;

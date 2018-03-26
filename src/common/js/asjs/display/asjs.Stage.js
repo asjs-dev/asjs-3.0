@@ -42,6 +42,6 @@ function(_scope, _super) {
     _scope.dispatchEvent(ASJS.Stage.RESIZE);
   }
 });
-msg(ASJS.Stage, "RESIZE",             "resize");
-msg(ASJS.Stage, "ADDED_TO_STAGE",     "addedToStage");
-msg(ASJS.Stage, "REMOVED_FROM_STAGE", "removedFromStage");
+msg(ASJS.Stage, "RESIZE");
+msg(ASJS.Stage, "ADDED_TO_STAGE");
+msg(ASJS.Stage, "REMOVED_FROM_STAGE");

@@ -17,4 +17,4 @@ function(_scope, _super) {
     _super.protected.showView();
   }
 });
-msg(ContentMediator, "SHOW", "show");
+msg(ContentMediator, "SHOW");

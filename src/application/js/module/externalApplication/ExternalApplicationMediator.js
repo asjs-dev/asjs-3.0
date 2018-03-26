@@ -58,6 +58,6 @@ function(_scope, _super) {
     _view.title = ((e.detail.loaded / e.detail.total) * 100) + "%";
   }
 });
-msg(ExternalApplicationMediator, "SHOW",  "show");
-msg(ExternalApplicationMediator, "HIDE",  "hide");
-msg(ExternalApplicationMediator, "CLOSE", "close");
+msg(ExternalApplicationMediator, "SHOW");
+msg(ExternalApplicationMediator, "HIDE");
+msg(ExternalApplicationMediator, "CLOSE");

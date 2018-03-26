@@ -2,7 +2,7 @@ require("./GeolocationData.js");
 
 var Geolocation = createSingletonClass(
 "Geolocaton",
-ASJS.EventDispatcher, 
+ASJS.EventDispatcher,
 function(_scope) {
   var _location = new GeolocationData();
   var _geolocation;
@@ -46,5 +46,5 @@ function(_scope) {
     _scope.dispatchEvent(Geolocation.ERROR, error);
   }
 });
-msg(Geolocation, "UPDATED", "updated");
-msg(Geolocation, "ERROR",   "error");
+msg(Geolocation, "UPDATED");
+msg(Geolocation, "ERROR");

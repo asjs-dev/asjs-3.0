@@ -5,9 +5,9 @@ var PitchDetect = createClass(
 ASJS.EventDispatcher,
 function(_scope) {
   var _media  = Media.instance;
-  
+
   var _isPlaying = false;
-  
+
   var _audioContext;
   var _analyser;
 
@@ -16,16 +16,16 @@ function(_scope) {
   var _buffer;
 
   var _minSamples;
-  
+
   var _interval;
-  
+
   _scope.new = function() {
     _scope.bufferLength = 1024;
     _scope.minSamples = 0;
     _scope.samplingInterval = 50;
     _audioContext = new AudioContext();
   }
-  
+
   prop(_scope, "bufferLength", {
     get: function() { return _bufferLength; },
     set: function(v) {
@@ -33,20 +33,20 @@ function(_scope) {
       _buffer = new Float32Array(_bufferLength);
     }
   });
-  
+
   prop(_scope, "minSamples", {
     get: function() { return _minSamples; },
     set: function(v) { _minSamples = v; }
   });
-  
+
   prop(_scope, "samplingInterval", {
     get: function() { return _interval; },
     set: function(v) { _interval = v; }
   });
-  
+
   _scope.start = function() {
     _scope.stop();
-    
+
     try {
       _media.getUserMedia({
         "audio": {
@@ -79,7 +79,7 @@ function(_scope) {
     _isPlaying = false;
     if (_rafID) _window.clearTimeout(_rafID);
   }
-  
+
   function autoCorrelate() {
     var sampleRate = _audioContext.sampleRate;
     var size = _buffer.length;
@@ -102,7 +102,7 @@ function(_scope) {
 
       var i = -1;
       while (++i < maxSamples) correlation += Math.abs((_buffer[i]) - (_buffer[i + offset]));
-      
+
       correlation = 1 - (correlation / maxSamples);
       correlations[offset] = correlation;
       if (correlation > 0.9 && correlation > lastCorrelation) {
@@ -112,7 +112,7 @@ function(_scope) {
           best_offset = offset;
         }
       } else if (foundGoodCorrelation) {
-        var shift = (correlations[best_offset + 1] - correlations[best_offset - 1]) / correlations[best_offset];  
+        var shift = (correlations[best_offset + 1] - correlations[best_offset - 1]) / correlations[best_offset];
         return sampleRate / (best_offset + (8 * shift));
       }
       lastCorrelation = correlation;
@@ -127,7 +127,7 @@ function(_scope) {
     _rafID = setTimeout(updatePitch, _interval);
   }
 });
-msg(PitchDetect, "DETECTED", "detected");
+msg(PitchDetect, "DETECTED");
 cnst(PitchDetect, "A", 440);
 cnst(PitchDetect, "noteFromPitch", function(frequency) {
 var noteNum = 12 * (Math.log(frequency / PitchDetect.A) / Math.log(2));

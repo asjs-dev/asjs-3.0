@@ -166,4 +166,4 @@ function(_scope, _super) {
     _scope.dispatchEvent(ASJS.CustomList.CHANGE);
   }
 });
-msg(ASJS.CustomList, "CHANGE", "change");
+msg(ASJS.CustomList, "CHANGE");

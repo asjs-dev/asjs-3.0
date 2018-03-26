@@ -1,17 +1,17 @@
 var WS = createClass(
 "WS",
-ASJS.EventDispatcher, 
+ASJS.EventDispatcher,
 function(_scope) {
   var priv = {};
-  
+
   cnst(priv, "RECONNECT_INTERVALS", [1, 2, 3, 15, 30, 60, 120, 240, 300]);
-  
+
   var _reconnectCounter = 0;
   var _tryToReconnect;
   var _reconnectTimeoutId;
   var _url;
   var _ws;
-  
+
   get(_scope, "url", function() { return _url; });
 
   get(_scope, "isOpen", function() { return _scope.readyState === WS.OPEN; });
@@ -26,7 +26,7 @@ function(_scope) {
     get: function() { return _tryToReconnect; },
     set: function(v) { _tryToReconnect = v; }
   });
-  
+
   _scope.connect = function(url) {
     _url = url;
 
@@ -49,7 +49,7 @@ function(_scope) {
   _scope.close = function() {
     if (_scope.isOpen) _ws.close();
   }
-  
+
   function onOpen(e) {
     _reconnectCounter = 0;
     _scope.dispatchEvent(WS.ON_OPEN);
@@ -83,8 +83,8 @@ cnst(WS, "CONNECTING",   0);
 cnst(WS, "OPEN",         1);
 cnst(WS, "CLOSING",      2);
 cnst(WS, "CLOSED",       3);
-msg(WS, "ON_OPEN",      "onOpen");
-msg(WS, "ON_CLOSED",    "onClosed");
-msg(WS, "ON_ERROR",     "onError");
-msg(WS, "ON_MESSAGE",   "onMessage");
-msg(WS, "ON_RECONNECT", "onReconnect");
+msg(WS, "ON_OPEN");
+msg(WS, "ON_CLOSED");
+msg(WS, "ON_ERROR");
+msg(WS, "ON_MESSAGE");
+msg(WS, "ON_RECONNECT");

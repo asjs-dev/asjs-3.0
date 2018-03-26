@@ -50,4 +50,4 @@ function(_scope, _super) {
     _super.protected.fileInput.el.click();
   }
 });
-msg(ASJS.FileSelector, "ON_CHANGE", "onChange");
+msg(ASJS.FileSelector, "ON_CHANGE");

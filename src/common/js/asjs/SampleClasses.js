@@ -60,7 +60,7 @@ function(_scope[, _super]) {
   });
 });
 cnst(SampleClass, "PUBLIC_STATIC_CONST", 10);
-msg(SampleClass, "PUBLIC_STATIC_CONST", "MESSAGE");
+msg(SampleClass, "PUBLIC_STATIC_CONST");
 SampleClass.publicStaticVar = 0;
 prop(SampleClass, "val", {
   get: function() { return SampleClass.publicStaticVar; },

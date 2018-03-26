@@ -1,6 +1,6 @@
 var MobileUtils = createSingletonClass(
 "MobileUtils",
-ASJS.BaseClass, 
+ASJS.BaseClass,
 function(_scope) {
   var _dpi;
   var _baseSize;
@@ -8,7 +8,7 @@ function(_scope) {
   var _useDPI;
   var _useScreenSize;
   var _isDesktop;
-  
+
   _scope.new = function() {
     _dpi = 1;
 
@@ -17,17 +17,17 @@ function(_scope) {
     _type          = MobileUtils.TYPE_WIDTH;
     _useDPI        = false;
     _useScreenSize = false;
-    
+
     var isIOS = new RegExp("iPad", "i").test(navigator.userAgent) || new RegExp("iPhone", "i").test(navigator.userAgent);
     _isDesktop = !isIOS && (empty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
   }
-  
+
   get(_scope, "isDesktop", function() { return _isDesktop;});
-  
+
   get(_scope, "width", function() { return _useScreenSize ? stage.screenWidth : stage.stageWidth; });
 
   get(_scope, "height", function() { return _useScreenSize ? stage.screenHeight : stage.stageHeight; });
-  
+
   prop(_scope, "type", {
     get: function() { return _type; },
     set: function(v) { _type = v; }
@@ -53,7 +53,7 @@ function(_scope) {
       calcDPI();
     }
   });
-  
+
   _scope.getOrientation = function() {
     return _scope.width > _scope.height ? MobileUtils.ORIENTATION_LANDSCAPE : MobileUtils.ORIENTATION_PORTRAIT;
   }
@@ -95,14 +95,14 @@ function(_scope) {
   _scope.preventMobileScrolling = function() {
     stage.addEventListener(ASJS.MouseEvent.TOUCH_MOVE, function(e) { e.preventDefault(); });
   }
-  
+
   function calcDPI() {
     _dpi = Math.min(2, Math.max(1, window.devicePixelRatio || (window.screen.deviceXDPI / window.screen.logicalXDPI) || 1));
   }
 });
-msg(MobileUtils, "ORIENTATION_LANDSCAPE", "orientationLandscape");
-msg(MobileUtils, "ORIENTATION_PORTRAIT",  "orientationPortrait");
-msg(MobileUtils, "TYPE_MINIMUM",          "typeMin");
-msg(MobileUtils, "TYPE_MAXIMUM",          "typeMax");
-msg(MobileUtils, "TYPE_WIDTH",            "typeWidth");
-msg(MobileUtils, "TYPE_HEIGHT",           "typeHeight");
+msg(MobileUtils, "ORIENTATION_LANDSCAPE");
+msg(MobileUtils, "ORIENTATION_PORTRAIT");
+msg(MobileUtils, "TYPE_MINIMUM");
+msg(MobileUtils, "TYPE_MAXIMUM");
+msg(MobileUtils, "TYPE_WIDTH");
+msg(MobileUtils, "TYPE_HEIGHT");
