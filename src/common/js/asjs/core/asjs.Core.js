@@ -74,7 +74,8 @@ var constant = function(t, n, v) {
 var cnst = constant;
 
 var message = function(t, n, v) {
-  cnst(t, n, v + "_" + Date.now() + message.id++);
+  if (!empty(t.name)) cnst(t, n, t.name + "_" + v);
+  else cnst(t, n, v + "_" + Date.now() + message.id++);
 };
 message.id = 0;
 var msg = message;
@@ -125,6 +126,7 @@ var empty = function(a) {
     return true;
   }
 }
+var emp = empty;
 
 var createClass = function(name, base, body) {
   function setup(name, base, body, args) {
@@ -157,6 +159,13 @@ var createSingletonClass = function(name, base, body) {
   return c;
 }
 var c1 = createSingletonClass;
+
+var createNamedObject = function(name, parent) {
+  var t = extendProperties(parent);
+      t.name = name;
+  return t;
+}
+var c2 = createNamedObject;
 
 ASJS.BaseClass = c0(
 "BaseClass",
