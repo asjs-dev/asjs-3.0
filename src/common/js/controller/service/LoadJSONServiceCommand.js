@@ -17,7 +17,7 @@ function(_scope) {
           dfd.reject(loader.content);
           loader.unload();
         });
-        loader.load(url);
+        loader.load(url + "?v={{date}}");
 
     return dfd;
   }

@@ -1,14 +1,14 @@
 .content-view {
   background-color : rgba($black, $alpha-4);
-  
+
   .background {
     transition          : 0.2s ease-out;
     background-position : center center;
     background-repeat   : no-repeat;
     background-size     : cover;
-    background-image    : url(../images/background.jpg);
+    background-image    : url(../images/background.jpg?v={{date}});
   }
-  
+
   .box {
     top              : 100px;
     border-radius    : 5px;
@@ -16,7 +16,7 @@
     box-shadow       : 0 0 60px rgba($black, $alpha-2);
     width            : 320px;
     height           : 130px;
-    
+
     .label {
       top         : 34px;
       width       : 320px;
@@ -27,14 +27,14 @@
       text-align  : center;
       color       : $grey-390;
     }
-    
+
     .show-notification-button {
       border-radius : 0 0 5px 5px;
       width         : 320px;
       top           : 90px;
     }
   }
-  
+
   .show-external-application-button {
     width : 320px;
     top   : 250px;
@@ -42,7 +42,7 @@
 }
 
 .animation-explode {
-  background-image          : url(../images/explosion.png);
+  background-image          : url(../images/explosion.png?v={{date}});
   background-size           : 300% 400%;
   animation                 : animation-key-explode steps(1) 1750ms;
   animation-iteration-count : 1;
@@ -178,7 +178,7 @@
 }
 
 .animation-fireworks {
-  background-image          : url(../images/triple03_sheet.png);
+  background-image          : url(../images/triple03_sheet.png?v={{date}});
   background-size           : 800% 300%;
   animation                 : animation-key-fireworks steps(1) 1000ms;
   animation-iteration-count : infinite;

@@ -13,7 +13,7 @@ function(_scope, _super) {
 
   _scope.new = function() {
     _super.new();
-    trace("<AS/JS> External Application {{version}}");
+    trace("<AS/JS> External Application {{appVersion}}.{{date}}");
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
   }
 
@@ -28,7 +28,7 @@ function(_scope, _super) {
   function addedToStage() {
     _styleLoader.addEventListener(ASJS.LoaderEvent.LOAD, onStyleLoaded);
     _styleLoader.compressed = true;
-    _styleLoader.load("external/style.dat");
+    _styleLoader.load("external/style.dat?v={{date}}");
 
     _language.addEventListener(ASJS.AbstractModel.CHANGED, onLanguageChanged);
   }

@@ -40,7 +40,7 @@ function(_scope, _super) {
   function loadExternalApplication() {
     unloadExternalApplication();
     _loader.compressed = true;
-    _loader.load("external/application.dat?v={{version}}");
+    _loader.load("external/application.dat?v={{date}}");
   }
 
   function unloadExternalApplication() {

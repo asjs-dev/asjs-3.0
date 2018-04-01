@@ -19,7 +19,7 @@ function(_scope, _super) {
     _scope.setCSS("position", "fixed");
 
     _window.rect = new ASJS.Rectangle(13, 60, 4, 7);
-    _window.backgroundImage = "images/window.png";
+    _window.backgroundImage = "images/window.png?v={{date}}";
     _scope.addChild(_window);
 
     _title.addClass("title-label");

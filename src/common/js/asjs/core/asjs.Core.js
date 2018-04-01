@@ -26,7 +26,7 @@ var ASJS = (function() {
       stage = ASJS.Stage.instance;
       stage.clear();
     }
-    trace("<AS/JS> core version: 3.0.1.{{version}}");
+    trace("<AS/JS> core version: {{appVersion}}.{{date}}");
     try {
       stage.addChild(new b());
     } catch (e) {
