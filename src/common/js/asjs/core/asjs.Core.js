@@ -83,13 +83,41 @@ var msg = message;
 var readOnlyFunction = cnst;
 var rof = readOnlyFunction;
 
+var animationFrameFunction = function(callback) {
+  return function() {
+    var args = arguments;
+    requestAnimationFrame(function() {
+      callback.apply(this, args);
+    });
+  }
+}
+var aff = animationFrameFunction;
+
 var map = function(object, callback) {
   var key;
   for (key in object) {
     var value = callback(key, object[key]);
-    if (value !== undefined) object[key] = value;
+    if (!empty(value)) object[key] = value;
   }
 }
+
+var iterateOver = function(object, callback, completeCallback) {
+  var keys = Object.keys(object);
+  var key;
+  var index = -1;
+  function next() {
+    index++;
+    if (index === keys.length) {
+      completeCallback && completeCallback();
+      return;
+    }
+    key = keys[index];
+    var value = callback(key, object[key], next);
+    if (!empty(value)) object[key] = value;
+  }
+  next();
+}
+var ito = iterateOver;
 
 var extendProperties = function(t) {
   var s = {};
