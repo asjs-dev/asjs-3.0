@@ -105,14 +105,17 @@ var iterateOver = function(object, callback, completeCallback) {
   var keys = Object.keys(object);
   var key;
   var index = -1;
-  function next() {
+  function end() {
+    completeCallback && completeCallback();
+  }
+  function next(finnish) {
     index++;
-    if (index === keys.length) {
-      completeCallback && completeCallback();
+    if (finnish || index === keys.length) {
+      end();
       return;
     }
     key = keys[index];
-    var value = callback(key, object[key], next);
+    var value = callback(key, object[key], next, end);
     if (!empty(value)) object[key] = value;
   }
   next();
