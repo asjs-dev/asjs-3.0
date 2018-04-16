@@ -108,9 +108,9 @@ var iterateOver = function(object, callback, completeCallback) {
   function end() {
     completeCallback && completeCallback();
   }
-  function next(finnish) {
+  function next() {
     index++;
-    if (finnish || index === keys.length) {
+    if (index === keys.length) {
       end();
       return;
     }
