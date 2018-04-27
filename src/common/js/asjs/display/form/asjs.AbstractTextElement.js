@@ -37,8 +37,9 @@ function(_scope, _super) {
 
   _scope.new = function(tag) {
     _super.new(tag);
-    _scope.addEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
+    //_scope.addEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
     _scope.addEventListener(ASJS.Event.CHANGE, onChange);
+    _scope.addEventListener(ASJS.Event.INPUT, onChange);
   }
 
   prop(_scope, "readonly", {
@@ -76,11 +77,11 @@ function(_scope, _super) {
       else _scope.removeAttr("autofocus");
     }
   });
-
+/*
   function onKeyUp(e) {
     checkRestrict();
   }
-
+*/
   function onChange() {
     checkRestrict();
   }
