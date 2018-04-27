@@ -86,6 +86,7 @@ function(_scope, _super) {
   }
 
   function checkRestrict() {
-    if (_restrict) _scope.val = _scope.val.replace(new RegExp("(?!" + _restrict + ").", "g"), '');
+    //if (_restrict) _scope.val = _scope.val.replace(new RegExp("(?!" + _restrict + ").", "g"), '');
+    if (_restrict) _scope.val = (_scope.val.match(new RegExp(restrict, "g")) || [""]).join("");
   }
 });
