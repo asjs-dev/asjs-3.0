@@ -37,9 +37,8 @@ function(_scope, _super) {
 
   _scope.new = function(tag) {
     _super.new(tag);
-    //_scope.addEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
     _scope.addEventListener(ASJS.Event.CHANGE, onChange);
-    _scope.addEventListener(ASJS.Event.INPUT, onChange);
+    _scope.addEventListener(ASJS.Event.INPUT,  onChange);
   }
 
   prop(_scope, "readonly", {
@@ -77,17 +76,34 @@ function(_scope, _super) {
       else _scope.removeAttr("autofocus");
     }
   });
-/*
-  function onKeyUp(e) {
-    checkRestrict();
-  }
-*/
+
   function onChange() {
     checkRestrict();
   }
 
   function checkRestrict() {
-    //if (_restrict) _scope.val = _scope.val.replace(new RegExp("(?!" + _restrict + ").", "g"), '');
-    if (_restrict) _scope.val = (_scope.val.match(new RegExp(restrict, "g")) || [""]).join("");
+    if (empty(_restrict)) return;
+
+    var caretPos = 0;
+
+    if (document.selection) {
+      var range = document.selection.createRange();
+      range.moveStart('character', -_scope.el.value.length);
+      caretPos = range.text.length;
+    } else if (_scope.el.selectionStart || _scope.el.selectionStart == '0') {
+      caretPos = _scope.el.selectionStart;
+    }
+
+    var newValue = _scope.val.replace(new RegExp("(?!" + _restrict + ").", "g"), '');
+    if (newValue === _scope.val) return;
+
+    _scope.val = newValue;
+
+    if (document.selection) {
+      var range = document.selection.createRange();
+      range.move('character', caretPos - 1);
+    } else if (_scope.el.selectionStart) {
+      _scope.el.setSelectionRange(caretPos - 1, caretPos - 1);
+    }
   }
 });
