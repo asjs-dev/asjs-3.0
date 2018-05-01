@@ -48,7 +48,7 @@ function(_scope) {
 
   function letsPlay() {
     if (_isPlaying) return;
-    _step = 0;
+    _step = 1;
     _isPlaying = true;
     _cycler.addCallback(update);
   }
@@ -58,11 +58,14 @@ function(_scope) {
 
     if (_step >= _duration) {
       _scope.stop();
+
       map(_to, function(k, item) {
         _target[k] = item;
       });
-      if (_stepCallback) _stepCallback();
-      if (_completeCallback) _completeCallback();
+
+      _stepCallback && _stepCallback();
+      _completeCallback && _completeCallback();
+
       return;
     }
 
@@ -70,7 +73,8 @@ function(_scope) {
       _target[k] = ASJS.Easing[_type](_step, _from[k], _change[k], _duration);
     });
 
-    if (_stepCallback) _stepCallback();
+    _stepCallback && _stepCallback();
+
     _step++;
   }
 });
