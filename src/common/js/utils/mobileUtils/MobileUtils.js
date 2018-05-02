@@ -20,6 +20,8 @@ function(_scope) {
 
     var isIOS = new RegExp("iPad", "i").test(navigator.userAgent) || new RegExp("iPhone", "i").test(navigator.userAgent);
     _isDesktop = !isIOS && (empty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
+
+    calcDPI();
   }
 
   get(_scope, "isDesktop", function() { return _isDesktop;});
@@ -35,10 +37,7 @@ function(_scope) {
 
   prop(_scope, "useDPI", {
     get: function() { return _useDPI; },
-    set: function(v) {
-      _useDPI = v;
-      calcDPI();
-    }
+    set: function(v) { _useDPI = v; }
   });
 
   prop(_scope, "useScreenSize", {
@@ -48,10 +47,7 @@ function(_scope) {
 
   prop(_scope, "baseSize", {
     get: function() { return _baseSize; },
-    set: function(v) {
-      _baseSize = v;
-      calcDPI();
-    }
+    set: function(v) { _baseSize = v; }
   });
 
   _scope.getOrientation = function() {

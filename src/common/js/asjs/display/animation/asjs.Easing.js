@@ -63,7 +63,7 @@ function(_scope) {
         _target[k] = item;
       });
 
-      _stepCallback && _stepCallback();
+      _stepCallback && _stepCallback(_step, _duration);
       _completeCallback && _completeCallback();
 
       return;
@@ -73,7 +73,7 @@ function(_scope) {
       _target[k] = ASJS.Easing[_type](_step, _from[k], _change[k], _duration);
     });
 
-    _stepCallback && _stepCallback();
+    _stepCallback && _stepCallback(_step, _duration);
 
     _step++;
   }
