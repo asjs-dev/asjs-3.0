@@ -27,17 +27,18 @@ function(_scope) {
   }
 
   _scope.play = function(target, to, duration, type, stepCallback, completeCallback) {
-    _target = target;
-    _from = {};
-    _change = {};
-    _to = to;
-    _type = type;
-    _duration = (duration / (1000 / _cycler.fps));
-    _stepCallback = stepCallback;
+    _target   = target;
+    _from     = {};
+    _change   = {};
+    _to       = to;
+    _type     = type;
+    _duration = Math.round(duration / (1000 / _cycler.fps));
+
+    _stepCallback     = stepCallback;
     _completeCallback = completeCallback;
 
     map(_to, function(k, item) {
-      _from[k] = _target[k];
+      _from[k]   = _target[k];
       _change[k] = item - _from[k];
     });
 
@@ -48,7 +49,7 @@ function(_scope) {
 
   function letsPlay() {
     if (_isPlaying) return;
-    _step = 1;
+    _step      = 1;
     _isPlaying = true;
     _cycler.addCallback(update);
   }
