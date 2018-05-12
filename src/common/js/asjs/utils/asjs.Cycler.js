@@ -26,24 +26,15 @@ function(_scope) {
   _scope.removeCallback = function(callback) {
     if (!_scope.callbackExists(callback)) return;
 
-    var i = -1;
-    var l = _callbacks.length;
-    var index;
-    while (++i < l) {
-      if (_callbacks[i] === callback) index = i;
-    }
-
-    _callbacks.splice(index, 1);
+    _callbacks.splice(_scope.getCallbackId(callback), 1);
   };
 
-  _scope.callbackExists = function(callback) {
-    var i = -1;
-    var l = _callbacks.length;
-    while (++i < l) {
-      if (_callbacks[i] === callback) return true;
-    }
+  _scope.getCallbackId = function(callback) {
+    return _callbacks.indexOf(callback);
+  }
 
-    return false;
+  _scope.callbackExists = function(callback) {
+    return _scope.getCallbackId(callback) > -1;
   };
 
   _scope.start = function() {
@@ -65,9 +56,7 @@ function(_scope) {
       _callbacks[i] && _callbacks[i]();
     }
 
-    _timeoutId = setTimeout(function() {
-      requestAnimationFrame(tick);
-    }, _interval);
+    _timeoutId = setTimeout(tick, _interval);
   };
 
   function getIntervalByFps() {

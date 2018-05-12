@@ -6,6 +6,15 @@ function(_scope) {
   var _doc     = document;
   var _win     = window;
 
+  var _workerCallbacksNum = 0;
+  var _workerCallbacks = {};
+  var _worker;
+
+  var _visibilityPolyfill = {
+    "visibilitychange" : "",
+    "hidden"           : ""
+  };
+
   var _eventPolyfill = {
     "dispatchEvent"       : "dispatchEvent",
     "addEventListener"    : "addEventListener",
@@ -18,6 +27,9 @@ function(_scope) {
   var _sid             = {};
 
   _scope.new = function() {
+    checkWorker();
+    checkSetTimeout();
+    checkVisibility();
     checkCustomEvent();
     checkEventListeners();
     checkAnimationFrame();
@@ -30,6 +42,9 @@ function(_scope) {
     checkMediaSource();
     checkCSSPrefix();
   }
+
+  get(_scope, "visibilitychange", function() { return _visibilityPolyfill.visibilitychange; });
+  get(_scope, "documentHidden", function() { return document[_visibilityPolyfill.hidden]; });
 
   get(_scope, "eventTypePrefix", function() { return _eventTypePrefix; });
 
@@ -52,6 +67,86 @@ function(_scope) {
 
   _scope.removeEventListener = function(element, event, listener) {
     element[_eventPolyfill.removeEventListener](event, listener);
+  }
+
+  function addWorkerCallback(callback) {
+    var newId = ++_workerCallbacksNum;
+    if (!_workerCallbacks[newId]) {
+      _workerCallbacks[newId] = callback;
+      return newId;
+    }
+    return -1;
+  }
+
+  function removeWorkerCallback(callback) {
+    removeWorkerCallbackById(getWorkerCallbackId(callback));
+  }
+
+  function removeWorkerCallbackById(id) {
+    del(_workerCallbacks, id);
+  }
+
+  function getWorkerCallbackId(callback) {
+    var id = -1;
+    map(_workerCallbacks, function(key, item) {
+      if (item === callback) id = key;
+    });
+    return id;
+  }
+
+  function checkWorker() {
+    if (typeof Worker !== "undefined") {
+      _worker = new Worker("data:text/javascript;charset=US-ASCII,setInterval(function(){postMessage(\"tick\");},1);");
+      _worker.onmessage = function() {
+        map(_workerCallbacks, function(key, item) {
+          item();
+        });
+      };
+    }
+  }
+
+  function checkSetTimeout() {
+    if (_worker) {
+      _win.setTimeout = function(callback, timeInterval) {
+        var t = Date.now();
+        var timerCallback = function() {
+          if (Date.now() - t >= timeInterval) {
+            removeWorkerCallback(timerCallback);
+            callback();
+          }
+        };
+        return addWorkerCallback(timerCallback);
+      };
+
+      _win.clearTimeout = removeWorkerCallbackById;
+
+      _win.setInterval = function(callback, timeInterval) {
+        var t = Date.now();
+        var timerCallback = function() {
+          var n = Date.now();
+          if (n - t >= timeInterval) {
+            t = n;
+            callback();
+          }
+        };
+        return addWorkerCallback(timerCallback);
+      }
+
+      _win.clearInterval = removeWorkerCallbackById;
+    }
+  }
+
+  function checkVisibility() {
+    if (typeof document.hidden !== "undefined") {
+      _visibilityPolyfill.hidden = "hidden";
+      _visibilityPolyfill.visibilitychange = "visibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+      _visibilityPolyfill.hidden = "msHidden";
+      _visibilityPolyfill.visibilitychange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+      _visibilityPolyfill.hidden = "webkitHidden";
+      _visibilityPolyfill.visibilitychange = "webkitvisibilitychange";
+    }
   }
 
   function checkCustomEvent() {
@@ -89,6 +184,12 @@ function(_scope) {
         lastTime = currTime + timeToCall;
         return id;
       };
+    }
+
+    var raf = _win.requestAnimationFrame;
+    _win.requestAnimationFrame = function(callback) {
+      if (_scope.documentHidden) return _win.setTimeout(callback, 1);
+      return raf(callback);
     }
 
     if (!_win.cancelAnimationFrame) {
