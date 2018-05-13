@@ -7,32 +7,6 @@ ASJS.AbstractTextElement = createClass(
 "AbstractTextElement",
 ASJS.FormElement,
 function(_scope, _super) {
-  var _protectedChars = [
-    ASJS.Keyboard.LEFT_ARROW,
-    ASJS.Keyboard.UP_ARROW,
-    ASJS.Keyboard.RIGHT_ARROW,
-    ASJS.Keyboard.DOWN_ARROW,
-    ASJS.Keyboard.BACKSPACE,
-    ASJS.Keyboard.TAB,
-    ASJS.Keyboard.DELETE,
-    ASJS.Keyboard.ENTER,
-    ASJS.Keyboard.SHIFT,
-    ASJS.Keyboard.CTRL,
-    ASJS.Keyboard.END,
-    ASJS.Keyboard.HOME,
-    ASJS.Keyboard.CAPS_LOCK,
-    ASJS.Keyboard.ESCAPE
-  ];
-  var _controlChars = [
-    ASJS.Keyboard.A,
-    ASJS.Keyboard.C,
-    ASJS.Keyboard.V,
-    ASJS.Keyboard.X,
-    ASJS.Keyboard.NUMPAD_1,
-    ASJS.Keyboard.NUMPAD_3,
-    ASJS.Keyboard.F7,
-    ASJS.Keyboard.F9
-  ];
   var _restrict;
 
   _scope.new = function(tag) {
