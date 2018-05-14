@@ -10,6 +10,8 @@ function(_scope) {
   var _workerCallbacks = {};
   var _worker;
 
+  var _isLittleEndian = false;
+
   var _visibilityPolyfill = {
     "visibilitychange" : "",
     "hidden"           : ""
@@ -41,7 +43,10 @@ function(_scope) {
     checkFunctionName();
     checkMediaSource();
     checkCSSPrefix();
+    checkEndian();
   }
+
+  get(_scope, "isLittleEndian", function() { return _isLittleEndian; });
 
   get(_scope, "visibilitychange", function() { return _visibilityPolyfill.visibilitychange; });
   get(_scope, "documentHidden", function() { return document[_visibilityPolyfill.hidden]; });
@@ -341,5 +346,13 @@ function(_scope) {
       _stylePrefixJS = 'ms';
       _stylePrefixCSS = jsCssMap.ms;
     }
+  }
+
+  function checkEndian() {
+    var b = new ArrayBuffer(4);
+    var a = new Uint32Array(b);
+    var c = new Uint8Array(b);
+    a[0] = 0xdeadbeef;
+    _isLittleEndian = c[0] == 0xef;
   }
 });

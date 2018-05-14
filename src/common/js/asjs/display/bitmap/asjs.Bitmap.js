@@ -332,7 +332,7 @@ function(_scope, _super) {
     var i = -1;
     var pixels = _scope.getImageData(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     var filter;
-    while (filter = _scope.bitmapFilters[ ++i ]) {
+    while (filter = _scope.bitmapFilters[++i]) {
       filter.execute(pixels);
     }
     _scope.putImageData(pixels, 0, 0);
