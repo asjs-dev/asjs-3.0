@@ -6,16 +6,15 @@ ASJS.PaletteLimitBitmapFilter = createClass(
 ASJS.AbstractBitmapFilter,
 function(_scope) {
   var _map = {};
+  var _palette;
 
   _scope.new = function(palette) {
-    _scope.palette = [];
+    _palette = [];
     if (palette.length <= 0) return;
 
     var i = -1;
     var l = palette.length;
-    while (++i < l) {
-      _scope.palette.push(ASJS.Color.hexToRgb(palette[i]));
-    }
+    while (++i < l) _palette.push(ASJS.Color.rgbHexToColor(palette[i]));
   }
 
   _scope.execute = function(pixels) {
@@ -23,19 +22,20 @@ function(_scope) {
     var selectedColor;
     var i = -4;
     var l = d.length;
-    var m = _scope.palette.length;
+    var m = _palette.length;
     while ((i += 4) < l) {
-      var originalColor = new ASJS.Color(d[i], d[i + 1], d[i + 2], d[i + 3]);
-      var hexValue = originalColor.hex;
+      if (d[i + 3] === 0) continue;
+      var originalColor = new ASJS.Color(d[i], d[i + 1], d[i + 2]);
+      var hexValue      = ASJS.Color.colorToRgbHex(originalColor);
 
       if (_map[hexValue]) selectedColor = _map[hexValue];
       else {
         var minDist = 768;
-        selectedColor = _scope.palette[0];
+        selectedColor = _palette[0];
 
         var j = 0;
         while (++j < m) {
-          var color = _scope.palette[j];
+          var color = _palette[j];
           var dist = ASJS.Color.twoColorDistance(originalColor, color);
           if (dist < minDist) {
             minDist = dist;
@@ -45,14 +45,13 @@ function(_scope) {
       }
       _map[hexValue] = selectedColor;
 
-      d[i] = selectedColor.r;
+      d[i]     = selectedColor.r;
       d[i + 1] = selectedColor.g;
       d[i + 2] = selectedColor.b;
-      d[i + 3] = selectedColor.a;
     }
 
     _map = {};
-    _scope.palette = {};
+    _palette = {};
 
     return pixels;
   }

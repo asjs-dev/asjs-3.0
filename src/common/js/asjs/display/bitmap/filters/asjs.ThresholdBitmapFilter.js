@@ -16,8 +16,9 @@ function(_scope) {
     var i = -4;
     var l = d.length;
     while ((i += 4) < l) {
-      var oColor = new ASJS.Color(d[i], d[i + 1], d[i + 2], d[i + 3]);
-      var hexValue = oColor.hex;
+      if (d[i + 3] === 0) continue;
+      var oColor   = new ASJS.Color(d[i], d[i + 1], d[i + 2]);
+      var hexValue = ASJS.Color.colorToRgbHex(oColor);
 
       if (!_map[hexValue]) {
         _map[hexValue] = 0.2126 * oColor.r + 0.7152 * oColor.g + 0.0722 * oColor.b >= _scope.threshold

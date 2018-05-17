@@ -259,9 +259,9 @@ function(_scope, _super) {
   }
 
   function addColorToGradient(gradient, stop, color, alpha) {
-    var rgb = ASJS.Color.hexToRGB(color);
-      rgb.a = alpha;
-    gradient.addColorStop(stop, ASJS.Color.rgbToString(rgb));
+    var rgba = ASJS.Color.rgbHexToColor(color);
+        rgba.alpha = alpha;
+    gradient.addColorStop(stop, ASJS.Color.colorToString(rgba));
   }
 
   function fillStyle(targetType, v) {
@@ -279,9 +279,10 @@ function(_scope, _super) {
   }
 
   function beginColorFill(targetType, rgb, alpha) {
-    var rgb = ASJS.Color.hexToRgb(rgb);
-      rgb.a = alpha;
-    fillStyle(targetType, ASJS.Color.rgbToString(rgb));
+    var rgba = ASJS.Color.rgbHexToColor(rgb);
+        rgba.alpha = alpha;
+        trace(rgb, rgba, ASJS.Color.colorToString(rgba));
+    fillStyle(targetType, ASJS.Color.colorToString(rgba));
   }
 
   function beginGradientFill(targetType, type, gradientData, colors) {
@@ -335,6 +336,8 @@ function(_scope, _super) {
     while (filter = _scope.bitmapFilters[++i]) {
       filter.execute(pixels);
     }
+
+    pixels.data.set(pixels);
     _scope.putImageData(pixels, 0, 0);
     _filtersReady = true;
   }

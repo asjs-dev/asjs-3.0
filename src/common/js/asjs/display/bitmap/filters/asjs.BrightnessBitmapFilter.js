@@ -13,6 +13,7 @@ function(_scope) {
     var i = -4;
     var l = d.length;
     while ((i += 4) < l) {
+      if (d[i + 3] === 0) continue;
       d[i]     += _scope.adjustment;
       d[i + 1] += _scope.adjustment;
       d[i + 2] += _scope.adjustment;
