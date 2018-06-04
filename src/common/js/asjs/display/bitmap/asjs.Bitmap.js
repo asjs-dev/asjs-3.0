@@ -336,7 +336,6 @@ function(_scope, _super) {
     while (filter = _scope.bitmapFilters[++i]) {
       filter.execute(pixels);
     }
-
     pixels.data.set(pixels);
     _scope.putImageData(pixels, 0, 0);
     _filtersReady = true;

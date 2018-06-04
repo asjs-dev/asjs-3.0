@@ -101,12 +101,16 @@ function(_scope) {
 
   function checkWorker() {
     if (typeof Worker !== "undefined") {
-      _worker = new Worker("data:text/javascript;charset=US-ASCII,setInterval(function(){postMessage(\"tick\");},1);");
-      _worker.onmessage = function() {
-        map(_workerCallbacks, function(key, item) {
-          item();
-        });
-      };
+      try {
+        _worker = new Worker("data:text/javascript;charset=US-ASCII,setInterval(function(){postMessage(\"tick\");},1);");
+        _worker.onmessage = function() {
+          map(_workerCallbacks, function(key, item) {
+            item();
+          });
+        };
+      } catch (e) {
+        _worker = null;
+      }
     }
   }
 

@@ -16,10 +16,8 @@ function(_scope) {
 });
 
 rof(ASJS.Color, "twoColorDistance", function(c1, c2) {
-  var d =
-    Math.abs(c1.r - c2.r) + Math.abs(c1.g - c2.g) +
-    Math.abs(c1.b - c2.b) + Math.abs(c1.a - c2.a);
-  return d;
+  return Math.abs(c1.r - c2.r) + Math.abs(c1.g - c2.g) +
+         Math.abs(c1.b - c2.b) + Math.abs(c1.a - c2.a);
 });
 
 rof(ASJS.Color, "colorToString", function(color) {
