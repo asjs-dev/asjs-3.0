@@ -22,6 +22,18 @@ var ASJS = (function() {
 
   _scope.start = function(b) {
     ASJS.Polyfill.instance;
+    isDocumentComplete()
+    ? start(b)
+    : document.addEventListener("readystatechange", function() {
+      isDocumentComplete() && start(b);
+    });
+  }
+
+  function isDocumentComplete() {
+    return document.readyState === "complete";
+  }
+
+  function start(b) {
     if (!stage) {
       stage = ASJS.Stage.instance;
       stage.clear();
