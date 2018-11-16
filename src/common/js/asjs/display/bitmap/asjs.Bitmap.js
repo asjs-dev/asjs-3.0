@@ -259,7 +259,7 @@ function(_scope, _super) {
   }
 
   function addColorToGradient(gradient, stop, color, alpha) {
-    var rgba = ASJS.Color.rgbHexToColor(color);
+    var rgba = is(color, ASJS.Color) ? color : ASJS.Color.rgbHexToColor(color);
         rgba.alpha = alpha;
     gradient.addColorStop(stop, ASJS.Color.colorToString(rgba));
   }
@@ -279,9 +279,8 @@ function(_scope, _super) {
   }
 
   function beginColorFill(targetType, rgb, alpha) {
-    var rgba = ASJS.Color.rgbHexToColor(rgb);
+    var rgba = is(rgb, ASJS.Color) ? rgb : ASJS.Color.rgbHexToColor(rgb);
         rgba.alpha = alpha;
-        trace(rgb, rgba, ASJS.Color.colorToString(rgba));
     fillStyle(targetType, ASJS.Color.colorToString(rgba));
   }
 
