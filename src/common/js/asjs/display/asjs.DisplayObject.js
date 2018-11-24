@@ -25,23 +25,23 @@ function(_scope, _super) {
 
   get(_scope, "bounds", function() { return new ASJS.Rectangle(_scope.calcX, _scope.calcY, _scope.calcWidth, _scope.calcHeight); });
 
-  get(_scope, "calcX", function() { return _scope.x + (parseFloat(_scope.getCSS("marginLeft")) || 0); });
+  get(_scope, "calcX", function() { return _scope.x + _scope.getCSS("marginLeft"); });
 
-  get(_scope, "calcY", function() { return _scope.y + (parseFloat(_scope.getCSS("marginTop")) || 0); });
+  get(_scope, "calcY", function() { return _scope.y + _scope.getCSS("marginTop"); });
 
   get(_scope, "calcWidth", function() {
-    var paddingLeft  = parseFloat(_scope.getCSS("paddingLeft")) || 0;
-    var paddingRight = parseFloat(_scope.getCSS("paddingRight")) || 0;
-    var borderLeft   = parseFloat(_scope.getCSS("borderLeft")) || 0;
-    var borderRight  = parseFloat(_scope.getCSS("borderRight")) || 0;
+    var paddingLeft  = _scope.getCSS("paddingLeft");
+    var paddingRight = _scope.getCSS("paddingRight");
+    var borderLeft   = _scope.getCSS("borderLeft");
+    var borderRight  = _scope.getCSS("borderRight");
     return _scope.width + paddingLeft + paddingRight + borderLeft + borderRight;
   });
 
   get(_scope, "calcHeight", function() {
-    var paddingTop    = parseFloat(_scope.getCSS("paddingTop")) || 0;
-    var paddingBottom = parseFloat(_scope.getCSS("paddingBottom")) || 0;
-    var borderTop     = parseFloat(_scope.getCSS("borderTop")) || 0;
-    var borderBottom  = parseFloat(_scope.getCSS("borderBottom")) || 0;
+    var paddingTop    = _scope.getCSS("paddingTop");
+    var paddingBottom = _scope.getCSS("paddingBottom");
+    var borderTop     = _scope.getCSS("borderTop");
+    var borderBottom  = _scope.getCSS("borderBottom");
     return _scope.height + paddingTop + paddingBottom + borderTop + borderBottom;
   });
 
@@ -83,28 +83,28 @@ function(_scope, _super) {
   });
 
   prop(_scope, "alpha", {
-    get: function() { return parseFloat(_scope.getCSS("opacity") || 0); },
+    get: function() { return _scope.getCSS("opacity"); },
     set: function(v) { _scope.setCSS("opacity", v); }
   });
 
   prop(_scope, "x", {
-    get: function() { return parseFloat(_scope.getCSS("left") || 0); },
-    set: function(v) { _scope.setCSS("left", !tis(v, "number") ? v : parseFloat(v)); }
+    get: function() { return _scope.getCSS("left"); },
+    set: function(v) { _scope.setCSS("left", v); }
   });
 
   prop(_scope, "y", {
-    get: function() { return parseFloat(_scope.getCSS("top") || 0); },
-    set: function(v) { _scope.setCSS("top", !tis(v, "number") ? v : parseFloat(v)); }
+    get: function() { return _scope.getCSS("top"); },
+    set: function(v) { _scope.setCSS("top", v); }
   });
 
   prop(_scope, "width", {
-    get: function() { return parseFloat(_scope.getCSS("width") || 0); },
-    set: function(v) { _scope.setCSS("width", !tis(v, "number") ? v : parseFloat(v)); }
+    get: function() { return _scope.getCSS("width"); },
+    set: function(v) { _scope.setCSS("width", v); }
   });
 
   prop(_scope, "height", {
-    get: function() { return parseFloat(_scope.getCSS("height") || 0); },
-    set: function(v) { _scope.setCSS("height", !tis(v, "number") ? v : parseFloat(v)); }
+    get: function() { return _scope.getCSS("height"); },
+    set: function(v) { _scope.setCSS("height", v); }
   });
 
   prop(_scope, "rotation", {

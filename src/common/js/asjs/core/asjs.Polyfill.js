@@ -301,7 +301,7 @@ function(_scope) {
 
   function checkFunctionName() {
     if (checkFunctionName.name && tis(checkFunctionName.name, "string")) return;
-    prop( Function.prototype, "name", {
+    prop(Function.prototype, "name", {
       get: function() {
         var matches = _scope.toString().match(/^function\s*([^\s(]+)/);
         if (matches) return matches[1];

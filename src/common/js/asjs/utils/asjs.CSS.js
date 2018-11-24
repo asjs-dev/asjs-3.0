@@ -104,7 +104,26 @@ function(_scope) {
   });
 });
 
-cnst(ASJS.CSS, "ADD_PIXEL_TYPES", ["width", "height", "top", "left"]);
+cnst(ASJS.CSS, "ADD_PIXEL_TYPES", [
+  "width",
+  "height",
+  "top",
+  "bottom",
+  "left",
+  "right",
+  "margin",
+  "margin-top",
+  "margin-bottom",
+  "margin-left",
+  "margin-right",
+  "padding",
+  "padding-top",
+  "padding-bottom",
+  "padding-left",
+  "padding-right",
+  "font-size",
+  "border-size"
+]);
 
 cnst(ASJS.CSS, "SELECTOR", ['fullscreen', 'placeholder']);
 
@@ -127,12 +146,12 @@ rof(ASJS.CSS, "replaceHyphen", function(s) {
 });
 
 rof(ASJS.CSS, "convertProperty", function(k) {
-  var nk = ASJS.Polyfill.stylePrefixCSS + k;
+  var nk = ASJS.Polyfill.instance.stylePrefixCSS + k;
   var i = -1;
   var l = ASJS.CSS.SELECTOR.length;
   while (++i < l) {
     if (nk.indexOf(":" + ASJS.CSS.SELECTOR[i]) > -1) {
-      nk = nk.replace(":" + ASJS.CSS.SELECTOR[i], ":" + ASJS.Polyfill.stylePrefixCSS + ASJS.CSS.SELECTOR[i]);
+      nk = nk.replace(":" + ASJS.CSS.SELECTOR[i], ":" + ASJS.Polyfill.instance.stylePrefixCSS + ASJS.CSS.SELECTOR[i]);
       i = l;
       break;
     }
@@ -145,13 +164,13 @@ rof(ASJS.CSS, "convertValue", function(v) {
   var i = -1;
   var l = ASJS.CSS.VALUE.length;
   while (++i < l) {
-    if (String(v).indexOf(ASJS.CSS.VALUE[i]) > -1) return ASJS.Polyfill.stylePrefixCSS + v;
+    if (String(v).indexOf(ASJS.CSS.VALUE[i]) > -1) return ASJS.Polyfill.instance.stylePrefixCSS + v;
   }
   return v;
 });
 
 rof(ASJS.CSS, "setCSS", function(t, k, v) {
-  v = ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 && tis(v, "number") ? v + "px" : v;
+  v = tis(v, "number") && ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 ? v + "px" : v;
   var nk = ASJS.CSS.convertProperty(k);
   var nv = ASJS.CSS.convertValue(v);
   t.el.style[ASJS.CSS.replaceHyphen(k)] = v;
@@ -159,8 +178,10 @@ rof(ASJS.CSS, "setCSS", function(t, k, v) {
 });
 
 rof(ASJS.CSS, "getCSS", function(t, k) {
-  var style = window.getComputedStyle(t.el);
-  var v = style.getPropertyValue(k);
-  if (v === "") v = t.el.style[ASJS.CSS.replaceHyphen(k)];
-  return ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 ? parseFloat(v) : v;
+  var v = t.el.style[ASJS.CSS.replaceHyphen(k)];
+  if (!v) {
+    var style = window.getComputedStyle(t.el);
+    v = style.getPropertyValue(k);
+  }
+  return ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 && tis(v, "string") && v.indexOf("px") > -1 ? parseFloat(v) : v;
 });
