@@ -8,6 +8,7 @@ require("event/asjs.MouseEvent.js");
 require("event/asjs.FocusEvent.js");
 require("event/asjs.Event.js");
 require("event/asjs.WindowEvent.js");
+require("event/asjs.DocumentEvent.js");
 require("event/asjs.MediaEvent.js");
 require("event/asjs.LoaderEvent.js");
 require("event/asjs.FileDragAndDropEvent.js");
@@ -49,6 +50,7 @@ require("display/asjs.Label.js");
 require("display/asjs.Image.js");
 require("display/asjs.Link.js");
 require("display/asjs.IFrame.js");
+require("display/asjs.ScrollBar.js");
 
 require("display/bitmap/utils/asjs.BitmapBounds.js");
 require("display/bitmap/utils/asjs.Color.js");

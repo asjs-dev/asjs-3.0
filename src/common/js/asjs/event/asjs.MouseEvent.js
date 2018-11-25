@@ -1,5 +1,6 @@
 ASJS.MouseEvent = {};
-cnst(ASJS.MouseEvent, "SCROLL",       ["DOMMouseScroll mousewheel scroll"]);
+cnst(ASJS.MouseEvent, "SCROLL",       "DOMMouseScroll scroll");
+cnst(ASJS.MouseEvent, "WHEEL",        "mousewheel");
 cnst(ASJS.MouseEvent, "CLICK",        "click");
 cnst(ASJS.MouseEvent, "DOUBLE_CLICK", "dblclick");
 cnst(ASJS.MouseEvent, "MOUSE_DOWN",   "mousedown");

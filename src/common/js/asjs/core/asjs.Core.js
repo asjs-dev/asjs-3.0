@@ -24,7 +24,7 @@ var ASJS = (function() {
     ASJS.Polyfill.instance;
     isDocumentComplete()
     ? start(b)
-    : document.addEventListener("readystatechange", function() {
+    : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function() {
       isDocumentComplete() && start(b);
     });
   }
@@ -159,8 +159,9 @@ var is = function(a, b) {
 }
 
 var tis = function(a, b) {
-  if (b === "number") return parseFloat(a) == a;
-  return typeof a === b;
+  return b === "number"
+    ? parseFloat(a) == a
+    : typeof a === b;
 }
 
 var empty = function(a) {
