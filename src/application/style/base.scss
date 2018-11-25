@@ -28,7 +28,6 @@ html, body {
 
 .animated {
   animation  : fade-in 0.2s ease-in;
-  transition : opacity 0.2s ease-out;
 
   @keyframes fade-in {
     from {
@@ -38,4 +37,8 @@ html, body {
       opacity : 1;
     }
   }
+}
+
+.animate {
+  transition : 0.2s ease-out;
 }
