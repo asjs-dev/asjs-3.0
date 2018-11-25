@@ -40,9 +40,9 @@ function(_scope, _super) {
     var scrollSize     = new ASJS.Point(_target.el.scrollWidth, _target.el.scrollHeight);
     
     if (
-      ASJS.GeomUtils.twoPointEquals(scrollSize, _previousScrollSize) &&
+      ASJS.GeomUtils.twoPointEquals(scrollSize,     _previousScrollSize) &&
       ASJS.GeomUtils.twoPointEquals(scrollPosition, _previousScrollPosition) &&
-      ASJS.GeomUtils.twoPointEquals(offsetSize, _previousOffsetSize)
+      ASJS.GeomUtils.twoPointEquals(offsetSize,     _previousOffsetSize)
     ) return;
     
     _previousOffsetSize     = offsetSize;
