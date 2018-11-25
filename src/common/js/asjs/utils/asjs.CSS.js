@@ -183,5 +183,10 @@ rof(ASJS.CSS, "getCSS", function(t, k) {
     var style = window.getComputedStyle(t.el);
     v = style.getPropertyValue(k);
   }
-  return ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 && tis(v, "string") && v.indexOf("px") > -1 ? parseFloat(v) : v;
+  return (
+    ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 &&
+    (tis(v, "number") || v.indexOf("px") > -1)
+      ? parseFloat(v)
+      : v
+  ) || 0;
 });

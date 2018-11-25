@@ -159,6 +159,7 @@ var is = function(a, b) {
 }
 
 var tis = function(a, b) {
+  if (b === "number") return parseFloat(a) == a;
   return typeof a === b;
 }
 
