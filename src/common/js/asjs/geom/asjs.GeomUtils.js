@@ -20,14 +20,15 @@ rof(ASJS.GeomUtils, "twoPointEquals", function(pointA, pointB) {
 });
 
 rof(ASJS.GeomUtils, "twoPointAngle", function(pointA, pointB) {
-  var v = new ASJS.Point(pointB.x - pointA.x, pointB.y - pointA.y);
-  var angle = Math.acos(v.x / Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2)));
+  var dot = pointA.x * pointB.x + pointA.y * pointB.y;
+  var det = pointA.x * pointB.y - pointA.y * pointB.x;
+  var angle = Math.atan2(det, dot);
   return angle / ASJS.GeomUtils.THETA;
 });
 
 rof(ASJS.GeomUtils, "rectInRect", function(rectA, rectB) {
-  return rectA.x >= rectB.x && rectA.y === rectB.y && 
-         rectA.x + rectA.width <= rectB.x + rectB.width && 
+  return rectA.x >= rectB.x && rectA.y === rectB.y &&
+         rectA.x + rectA.width <= rectB.x + rectB.width &&
          rectA.y + rectA.height <= rectB.y + rectB.height;
 });
 
@@ -66,9 +67,9 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
 
   var globalPos = target.localToGlobal(new ASJS.Point(0, 0));
   var diffPoint = new ASJS.Point(point.x - (globalPos.x + rect.width * 0.5), point.y - (globalPos.y + rect.height * 0.5));
-  var rotatedDiffPoint = new ASJS.Point( 
-    diffPoint.x * Math.cos(rotationDeg) - diffPoint.y * Math.sin(rotationDeg), 
-    diffPoint.x * Math.sin(rotationDeg) + diffPoint.y * Math.cos(rotationDeg) 
+  var rotatedDiffPoint = new ASJS.Point(
+    diffPoint.x * Math.cos(rotationDeg) - diffPoint.y * Math.sin(rotationDeg),
+    diffPoint.x * Math.sin(rotationDeg) + diffPoint.y * Math.cos(rotationDeg)
   );
   var recalcPoint = new ASJS.Point(point.x - (diffPoint.x - rotatedDiffPoint.x), point.y - (diffPoint.y - rotatedDiffPoint.y));
 
