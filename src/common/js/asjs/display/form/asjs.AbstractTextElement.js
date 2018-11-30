@@ -8,6 +8,7 @@ ASJS.AbstractTextElement = createClass(
 ASJS.FormElement,
 function(_scope, _super) {
   var _restrict;
+  var _helperElement = new ASJS.Tag();
 
   _scope.new = function(tag) {
     _super.new(tag);
@@ -25,7 +26,10 @@ function(_scope, _super) {
 
   prop(_scope, "placeholder", {
     get: function() { return _scope.getAttr("placeholder"); },
-    set: function(v) { _scope.setAttr("placeholder", v); }
+    set: function(v) {
+      _helperElement.html = v;
+      _scope.setAttr("placeholder", _helperElement.text);
+    }
   });
 
   prop(_scope, "val", {
