@@ -12,7 +12,8 @@ rof(ASJS.GeomUtils, "twoPointDistance", function(pointA, pointB) {
 });
 
 rof(ASJS.GeomUtils, "pointInRect", function(point, rect) {
-  return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
+  return point.x >= rect.x && point.x <= rect.x + rect.width &&
+         point.y >= rect.y && point.y <= rect.y + rect.height;
 });
 
 rof(ASJS.GeomUtils, "twoPointEquals", function(pointA, pointB) {
@@ -26,8 +27,18 @@ rof(ASJS.GeomUtils, "twoPointAngle", function(pointA, pointB) {
   return angle / ASJS.GeomUtils.THETA;
 });
 
+rof(ASJS.GeomUtils, "rectCutRect", function(rectA, rectB) {
+  var newRectB = new ASJS.Rectangle(
+    rectB.x      - rectA.width,
+    rectB.y      - rectA.height,
+    rectB.width  + rectA.width * 2,
+    rectB.height + rectA.height * 2
+  );
+  return ASJS.GeomUtils.rectInRect(rectA, newRectB);
+});
+
 rof(ASJS.GeomUtils, "rectInRect", function(rectA, rectB) {
-  return rectA.x >= rectB.x && rectA.y === rectB.y &&
+  return rectA.x >= rectB.x && rectA.y >= rectB.y &&
          rectA.x + rectA.width <= rectB.x + rectB.width &&
          rectA.y + rectA.height <= rectB.y + rectB.height;
 });
@@ -66,12 +77,18 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
   var rect = target.bounds;
 
   var globalPos = target.localToGlobal(new ASJS.Point(0, 0));
-  var diffPoint = new ASJS.Point(point.x - (globalPos.x + rect.width * 0.5), point.y - (globalPos.y + rect.height * 0.5));
+  var diffPoint = new ASJS.Point(
+    point.x - (globalPos.x + rect.width * 0.5),
+    point.y - (globalPos.y + rect.height * 0.5)
+  );
   var rotatedDiffPoint = new ASJS.Point(
     diffPoint.x * Math.cos(rotationDeg) - diffPoint.y * Math.sin(rotationDeg),
     diffPoint.x * Math.sin(rotationDeg) + diffPoint.y * Math.cos(rotationDeg)
   );
-  var recalcPoint = new ASJS.Point(point.x - (diffPoint.x - rotatedDiffPoint.x), point.y - (diffPoint.y - rotatedDiffPoint.y));
+  var recalcPoint = new ASJS.Point(
+    point.x - (diffPoint.x - rotatedDiffPoint.x),
+    point.y - (diffPoint.y - rotatedDiffPoint.y)
+  );
 
   var localPoint = target.globalToLocal(recalcPoint);
   return localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= rect.width && localPoint.y <= rect.height;
