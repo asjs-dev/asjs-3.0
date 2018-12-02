@@ -48,12 +48,12 @@ function(_scope) {
   get(_scope, "stage", function() { return _scope.parent ? _scope.parent.stage : null; });
 
   _scope.hasClass = function(v) {
-    return _el.className.split(" ").indexOf(v) > -1;
+    return _scope.getClassList().indexOf(v) > -1;
   }
 
   _scope.addClass = function(v) {
     var newClasses = v.split(" ");
-    var classList  = _el.className.split(" ");
+    var classList  = _scope.getClassList();
     var newClass;
     while (newClass = newClasses.shift()) {
       if (!_scope.hasClass(newClass)) classList.push(newClass);
@@ -63,12 +63,20 @@ function(_scope) {
 
   _scope.removeClass = function(v) {
     var removeClasses = v.split(" ");
-    var classList     = _el.className.split(" ");
+    var classList     = _scope.getClassList();
     var removeClass;
     while (removeClass = removeClasses.shift()) {
       if (_scope.hasClass(removeClass)) classList.splice(classList.indexOf(removeClass), 1);
     }
     _el.className = classList.join(" ");
+  }
+
+  _scope.removeClassList = function() {
+    _el.className = "";
+  }
+
+  _scope.getClassList = function() {
+    return _el.className.split(" ");
   }
 
   _scope.getCSS = function(k) {
