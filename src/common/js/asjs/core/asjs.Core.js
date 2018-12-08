@@ -173,6 +173,11 @@ var empty = function(a) {
 }
 var emp = empty;
 
+var padStart = function(v, l) {
+  return String(v / Math.pow(10, !empty(l) ? l : 2)).substr(2);
+}
+var ps = padStart;
+
 var createClass = function(name, base, body) {
   function setup(name, base, body, args) {
     if (!this.$n) this.$n = [];
