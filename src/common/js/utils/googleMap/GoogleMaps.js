@@ -74,6 +74,7 @@ function(_scope, _super) {
   _scope.destruct = function() {
     google.maps.event.clearListeners(_map, 'center_changed');
     _map = null;
+    _super.destruct();
   }
 
   function onCenterChanged() {

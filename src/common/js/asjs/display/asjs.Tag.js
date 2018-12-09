@@ -5,7 +5,7 @@ require("../utils/asjs.CSS.js");
 ASJS.Tag = createClass(
 "Tag",
 ASJS.EventDispatcher,
-function(_scope) {
+function(_scope, _super) {
   var priv = {};
 
   cnst(priv, "CREATED", "created");
@@ -108,5 +108,12 @@ function(_scope) {
     var state = _scope.stage ? ASJS.Stage.ADDED_TO_STAGE : ASJS.Stage.REMOVED_FROM_STAGE;
     if (_state !== priv.CREATED || state !== ASJS.Stage.REMOVED_FROM_STAGE) _scope.dispatchEvent(state, null, false);
     _state = state;
+  }
+
+  _scope.destruct = function() {
+    _scope && tis(_scope.clear, "function") && _scope.clear();
+
+    _el    = null;
+    _super.destruct();
   }
 });

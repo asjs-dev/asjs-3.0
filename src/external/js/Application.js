@@ -23,6 +23,7 @@ function(_scope, _super) {
     _styleLoader.unload();
     _language.clear();
     _config.clear();
+    _super.destruct();
   }
 
   function addedToStage() {

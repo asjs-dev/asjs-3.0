@@ -223,4 +223,8 @@ Object,
 function(_scope, _super) {
   _scope.new = function() {};
   _scope.prot = _scope.protected = {};
+  _scope.destruct = function() {
+    _scope = null;
+    _super = null;
+  }
 });
