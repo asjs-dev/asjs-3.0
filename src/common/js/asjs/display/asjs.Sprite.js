@@ -48,7 +48,7 @@ function(_scope, _super) {
     }
   });
 
-  get(_scope, "numChildren", function() { return _children.length; });
+  get(_scope, "numChildren", function() { return !empty(_children) ? _children.length : 0; });
 
   _scope.clear = function() {
     while (_scope.numChildren > 0) _scope.removeChildAt(0);
@@ -76,8 +76,7 @@ function(_scope, _super) {
   _scope.removeChild = function(child) {
     if (!child) return null;
     _scope.el.removeChild(child.el);
-    var index = _scope.getChildIndex(child);
-    if (index > -1) _children.splice(index, 1);
+    _children.remove(child);
     child.parent = null;
     return child;
   }
@@ -133,5 +132,12 @@ function(_scope, _super) {
     var i = -1;
     var l = _scope.numChildren;
     while (++i < l) _scope.getChildAt(i).sendParentChangeEvent();
+  }
+
+  _scope.destruct = function() {
+    _children      = null;
+    _mouseChildren = null;
+
+    _super.destruct();
   }
 });

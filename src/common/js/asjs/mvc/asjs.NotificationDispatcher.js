@@ -17,4 +17,10 @@ function(_scope, _super) {
   _super.protected.removeHandler = function(type, callback) {
     _nHandler.remove(type, callback);
   }
+
+  _scope.destruct = function() {
+    _nHandler = null;
+
+    _super.destruct();
+  }
 });

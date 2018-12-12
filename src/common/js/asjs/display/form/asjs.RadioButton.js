@@ -42,4 +42,11 @@ function(_scope, _super) {
     get: function() { return _radio.value; },
     set: function(v) { _radio.value = v; }
   });
+
+  _scope.destruct = function() {
+    destructClass(_radio);
+    destructClass(_label);
+
+    _super.destruct();
+  }
 });

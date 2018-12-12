@@ -38,11 +38,11 @@ var ASJS = (function() {
       stage = ASJS.Stage.instance;
       stage.clear();
     }
-    trace("<AS/JS> core version: {{appVersion}}.{{date}}");
+    trc("<AS/JS> core version: {{appVersion}}.{{date}}");
     try {
       stage.addChild(new b());
     } catch (e) {
-      trace(e);
+      trc(e);
     }
     return b;
   }
@@ -86,7 +86,7 @@ var constant = function(t, n, v) {
 var cnst = constant;
 
 var message = function(t, n) {
-  if (!empty(t.name)) cnst(t, n, t.name + "_" + n);
+  if (!emp(t.name)) cnst(t, n, t.name + "_" + n);
   else cnst(t, n, n + "_" + Date.now() + message.id++);
 };
 message.id = 0;
@@ -109,11 +109,12 @@ var map = function(object, callback) {
   var key;
   for (key in object) {
     var value = callback(key, object[key]);
-    if (!empty(value)) object[key] = value;
+    if (!emp(value)) object[key] = value;
   }
 }
 
 var iterateOver = function(object, callback, completeCallback) {
+  if (emp(object)) return;
   var keys = Object.keys(object);
   var key;
   var index = -1;
@@ -127,8 +128,10 @@ var iterateOver = function(object, callback, completeCallback) {
       return;
     }
     key = keys[index];
-    var value = callback(key, object[key], next, end);
-    if (!empty(value)) object[key] = value;
+    try {
+      var value = callback(key, object[key], next, end);
+      if (!emp(value)) object[key] = value;
+    } catch (e) { next(); }
   }
   next();
 }
@@ -147,6 +150,22 @@ var extendProperties = function(t) {
   return s;
 };
 var extProps = extendProperties;
+
+var destructObject = function(t) {
+  ito(t, function(key, item, next) {
+    if (tis(item, "object")) destObj(item);
+    destCls(item);
+    del(t, key);
+    next();
+  });
+  t = null;
+};
+var destObj = destructObject;
+
+var destructClass = function(t) {
+  t && t.destruct && t.destruct();
+}
+var destCls = destructClass;
 
 var deleteProperty = function(t, p) {
   t[p] = null;
@@ -174,7 +193,7 @@ var empty = function(a) {
 var emp = empty;
 
 var padStart = function(v, l) {
-  return String(v / Math.pow(10, !empty(l) ? l : 2)).substr(2);
+  return String(v / Math.pow(10, !emp(l) ? l : 2)).substr(2);
 }
 var ps = padStart;
 
@@ -204,6 +223,7 @@ var createSingletonClass = function(name, base, body) {
   var c = c0(name, base, body);
   get(c, "instance", function() {
     cnst(c, "instance", new c());
+    c.instance.destruct = null;
     return c.instance;
   });
   return c;
@@ -211,7 +231,7 @@ var createSingletonClass = function(name, base, body) {
 var c1 = createSingletonClass;
 
 var createNamedObject = function(name, parent) {
-  var t = extendProperties(parent);
+  var t = extProps(parent);
       t.name = name;
   return t;
 }
@@ -222,9 +242,10 @@ ASJS.BaseClass = c0(
 Object,
 function(_scope, _super) {
   _scope.new = function() {};
-  _scope.prot = _scope.protected = {};
+  _scope.protected = {};
+  _scope.prot = _scope.protected;
   _scope.destruct = function() {
-    _scope = null;
-    _super = null;
+    destObj(_scope);
+    destObj(_super);
   }
 });

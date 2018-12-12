@@ -34,6 +34,8 @@ function(_scope, _super) {
     while (++i < l) _blocks[i].setCSS("background-image", "url(" + v + ")");
     var image = new ASJS.Image();
         image.addEventListener(ASJS.LoaderEvent.LOAD, function() {
+          image.removeEventListeners();
+
           _size.x = image.imageWidth;
           _size.y = image.imageHeight;
           _scope.render();
@@ -94,6 +96,22 @@ function(_scope, _super) {
     drawBackground(_blocks[4], tl.x,    tl.y,     ps.x,    ps.y);
     drawBackground(_blocks[5], "right", tl.y,     _size.x, ps.y);
     drawBackground(_blocks[7], tl.x,    "bottom", ps.x,    _size.y);
+  }
+
+  _scope.destruct = function() {
+    destructClass(_size);
+    destructClass(_rectangle);
+
+    var i = -1;
+    var l = _blocks.length;
+    while (++i < l) {
+      _scope.removeChild(_blocks[i]);
+      destructClass(_blocks[i]);
+      _blocks[i] = null;
+    }
+    _blocks = null;
+
+    _super.destruct();
   }
 
   function drawBackground(block, a, b, c, d) {

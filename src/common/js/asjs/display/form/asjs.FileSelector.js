@@ -40,6 +40,16 @@ function(_scope, _super) {
     set: function(v) { _super.protected.fileInput.setAttr("name", v); }
   });
 
+  _scope.destruct = function() {
+    destructClass(_super.protected.fileInput);
+    _super.protected.fileInput = null;
+
+    destructClass(_preview);
+    _preview = null;
+
+    _super.destruct();
+  }
+
   _super.protected.onChange = function() {
     _preview.text = _scope.val;
     _scope.dispatchEvent(ASJS.FileSelector.ON_CHANGE);

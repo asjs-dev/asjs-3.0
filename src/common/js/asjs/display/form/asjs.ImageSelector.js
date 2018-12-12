@@ -19,6 +19,12 @@ function(_scope, _super) {
     }
   }
 
+  _scope.destruct = function() {
+    _reader = null;
+
+    _super.destruct();
+  }
+
   function readerOnLoad(e) {
     _scope.preview.setCSS('background-image', 'url(' + e.target.result + ')');
     _scope.dispatchEvent(ASJS.FileSelector.ON_CHANGE);

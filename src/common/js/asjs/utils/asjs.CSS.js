@@ -6,7 +6,8 @@ ASJS.CSS = createSingletonClass(
 "CSS",
 ASJS.BaseClass,
 function(_scope) {
-  var _head   = ASJS.Head.instance;
+  var _head = ASJS.Head.instance;
+  
   var _runTimeStyle;
   var _merged;
 

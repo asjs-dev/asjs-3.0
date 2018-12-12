@@ -143,6 +143,18 @@ function(_scope, _super) {
     }
   }
 
+  _scope.destruct = function() {
+    _multiselect    = null;
+    _cell           = null;
+    _lastCellIndex  = null;
+    _name           = null;
+    
+    destructClass(_itemsContainer);
+    _itemsContainer = null;
+
+    _super.destruct();
+  }
+
   function onCellClick(e) {
     var cell = _itemsContainer.getChildByDOMObject(e.target);
     if (!cell) return;

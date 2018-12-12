@@ -5,7 +5,7 @@ ASJS.Label = createClass(
 ASJS.DisplayObject,
 function(_scope, _super) {
   var _for;
-  
+
   _scope.new = function() {
     _super.new("label");
   }
@@ -19,4 +19,10 @@ function(_scope, _super) {
       }
     }
   });
+
+  _scope.destruct = function() {
+    _for = null;
+    
+    _super.destruct();
+  }
 });

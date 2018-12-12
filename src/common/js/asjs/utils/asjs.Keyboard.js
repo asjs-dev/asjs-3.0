@@ -4,8 +4,10 @@ require("../event/asjs.FocusEvent.js");
 ASJS.Keyboard = createClass(
 "Keyboard",
 ASJS.BaseClass,
-function(_scope) {
+function(_scope, _super) {
   var _pressedKeys = {};
+  var _targets     = [];
+
   var _downCallback;
   var _upCallback;
 
@@ -15,6 +17,9 @@ function(_scope) {
 
   _scope.addKeyListener = function(target, downCallback, upCallback) {
     if (!target) return;
+    if (_targets.has(target)) return;
+    _targets.push(target);
+
     _downCallback = downCallback;
     _upCallback   = upCallback;
 
@@ -23,15 +28,29 @@ function(_scope) {
     target.addEventListener(ASJS.KeyboardEvent.KEY_DOWN, onKeyDown);
     target.addEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
 
-    window.addEventListener(ASJS.FocusEvent.BLUR, onBlur);
+    !window.hasEventListener(ASJS.FocusEvent.BLUR, onBlur) && window.addEventListener(ASJS.FocusEvent.BLUR, onBlur);
   };
 
   _scope.removeKeyListener = function(target) {
+    if (!_targets.has(target)) return;
+    _targets.remove(target);
+
     target.removeEventListener(ASJS.KeyboardEvent.KEY_DOWN, onKeyDown);
     target.removeEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
 
-    window.removeEventListener(ASJS.FocusEvent.BLUR, onBlur);
+    window.hasEventListener(ASJS.FocusEvent.BLUR, onBlur) && window.removeEventListener(ASJS.FocusEvent.BLUR, onBlur);
   };
+
+  _scope.destruct = function() {
+    while (_targets.length > 0) _scope.removeKeyListener(_targets.shift());
+
+    _pressedKeys  = null;
+    _downCallback = null;
+    _upCallback   = null;
+    _targets      = null;
+
+    _super.destruct();
+  }
 
   function onBlur() {
     map(_pressedKeys, function(k) {

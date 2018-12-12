@@ -32,6 +32,8 @@ function(_scope) {
   function initApplication() {
     (new EnvironmentCommand()).execute();
     (new ViewPrepCommand()).execute(_app);
+
+    _scope.destruct();
   }
 
   function loadJSON(url, callback) {

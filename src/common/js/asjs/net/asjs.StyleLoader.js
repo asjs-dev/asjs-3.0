@@ -28,4 +28,11 @@ function(_scope, _super) {
     _scope.unload();
     _super.load(url);
   }
+
+  _scope.destruct = function() {
+    _head  = null;
+    _style = null;
+    
+    _super.destruct();
+  }
 });

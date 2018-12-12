@@ -23,4 +23,10 @@ function(_scope, _super) {
     _scope.unload();
     _super.load(url);
   }
+
+  _scope.destruct = function() {
+    _content = null;
+
+    _super.destruct();
+  }
 });

@@ -5,7 +5,7 @@ ASJS.Cell = createClass(
 "Cell",
 ASJS.Sprite,
 function(_scope, _super) {
-  var _data = {};
+  var _data    = {};
   var _checked = false;
 
   _scope.new = function() {
@@ -37,6 +37,13 @@ function(_scope, _super) {
   _scope.render = function() {}
 
   _scope.showData = function() {}
+
+  _scope.destruct = function() {
+    _data    = null;
+    _checked = null;
+
+    _super.destruct();
+  }
 
   function onClick(e) {
     _scope.dispatchEvent(ASJS.Cell.CLICK, {

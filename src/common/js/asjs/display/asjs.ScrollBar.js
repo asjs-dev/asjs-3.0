@@ -68,6 +68,30 @@ function(_scope, _super) {
     draw(_verticalScrollBar,   "y", "height");
   });
 
+  _scope.destruct = function() {
+    destruct();
+
+    _target                 = null;
+    _originalOverflow       = null;
+
+    destructClass(_previousOffsetSize);
+    _previousOffsetSize = null;
+
+    destructClass(_previousScrollSize);
+    _previousScrollSize = null;
+
+    destructClass(_previousScrollPosition);
+    _previousScrollPosition = null;
+
+    destructClass(_verticalScrollBar);
+    _verticalScrollBar = null;
+
+    destructClass(_horizontalScrollBar);
+    _horizontalScrollBar = null;
+
+    _super.destruct();
+  }
+
   function scroll(event) {
     if (!_target) return;
 

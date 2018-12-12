@@ -20,8 +20,7 @@ function(_scope, _super) {
   }
 
   function onShow() {
-    if (!_super.protected.view.contains(_view))
-      _super.protected.view.addChild(_view);
+    if (!_super.protected.view.contains(_view)) _super.protected.view.addChild(_view);
     loadExternalApplication();
 
     _super.protected.showView();

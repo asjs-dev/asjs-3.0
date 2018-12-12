@@ -40,4 +40,14 @@ function(_scope, _super) {
       _checkbox.dispatchEvent(ASJS.Event.CHANGE);
     }
   });
+
+  _scope.destruct = function() {
+    destructClass(_checkbox);
+    _checkbox = null;
+
+    destructClass(_label);
+    _label = null;
+
+    _super.destruct();
+  }
 });

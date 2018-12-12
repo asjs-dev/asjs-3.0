@@ -9,14 +9,12 @@ ASJS.AbstractCommand,
 function(_scope) {
   var _language  = Language.instance;
   var _cookies   = Cookies;
-  var _cycler    = ASJS.Cycler.instance;
   var _config    = Config.instance;
   var _urlParser = URLParser.instance;
   var _sleepToResizeId;
 
   _scope.execute = function() {
     setupLanguage();
-    setupCycler();
     setupStage();
   }
 
@@ -32,11 +30,6 @@ function(_scope) {
 
     _cookies.createCookie('language', _language.selectedLanguage);
     document.title = _language.getText("title");
-  }
-
-  function setupCycler() {
-    _cycler.fps = _config.get("fps");
-    _cycler.start();
   }
 
   function setupStage() {

@@ -18,9 +18,9 @@ function(_scope, _super) {
     _super.new(tag);
     _scope.tabindex = -1;
     _scope.setCSS("pointer-events", "auto");
-    _scope.setCSS("position", "absolute");
-    _scope.setCSS("display", _cssDisplay);
-    _scope.setCSS("box-sizing", "border-box");
+    _scope.setCSS("position",       "absolute");
+    _scope.setCSS("display",        _cssDisplay);
+    _scope.setCSS("box-sizing",     "border-box");
   }
 
   get(_scope, "bounds", function() { return new ASJS.Rectangle(_scope.calcX, _scope.calcY, _scope.calcWidth, _scope.calcHeight); });
@@ -167,6 +167,17 @@ function(_scope, _super) {
   _scope.globalToLocal = function(point) {
     return ASJS.GeomUtils.globalToLocal(_scope, point);
   };
+
+  _scope.destruct = function() {
+    _mouse      = null;
+    _filters    = null;
+    _rotation   = null;
+    _scaleX     = null;
+    _scaleY     = null;
+    _cssDisplay = null;
+    
+    _super.destruct();
+  }
 
   function drawTransform() {
     _scope.setCSS("transform", 'rotate(' + _rotation + 'deg) scaleX(' + _scaleX + ') scaleY(' + _scaleY + ')');

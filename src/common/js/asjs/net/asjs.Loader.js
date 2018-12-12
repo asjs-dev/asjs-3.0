@@ -83,6 +83,32 @@ function(_scope, _super) {
     reset();
   }
 
+  _scope.destruct = function() {
+    if (_request) {
+      _request.removeEventListener(ASJS.LoaderEvent.READY_STATE_CHANGE, onReadyStateChange);
+      _request.removeEventListener(ASJS.LoaderEvent.PROGRESS,           onProgress);
+      _request.removeEventListener(ASJS.LoaderEvent.LOAD,               onLoad);
+      _request.removeEventListener(ASJS.LoaderEvent.ERROR,              onError);
+      _request.removeEventListener(ASJS.LoaderEvent.ABORT,              onAbort);
+      _request.removeEventListener(ASJS.LoaderEvent.LOAD_START,         onLoadStart);
+      _request.removeEventListener(ASJS.LoaderEvent.TIMEOUT,            onTimeout);
+      _request.removeEventListener(ASJS.LoaderEvent.LOAD_END,           onLoadEnd);
+    }
+
+    _async        = null;
+    _method       = null;
+    _headers      = null;
+    _responseType = null;
+    _compressed   = null;
+    _request      = null;
+    _username     = null;
+    _password     = null;
+    _url          = null;
+    _data         = null;
+
+    _super.destruct();
+  }
+
   function reset() {
     if (_request) {
       _scope.cancel();

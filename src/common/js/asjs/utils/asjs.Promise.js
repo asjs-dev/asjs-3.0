@@ -1,7 +1,7 @@
 ASJS.Promise = createClass(
 "Promise",
 ASJS.BaseClass,
-function(_scope) {
+function(_scope, _super) {
   var _resolveFunction = [];
   var _rejectFunction  = [];
   var _finallyFunction = [];
@@ -29,7 +29,7 @@ function(_scope) {
   }
 
   _scope.then = function(f) {
-    if (_resolveFunction.indexOf(f) === -1) {
+    if (!_resolveFunction.has(f)) {
       _resolveFunction.push(f);
       callResolve();
     }
@@ -37,7 +37,7 @@ function(_scope) {
   }
 
   _scope.catch = function(f) {
-    if (_rejectFunction.indexOf(f) === -1) {
+    if (!_rejectFunction.has(f)) {
       _rejectFunction.push(f);
       callReject();
     }
@@ -45,11 +45,22 @@ function(_scope) {
   }
 
   _scope.finally = function(f) {
-    if (_finallyFunction.indexOf(f) === -1) {
+    if (!_finallyFunction.has(f)) {
       _finallyFunction.push(f);
       callFinally();
     }
     return _scope;
+  }
+
+  _scope.destruct = function() {
+    _resolveFunction = null;
+    _rejectFunction  = null;
+    _finallyFunction = null;
+    _calledResolve   = null;
+    _calledReject    = null;
+    _calledFinally   = null;
+    
+    _super.destruct();
   }
 
   function callResolve() {
@@ -65,5 +76,6 @@ function(_scope) {
   function callFinally() {
     if (!_calledFinally) return;
     while (_finallyFunction.length > 0) _finallyFunction.shift()(_resolveData || _rejectData);
+    _scope.destruct();
   }
 });

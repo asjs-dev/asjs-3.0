@@ -10,4 +10,11 @@ function(_scope, _super) {
   _scope.new = function(root) {
     root.addChild(_super.protected.view);
   }
+
+  _scope.destruct = function() {
+    destructClass(_super.protected.view);
+    _super.protected.view = null;
+
+    _super.destruct();
+  }
 });

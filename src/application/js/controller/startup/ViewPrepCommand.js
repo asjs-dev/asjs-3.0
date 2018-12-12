@@ -12,5 +12,7 @@ function(_scope) {
     new NotificationWindowMediator(app);
 
     _scope.sendNotification(ContentMediator.SHOW);
+
+    _scope.destruct();
   }
 });

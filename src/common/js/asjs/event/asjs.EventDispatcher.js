@@ -3,7 +3,7 @@ require("../core/asjs.Polyfill.js");
 ASJS.EventDispatcher = createClass(
 "EventDispatcher",
 ASJS.BaseClass,
-function(_scope) {
+function(_scope, _super) {
   var _polyfill = ASJS.Polyfill.instance;
 
   var _handlers = {};
@@ -83,13 +83,22 @@ function(_scope) {
     if (!handler)  return true;
     return handlers.indexOf(handler) > -1;
   };
+
+  _scope.destruct = function() {
+    _scope.removeEventListeners && _scope.removeEventListeners();
+
+    _polyfill = null;
+    _handlers = null;
+
+    _super.destruct();
+  }
 });
 rof(ASJS.EventDispatcher, "createEvent", function(event, data, bubble) {
   return !tis(event, "string")
     ? event
     : new CustomEvent(ASJS.Polyfill.instance.convertEventType(event), {
-        detail: data,
-        cancelable: true,
-        bubbles: empty(bubble) ? true : bubble
+        detail     : data,
+        cancelable : true,
+        bubbles    : empty(bubble) ? true : bubble
     });
 });

@@ -44,6 +44,7 @@ function(_scope) {
     checkMediaSource();
     checkCSSPrefix();
     checkEndian();
+    checkArray();
   }
 
   get(_scope, "isLittleEndian", function() { return _isLittleEndian; });
@@ -358,5 +359,14 @@ function(_scope) {
     var c = new Uint8Array(b);
     a[0] = 0xdeadbeef;
     _isLittleEndian = c[0] == 0xef;
+  }
+
+  function checkArray() {
+    Array.prototype.has = function(item) {
+      return this.indexOf(item) > -1;
+    }
+    Array.prototype.remove = function(item) {
+      this.has(item) && this.splice(this.indexOf(item), 1);
+    }
   }
 });

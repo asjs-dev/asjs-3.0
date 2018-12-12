@@ -3,7 +3,7 @@ require("../../utils/asjs.Cycler.js");
 ASJS.Easing = createClass(
 "Easing",
 ASJS.BaseClass,
-function(_scope) {
+function(_scope, _super) {
   var _cycler = ASJS.Cycler.instance;
   var _isPlaying;
   var _id;
@@ -45,6 +45,25 @@ function(_scope) {
     if (!ASJS.Easing[_type]) _type = "linearTween";
 
     letsPlay();
+  }
+
+  _scope.destruct = function() {
+    _scope.stop();
+
+    _cycler           = null;
+    _isPlaying        = null;
+    _id               = null;
+    _step             = null;
+    _target           = null;
+    _from             = null;
+    _change           = null;
+    _to               = null;
+    _type             = null;
+    _duration         = null;
+    _stepCallback     = null;
+    _completeCallback = null;
+
+    _super.destruct();
   }
 
   function letsPlay() {

@@ -48,4 +48,11 @@ function(_scope, _super) {
   _scope.render = function() {
     _select.setSize(_scope.width + 30, _scope.height);
   }
+
+  _scope.destruct = function() {
+    destructClass(_select);
+    _select = null;
+
+    _super.destruct();
+  }
 });

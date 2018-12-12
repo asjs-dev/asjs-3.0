@@ -9,7 +9,7 @@ ASJS.DisplayObject,
 function(_scope, _super) {
   var priv = {};
 
-  cnst(priv, "TARGET_FILL", "targetFill");
+  cnst(priv, "TARGET_FILL",   "targetFill");
   cnst(priv, "TARGET_STROKE", "targetStroke");
 
   var _filtersReady = true;
@@ -219,7 +219,8 @@ function(_scope, _super) {
   _scope.destroy = function() {
     _scope.clearRect(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     _scope.setBitmapSize(1, 1);
-    if (_original) _original = null;
+    destructClass(_original);
+    _original = null;
   }
 
   _scope.setBitmapSize = function(width, height) {
@@ -246,6 +247,21 @@ function(_scope, _super) {
 
   _scope.restore = function() {
     getContext().restore();
+  }
+
+  _scope.destruct = function() {
+    _scope.destroy();
+
+    priv           = null;
+    _filtersReady  = null;
+    _drawLine      = null;
+    _keepOriginal  = null;
+    _drawFill      = null;
+    _context       = null;
+    _bitmapFilters = null;
+    _original      = null;
+
+    _super.destruct();
   }
 
   function beginPath() {

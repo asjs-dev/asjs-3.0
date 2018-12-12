@@ -24,9 +24,7 @@ function(_scope) {
   };
 
   _scope.removeCallback = function(callback) {
-    if (!_scope.callbackExists(callback)) return;
-
-    _callbacks.splice(_scope.getCallbackId(callback), 1);
+    _callbacks.remove(callback);
   };
 
   _scope.getCallbackId = function(callback) {
@@ -34,7 +32,7 @@ function(_scope) {
   }
 
   _scope.callbackExists = function(callback) {
-    return _scope.getCallbackId(callback) > -1;
+    return _callbacks.has(callback);
   };
 
   _scope.start = function() {
@@ -46,7 +44,6 @@ function(_scope) {
     _isPlaying = false;
     _timeoutId = clearTimeout(_timeoutId);
   };
-
   function tick() {
     _timeoutId = clearTimeout(_timeoutId);
 

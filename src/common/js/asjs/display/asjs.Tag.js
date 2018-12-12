@@ -111,9 +111,14 @@ function(_scope, _super) {
   }
 
   _scope.destruct = function() {
-    _scope && tis(_scope.clear, "function") && _scope.clear();
+    _parent && _parent.removeChild && _parent.removeChild(_scope);
 
-    _el    = null;
+    _scope.clear && _scope.clear();
+
+    _el     = null;
+    _parent = null;
+    _state  = null;
+
     _super.destruct();
   }
 });

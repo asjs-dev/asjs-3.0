@@ -55,6 +55,14 @@ function(_scope, _super) {
     }
   });
 
+  _scope.destruct = function() {
+    _restrict = null;
+    destructClass(_helperElement);
+    _helperElement = null;
+
+    _super.destruct();
+  }
+
   function onChange() {
     checkRestrict();
   }
