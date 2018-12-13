@@ -1,10 +1,13 @@
 require("../event/asjs.KeyboardEvent.js");
 require("../event/asjs.FocusEvent.js");
+require("../display/asjs.Window.js");
 
 ASJS.Keyboard = createClass(
 "Keyboard",
 ASJS.BaseClass,
 function(_scope, _super) {
+  var _window = ASJS.Window.instance;
+
   var _pressedKeys = {};
   var _targets     = [];
 
@@ -26,9 +29,9 @@ function(_scope, _super) {
     _scope.removeKeyListener(target);
 
     target.addEventListener(ASJS.KeyboardEvent.KEY_DOWN, onKeyDown);
-    target.addEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
+    target.addEventListener(ASJS.KeyboardEvent.KEY_UP,   onKeyUp);
 
-    !window.hasEventListener(ASJS.FocusEvent.BLUR, onBlur) && window.addEventListener(ASJS.FocusEvent.BLUR, onBlur);
+    _window.addEventListener(ASJS.FocusEvent.BLUR, onBlur);
   };
 
   _scope.removeKeyListener = function(target) {
@@ -36,9 +39,9 @@ function(_scope, _super) {
     _targets.remove(target);
 
     target.removeEventListener(ASJS.KeyboardEvent.KEY_DOWN, onKeyDown);
-    target.removeEventListener(ASJS.KeyboardEvent.KEY_UP, onKeyUp);
+    target.removeEventListener(ASJS.KeyboardEvent.KEY_UP,   onKeyUp);
 
-    window.hasEventListener(ASJS.FocusEvent.BLUR, onBlur) && window.removeEventListener(ASJS.FocusEvent.BLUR, onBlur);
+    _window.removeEventListener(ASJS.FocusEvent.BLUR, onBlur);
   };
 
   _scope.destruct = function() {
