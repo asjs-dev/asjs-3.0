@@ -10,7 +10,7 @@ function(_scope) {
   get(_scope, "mouseX", function() { return _mousePos.x; });
 
   get(_scope, "mouseY", function() { return _mousePos.y; });
-  
+
   _scope.show = function() {
     stage.setCSS("cursor", "default");
   };
@@ -27,7 +27,7 @@ function(_scope) {
     window.addEventListener(ASJS.MouseEvent.MOUSE_MOVE, onMouseMove);
     window.addEventListener(ASJS.MouseEvent.TOUCH_MOVE, onMouseMove);
   };
-  
+
   function onMouseMove(e) {
     var iosTouchEvent = e.touches;
     var androidTouchEvent = e.originalEvent ? e.originalEvent.touches : null;

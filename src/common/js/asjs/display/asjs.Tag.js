@@ -115,10 +115,10 @@ function(_scope, _super) {
 
     _scope.clear && _scope.clear();
 
+    _super.destruct();
+
     _el     = null;
     _parent = null;
     _state  = null;
-
-    _super.destruct();
   }
 });

@@ -105,35 +105,38 @@ var animationFrameFunction = function(callback) {
 }
 var aff = animationFrameFunction;
 
-var map = function(object, callback) {
-  var key;
-  for (key in object) {
-    var value = callback(key, object[key]);
-    if (!emp(value)) object[key] = value;
+var map = function(o, cb) {
+  for (var k in o) {
+    if (!o.hasOwnProperty(k)) continue;
+    var v = cb(k, o[k]);
+    if (!emp(v)) o[k] = v;
   }
 }
 
-var iterateOver = function(object, callback, completeCallback) {
-  if (emp(object)) return;
-  var keys = Object.keys(object);
-  var key;
-  var index = -1;
-  function end() {
-    completeCallback && completeCallback();
+var iterateOver = function(o, cb, ccb) {
+  if (emp(o)) return en();
+  var ks = Object.keys(o);
+  var k;
+  var i = -1;
+  function en() {
+    ccb && ccb();
   }
-  function next() {
-    index++;
-    if (index === keys.length) {
-      end();
+  function n() {
+    i++;
+    if (i === ks.length) {
+      en();
       return;
     }
-    key = keys[index];
+    k = ks[i];
+    if (!o.hasOwnProperty(k)) n();
+    var iv;
     try {
-      var value = callback(key, object[key], next, end);
-      if (!emp(value)) object[key] = value;
-    } catch (e) { next(); }
+      iv = o[k];
+    } catch (e) {}
+    var v = cb(k, iv, n, en);
+    if (!emp(v)) o[k] = v;
   }
-  next();
+  n();
 }
 var ito = iterateOver;
 
@@ -167,8 +170,13 @@ var destructClass = function(t) {
 }
 var destCls = destructClass;
 
+var emptyFunction = function() {}
+var ef = emptyFunction;
+
 var deleteProperty = function(t, p) {
-  t[p] = null;
+  var desc = Object.getOwnPropertyDescriptor(t, p);
+  if (desc && (desc.get || desc.set)) prop(t, p, {set: ef, get: ef});
+  else t[p] = null;
   delete t[p];
 }
 var del = deleteProperty;

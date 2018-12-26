@@ -175,7 +175,7 @@ function(_scope, _super) {
     _scaleX     = null;
     _scaleY     = null;
     _cssDisplay = null;
-    
+
     _super.destruct();
   }
 
