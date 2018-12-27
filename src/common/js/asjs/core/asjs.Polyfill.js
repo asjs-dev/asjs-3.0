@@ -370,3 +370,20 @@ function(_scope) {
     }
   }
 });
+cnst(ASJS.Polyfill, "SCROLL_SIZE", -20);
+cnst(ASJS.Polyfill, "SCROLL_DELTA", {
+  "X": {
+    "1": ASJS.Polyfill.SCROLL_SIZE,
+    "2": 0
+  },
+  "Y": {
+    "1": 0,
+    "2": ASJS.Polyfill.SCROLL_SIZE
+  }
+});
+rof(ASJS.Polyfill, "getScrollData", function(event) {
+  return new ASJS.Point(
+    event.wheelDeltaX || event.deltaX || (event.detail * ASJS.Polyfill.SCROLL_DELTA.X[event.axis]),
+    event.wheelDeltaY || event.deltaY || (event.detail * ASJS.Polyfill.SCROLL_DELTA.Y[event.axis])
+  );
+});

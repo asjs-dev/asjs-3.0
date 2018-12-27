@@ -1,4 +1,5 @@
 require("./asjs.DisplayObject.js");
+require("../core/asjs.Polyfill.js");
 require("../geom/asjs.GeomUtils.js");
 require("../event/asjs.DocumentEvent.js");
 
@@ -95,8 +96,10 @@ function(_scope, _super) {
   function scroll(event) {
     if (!_target) return;
 
-    _target.el.scrollLeft += event.deltaX;
-    _target.el.scrollTop  += event.deltaY;
+    var scrollDelta = ASJS.Polyfill.getScrollData(event);
+    
+    _target.el.scrollLeft += scrollDelta.x;
+    _target.el.scrollTop  += scrollDelta.y;
 
     _scope.update();
   }
@@ -110,7 +113,8 @@ function(_scope, _super) {
     _target.setCSS("overflow", _originalOverflow);
 
     _scope.contains(_horizontalScrollBar) && _scope.removeChild(_horizontalScrollBar);
-    _scope.contains(_verticalScrollBar) && _scope.removeChild(_verticalScrollBar);
+    _scope.contains(_verticalScrollBar)   && _scope.removeChild(_verticalScrollBar);
+
     _scope.move(0, 0);
   }
 
