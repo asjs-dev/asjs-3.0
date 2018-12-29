@@ -62,9 +62,9 @@ function(_scope, _super) {
     set: function(v) {
       _filters = v;
       var filters = "";
+      var filter;
       var i = -1;
-      var l = _filters.length;
-      while (++i < l) filters += " " + _filters[i].execute();
+      while (filter = _filters[++i]) filters += " " + filter.execute();
       _scope.setCSS("filter", filters);
     }
   });

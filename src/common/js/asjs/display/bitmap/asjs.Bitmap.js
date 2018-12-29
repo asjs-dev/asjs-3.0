@@ -327,17 +327,20 @@ function(_scope, _super) {
     return _context;
   }
 
+  function clearBitmapFilters() {
+    var filter;
+    while (filter = _scope.bitmapFilters.shift()) filter.destruct();
+  }
+
   function executeFilters() {
     if (!_filtersReady) return;
     _filtersReady = false;
 
-    var l = _scope.bitmapFilters.length;
-
-    if (l == 0) return;
+    if (_scope.bitmapFilters.length === 0) return;
 
     if (_scope.keepOriginal) {
       if (!_original) {
-        _original = new ASJS.Image();
+        _original     = new ASJS.Image();
         _original.src = _scope.getDataUrl("image/png", 1.0);
       } else {
         _scope.drawImage(_original, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
@@ -345,12 +348,11 @@ function(_scope, _super) {
       }
     }
 
-    var i = -1;
     var pixels = _scope.getImageData(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     var filter;
-    while (filter = _scope.bitmapFilters[++i]) {
-      filter.execute(pixels);
-    }
+    var i = -1;
+    while (filter = _scope.bitmapFilters[++i]) filter.execute(pixels);
+
     pixels.data.set(pixels);
     _scope.putImageData(pixels, 0, 0);
     _filtersReady = true;
