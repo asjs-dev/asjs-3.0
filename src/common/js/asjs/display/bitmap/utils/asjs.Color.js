@@ -6,13 +6,8 @@ function(_scope) {
     _scope.r = r || 0;
     _scope.g = g || 0;
     _scope.b = b || 0;
-    _scope.a = a || 255;
+    _scope.a = tis(a, "number") ? a : 1;
   }
-
-  prop(_scope, "alpha", {
-    get: function() { return _scope.a / 255; },
-    set: function(v) { _scope.a = (v || 1) * 255; }
-  });
 });
 
 rof(ASJS.Color, "twoColorDistance", function(c1, c2) {
@@ -50,7 +45,7 @@ rof(ASJS.Color, "rgbaHexToColor", function(hex) {
     parseInt(result[0], 16) || 0,
     parseInt(result[1], 16) || 0,
     parseInt(result[2], 16) || 0,
-    parseInt(result[3], 16) || 255
+    parseInt(result[3], 16) || 1
   );
 });
 
@@ -61,7 +56,7 @@ rof(ASJS.Color, "argbHexToColor", function(hex) {
     parseInt(result[1], 16) || 0,
     parseInt(result[2], 16) || 0,
     parseInt(result[3], 16) || 0,
-    parseInt(result[0], 16) || 255
+    parseInt(result[0], 16) || 1
   );
 });
 
@@ -72,7 +67,7 @@ rof(ASJS.Color, "abgrHexToColor", function(hex) {
     parseInt(result[3], 16) || 0,
     parseInt(result[2], 16) || 0,
     parseInt(result[1], 16) || 0,
-    parseInt(result[0], 16) || 255
+    parseInt(result[0], 16) || 1
   );
 });
 

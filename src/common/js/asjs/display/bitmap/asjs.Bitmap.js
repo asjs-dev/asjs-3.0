@@ -304,16 +304,14 @@ function(_scope, _super) {
     var ctx = getContext();
     var gradient;
     switch (type) {
-      case ASJS.Bitmap.GRADIENT_LINEAR: gradient = ctx.createLinearGradient(gradientParams);
+      case ASJS.Bitmap.GRADIENT_LINEAR: gradient = ctx.createLinearGradient.apply(ctx, gradientData);
       break;
-      case ASJS.Bitmap.GRADIENT_RADIAL: gradient = ctx.createRadialGradient(gradientParams);
+      case ASJS.Bitmap.GRADIENT_RADIAL: gradient = ctx.createRadialGradient.apply(ctx, gradientData);
       break;
     }
     var i = -1;
     var color;
-    while (color = colors[ ++i ]) {
-      addColorToGradient(gradient, color.stop, color.color, color.alpha);
-    }
+    while (color = colors[++i]) addColorToGradient(gradient, color.stop, color.color, color.alpha);
     fillStyle(targetType, gradient);
   }
 

@@ -55,9 +55,7 @@ require("display/asjs.ScrollBar.js");
 require("display/bitmap/utils/asjs.BitmapBounds.js");
 require("display/bitmap/utils/asjs.Color.js");
 
-require("display/bitmap/vo/asjs.RadialGradientVo.js");
 require("display/bitmap/vo/asjs.GradientColorVo.js");
-require("display/bitmap/vo/asjs.LinearGradientVo.js");
 require("display/bitmap/filters/asjs.CutoutBitmapFilter.js");
 require("display/bitmap/filters/asjs.ColorLimitBitmapFilter.js");
 require("display/bitmap/filters/asjs.ColorChangeBitmapFilter.js");
