@@ -9,12 +9,6 @@ function(_scope, _super) {
     _super.new("img");
   }
 
-  get(_scope, "bitmap", function() {
-    var bmp = new ASJS.Bitmap(_scope.imageWidth, _scope.imageHeight);
-        bmp.drawImage(_scope, 0, 0, _scope.imageWidth, _scope.imageHeight, 0, 0, _scope.imageWidth, _scope.imageHeight);
-    return bmp;
-  });
-
   get(_scope, "imageWidth", function() { return _scope.el.width; });
 
   get(_scope, "imageHeight", function() { return _scope.el.height; });
@@ -28,4 +22,9 @@ function(_scope, _super) {
     get: function() { return _scope.getAttr("alt"); },
     set: function(v) { _scope.setAttr("alt", v); }
   });
+});
+rof(ASJS.Image, "convertToBitmap", function(image) {
+  var bmp = new ASJS.Bitmap(image.imageWidth, image.imageHeight);
+      bmp.drawImage(image, 0, 0, image.imageWidth, image.imageHeight, 0, 0, image.imageWidth, image.imageHeight);
+  return bmp;
 });

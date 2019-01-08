@@ -219,7 +219,7 @@ function(_scope, _super) {
   _scope.destroy = function() {
     _scope.clearRect(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     _scope.setBitmapSize(1, 1);
-    destructClass(_original);
+    _original && _original.destruct();
     _original = null;
   }
 
