@@ -23,6 +23,10 @@ rof(ASJS.Color, "valuesFromHex", function(hex) {
   return hex.replace(/^(#|0x)/, "").match(/.{1,2}/g);
 });
 
+rof(ASJS.Color, "hexStringToInt", function(hex) {
+  return parseInt(hex.replace(/#|0x/, ""), 16);
+});
+
 rof(ASJS.Color, "intToHex", function(v) {
   var hex = (v || 0).toString(16);
   return (hex.length < 2 ? "0" : "") + hex;

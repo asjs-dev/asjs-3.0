@@ -192,12 +192,12 @@ function(_scope, _super) {
 
   _scope.getColorRgb = function(x, y) {
     var color = _scope.getImageData(x, y, 1, 1);
-    return {
-      r: color.data[ 0 ],
-      g: color.data[ 1 ],
-      b: color.data[ 2 ],
-      a: color.data[ 3 ]
-    };
+    return new ASJS.Color(
+      color.data[0],
+      color.data[1],
+      color.data[2],
+      color.data[3] / 255
+    );
   }
 
   _scope.setColor = function(x, y) {
@@ -276,7 +276,7 @@ function(_scope, _super) {
 
   function addColorToGradient(gradient, stop, color, alpha) {
     var rgba = is(color, ASJS.Color) ? color : ASJS.Color.rgbHexToColor(color);
-        rgba.alpha = alpha;
+        rgba.a = alpha;
     gradient.addColorStop(stop, ASJS.Color.colorToString(rgba));
   }
 
@@ -296,7 +296,7 @@ function(_scope, _super) {
 
   function beginColorFill(targetType, rgb, alpha) {
     var rgba = is(rgb, ASJS.Color) ? rgb : ASJS.Color.rgbHexToColor(rgb);
-        rgba.alpha = alpha;
+        rgba.a = alpha;
     fillStyle(targetType, ASJS.Color.colorToString(rgba));
   }
 
