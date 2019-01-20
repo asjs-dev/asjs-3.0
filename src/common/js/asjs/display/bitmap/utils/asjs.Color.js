@@ -16,7 +16,7 @@ rof(ASJS.Color, "twoColorDistance", function(c1, c2) {
 });
 
 rof(ASJS.Color, "colorToString", function(color) {
-  return "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.alpha + ")";
+  return "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
 });
 
 rof(ASJS.Color, "valuesFromHex", function(hex) {
