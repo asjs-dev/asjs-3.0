@@ -161,7 +161,13 @@ function(_scope, _super) {
 
   _scope.drawImage = function(image, sx, sy, sw, sh, x, y, w, h) {
     try {
-      getContext().drawImage(image.el, sx, sy, sw, sh, x, y, w, h);
+      getContext().drawImage(
+        image.el,
+        sx || 0, sy || 0,
+        sw || image.imageWidth, sh || image.imageHeight,
+        x || 0, y || 0,
+        w || _scope.bitmapWidth, h || _scope.bitmapHeight
+      );
     } catch (e) {}
   }
 
@@ -219,7 +225,6 @@ function(_scope, _super) {
   _scope.destroy = function() {
     _scope.clearRect(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     _scope.setBitmapSize(1, 1);
-    _original && _original.destruct();
     _original = null;
   }
 
@@ -229,15 +234,20 @@ function(_scope, _super) {
   }
 
   _scope.clone = function() {
+    var pixels = _scope.getImageData(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
+
     var bmp = new ASJS.Bitmap(_scope.bitmapWidth, _scope.bitmapHeight);
-      bmp.setSize(_scope.bitmapWidth, _scope.bitmapHeight);
-      bmp.drawImage(_scope, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
+        bmp.putImageData(pixels, 0, 0);
+
     return bmp;
   }
 
   _scope.getOriginal = function() {
+    if (!_original) return _scope;
+
     var bmp = new ASJS.Bitmap(_scope.bitmapWidth, _scope.bitmapHeight);
-    if (_original) bmp.drawImage(_original, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
+        bmp.putImageData(_original, 0, 0);
+
     return bmp;
   }
 
@@ -337,13 +347,8 @@ function(_scope, _super) {
     if (_scope.bitmapFilters.length === 0) return;
 
     if (_scope.keepOriginal) {
-      if (!_original) {
-        _original     = new ASJS.Image();
-        _original.src = _scope.getDataUrl("image/png", 1.0);
-      } else {
-        _scope.drawImage(_original, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight, 0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
-        _original = null;
-      }
+      if (!_original) _original = _scope.getImageData(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
+      _scope.putImageData(_original, 0, 0);
     }
 
     var pixels = _scope.getImageData(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
@@ -351,7 +356,6 @@ function(_scope, _super) {
     var i = -1;
     while (filter = _scope.bitmapFilters[++i]) filter.execute(pixels);
 
-    pixels.data.set(pixels);
     _scope.putImageData(pixels, 0, 0);
     _filtersReady = true;
   }

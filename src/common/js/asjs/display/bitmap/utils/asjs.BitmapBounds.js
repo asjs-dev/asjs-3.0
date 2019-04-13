@@ -13,13 +13,13 @@ rof(ASJS.BitmapBounds, "execute", function(bitmap) {
 
   var i = -4;
   var l = d.length;
+  var pixelPos = new ASJS.Point();
   while ((i += 4) < l) {
     if (d[ i + 3 ] > 0) {
       var pixelLinearPos = Math.floor(i / 4);
-      var pixelPos = new ASJS.Point(
-        Math.floor(pixelLinearPos % w),
-        Math.floor(pixelLinearPos / w)
-      );
+
+      pixelPos.x = Math.floor(pixelLinearPos % w);
+      pixelPos.y = Math.floor(pixelLinearPos / w);
 
       if (pixelPos.x < size.x) size.x = pixelPos.x;
       if (pixelPos.y < size.y) size.y = pixelPos.y;

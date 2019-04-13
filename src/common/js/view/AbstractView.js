@@ -15,7 +15,7 @@ function(_scope, _super) {
 
   _super.protected.animateTo = function(to, completeCallback) {
     _completeCallback = completeCallback;
-    _scope.alpha = Math.max(0, Math.min(1, to));
+    _scope.alpha = bw(0, 1, to);
   }
 
   _scope.hide = function(callback) {

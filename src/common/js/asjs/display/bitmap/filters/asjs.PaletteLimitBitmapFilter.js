@@ -23,10 +23,12 @@ function(_scope) {
     var i = -4;
     var l = d.length;
     var m = _palette.length;
+    var originalColor = new ASJS.Color();
     while ((i += 4) < l) {
       if (d[i + 3] === 0) continue;
-      var originalColor = new ASJS.Color(d[i], d[i + 1], d[i + 2]);
-      var hexValue      = ASJS.Color.colorToRgbHex(originalColor);
+      originalColor.set(d[i], d[i + 1], d[i + 2]);
+
+      var hexValue = ASJS.Color.colorToRgbHex(originalColor);
 
       if (_map[hexValue]) selectedColor = _map[hexValue];
       else {

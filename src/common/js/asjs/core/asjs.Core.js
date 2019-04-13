@@ -40,7 +40,8 @@ var ASJS = (function() {
     }
     trc("<AS/JS> core version: {{appVersion}}.{{date}}");
     try {
-      stage.addChild(new b());
+      var app = new b();
+      is(app, ASJS.Tag) && stage.addChild(app);
     } catch (e) {
       trc(e);
     }
@@ -139,6 +140,11 @@ var iterateOver = function(o, cb, ccb) {
   n();
 }
 var ito = iterateOver;
+
+var between = function(a, b, c) {
+  return Math.max(a, Math.min(b, c));
+}
+var bw = between;
 
 var extendProperties = function(t) {
   var s = {};

@@ -93,7 +93,7 @@ function(_scope) {
   }
 
   function calcDPI() {
-    _dpi = Math.min(2, Math.max(1, window.devicePixelRatio || (window.screen.deviceXDPI / window.screen.logicalXDPI) || 1));
+    _dpi = bw(1, 2, window.devicePixelRatio || (window.screen.deviceXDPI / window.screen.logicalXDPI) || 1);
   }
 });
 msg(MobileUtils, "ORIENTATION_LANDSCAPE");

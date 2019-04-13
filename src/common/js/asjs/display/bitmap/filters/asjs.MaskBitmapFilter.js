@@ -28,12 +28,13 @@ function(_scope) {
 
     var i = -4;
     var l = srcD.length;
+    var srcPixelPos = new ASJS.Point();
     while ((i += 4) < l) {
       var srcPixelLinearPos = Math.floor(i / 4);
-      var srcPixelPos = new ASJS.Point(
-        Math.floor(srcPixelLinearPos % srcW),
-        Math.floor(srcPixelLinearPos / srcW)
-      );
+
+      srcPixelPos.x = Math.floor(srcPixelLinearPos % srcW);
+      srcPixelPos.y = Math.floor(srcPixelLinearPos / srcW);
+
       if (srcPixelPos.x >= _scope.pos.x && srcPixelPos.y >= _scope.pos.y && srcPixelPos.x < maxMaskW && srcPixelPos.y < maxMaskH) {
         var j = ((srcPixelPos.y - _scope.pos.y) * maskW + (srcPixelPos.x - _scope.pos.x)) * 4;
         var sA = srcD[i + 3];

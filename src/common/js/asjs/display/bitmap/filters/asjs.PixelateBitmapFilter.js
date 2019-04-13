@@ -19,12 +19,11 @@ function(_scope) {
     var step = 4 * pixS;
     var i = - step;
     var l = d.length;
+    var pixelPos = new ASJS.Point();
     while ((i += step) < l) {
       var pixelLinearPos = Math.floor(i / 4);
-      var pixelPos = new ASJS.Point(
-        Math.floor(pixelLinearPos % w),
-        Math.floor(pixelLinearPos / w)
-      );
+      pixelPos.x = Math.floor(pixelLinearPos % w);
+      pixelPos.y = Math.floor(pixelLinearPos / w);
 
       if (pixelPos.x % pixS > 0) i = i - pixelPos.x * 4 - step;
       else if ((pixelPos.y % pixS) == 0) {

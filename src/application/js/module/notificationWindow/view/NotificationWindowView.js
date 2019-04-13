@@ -77,8 +77,8 @@ function(_scope, _super) {
     _scope.setSize(stage.stageWidth, stage.stageHeight);
 
     _window.setSize(
-      Math.max(150, Math.min(stage.stageWidth, _notificationItem.width)),
-      Math.max(150, Math.min(stage.stageHeight, _notificationItem.height))
+      bw(150, stage.stageWidth, _notificationItem.width),
+      bw(150, stage.stageHeight, _notificationItem.height)
     );
     _window.move(
       (stage.stageWidth - _window.width) * 0.5,
