@@ -4,7 +4,7 @@
 Try it: https://plnkr.co/edit/T8Ujtc?p=preview
 
 Examples:
-- http://budapestmakery.hu/videos/
+- http://budapestmakery.hu/videos/makery.html#lang=en
 
 Features:
 * AS3 like display list handling
