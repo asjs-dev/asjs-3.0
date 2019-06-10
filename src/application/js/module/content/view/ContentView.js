@@ -3,14 +3,11 @@ require("../../../../../common/js/view/AbstractView.js");
 require("../ContentMediator.js");
 require("./assets/Box.js");
 
-var ContentView = createClass(
-"ContentView",
-AbstractView,
-function(_scope, _super) {
-  var _language                  = Language.instance;
+createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) {
+  var _language                  = ASJSUtils.Language.instance;
   var _mouse                     = ASJS.Mouse.instance;
   var _background                = new ASJS.DisplayObject();
-  var _box                       = new Box();
+  var _box                       = new NS.Box();
   var _externalApplicationButton = new ASJS.Button();
   var _animatedSprite            = new ASJS.DisplayObject();
   var _drag                      = false;
@@ -63,9 +60,9 @@ function(_scope, _super) {
   }
 
   function removedFromStage() {
-    stage.removeEventListener(ASJS.MouseEvent.MOUSE_UP + " " + ASJS.MouseEvent.TOUCH_END,    onDragStop);
-    stage.removeEventListener(ASJS.MouseEvent.MOUSE_LEAVE,                                   onDragStop);
-    stage.removeEventListener(ASJS.MouseEvent.MOUSE_MOVE + " " + ASJS.MouseEvent.TOUCH_MOVE, onStageMouseMove);
+    stage.removeEventListener([ASJS.MouseEvent.MOUSE_UP, ASJS.MouseEvent.TOUCH_END],    onDragStop);
+    stage.removeEventListener(ASJS.MouseEvent.MOUSE_LEAVE,                              onDragStop);
+    stage.removeEventListener([ASJS.MouseEvent.MOUSE_MOVE, ASJS.MouseEvent.TOUCH_MOVE], onStageMouseMove);
 
     _scope.removeEventListener(ASJS.MouseEvent.CLICK, onMouseClick);
   }
@@ -111,6 +108,6 @@ function(_scope, _super) {
   }
 
   function onExternalApplicationButtonClick() {
-    _scope.dispatchEvent(ContentMediator.ON_SHOW_EXTERNAL_APPLICATION);
+    _scope.dispatchEvent(NS.ContentMediator.ON_SHOW_EXTERNAL_APPLICATION);
   }
 });

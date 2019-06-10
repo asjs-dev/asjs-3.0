@@ -1,10 +1,7 @@
 require("../asjs.DisplayObject.js");
 require("./asjs.FormElement.js");
 
-ASJS.RadioButton = createClass(
-"RadioButton",
-ASJS.FormElement,
-function(_scope, _super) {
+createClass(ASJS, "RadioButton", ASJS.FormElement, function(_scope, _super) {
   var _radio = new ASJS.DisplayObject("input");
   var _label = new ASJS.DisplayObject();
 

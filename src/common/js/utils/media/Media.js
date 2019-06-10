@@ -1,7 +1,6 @@
-var Media = createSingletonClass(
-"Media",
-ASJS.BaseClass,
-function(_scope) {
+require("../../NameSpace.js");
+
+createSingletonClass(ASJSUtils, "Media", ASJS.BaseClass, function(_scope) {
   _scope.getUserMedia = function(constraints, callback, errorCallback) {
     navigator.getUserMedia(constraints, callback, errorCallback);
   }
@@ -27,5 +26,5 @@ function(_scope) {
     return !!navigator.getUserMedia;
   }
 });
-cnst(Media, "FACING_MODE_USER",        "user");
-cnst(Media, "FACING_MODE_ENVIRONMENT", "environment");
+cnst(ASJSUtils.Media, "FACING_MODE_USER",        "user");
+cnst(ASJSUtils.Media, "FACING_MODE_ENVIRONMENT", "environment");

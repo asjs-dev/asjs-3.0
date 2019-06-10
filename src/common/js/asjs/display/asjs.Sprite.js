@@ -1,10 +1,7 @@
 require("../geom/asjs.Rectangle.js");
 require("./asjs.DisplayObject.js");
 
-ASJS.Sprite = createClass(
-"Sprite",
-ASJS.DisplayObject,
-function(_scope, _super) {
+createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   var _children      = [];
   var _mouseChildren = true;
 

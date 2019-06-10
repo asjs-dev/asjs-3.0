@@ -1,7 +1,4 @@
-ASJS.Color = createClass(
-"Color",
-ASJS.BaseClass,
-function(_scope) {
+createClass(ASJS, "Color", ASJS.BaseClass, function(_scope) {
   _scope.new = function(r, g, b, a) {
     _scope.set(r, g, b, a);
   }

@@ -1,19 +1,16 @@
 require("../../../../common/js/mediator/AbstractResizeMediator.js");
 require("./view/ExternalApplicationView.js");
 
-var ExternalApplicationMediator = createClass(
-"ExternalApplicationMediator",
-AbstractResizeMediator,
-function(_scope, _super) {
-  var _view   = new ExternalApplicationView();
+createClass(NS, "ExternalApplicationMediator", ASJSUtils.AbstractResizeMediator, function(_scope, _super) {
+  var _view   = new NS.ExternalApplicationView();
   var _loader = new ASJS.ScriptLoader();
 
   _scope.new = function(root) {
     _super.new(root);
-    _super.protected.addHandler(ExternalApplicationMediator.SHOW, onShow);
-    _super.protected.addHandler(ExternalApplicationMediator.HIDE, onHide);
+    _super.protected.addHandler(NS.ExternalApplicationMediator.SHOW, onShow);
+    _super.protected.addHandler(NS.ExternalApplicationMediator.HIDE, onHide);
 
-    _view.addEventListener(ExternalApplicationMediator.CLOSE, onClose);
+    _view.addEventListener(NS.ExternalApplicationMediator.CLOSE, onClose);
 
     _loader.addEventListener(ASJS.LoaderEvent.LOAD, onLoadExternalApplication);
     _loader.addEventListener(ASJS.LoaderEvent.PROGRESS, onProgressExternalApplication);
@@ -57,6 +54,6 @@ function(_scope, _super) {
     _view.title = ((e.detail.loaded / e.detail.total) * 100) + "%";
   }
 });
-msg(ExternalApplicationMediator, "SHOW");
-msg(ExternalApplicationMediator, "HIDE");
-msg(ExternalApplicationMediator, "CLOSE");
+msg(NS.ExternalApplicationMediator, "SHOW");
+msg(NS.ExternalApplicationMediator, "HIDE");
+msg(NS.ExternalApplicationMediator, "CLOSE");

@@ -1,4 +1,4 @@
-ASJS.BlendMode = {};
+createUtility(ASJS, "BlendMode");
 cnst(ASJS.BlendMode, "SOURCE_OVER",      "source-over");
 cnst(ASJS.BlendMode, "SOURCE_IN",        "source-in");
 cnst(ASJS.BlendMode, "SOURCE_OUT",       "source-out");

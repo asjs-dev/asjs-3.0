@@ -1,4 +1,4 @@
-ASJS.WindowEvent = {};
+createUtility(ASJS, "WindowEvent");
 cnst(ASJS.WindowEvent, "POPSTATE", "popstate");
 cnst(ASJS.WindowEvent, "RESIZE",   "resize");
 cnst(ASJS.WindowEvent, "ONLINE",   "online");

@@ -1,7 +1,7 @@
 require("../../../geom/asjs.Rectangle.js");
 require("../../../geom/asjs.Point.js");
 
-ASJS.BitmapBounds = {};
+createUtility(ASJS, "BitmapBounds");
 rof(ASJS.BitmapBounds, "execute", function(bitmap) {
   var pixels = bitmap.getImageData(0, 0, bitmap.bitmapWidth, bitmap.bitmapHeight);
 

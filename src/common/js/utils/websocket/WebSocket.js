@@ -1,7 +1,6 @@
-var WS = createClass(
-"WS",
-ASJS.EventDispatcher,
-function(_scope) {
+require("../../NameSpace.js");
+
+createClass(ASJSUtils, "WS", ASJS.EventDispatcher, function(_scope) {
   var priv = {};
 
   cnst(priv, "RECONNECT_INTERVALS", [1, 2, 3, 15, 30, 60, 120, 240, 300]);
@@ -14,9 +13,9 @@ function(_scope) {
 
   get(_scope, "url", function() { return _url; });
 
-  get(_scope, "isOpen", function() { return _scope.readyState === WS.OPEN; });
+  get(_scope, "isOpen", function() { return _scope.readyState === ASJSUtils.WS.OPEN; });
 
-  get(_scope, "readyState", function() { return _ws ? _ws.readyState : WS.CLOSED; });
+  get(_scope, "readyState", function() { return _ws ? _ws.readyState : ASJSUtils.WS.CLOSED; });
 
   get(_scope, "protocol", function() { return _ws ? _ws.protocol : null; });
 
@@ -52,15 +51,15 @@ function(_scope) {
 
   function onOpen(e) {
     _reconnectCounter = 0;
-    _scope.dispatchEvent(WS.ON_OPEN);
+    _scope.dispatchEvent(ASJSUtils.WS.ON_OPEN);
   }
 
   function onClose(e) {
-    _scope.dispatchEvent(WS.ON_CLOSED);
+    _scope.dispatchEvent(ASJSUtils.WS.ON_CLOSED);
     if (!e.wasClean && _scope.tryToReconnect) {
       _reconnectCounter = Math.min(priv.RECONNECT_INTERVALS.length - 1, _reconnectCounter + 1);
       var timeout = priv.RECONNECT_INTERVALS[_reconnectCounter];
-      _scope.dispatchEvent(WS.ON_RECONNECT, timeout);
+      _scope.dispatchEvent(ASJSUtils.WS.ON_RECONNECT, timeout);
       _reconnectTimeoutId = clearTimeout(_reconnectTimeoutId);
       _reconnectTimeoutId = setTimeout(reconnect, timeout * 1000);
     }
@@ -72,19 +71,19 @@ function(_scope) {
   }
 
   function onMessage(e) {
-    _scope.dispatchEvent(WS.ON_MESSAGE, e.data);
+    _scope.dispatchEvent(ASJSUtils.WS.ON_MESSAGE, e.data);
   }
 
   function onError(e) {
-    _scope.dispatchEvent(WS.ON_ERROR, e);
+    _scope.dispatchEvent(ASJSUtils.WS.ON_ERROR, e);
   }
 });
-cnst(WS, "CONNECTING",   0);
-cnst(WS, "OPEN",         1);
-cnst(WS, "CLOSING",      2);
-cnst(WS, "CLOSED",       3);
-msg(WS, "ON_OPEN");
-msg(WS, "ON_CLOSED");
-msg(WS, "ON_ERROR");
-msg(WS, "ON_MESSAGE");
-msg(WS, "ON_RECONNECT");
+cnst(ASJSUtils.WS, "CONNECTING",   0);
+cnst(ASJSUtils.WS, "OPEN",         1);
+cnst(ASJSUtils.WS, "CLOSING",      2);
+cnst(ASJSUtils.WS, "CLOSED",       3);
+msg(ASJSUtils.WS, "ON_OPEN");
+msg(ASJSUtils.WS, "ON_CLOSED");
+msg(ASJSUtils.WS, "ON_ERROR");
+msg(ASJSUtils.WS, "ON_MESSAGE");
+msg(ASJSUtils.WS, "ON_RECONNECT");

@@ -2,11 +2,8 @@ require("../../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../../common/js/view/AbstractView.js");
 require("../ExternalApplicationMediator.js");
 
-var ExternalApplicationView = createClass(
-"ExternalApplicationView",
-AbstractView,
-function(_scope, _super) {
-  var _language = Language.instance;
+createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractView, function(_scope, _super) {
+  var _language = ASJSUtils.Language.instance;
   var _mouse    = ASJS.Mouse.instance;
 
   var _container   = new ASJS.Sprite();
@@ -73,7 +70,7 @@ function(_scope, _super) {
 
   function onCloseClick() {
     _super.protected.animateTo(0, function() {
-      _scope.dispatchEvent(ExternalApplicationMediator.CLOSE);
+      _scope.dispatchEvent(NS.ExternalApplicationMediator.CLOSE);
     });
   }
 });

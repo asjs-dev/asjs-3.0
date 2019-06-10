@@ -2,12 +2,9 @@ require("../display/asjs.Head.js");
 require("../core/asjs.Polyfill.js");
 require("../utils/asjs.CSS.js");
 
-ASJS.CSS = createSingletonClass(
-"CSS",
-ASJS.BaseClass,
-function(_scope) {
+createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
   var _head = ASJS.Head.instance;
-  
+
   var _runTimeStyle;
   var _merged;
 
@@ -92,7 +89,7 @@ function(_scope) {
     _head.addChild(_runTimeStyle);
   }
 
-  var Rule = createClass("Rule", ASJS.BaseClass, function(_super) {
+  createClass(this, "Rule", ASJS.BaseClass, function(_super) {
     _scope.sheetId;
     _scope.ruleId;
     _scope.rule;

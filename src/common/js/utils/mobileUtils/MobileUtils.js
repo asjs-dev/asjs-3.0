@@ -1,7 +1,6 @@
-var MobileUtils = createSingletonClass(
-"MobileUtils",
-ASJS.BaseClass,
-function(_scope) {
+require("../../NameSpace.js");
+
+createSingletonClass(ASJSUtils, "MobileUtils", ASJS.BaseClass, function(_scope) {
   var _dpi;
   var _baseSize;
   var _type;
@@ -14,7 +13,7 @@ function(_scope) {
 
     _baseSize = 0;
 
-    _type          = MobileUtils.TYPE_WIDTH;
+    _type          = ASJSUtils.MobileUtils.TYPE_WIDTH;
     _useDPI        = false;
     _useScreenSize = false;
 
@@ -51,15 +50,15 @@ function(_scope) {
   });
 
   _scope.getOrientation = function() {
-    return _scope.width > _scope.height ? MobileUtils.ORIENTATION_LANDSCAPE : MobileUtils.ORIENTATION_PORTRAIT;
+    return _scope.width > _scope.height ? ASJSUtils.MobileUtils.ORIENTATION_LANDSCAPE : ASJSUtils.MobileUtils.ORIENTATION_PORTRAIT;
   }
 
   _scope.getBrowserOrientation = function() {
-    return stage.stageWidth > stage.stageHeight ? MobileUtils.ORIENTATION_LANDSCAPE : MobileUtils.ORIENTATION_PORTRAIT;
+    return stage.stageWidth > stage.stageHeight ? ASJSUtils.MobileUtils.ORIENTATION_LANDSCAPE : ASJSUtils.MobileUtils.ORIENTATION_PORTRAIT;
   }
 
   _scope.getDeviceOrientation = function() {
-    return stage.screenWidth > stage.screenHeight ? MobileUtils.ORIENTATION_LANDSCAPE : MobileUtils.ORIENTATION_PORTRAIT;
+    return stage.screenWidth > stage.screenHeight ? ASJSUtils.MobileUtils.ORIENTATION_LANDSCAPE : ASJSUtilsS.MobileUtils.ORIENTATION_PORTRAIT;
   }
 
   _scope.getDPI = function() {
@@ -69,13 +68,13 @@ function(_scope) {
   _scope.getScreenWidth = function(fp) {
     if (fp) return _scope.width;
     switch (_scope.type) {
-      case MobileUtils.TYPE_WIDTH: return _scope.width;
+      case ASJSUtils.MobileUtils.TYPE_WIDTH: return _scope.width;
       break;
-      case MobileUtils.TYPE_HEIGHT: return _scope.height;
+      case ASJSUtils.MobileUtils.TYPE_HEIGHT: return _scope.height;
       break;
-      case MobileUtils.TYPE_MINIMUM: return Math.min(_scope.width, _scope.height);
+      case ASJSUtils.MobileUtils.TYPE_MINIMUM: return Math.min(_scope.width, _scope.height);
       break;
-      case MobileUtils.TYPE_MAXIMUM: return Math.max(_scope.width, _scope.height);
+      case ASJSUtils.MobileUtils.TYPE_MAXIMUM: return Math.max(_scope.width, _scope.height);
       break;
     }
   }
@@ -96,9 +95,9 @@ function(_scope) {
     _dpi = bw(1, 2, window.devicePixelRatio || (window.screen.deviceXDPI / window.screen.logicalXDPI) || 1);
   }
 });
-msg(MobileUtils, "ORIENTATION_LANDSCAPE");
-msg(MobileUtils, "ORIENTATION_PORTRAIT");
-msg(MobileUtils, "TYPE_MINIMUM");
-msg(MobileUtils, "TYPE_MAXIMUM");
-msg(MobileUtils, "TYPE_WIDTH");
-msg(MobileUtils, "TYPE_HEIGHT");
+msg(ASJSUtils.MobileUtils, "ORIENTATION_LANDSCAPE");
+msg(ASJSUtils.MobileUtils, "ORIENTATION_PORTRAIT");
+msg(ASJSUtils.MobileUtils, "TYPE_MINIMUM");
+msg(ASJSUtils.MobileUtils, "TYPE_MAXIMUM");
+msg(ASJSUtils.MobileUtils, "TYPE_WIDTH");
+msg(ASJSUtils.MobileUtils, "TYPE_HEIGHT");

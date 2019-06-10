@@ -1,10 +1,8 @@
 require("./GeolocationData.js");
+require("../../NameSpace.js");
 
-var Geolocation = createSingletonClass(
-"Geolocaton",
-ASJS.EventDispatcher,
-function(_scope) {
-  var _location = new GeolocationData();
+createSingletonClass(ASJSUtils, "Geolocaton", ASJS.EventDispatcher, function(_scope) {
+  var _location = new ASJSUtils.GeolocationData();
   var _geolocation;
   var _watchID;
 
@@ -37,14 +35,14 @@ function(_scope) {
   }
 
   function setGeoDatas(position) {
-    _location = new GeolocationData(position.coords);
+    _location = new ASJSUtils.GeolocationData(position.coords);
 
-    _scope.dispatchEvent(Geolocation.UPDATED, _location);
+    _scope.dispatchEvent(ASJSUtils.Geolocation.UPDATED, _location);
   }
 
   function errorGettingPosition(error) {
-    _scope.dispatchEvent(Geolocation.ERROR, error);
+    _scope.dispatchEvent(ASJSUtils.Geolocation.ERROR, error);
   }
 });
-msg(Geolocation, "UPDATED");
-msg(Geolocation, "ERROR");
+msg(ASJSUtils.Geolocation, "UPDATED");
+msg(ASJSUtils.Geolocation, "ERROR");

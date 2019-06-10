@@ -1,9 +1,6 @@
 require("./asjs.AbstractBitmapFilter.js");
 
-ASJS.TintBitmapFilter = createClass(
-"TintBitmapFilter",
-ASJS.AbstractBitmapFilter,
-function(_scope) {
+createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   _scope.new = function(color, blendModeFunction) {
     _scope.color = color || new ASJS.Color();
     _scope.blendModeFunction = blendModeFunction || ASJS.TintBitmapFilter.ADD;

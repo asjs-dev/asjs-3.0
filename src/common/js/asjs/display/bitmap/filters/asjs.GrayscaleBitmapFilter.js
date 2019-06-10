@@ -1,10 +1,7 @@
 require("../utils/asjs.Color.js");
 require("./asjs.AbstractBitmapFilter.js");
 
-ASJS.GrayscaleBitmapFilter = createClass(
-"GrayscaleBitmapFilter",
-ASJS.AbstractBitmapFilter,
-function(_scope) {
+createClass(ASJS, "GrayscaleBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   var _map = {};
 
   _scope.execute = function(pixels) {

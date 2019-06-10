@@ -1,7 +1,6 @@
-var GeolocationData = createClass(
-"GeolocationData",
-ASJS.BaseClass, 
-function(_scope) {
+require("../../NameSpace.js");
+
+createClass(ASJSUtils, "GeolocationData", ASJS.BaseClass, function(_scope) {
   _scope.new = function(data) {
     var d = data || {};
 

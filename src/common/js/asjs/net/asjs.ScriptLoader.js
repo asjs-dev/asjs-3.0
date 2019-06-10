@@ -1,9 +1,6 @@
 require("./asjs.Loader.js");
 
-ASJS.ScriptLoader = createClass(
-"ScriptLoader",
-ASJS.Loader,
-function(_scope, _super) {
+createClass(ASJS, "ScriptLoader", ASJS.Loader, function(_scope, _super) {
   var _content;
 
   get(_scope, "content", function() {

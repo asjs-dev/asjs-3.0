@@ -1,10 +1,7 @@
 require("../asjs.Sprite.js");
 require("./asjs.Cell.js");
 
-ASJS.CustomList = createClass(
-"CustomList",
-ASJS.Sprite,
-function(_scope, _super) {
+createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   var _multiselect    = false;
   var _cell           = ASJS.Cell;
   var _lastCellIndex  = 0;
@@ -148,7 +145,7 @@ function(_scope, _super) {
     _cell           = null;
     _lastCellIndex  = null;
     _name           = null;
-    
+
     destructClass(_itemsContainer);
     _itemsContainer = null;
 

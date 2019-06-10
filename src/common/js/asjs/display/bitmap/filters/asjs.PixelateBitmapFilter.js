@@ -1,10 +1,7 @@
 require("../../../geom/asjs.Point.js");
 require("./asjs.AbstractBitmapFilter.js");
 
-ASJS.PixelateBitmapFilter = createClass(
-"PixelateBitmapFilter",
-ASJS.AbstractBitmapFilter,
-function(_scope) {
+createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   _scope.new = function(value) {
     _scope.value = value;
   }

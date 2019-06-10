@@ -1,9 +1,6 @@
 require("./asjs.AbstractBitmapFilter.js");
 
-ASJS.InvertBitmapFilter = createClass(
-"InvertBitmapFilter",
-ASJS.AbstractBitmapFilter,
-function(_scope) {
+createClass(ASJS, "InvertBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   var _map = {};
 
   _scope.execute = function(pixels) {

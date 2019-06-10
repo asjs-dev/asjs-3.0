@@ -1,14 +1,12 @@
+require("./NameSpace.js");
 require("../../common/js/utils/dataUtils/Language.js");
 require("../../common/js/utils/dataUtils/Config.js");
 require("./controller/DestructCommand.js");
 require("./controller/StartupCommand.js");
 
-var Application = createClass(
-"Application",
-ASJS.Sprite,
-function(_scope, _super) {
-  var _language       = Language.instance;
-  var _config         = Config.instance;
+createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
+  var _language       = ASJSUtils.Language.instance;
+  var _config         = ASJSUtils.Config.instance;
   var _styleLoader    = new ASJS.StyleLoader();
   var _languageLoaded = false;
 
@@ -21,7 +19,7 @@ function(_scope, _super) {
   get(_scope, "title", function() { return _language.getText("title"); });
 
   _scope.destruct = function() {
-    (new DestructCommand()).execute(_scope);
+    (new NS.DestructCommand()).execute();
     _styleLoader.unload();
     _language.clear();
     _config.clear();
@@ -42,7 +40,7 @@ function(_scope, _super) {
   function onStyleLoaded() {
     _styleLoader.removeEventListener(ASJS.LoaderEvent.LOAD, onStyleLoaded);
     _styleLoader.useStyle();
-    (new StartupCommand()).execute(_scope);
+    (new NS.StartupCommand()).execute(_scope);
   }
 
   function onLanguageChanged() {
@@ -53,4 +51,4 @@ function(_scope, _super) {
   }
 });
 // -------------------- //
-return Application;
+return NS.Application;

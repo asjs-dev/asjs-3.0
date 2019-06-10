@@ -1,12 +1,9 @@
-require("../../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../../common/js/view/AbstractView.js");
+require("../../../../../common/js/utils/dataUtils/Language.js");
 require("../ContentMediator.js");
 
-var ContentView = createClass(
-"ContentView",
-AbstractView,
-function(_scope, _super) {
-  var _language = Language.instance;
+createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) {
+  var _language = ASJSUtils.Language.instance;
   var _parent;
 
   var _background = new ASJS.DisplayObject();

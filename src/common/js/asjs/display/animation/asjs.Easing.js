@@ -1,9 +1,6 @@
 require("../../utils/asjs.Cycler.js");
 
-ASJS.Easing = createClass(
-"Easing",
-ASJS.BaseClass,
-function(_scope, _super) {
+createClass(ASJS, "Easing", ASJS.BaseClass, function(_scope, _super) {
   var _cycler = ASJS.Cycler.instance;
   var _isPlaying;
   var _id;

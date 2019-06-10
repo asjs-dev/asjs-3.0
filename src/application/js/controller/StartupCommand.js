@@ -4,10 +4,7 @@ require("../../../common/js/utils/dataUtils/Config.js");
 require("./startup/EnvironmentCommand.js");
 require("./startup/ViewPrepCommand.js");
 
-var StartupCommand = createClass(
-"StartupCommand",
-ASJS.AbstractCommand,
-function(_scope) {
+createClass(NS, "StartupCommand", ASJS.AbstractCommand, function(_scope) {
   var _app;
 
   _scope.execute = function(app) {
@@ -17,27 +14,27 @@ function(_scope) {
 
   function loadConfig() {
     loadJSON("config.dat", function(response) {
-      Config.instance.data = response;
+      ASJSUtils.Config.instance.data = response;
       loadLanguage();
     });
   }
 
   function loadLanguage() {
     loadJSON("language.dat", function(response) {
-      Language.instance.data = response;
+      ASJSUtils.Language.instance.data = response;
       initApplication();
     });
   }
 
   function initApplication() {
-    (new EnvironmentCommand()).execute();
-    (new ViewPrepCommand()).execute(_app);
+    (new NS.EnvironmentCommand()).execute();
+    (new NS.ViewPrepCommand()).execute(_app);
 
     _scope.destruct();
   }
 
   function loadJSON(url, callback) {
-    (new LoadJSONServiceCommand())
+    (new ASJSUtils.LoadJSONServiceCommand())
       .execute("data/" + url)
       .then(callback)
       .catch(onLoadError);

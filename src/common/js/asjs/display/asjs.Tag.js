@@ -2,10 +2,7 @@ require("../event/asjs.EventDispatcher.js");
 require("../geom/asjs.Rectangle.js");
 require("../utils/asjs.CSS.js");
 
-ASJS.Tag = createClass(
-"Tag",
-ASJS.EventDispatcher,
-function(_scope, _super) {
+createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   var priv = {};
 
   cnst(priv, "CREATED", "created");

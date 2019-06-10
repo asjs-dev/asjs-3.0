@@ -1,9 +1,6 @@
 require("./asjs.AbstractBitmapFilter.js");
 
-ASJS.ColorLimitBitmapFilter = createClass(
-"ColorLimitBitmapFilter",
-ASJS.AbstractBitmapFilter,
-function(_scope) {
+createClass(ASJS, "ColorLimitBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   var _map = {};
 
   _scope.new = function(threshold) {

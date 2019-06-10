@@ -1,10 +1,7 @@
 require("../utils/asjs.CSS.js");
 require("./asjs.Tag.js");
 
-ASJS.PrimitiveDisplayObject = createClass(
-"PrimitiveDisplayObject",
-ASJS.Tag,
-function(_scope, _super) {
+createClass(ASJS, "PrimitiveDisplayObject", ASJS.Tag, function(_scope, _super) {
   _scope.new = function(tag) {
     _super.new(tag);
     _scope.id = "instance_" + (++ASJS.PrimitiveDisplayObject.instanceId);

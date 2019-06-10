@@ -1,7 +1,6 @@
-var AbstractView = createClass(
-"AbstractView",
-ASJS.Sprite,
-function(_scope, _super) {
+require("../NameSpace.js");
+
+createClass(ASJSUtils, "AbstractView", ASJS.Sprite, function(_scope, _super) {
   var _completeCallback;
 
   _scope.new = function() {

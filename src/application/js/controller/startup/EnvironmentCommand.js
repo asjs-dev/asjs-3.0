@@ -3,14 +3,11 @@ require("../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../common/js/utils/dataUtils/Cookies.js");
 require("../../../../common/js/utils/dataUtils/Config.js");
 
-var EnvironmentCommand = createClass(
-"EnvironmentCommand",
-ASJS.AbstractCommand,
-function(_scope) {
-  var _language  = Language.instance;
-  var _cookies   = Cookies;
-  var _config    = Config.instance;
-  var _urlParser = URLParser.instance;
+createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
+  var _language  = ASJSUtils.Language.instance;
+  var _cookies   = ASJSUtils.Cookies;
+  var _config    = ASJSUtils.Config.instance;
+  var _urlParser = ASJSUtils.URLParser.instance;
   var _sleepToResizeId;
 
   _scope.execute = function() {

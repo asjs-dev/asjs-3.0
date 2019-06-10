@@ -3,10 +3,7 @@ require("../bitmap/utils/asjs.Color.js");
 require("../asjs.DisplayObject.js");
 require("../asjs.Image.js");
 
-ASJS.Bitmap = createClass(
-"Bitmap",
-ASJS.DisplayObject,
-function(_scope, _super) {
+createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   var priv = {};
 
   cnst(priv, "TARGET_FILL",   "targetFill");

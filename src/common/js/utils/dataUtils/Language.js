@@ -1,7 +1,6 @@
-var Language = createSingletonClass(
-"Language",
-ASJS.AbstractModel,
-function(_scope) {
+require("../../NameSpace.js");
+
+createSingletonClass(ASJSUtils, "Language", ASJS.AbstractModel, function(_scope) {
   get(_scope, "supportedLanguages", function() { return _scope.get("supportedLanguages"); });
 
   get(_scope, "selectedLanguage", function() { return _scope.get("selectedLanguage"); });

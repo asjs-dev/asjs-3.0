@@ -1,14 +1,14 @@
-require("../compressor/LZW.js");
+require("../../NameSpace.js");
 
-var FileSaver = {};
-rof(FileSaver, "save", function(fileName, data, compress) {
+createUtility(ASJSUtils, "FileSaver");
+rof(ASJSUtils.FileSaver, "save", function(fileName, data, compress) {
   if (!fileName) fileName = 'untitled.json';
   var fileType = "application/json";
 
   if (tis(data, "object")) data = JSON.stringify(data);
 
   if (compress) {
-    data = LZW.encode(data);
+    data = ASJS.LZW.encode(data);
     fileType = "octet/stream";
   }
 

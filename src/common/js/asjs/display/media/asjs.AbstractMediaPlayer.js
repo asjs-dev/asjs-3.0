@@ -1,9 +1,6 @@
 require("../asjs.Sprite.js");
 
-ASJS.AbstractMediaPlayer = createClass(
-"AbstractMediaPlayer",
-ASJS.Sprite,
-function(_scope, _super) {
+createClass(ASJS, "AbstractMediaPlayer", ASJS.Sprite, function(_scope, _super) {
   _scope.new = function(tag) {
     _super.new(tag);
     _scope.controls = false;

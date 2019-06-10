@@ -1,11 +1,8 @@
 require("../../../../../../common/js/utils/dataUtils/Language.js");
 require("../../ContentMediator.js");
 
-var Box = createClass(
-"Box",
-ASJS.Sprite,
-function(_scope, _super) {
-  var _language = Language.instance;
+createClass(NS, "Box", ASJS.Sprite, function(_scope, _super) {
+  var _language = ASJSUtils.Language.instance;
   var _label    = new ASJS.Label();
   var _button   = new ASJS.Button();
 
@@ -27,6 +24,6 @@ function(_scope, _super) {
   get(_scope, "label", function() { return _label; });
 
   function onButtonClick() {
-    _scope.dispatchEvent(ContentMediator.ON_SHOW_NOTIFICATION_WINDOW);
+    _scope.dispatchEvent(NS.ContentMediator.ON_SHOW_NOTIFICATION_WINDOW);
   }
 });

@@ -1,9 +1,6 @@
 require("../media/asjs.AbstractMediaPlayer.js");
 
-ASJS.VideoPlayer = createClass(
-"VideoPlayer",
-ASJS.AbstractMediaPlayer,
-function(_scope, _super) {
+createClass(ASJS, "VideoPlayer", ASJS.AbstractMediaPlayer, function(_scope, _super) {
   _scope.new = function() {
     _super.new("video");
   }

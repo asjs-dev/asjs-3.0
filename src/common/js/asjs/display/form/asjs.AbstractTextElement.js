@@ -3,10 +3,7 @@ require("../../event/asjs.Event.js");
 require("../../utils/asjs.Keyboard.js");
 require("./asjs.FormElement.js");
 
-ASJS.AbstractTextElement = createClass(
-"AbstractTextElement",
-ASJS.FormElement,
-function(_scope, _super) {
+createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _super) {
   var _restrict;
   var _helperElement = new ASJS.Tag();
 

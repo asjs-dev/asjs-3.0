@@ -1,9 +1,6 @@
 require("./asjs.DisplayObject.js");
 
-ASJS.Label = createClass(
-"Label",
-ASJS.DisplayObject,
-function(_scope, _super) {
+createClass(ASJS, "Label", ASJS.DisplayObject, function(_scope, _super) {
   var _for;
 
   _scope.new = function() {
@@ -22,7 +19,7 @@ function(_scope, _super) {
 
   _scope.destruct = function() {
     _for = null;
-    
+
     _super.destruct();
   }
 });

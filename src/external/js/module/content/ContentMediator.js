@@ -1,21 +1,18 @@
 require("../../../../common/js/mediator/AbstractResizeMediator.js");
 require("./view/ContentView.js");
 
-var ContentMediator = createClass(
-"ContentMediator",
-AbstractResizeMediator,
-function(_scope, _super) {
-  var _contentView = new ContentView();
+createClass(NS, "ContentMediator", ASJSUtils.AbstractResizeMediator, function(_scope, _super) {
+  var _contentView = new NS.ContentView();
 
   _scope.new = function(root) {
     _super.new(root);
-    _super.protected.addHandler(ContentMediator.SHOW,     onShow);
-    _super.protected.addHandler(ContentMediator.DESTRUCT, onDestruct);
+    _super.protected.addHandler(NS.ContentMediator.SHOW,     onShow);
+    _super.protected.addHandler(NS.ContentMediator.DESTRUCT, onDestruct);
   }
 
   _scope.destruct = function() {
-    _super.protected.removeHandler(ContentMediator.SHOW,     onShow);
-    _super.protected.removeHandler(ContentMediator.DESTRUCT, onDestruct);
+    _super.protected.removeHandler(NS.ContentMediator.SHOW,     onShow);
+    _super.protected.removeHandler(NS.ContentMediator.DESTRUCT, onDestruct);
     _contentView.destruct();
     _super.destruct();
   }
@@ -29,5 +26,5 @@ function(_scope, _super) {
     _scope.destruct();
   }
 });
-msg(ContentMediator, "SHOW");
-msg(ContentMediator, "DESTRUCT");
+msg(NS.ContentMediator, "SHOW");
+msg(NS.ContentMediator, "DESTRUCT");

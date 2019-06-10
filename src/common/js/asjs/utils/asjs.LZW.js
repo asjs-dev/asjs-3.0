@@ -1,7 +1,4 @@
-ASJS.LZW = createSingletonClass(
-"LZW",
-ASJS.BaseClass,
-function(_scope) {
+createSingletonClass(ASJS, "LZW", ASJS.BaseClass, function(_scope) {
   _scope.compress = function(uncompressed) {
     uncompressed = unescape(encodeURIComponent(uncompressed));
     var i;

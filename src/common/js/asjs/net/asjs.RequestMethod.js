@@ -1,4 +1,4 @@
-ASJS.RequestMethod = {};
+createUtility(ASJS, "RequestMethod");
 cnst(ASJS.RequestMethod, "DELETE",  "DELETE");
 cnst(ASJS.RequestMethod, "GET",     "GET");
 cnst(ASJS.RequestMethod, "HEAD",    "HEAD");

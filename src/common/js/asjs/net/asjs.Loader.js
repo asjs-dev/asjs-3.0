@@ -3,10 +3,7 @@ require("../event/asjs.LoaderEvent.js");
 require("../utils/asjs.LZW.js");
 require("./asjs.RequestMethod.js");
 
-ASJS.Loader = createClass(
-"Loader",
-ASJS.EventDispatcher,
-function(_scope, _super) {
+createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
   var _async        = true;
   var _method       = ASJS.RequestMethod.GET;
   var _headers      = {};

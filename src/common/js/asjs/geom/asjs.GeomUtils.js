@@ -1,6 +1,7 @@
 require("./asjs.Point.js");
 
-ASJS.GeomUtils = {};
+createUtility(ASJS, "GeomUtils");
+
 cnst(ASJS.GeomUtils, "THETA", Math.PI / 180);
 
 rof(ASJS.GeomUtils, "pointInOrigo", function(point) {

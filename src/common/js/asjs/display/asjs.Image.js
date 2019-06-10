@@ -1,10 +1,7 @@
 require("./bitmap/asjs.Bitmap.js");
 require("./asjs.DisplayObject.js");
 
-ASJS.Image = createClass(
-"Image",
-ASJS.DisplayObject,
-function(_scope, _super) {
+createClass(ASJS, "Image", ASJS.DisplayObject, function(_scope, _super) {
   _scope.new = function() {
     _super.new("img");
   }

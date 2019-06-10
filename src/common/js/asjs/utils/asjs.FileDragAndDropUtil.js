@@ -1,4 +1,4 @@
-ASJS.FileDragAndDropUtil = {};
+createUtility(ASJS, "FileDragAndDropUtil");
 rof(ASJS.FileDragAndDropUtil, "getFilesByEvent", function(e) {
   var files = [];
 

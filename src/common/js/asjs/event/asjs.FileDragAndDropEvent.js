@@ -1,4 +1,4 @@
-ASJS.FileDragAndDropEvent = {};
+createUtility(ASJS, "FileDragAndDropEvent");
 cnst(ASJS.FileDragAndDropEvent, "DRAG_OVER",  "dragover");
 cnst(ASJS.FileDragAndDropEvent, "DRAG_END",   "dragend");
 cnst(ASJS.FileDragAndDropEvent, "DROP",       "drop");

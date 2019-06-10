@@ -1,9 +1,6 @@
 require("./asjs.Sprite.js");
 
-ASJS.Link = createClass(
-"Link",
-ASJS.Sprite,
-function(_scope, _super) {
+createClass(ASJS, "Link", ASJS.Sprite, function(_scope, _super) {
   _scope.new = function() {
     _super.new("a");
   }

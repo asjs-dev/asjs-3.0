@@ -1,9 +1,6 @@
 require("../asjs.Tag.js");
 
-ASJS.VideoTrack = createClass(
-"VideoTrack",
-ASJS.Tag,
-function(_scope, _super) {
+createClass(ASJS, "VideoTrack", ASJS.Tag, function(_scope, _super) {
   _scope.new = function() {
     _super.new("track");
   }

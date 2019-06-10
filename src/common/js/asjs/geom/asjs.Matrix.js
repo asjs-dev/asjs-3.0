@@ -1,7 +1,4 @@
-ASJS.Matrix = createClass(
-"Matrix",
-ASJS.BaseClass,
-function(_scope) {
+createClass(ASJS, "Matrix", ASJS.BaseClass, function(_scope) {
   _scope.new = function(a, b, c, d, e, f) {
     _scope.a = !tis(a, "number") ? 1 : a;
     _scope.b = !tis(b, "number") ? 0 : b;

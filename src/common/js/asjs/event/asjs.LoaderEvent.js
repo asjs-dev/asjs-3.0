@@ -1,4 +1,4 @@
-ASJS.LoaderEvent = {};
+createUtility(ASJS, "LoaderEvent");
 cnst(ASJS.LoaderEvent, "ERROR",              "error");
 cnst(ASJS.LoaderEvent, "ABORT",              "abort");
 cnst(ASJS.LoaderEvent, "LOAD_START",         "loadstart");

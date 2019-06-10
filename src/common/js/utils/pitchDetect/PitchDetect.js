@@ -1,10 +1,8 @@
 require("../media/Media.js");
+require("../../NameSpace.js");
 
-var PitchDetect = createClass(
-"PitchDetect",
-ASJS.EventDispatcher,
-function(_scope) {
-  var _media  = Media.instance;
+createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
+  var _media  = ASJSUtils.Media.instance;
 
   var _isPlaying = false;
 
@@ -123,17 +121,17 @@ function(_scope) {
 
   function updatePitch() {
     _analyser.getFloatTimeDomainData(_buffer);
-     _scope.dispatchEvent(PitchDetect.DETECTED, autoCorrelate());
+     _scope.dispatchEvent(ASJSUtils.PitchDetect.DETECTED, autoCorrelate());
     _rafID = setTimeout(updatePitch, _interval);
   }
 });
-msg(PitchDetect, "DETECTED");
-cnst(PitchDetect, "A", 440);
-cnst(PitchDetect, "noteFromPitch", function(frequency) {
-var noteNum = 12 * (Math.log(frequency / PitchDetect.A) / Math.log(2));
+msg(ASJSUtils.PitchDetect, "DETECTED");
+cnst(ASJSUtils.PitchDetect, "A", 440);
+cnst(ASJSUtils.PitchDetect, "noteFromPitch", function(frequency) {
+var noteNum = 12 * (Math.log(frequency / ASJSUtils.PitchDetect.A) / Math.log(2));
 return Math.round(noteNum) + 69;
 });
-cnst(PitchDetect, "centsOffFromPitch", function(frequency, note) {
-var freqFromNoteNum = PitchDetect.A * Math.pow(2, (note - 69) / 12);
+cnst(ASJSUtils.PitchDetect, "centsOffFromPitch", function(frequency, note) {
+var freqFromNoteNum = ASJSUtils.PitchDetect.A * Math.pow(2, (note - 69) / 12);
 return Math.floor(1200 * Math.log(frequency / freqFromNoteNum) / Math.log(2));
 });

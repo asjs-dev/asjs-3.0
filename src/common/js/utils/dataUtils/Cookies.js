@@ -1,5 +1,7 @@
-var Cookies = {};
-rof(Cookies, "createCookie", function(n, v, d) {
+require("../../NameSpace.js");
+
+createUtility(ASJSUtils, "Cookies");
+rof(ASJSUtils.Cookies, "createCookie", function(n, v, d) {
   if ( d ) {
     var date = new Date();
         date.setTime(date.getTime() + (d * 86400000));
@@ -12,7 +14,7 @@ rof(Cookies, "createCookie", function(n, v, d) {
     trace(e);
   }
 });
-rof(Cookies, "readCookie", function(n) {
+rof(ASJSUtils.Cookies, "readCookie", function(n) {
   var nameEQ = n + "=";
   var ca = document.cookie.split(';');
   var i = -1;
@@ -29,7 +31,7 @@ rof(Cookies, "readCookie", function(n) {
   }
   return null;
 });
-rof(Cookies, "eraseCookie", function(n) {
+rof(ASJSUtils.Cookies, "eraseCookie", function(n) {
   _scope.createCookie(n, "", -1);
   try {
     if (!empty(Storage)) localStorage.removeItem(n);

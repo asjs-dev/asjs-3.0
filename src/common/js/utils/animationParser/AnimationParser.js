@@ -1,7 +1,6 @@
-var AnimationParser = createSingletonClass(
-"AnimationParser",
-ASJS.BaseClass,
-function(_scope) {
+require("../../NameSpace.js");
+
+createSingletonClass(ASJSUtils, "AnimationParser", ASJS.BaseClass, function(_scope) {
   _scope.createCSSAnimationsByJSON = function(list) {
     var i = -1;
     var l = list.length;

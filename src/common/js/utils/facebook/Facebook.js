@@ -1,7 +1,6 @@
-var Facebook = createSingletonClass(
-"Facebook",
-ASJS.Sprite,
-function(_scope, _super) {
+require("../../NameSpace.js");
+
+createSingletonClass(ASJSUtils, "Facebook", ASJS.Sprite, function(_scope, _super) {
   var _facebookAppId;
   var _version;
 
@@ -42,16 +41,16 @@ function(_scope, _super) {
   }
 
   function onPostFeed(response) {
-    _scope.dispatchEvent(Facebook.POST_COMPLETE, response);
+    _scope.dispatchEvent(ASJSUtils.Facebook.POST_COMPLETE, response);
   }
 
   function onLogout(response) {
-    _scope.dispatchEvent(Facebook.LOGOUT);
+    _scope.dispatchEvent(ASJSUtils.Facebook.LOGOUT);
   }
 
   function onGetLoginStatus(response) {
     if (response.status === "connected") FB.logout( onLogout);
-    else _scope.dispatchEvent(Facebook.LOGOUT);
+    else _scope.dispatchEvent(ASJSUtils.Facebook.LOGOUT);
   }
 
   function onFBAsyncInit() {
@@ -69,17 +68,17 @@ function(_scope, _super) {
 
   function onLoginStatus(response) {
     switch (response.status) {
-      case "connected":      _scope.dispatchEvent(Facebook.CONNECTED, response.authResponse);
+      case "connected":      _scope.dispatchEvent(ASJSUtils.Facebook.CONNECTED, response.authResponse);
       break;
-      case "not_authorized": _scope.dispatchEvent(Facebook.NOT_AUTHORIZED);
+      case "not_authorized": _scope.dispatchEvent(ASJSUtils.Facebook.NOT_AUTHORIZED);
       break;
-      case "unknown":        _scope.dispatchEvent(Facebook.UNKNOW);
+      case "unknown":        _scope.dispatchEvent(ASJSUtils.Facebook.UNKNOW);
       break;
     }
   }
 });
-msg(Facebook, "CONNECTED");
-msg(Facebook, "NOT_AUTHORIZED");
-msg(Facebook, "UNKNOW");
-msg(Facebook, "LOGOUT");
-msg(Facebook, "POST_COMPLETE");
+msg(ASJSUtils.Facebook, "CONNECTED");
+msg(ASJSUtils.Facebook, "NOT_AUTHORIZED");
+msg(ASJSUtils.Facebook, "UNKNOW");
+msg(ASJSUtils.Facebook, "LOGOUT");
+msg(ASJSUtils.Facebook, "POST_COMPLETE");

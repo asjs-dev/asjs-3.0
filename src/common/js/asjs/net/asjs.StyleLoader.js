@@ -2,10 +2,7 @@ require("../display/asjs.Head.js");
 require("../display/asjs.Tag.js");
 require("./asjs.Loader.js");
 
-ASJS.StyleLoader = createClass(
-"StyleLoader",
-ASJS.Loader,
-function(_scope, _super) {
+createClass(ASJS, "StyleLoader", ASJS.Loader, function(_scope, _super) {
   var _head = ASJS.Head.instance;
   var _style;
 
@@ -32,7 +29,7 @@ function(_scope, _super) {
   _scope.destruct = function() {
     _head  = null;
     _style = null;
-    
+
     _super.destruct();
   }
 });

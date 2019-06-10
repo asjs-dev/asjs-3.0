@@ -1,7 +1,4 @@
-ASJS.Promise = createClass(
-"Promise",
-ASJS.BaseClass,
-function(_scope, _super) {
+createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
   var _resolveFunction = [];
   var _rejectFunction  = [];
   var _finallyFunction = [];
@@ -59,7 +56,7 @@ function(_scope, _super) {
     _calledResolve   = null;
     _calledReject    = null;
     _calledFinally   = null;
-    
+
     _super.destruct();
   }
 

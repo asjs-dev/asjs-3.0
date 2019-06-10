@@ -3,10 +3,7 @@ require("../utils/asjs.Mouse.js");
 require("./asjs.Window.js");
 require("./asjs.Sprite.js");
 
-ASJS.Stage = createSingletonClass(
-"Stage",
-ASJS.Sprite,
-function(_scope, _super) {
+createSingletonClass(ASJS, "Stage", ASJS.Sprite, function(_scope, _super) {
   var _window      = ASJS.Window.instance;
   var _stageWidth  = 0;
   var _stageHeight = 0;

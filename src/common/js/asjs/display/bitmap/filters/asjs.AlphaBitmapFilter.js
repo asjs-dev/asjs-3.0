@@ -1,9 +1,6 @@
 require("./asjs.AbstractBitmapFilter.js");
 
-ASJS.AlphaBitmapFilter = createClass(
-"AlphaBitmapFilter",
-ASJS.AbstractBitmapFilter,
-function(_scope) {
+createClass(ASJS, "AlphaBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   _scope.new = function(type) {
     _scope.type = type || ASJS.AlphaBitmapFilter.TYPE_DARKNESS;
   }

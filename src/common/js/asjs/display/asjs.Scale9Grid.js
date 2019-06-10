@@ -4,10 +4,7 @@ require("../geom/asjs.Point.js");
 require("./asjs.Sprite.js");
 require("./asjs.Image.js");
 
-ASJS.Scale9Grid = createClass(
-"Scale9Grid",
-ASJS.Sprite,
-function(_scope, _super) {
+createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
   var _size      = new ASJS.Point();
   var _rectangle = new ASJS.Rectangle();
   var _blocks    = [];

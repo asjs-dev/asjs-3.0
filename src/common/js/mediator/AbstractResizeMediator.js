@@ -1,7 +1,6 @@
-var AbstractResizeMediator = createClass(
-"AbstractMediator",
-ASJS.AbstractMediator,
-function(_scope, _super) {
+require("../NameSpace.js");
+
+createClass(ASJSUtils, "AbstractResizeMediator", ASJS.AbstractMediator, function(_scope, _super) {
   _super.protected.forceResize = true;
 
   _scope.new = function(root) {

@@ -1,10 +1,7 @@
 require("../asjs.PrimitiveDisplayObject.js");
 require("./asjs.FormElement.js");
 
-ASJS.DropDownOption = createClass(
-"DropDownOption",
-ASJS.PrimitiveDisplayObject,
-function(_scope, _super) {
+createClass(ASJS, "DropDownOption", ASJS.PrimitiveDisplayObject, function(_scope, _super) {
   _scope.new = function(value, label, disabled, selected) {
     _super.new("option");
     _scope.value = value || 0;

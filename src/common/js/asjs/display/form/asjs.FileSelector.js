@@ -3,10 +3,7 @@ require("../../event/asjs.MouseEvent.js");
 require("../asjs.DisplayObject.js");
 require("./asjs.FormElement.js");
 
-ASJS.FileSelector = createClass(
-"FileSelector",
-ASJS.FormElement,
-function(_scope, _super) {
+createClass(ASJS, "FileSelector", ASJS.FormElement, function(_scope, _super) {
   _super.protected.fileInput = new ASJS.DisplayObject("input");
 
   var _preview = new ASJS.Sprite();

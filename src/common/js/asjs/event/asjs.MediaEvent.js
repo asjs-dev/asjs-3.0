@@ -1,4 +1,4 @@
-ASJS.MediaEvent = {};
+createUtility(ASJS, "MediaEvent");
 cnst(ASJS.MediaEvent, "ABORT",            "abort");
 cnst(ASJS.MediaEvent, "CAN_PLAY",         "canplay");
 cnst(ASJS.MediaEvent, "CAN_PLAY_THROUGH", "canplaythrough");

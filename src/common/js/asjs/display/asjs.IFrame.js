@@ -1,9 +1,6 @@
 require("./asjs.DisplayObject.js");
 
-ASJS.IFrame = createClass(
-"IFrame",
-ASJS.DisplayObject,
-function(_scope, _super) {
+createClass(ASJS, "IFrame", ASJS.DisplayObject, function(_scope, _super) {
   _scope.new = function() {
     _super.new("iframe");
   }

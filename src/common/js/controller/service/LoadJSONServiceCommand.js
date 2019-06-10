@@ -1,7 +1,6 @@
-var LoadJSONServiceCommand = createClass(
-"LoadJSONServiceCommand",
-ASJS.AbstractCommand,
-function(_scope) {
+require("../../NameSpace.js");
+
+createClass(ASJSUtils, "LoadJSONServiceCommand", ASJS.AbstractCommand, function(_scope) {
   _scope.execute = function(url) {
     var dfd = new ASJS.Promise();
 

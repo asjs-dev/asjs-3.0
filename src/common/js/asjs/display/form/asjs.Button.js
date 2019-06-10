@@ -1,14 +1,11 @@
 require("./asjs.FormElement.js");
 
-ASJS.Button = createClass(
-"Button",
-ASJS.FormElement,
-function(_scope, _super) {
+createClass(ASJS, "Button", ASJS.FormElement, function(_scope, _super) {
   _scope.new = function() {
     _super.new("input");
     _scope.setAttr("type", "button");
   }
-  
+
   prop(_scope, "label", {
     get: function() { return _scope.getAttr("value"); },
     set: function(v) { _scope.setAttr("value", v); }

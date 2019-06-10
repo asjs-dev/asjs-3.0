@@ -1,9 +1,8 @@
-var URLParser = createSingletonClass(
-"URLParser",
-ASJS.BaseClass, 
-function(_scope) {
+require("../../NameSpace.js");
+
+createSingletonClass(ASJSUtils, "URLParser", ASJS.BaseClass, function(_scope) {
   var _urlParams;
-  
+
   _scope.getQueryParam = function(param) {
     if (!_urlParams || !_urlParams[param]) {
       var queryParams = decodeURIComponent(location.href);
@@ -18,7 +17,7 @@ function(_scope) {
     }
     return _urlParams[param];
   }
-  
+
   _scope.parseURL = function() {
     return decodeURIComponent(location.href).split("/");
   }

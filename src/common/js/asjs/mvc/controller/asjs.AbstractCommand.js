@@ -1,9 +1,6 @@
 require("../asjs.NotificationHandler.js");
 
-ASJS.AbstractCommand = createClass(
-"AbstractCommand",
-ASJS.BaseClass,
-function(_scope, _super) {
+createClass(ASJS, "AbstractCommand", ASJS.BaseClass, function(_scope, _super) {
   var _nHandler = ASJS.NotificationHandler.instance;
 
   _scope.execute = function() {}

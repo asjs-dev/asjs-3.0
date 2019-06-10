@@ -3,10 +3,7 @@ require("../geom/asjs.GeomUtils.js");
 require("../utils/asjs.Mouse.js");
 require("./asjs.PrimitiveDisplayObject.js");
 
-ASJS.DisplayObject = createClass(
-"DisplayObject",
-ASJS.PrimitiveDisplayObject,
-function(_scope, _super) {
+createClass(ASJS, "DisplayObject", ASJS.PrimitiveDisplayObject, function(_scope, _super) {
   var _mouse      = ASJS.Mouse.instance;
   var _filters    = [];
   var _rotation   = 0;

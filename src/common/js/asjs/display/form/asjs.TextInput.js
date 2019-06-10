@@ -1,14 +1,11 @@
 require("./asjs.AbstractTextElement.js");
 
-ASJS.TextInput = createClass(
-"TextInput",
-ASJS.AbstractTextElement,
-function(_scope, _super) {
+createClass(ASJS, "TextInput", ASJS.AbstractTextElement, function(_scope, _super) {
   _scope.new = function() {
     _super.new("input");
     _scope.type = ASJS.TextInput.TYPE_TEXT;
   }
-  
+
   prop(_scope, "type", {
     get: function() { return _scope.getAttr("type"); },
     set: function(v) { _scope.setAttr("type", v); }

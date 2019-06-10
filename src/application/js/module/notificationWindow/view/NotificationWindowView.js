@@ -1,10 +1,7 @@
 require("../../../../../common/js/view/AbstractView.js");
 require("../NotificationWindowMediator.js");
 
-var NotificationWindowView = createClass(
-"NotificationWindowView",
-AbstractView,
-function(_scope, _super) {
+createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scope, _super) {
   var _notificationItem = {};
   var _window           = new ASJS.Scale9Grid();
   var _title            = new ASJS.Sprite();
@@ -43,7 +40,7 @@ function(_scope, _super) {
 
   _scope.hideWindow = function() {
     _super.protected.animateTo(0, function() {
-      _scope.dispatchEvent(NotificationWindowMediator.HIDE);
+      _scope.dispatchEvent(NS.NotificationWindowMediator.HIDE);
 
       _title.html   = "";
       _content.html = "";

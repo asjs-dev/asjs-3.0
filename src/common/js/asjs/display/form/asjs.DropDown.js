@@ -1,10 +1,7 @@
 require("../asjs.Sprite.js");
 require("./asjs.FormElement.js");
 
-ASJS.DropDown = createClass(
-"DropDown",
-ASJS.FormElement,
-function(_scope, _super) {
+createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
   var _select = new ASJS.Sprite("select");
 
   _scope.new = function() {

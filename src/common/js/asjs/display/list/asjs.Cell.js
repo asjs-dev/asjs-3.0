@@ -1,10 +1,7 @@
 require("../../event/asjs.MouseEvent.js");
 require("../asjs.Sprite.js");
 
-ASJS.Cell = createClass(
-"Cell",
-ASJS.Sprite,
-function(_scope, _super) {
+createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
   var _data    = {};
   var _checked = false;
 

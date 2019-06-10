@@ -1,14 +1,11 @@
-require("../../../../common/js/utils/urlParser/URLParser.js");
 require("../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../common/js/utils/dataUtils/Cookies.js");
+require("../../../../common/js/utils/urlParser/URLParser.js");
 
-var EnvironmentCommand = createClass(
-"EnvironmentCommand",
-ASJS.AbstractCommand,
-function(_scope) {
-  var _language  = Language.instance;
-  var _cookies   = Cookies;
-  var _urlParser = URLParser.instance;
+createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
+  var _language  = ASJSUtils.Language.instance;
+  var _cookies   = ASJSUtils.Cookies;
+  var _urlParser = ASJSUtils.URLParser.instance;
 
   _scope.execute = function() {
     setupLanguage();
@@ -23,7 +20,5 @@ function(_scope) {
                            validateLanguage((navigator.language || navigator.userLanguage).split("-")[0]) ||
                            _language.selectedLanguage;
     _language.set("selectedLanguage", selectedLanguage);
-
-    _cookies.createCookie('language', _language.selectedLanguage);
   }
 });

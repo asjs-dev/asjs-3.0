@@ -1,56 +1,5 @@
 "use strict";
 
-var stage;
-var ASJS = (function() {
-  var _scope = {};
-
-  var _sourcePath     = "";
-  var _includedScript = {};
-
-  _scope.sourcePath = function(v) {
-    _sourcePath = v;
-  }
-
-  _scope.import = function(f) {
-    if (_includedScript[f]) return;
-    _includedScript[f] = 1;
-    var script = new ASJS.Tag("script");
-        script.setAttr("type", "text/javascript");
-        script.setAttr("src",  _sourcePath + f);
-    ASJS.Head.addChild(script);
-  }
-
-  _scope.start = function(b) {
-    ASJS.Polyfill.instance;
-    isDocumentComplete()
-    ? start(b)
-    : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function() {
-      isDocumentComplete() && start(b);
-    });
-  }
-
-  function isDocumentComplete() {
-    return document.readyState === "complete";
-  }
-
-  function start(b) {
-    if (!stage) {
-      stage = ASJS.Stage.instance;
-      stage.clear();
-    }
-    trc("<AS/JS> core version: {{appVersion}}.{{date}}");
-    try {
-      var app = new b();
-      is(app, ASJS.Tag) && stage.addChild(app);
-    } catch (e) {
-      trc(e);
-    }
-    return b;
-  }
-
-  return _scope;
-})();
-
 var trace = console.log;
 var trc = trace;
 try {
@@ -61,6 +10,35 @@ try {
 }
 trc = trace;
 console.clear();
+
+var is = function(a, b) {
+  return a instanceof b;
+}
+
+var tis = function(a, b) {
+  return b === "number"
+    ? parseFloat(a) == a
+    : typeof a === b;
+}
+
+var empty = function(a) {
+  try {
+    return a === undefined || a === null || a === "" || a.length === 0;
+  } catch(e) {
+    return true;
+  }
+}
+var emp = empty;
+
+var padStart = function(v, l) {
+  return String(v / Math.pow(10, !emp(l) ? l : 2)).substr(2);
+}
+var ps = padStart;
+
+var between = function(a, b, c) {
+  return Math.max(a, Math.min(b, c));
+}
+var bw = between;
 
 var property = function(t, n, v) {
   v.enumerable   = true;
@@ -87,8 +65,12 @@ var constant = function(t, n, v) {
 var cnst = constant;
 
 var message = function(t, n) {
-  if (!emp(t.name)) cnst(t, n, t.name + "_" + n);
-  else cnst(t, n, n + "_" + Date.now() + message.id++);
+  try {
+    if (!emp(t.name)) cnst(t, n, t.name + "_" + n);
+    else cnst(t, n, n + "_" + Date.now() + message.id++);
+  } catch (e) {
+    trace("ERROR", n);
+  }
 };
 message.id = 0;
 var msg = message;
@@ -141,11 +123,6 @@ var iterateOver = function(o, cb, ccb) {
 }
 var ito = iterateOver;
 
-var between = function(a, b, c) {
-  return Math.max(a, Math.min(b, c));
-}
-var bw = between;
-
 var extendProperties = function(t) {
   var s = {};
   for (var k in t) {
@@ -187,31 +164,7 @@ var deleteProperty = function(t, p) {
 }
 var del = deleteProperty;
 
-var is = function(a, b) {
-  return a instanceof b;
-}
-
-var tis = function(a, b) {
-  return b === "number"
-    ? parseFloat(a) == a
-    : typeof a === b;
-}
-
-var empty = function(a) {
-  try {
-    return a === undefined || a === null || a === "" || a.length === 0;
-  } catch(e) {
-    return true;
-  }
-}
-var emp = empty;
-
-var padStart = function(v, l) {
-  return String(v / Math.pow(10, !emp(l) ? l : 2)).substr(2);
-}
-var ps = padStart;
-
-var createClass = function(name, base, body) {
+var createClass = function(scope, name, base, body, singleton) {
   function setup(name, base, body, args) {
     if (!this.$n) this.$n = [];
     this.$n.push(name);
@@ -229,18 +182,23 @@ var createClass = function(name, base, body) {
     }
   }
 
-  return Function("var a=arguments;var name=a[0];var base=a[1];var body=a[2];var setup=a[3];var "+name+"=function(){setup.apply(this,[name,base,body,arguments]);};"+name+".prototype=Object.create(base.prototype);"+name+".prototype.constructor="+name+";return "+name+";")(name, base, body, setup);
+  var x = Function("var a=arguments;var name=a[0];var base=a[1];var body=a[2];var setup=a[3];var "+name+"=function(){setup.apply(this,[name,base,body,arguments]);};"+name+".prototype=Object.create(base.prototype);"+name+".prototype.constructor="+name+";return "+name+";")(name, base, body, setup);
+  if (singleton) {
+    var y = {}
+    get(y, "instance", function() {
+      if (!x.instance) {
+        x.instance = new x();
+        x.instance.destruct = function() {};
+      }
+      return x.instance;
+    });
+    cnst(scope, name, y);
+  } else cnst(scope, name, x);
 }
 var c0 = createClass;
 
-var createSingletonClass = function(name, base, body) {
-  var c = c0(name, base, body);
-  get(c, "instance", function() {
-    cnst(c, "instance", new c());
-    c.instance.destruct = null;
-    return c.instance;
-  });
-  return c;
+var createSingletonClass = function(scope, name, base, body) {
+  c0(scope, name, base, body, true);
 }
 var c1 = createSingletonClass;
 
@@ -251,14 +209,67 @@ var createNamedObject = function(name, parent) {
 }
 var c2 = createNamedObject;
 
-ASJS.BaseClass = c0(
-"BaseClass",
-Object,
-function(_scope, _super) {
-  _scope.new = function() {};
+var createUtility = function(scope, name) {
+  cnst(scope, name, {});
+}
+var c3 = createUtility;
+
+var stage;
+cnst(this, "ASJS", (function() {
+  var _scope = {};
+
+  var _sourcePath     = "";
+  var _includedScript = {};
+
+  _scope.sourcePath = function(v) {
+    _sourcePath = v;
+  }
+
+  _scope.import = function(f) {
+    if (_includedScript[f]) return;
+    _includedScript[f] = 1;
+    var script = new ASJS.Tag("script");
+        script.setAttr("type", "text/javascript");
+        script.setAttr("src",  _sourcePath + f);
+    ASJS.Head.addChild(script);
+  }
+
+  _scope.start = function(b) {
+    ASJS.Polyfill.instance;
+    isDocumentComplete()
+    ? start(b)
+    : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function() {
+      isDocumentComplete() && start(b);
+    });
+  }
+
+  function isDocumentComplete() {
+    return document.readyState === "complete";
+  }
+
+  function start(b) {
+    if (!stage) {
+      stage = ASJS.Stage.instance;
+      stage.clear();
+    }
+    trc("<AS/JS> core version: {{appVersion}}.{{date}}");
+    try {
+      var app = new b();
+      is(app, ASJS.Tag) && stage.addChild(app);
+    } catch (e) {
+      trc(e);
+    }
+    return b;
+  }
+
+  return _scope;
+})());
+
+c0(ASJS, "BaseClass", Object, function(_scope, _super) {
+  _scope.new       = function() {};
   _scope.protected = {};
-  _scope.prot = _scope.protected;
-  _scope.destruct = function() {
+  _scope.prot      = _scope.protected;
+  _scope.destruct  = function() {
     destObj(_scope);
     destObj(_super);
   }

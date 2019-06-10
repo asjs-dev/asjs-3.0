@@ -1,4 +1,3 @@
-var Config = createSingletonClass(
-"Config",
-ASJS.AbstractModel
-);
+require("../../NameSpace.js");
+
+createSingletonClass(ASJSUtils, "Config", ASJS.AbstractModel);

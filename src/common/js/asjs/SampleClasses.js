@@ -1,8 +1,6 @@
-var SampleClass = createClass(
-var SampleClass = createSingletonClass(
-"SampleClass",
-[ASJS.BaseClass | parentClass],
-function(_scope[, _super]) {
+var NameSpace = {};
+
+[createClass|createSingletonClass]([this|NameSpace], "SampleClass", [ASJS.BaseClass|parentClass], function(_scope[, _super]) {
   var priv = {};
 
   cnst(priv, "PRIVATE_CONST", 0);
@@ -52,18 +50,15 @@ function(_scope[, _super]) {
 
   function privateFunction() {};
 
-  var InternalClass = createClass(
-  "InternalClass",
-  [ASJS.BaseClass | parentClass],
-  function(_scope, _super) {
+  createClass(this, "InternalClass", [ASJS.BaseClass|parentClass], function(_scope, _super) {
     ...
   });
 });
-cnst(SampleClass, "PUBLIC_STATIC_CONST", 10);
-msg(SampleClass, "PUBLIC_STATIC_CONST");
-SampleClass.publicStaticVar = 0;
-prop(SampleClass, "val", {
-  get: function() { return SampleClass.publicStaticVar; },
-  set: function(v) { SampleClass.publicStaticVar = v; }
+cnst(NameSpace.SampleClass, "PUBLIC_STATIC_CONST", 10);
+msg(NameSpace.SampleClass, "PUBLIC_STATIC_CONST");
+NameSpace.SampleClass.publicStaticVar = 0;
+prop(NameSpace.SampleClass, "val", {
+  get: function() { return NameSpace.SampleClass.publicStaticVar; },
+  set: function(v) { NameSpace.SampleClass.publicStaticVar = v; }
 });
-rof(SampleClass, "publicStaticFunction", function(param) {});
+rof(NameSpace.SampleClass, "publicStaticFunction", function(param) {});

@@ -1,4 +1,4 @@
-ASJS.MouseEvent = {};
+createUtility(ASJS, "MouseEvent");
 cnst(ASJS.MouseEvent, "SCROLL",       "DOMMouseScroll scroll");
 cnst(ASJS.MouseEvent, "WHEEL",        "DOMMouseScroll mousewheel");
 cnst(ASJS.MouseEvent, "CLICK",        "click");

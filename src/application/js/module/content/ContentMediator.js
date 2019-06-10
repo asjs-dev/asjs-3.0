@@ -5,20 +5,17 @@ require("../notificationWindow/vo/NotificationWindowDataVo.js");
 require("../notificationWindow/NotificationWindowMediator.js");
 require("./view/ContentView.js");
 
-var ContentMediator = createClass(
-"ContentMediator",
-AbstractResizeMediator,
-function(_scope, _super) {
-  var _language = Language.instance;
-  var _view     = new ContentView();
+createClass(NS, "ContentMediator", ASJSUtils.AbstractResizeMediator, function(_scope, _super) {
+  var _language = ASJSUtils.Language.instance;
+  var _view     = new NS.ContentView();
 
   _scope.new = function(root) {
     _super.new(root);
 
-    _super.protected.addHandler(ContentMediator.SHOW, onShow);
+    _super.protected.addHandler(NS.ContentMediator.SHOW, onShow);
 
-    _view.addEventListener(ContentMediator.ON_SHOW_NOTIFICATION_WINDOW,  showNotificationWindow);
-    _view.addEventListener(ContentMediator.ON_SHOW_EXTERNAL_APPLICATION, showExternalApplication);
+    _view.addEventListener(NS.ContentMediator.ON_SHOW_NOTIFICATION_WINDOW,  showNotificationWindow);
+    _view.addEventListener(NS.ContentMediator.ON_SHOW_EXTERNAL_APPLICATION, showExternalApplication);
   }
 
   function onShow() {
@@ -27,17 +24,17 @@ function(_scope, _super) {
   }
 
   function showNotificationWindow() {
-    var notificationWindowDataVo         = new NotificationWindowDataVo();
+    var notificationWindowDataVo         = new NS.NotificationWindowDataVo();
         notificationWindowDataVo.title   = _language.getText("notification_title");
         notificationWindowDataVo.content = _language.getText("notification_content");
         notificationWindowDataVo.height  = 230;
-    _scope.sendNotification(NotificationWindowMediator.SHOW, notificationWindowDataVo);
+    _scope.sendNotification(NS.NotificationWindowMediator.SHOW, notificationWindowDataVo);
   }
 
   function showExternalApplication() {
-    _scope.sendNotification(ExternalApplicationMediator.SHOW);
+    _scope.sendNotification(NS.ExternalApplicationMediator.SHOW);
   }
 });
-msg(ContentMediator, "SHOW");
-msg(ContentMediator, "ON_SHOW_EXTERNAL_APPLICATION");
-msg(ContentMediator, "ON_SHOW_NOTIFICATION_WINDOW");
+msg(NS.ContentMediator, "SHOW");
+msg(NS.ContentMediator, "ON_SHOW_EXTERNAL_APPLICATION");
+msg(NS.ContentMediator, "ON_SHOW_NOTIFICATION_WINDOW");

@@ -3,10 +3,7 @@ require("../core/asjs.Polyfill.js");
 require("../geom/asjs.GeomUtils.js");
 require("../event/asjs.DocumentEvent.js");
 
-ASJS.ScrollBar = createClass(
-"ScrollBar",
-ASJS.Sprite,
-function(_scope, _super) {
+createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   var _target;
 
   var _originalOverflow;
@@ -97,7 +94,7 @@ function(_scope, _super) {
     if (!_target) return;
 
     var scrollDelta = ASJS.Polyfill.getScrollData(event);
-    
+
     _target.el.scrollLeft += scrollDelta.x;
     _target.el.scrollTop  += scrollDelta.y;
 

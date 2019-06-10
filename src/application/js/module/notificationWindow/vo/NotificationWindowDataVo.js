@@ -1,7 +1,4 @@
-var NotificationWindowDataVo = createClass(
-"NotificationWindowDataVo",
-ASJS.BaseClass,
-function(_scope) {
+createClass(NS, "NotificationWindowDataVo", ASJS.BaseClass, function(_scope) {
   _scope.new = function() {
     _scope.title          = "";
     _scope.content        = "";

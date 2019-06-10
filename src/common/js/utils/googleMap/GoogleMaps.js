@@ -1,7 +1,6 @@
-var GoogleMaps = createClass(
-"GoogleMaps",
-ASJS.Sprite,
-function(_scope, _super) {
+require("../../NameSpace.js");
+
+createClass(ASJSUtils, "GoogleMaps", ASJS.Sprite, function(_scope, _super) {
   var _latitude = 0;
   var _longitude = 0;
   var _zoom = 4;
@@ -85,4 +84,4 @@ function(_scope, _super) {
     google.maps.event.trigger(_map, 'resize');
   }
 });
-msg(GoogleMap, "CLICK");
+msg(ASJSUtils.GoogleMap, "CLICK");

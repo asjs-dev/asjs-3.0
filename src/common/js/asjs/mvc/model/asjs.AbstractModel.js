@@ -1,9 +1,6 @@
 require("../../event/asjs.EventDispatcher.js");
 
-ASJS.AbstractModel = createClass(
-"AbstractModel",
-ASJS.EventDispatcher,
-function(_scope) {
+createClass(ASJS, "AbstractModel", ASJS.EventDispatcher, function(_scope) {
   var priv = {};
 
   cnst(priv, "PREFIX", "ASJS-AbstractModel-");

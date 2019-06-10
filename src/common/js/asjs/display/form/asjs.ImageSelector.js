@@ -1,9 +1,6 @@
 require("./asjs.FileSelector.js");
 
-ASJS.ImageSelector = createClass(
-"ImageSelector",
-ASJS.FileSelector,
-function(_scope, _super) {
+createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
   var _reader = new FileReader();
 
   _scope.new = function() {

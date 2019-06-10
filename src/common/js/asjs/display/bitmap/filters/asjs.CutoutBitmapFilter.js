@@ -1,9 +1,6 @@
 require("./asjs.AbstractBitmapFilter.js");
 
-ASJS.CutoutBitmapFilter = createClass(
-"CutoutBitmapFilter",
-ASJS.AbstractBitmapFilter,
-function(_scope) {
+createClass(ASJS, "CutoutBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   var _map = {};
   var _average = 1;
 
