@@ -214,6 +214,21 @@ var createUtility = function(nameSpace, name) {
 }
 var c3 = createUtility;
 
+var convertRelativePathToAbsolute = function(basePath, path) {
+  var splittedBasePath = basePath.split("/");
+  if (emp(splittedBasePath[splittedBasePath.length - 1])) splittedBasePath.pop();
+  var splittedPath = path.split("/");
+  if (emp(splittedPath[splittedPath.length - 1])) splittedPath.pop();
+  if ([".", ".."].indexOf(splittedPath[0]) === -1) return path;
+  var i = -1;
+  var l = splittedPath.length;
+  while (++i < l) {
+    if (splittedPath[i] === "..") splittedBasePath.pop();
+    else if (splittedPath[i] !== ".") splittedBasePath.push(splittedPath[i]);
+  }
+  return splittedBasePath.join("/");
+}
+
 var stage;
 cnst(this, "ASJS", (function() {
   var _scope = {};
@@ -226,12 +241,17 @@ cnst(this, "ASJS", (function() {
   }
 
   _scope.import = function(f) {
-    if (_includedScript[f]) return;
-    _includedScript[f] = 1;
-    var script = new ASJS.Tag("script");
-        script.setAttr("type", "text/javascript");
-        script.setAttr("src",  _sourcePath + f);
-    ASJS.Head.instance.addChild(script);
+    var fileName = f.substr(f.lastIndexOf("/") + 1);
+    var relativePath = f.substr(0, f.lastIndexOf("/"));
+    var absolutePath = convertRelativePathToAbsolute(document.baseURI + _sourcePath, relativePath);
+    var path = [absolutePath, fileName].join("/");
+    if (_includedScript[path]) return;
+    _includedScript[path] = 1;
+    var scriptLoader = new ASJS.ScriptLoader();
+        scriptLoader.addEventListener(ASJS.LoaderEvent.LOAD, function() {
+          scriptLoader.content;
+        });
+        scriptLoader.load(path);
   }
 
   _scope.start = function(b) {
