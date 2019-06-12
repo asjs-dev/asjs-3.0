@@ -164,7 +164,7 @@ var deleteProperty = function(t, p) {
 }
 var del = deleteProperty;
 
-var createClass = function(scope, name, base, body, singleton) {
+var createClass = function(nameSpace, name, base, body, singleton) {
   function setup(name, base, body, args) {
     if (!this.$n) this.$n = [];
     this.$n.push(name);
@@ -192,13 +192,13 @@ var createClass = function(scope, name, base, body, singleton) {
       }
       return x.instance;
     });
-    cnst(scope, name, y);
-  } else cnst(scope, name, x);
+    cnst(nameSpace, name, y);
+  } else cnst(nameSpace, name, x);
 }
 var c0 = createClass;
 
-var createSingletonClass = function(scope, name, base, body) {
-  c0(scope, name, base, body, true);
+var createSingletonClass = function(nameSpace, name, base, body) {
+  c0(nameSpace, name, base, body, true);
 }
 var c1 = createSingletonClass;
 
@@ -209,8 +209,8 @@ var createNamedObject = function(name, parent) {
 }
 var c2 = createNamedObject;
 
-var createUtility = function(scope, name) {
-  cnst(scope, name, {});
+var createUtility = function(nameSpace, name) {
+  cnst(nameSpace, name, {});
 }
 var c3 = createUtility;
 
@@ -231,7 +231,7 @@ cnst(this, "ASJS", (function() {
     var script = new ASJS.Tag("script");
         script.setAttr("type", "text/javascript");
         script.setAttr("src",  _sourcePath + f);
-    ASJS.Head.addChild(script);
+    ASJS.Head.instance.addChild(script);
   }
 
   _scope.start = function(b) {
@@ -264,6 +264,8 @@ cnst(this, "ASJS", (function() {
 
   return _scope;
 })());
+
+var require = ASJS.import;
 
 c0(ASJS, "BaseClass", Object, function(_scope, _super) {
   _scope.new       = function() {};
