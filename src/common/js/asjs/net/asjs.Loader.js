@@ -4,57 +4,52 @@ require("../utils/asjs.LZW.js");
 require("./asjs.RequestMethod.js");
 
 createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
-  var _async        = true;
-  var _method       = ASJS.RequestMethod.GET;
-  var _headers      = {};
-  var _responseType = "text";
-  var _compressed   = false;
+  var _async           = true;
+  var _method          = ASJS.RequestMethod.GET;
+  var _responseType    = "text";
+  var _compressed      = false;
+  var _withCredentials = false;
+  var _headers;
   var _request;
   var _username;
   var _password;
   var _url;
   var _data;
+  var _content;
 
   _scope.new = function() {
     reset();
   }
 
-  get(_scope, "url", function() { return _url; });
-
   get(_scope, "content", function() {
-    var response = _request.response;
-    if (_compressed) response = ASJS.LZW.instance.decompress(response);
-    if (_responseType === "json" && tis(_request.response, "string")) response = JSON.parse(response);
-    return response;
+    if (!_content) {
+      _content = _request.response;
+      if (_compressed) _content = ASJS.LZW.instance.decompress(_content);
+      if (_responseType === "json" && tis(_request.response, "string")) _content = JSON.parse(_content);
+    }
+    return _content;
   });
 
-  get(_scope, "status", function() { return _request.status; });
-
-  get(_scope, "statusText", function() { return _request.statusText; });
-
-  get(_scope, "readyState", function() { return _request.readyState; });
-
-  set(_scope, "contentType", function(v) { _headers["Content-type"] = v; });
-
-  set(_scope, "username", function(v) { _username = v; });
-
-  set(_scope, "password", function(v) { _password = v; });
-
-  set(_scope, "data", function(v) { _data = v; });
-
-  set(_scope, "async", function(v) { _async = v; });
-
-  set(_scope, "method", function(v) { _method = v; });
-
-  set(_scope, "responseType", function(v) { _responseType = v; });
-
-  set(_scope, "compressed", function(v) { _compressed = v; });
+  get(_scope, "status",          function() { return _request.status; });
+  get(_scope, "statusText",      function() { return _request.statusText; });
+  get(_scope, "readyState",      function() { return _request.readyState; });
+  get(_scope, "url",             function() { return _url; });
+  set(_scope, "contentType",     function(v) { _scope.setHeader("Content-type", v); });
+  set(_scope, "username",        function(v) { _username = v; });
+  set(_scope, "password",        function(v) { _password = v; });
+  set(_scope, "data",            function(v) { _data = v; });
+  set(_scope, "async",           function(v) { _async = v; });
+  set(_scope, "method",          function(v) { _method = v; });
+  set(_scope, "responseType",    function(v) { _responseType = v; });
+  set(_scope, "compressed",      function(v) { _compressed = v; });
+  set(_scope, "withCredentials", function(v) { _withCredentials = v; });
 
   _scope.unload = function() {
     _scope.free();
   }
 
   _scope.setHeader = function(k, v) {
+    if (!_headers) _headers = {};
     _headers[k] = v;
   };
 
@@ -66,30 +61,29 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
     _request.abort();
   };
 
-  _scope.load = function(url) {
-    if (!url) return;
-    _url = url;
-
-    _request.open(_method, _url, _async, _username, _password);
-    _request.responseType = _compressed ? "text" : _responseType;
-    for (var k in _headers) _request.setRequestHeader(k, _headers[k]);
-    _request.send(_compressed ? ASJS.LZW.instance.compress(_data) : _data);
-  };
-
   _scope.free = function() {
     reset();
   }
 
+  _scope.load = function(url) {
+    if (!url) return;
+    _url = url;
+
+    _request.withCredentials = _withCredentials;
+    _request.open(_method, _url, _async, _username, _password);
+    _request.responseType = _compressed ? "text" : _responseType;
+    if (_headers) {
+      for (var k in _headers) {
+        _request.setRequestHeader(k, _headers[k]);
+      }
+    }
+    _request.send(_compressed ? ASJS.LZW.instance.compress(_data) : _data);
+  };
+
   _scope.destruct = function() {
     if (_request) {
-      _request.removeEventListener(ASJS.LoaderEvent.READY_STATE_CHANGE, onReadyStateChange);
-      _request.removeEventListener(ASJS.LoaderEvent.PROGRESS,           onProgress);
-      _request.removeEventListener(ASJS.LoaderEvent.LOAD,               onLoad);
-      _request.removeEventListener(ASJS.LoaderEvent.ERROR,              onError);
-      _request.removeEventListener(ASJS.LoaderEvent.ABORT,              onAbort);
-      _request.removeEventListener(ASJS.LoaderEvent.LOAD_START,         onLoadStart);
-      _request.removeEventListener(ASJS.LoaderEvent.TIMEOUT,            onTimeout);
-      _request.removeEventListener(ASJS.LoaderEvent.LOAD_END,           onLoadEnd);
+      _scope.cancel();
+      removeListeners();
     }
 
     _async        = null;
@@ -102,6 +96,7 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
     _password     = null;
     _url          = null;
     _data         = null;
+    _content      = null;
 
     _super.destruct();
   }
@@ -109,17 +104,12 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
   function reset() {
     if (_request) {
       _scope.cancel();
-      _request = null;
+      removeListeners();
     }
 
-    _request = new XMLHttpRequest();
+    _content = null;
 
-    if ("withCredentials" in _request) {
-    } else if (!empty(XDomainRequest)) _request = new XDomainRequest();
-    else _request = null;
-
-    if (!_request) throw new Error("CORS not supported");
-    _request.withCredentials = true;
+    _request = XMLHttpRequest ? new XMLHttpRequest() : new XDomainRequest();
 
     _request.addEventListener(ASJS.LoaderEvent.READY_STATE_CHANGE, onReadyStateChange);
     _request.addEventListener(ASJS.LoaderEvent.PROGRESS,           onProgress);
@@ -129,6 +119,17 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
     _request.addEventListener(ASJS.LoaderEvent.LOAD_START,         onLoadStart);
     _request.addEventListener(ASJS.LoaderEvent.TIMEOUT,            onTimeout);
     _request.addEventListener(ASJS.LoaderEvent.LOAD_END,           onLoadEnd);
+  }
+
+  function removeListeners() {
+    _request.removeEventListener(ASJS.LoaderEvent.READY_STATE_CHANGE, onReadyStateChange);
+    _request.removeEventListener(ASJS.LoaderEvent.PROGRESS,           onProgress);
+    _request.removeEventListener(ASJS.LoaderEvent.LOAD,               onLoad);
+    _request.removeEventListener(ASJS.LoaderEvent.ERROR,              onError);
+    _request.removeEventListener(ASJS.LoaderEvent.ABORT,              onAbort);
+    _request.removeEventListener(ASJS.LoaderEvent.LOAD_START,         onLoadStart);
+    _request.removeEventListener(ASJS.LoaderEvent.TIMEOUT,            onTimeout);
+    _request.removeEventListener(ASJS.LoaderEvent.LOAD_END,           onLoadEnd);
   }
 
   function onReadyStateChange(e) {

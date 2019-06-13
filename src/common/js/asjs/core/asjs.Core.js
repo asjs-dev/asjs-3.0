@@ -214,7 +214,7 @@ var createUtility = function(nameSpace, name) {
 }
 var c3 = createUtility;
 
-var convertRelativePathToAbsolute = function(basePath, path) {
+var resolvePath = function(basePath, path) {
   var splittedBasePath = basePath.split("/");
   if (emp(splittedBasePath[splittedBasePath.length - 1])) splittedBasePath.pop();
   var splittedPath = path.split("/");
@@ -232,27 +232,6 @@ var convertRelativePathToAbsolute = function(basePath, path) {
 var stage;
 cnst(this, "ASJS", (function() {
   var _scope = {};
-
-  var _sourcePath     = "";
-  var _includedScript = {};
-
-  _scope.sourcePath = function(v) {
-    _sourcePath = v;
-  }
-
-  _scope.import = function(f) {
-    var fileName = f.substr(f.lastIndexOf("/") + 1);
-    var relativePath = f.substr(0, f.lastIndexOf("/"));
-    var absolutePath = convertRelativePathToAbsolute(document.baseURI + _sourcePath, relativePath);
-    var path = [absolutePath, fileName].join("/");
-    if (_includedScript[path]) return;
-    _includedScript[path] = 1;
-    var scriptLoader = new ASJS.ScriptLoader();
-        scriptLoader.addEventListener(ASJS.LoaderEvent.LOAD, function() {
-          scriptLoader.content;
-        });
-        scriptLoader.load(path);
-  }
 
   _scope.start = function(b) {
     ASJS.Polyfill.instance;
@@ -284,8 +263,81 @@ cnst(this, "ASJS", (function() {
 
   return _scope;
 })());
+var stage;
 
-var require = ASJS.import;
+c1(ASJS, "Importer", Object, function(_scope) {
+  var _priv = {};
+  cnst(_priv, "REQUIRE_REGEX", /require\((\"[^\"]*\"|\'[^\']*\')\)\;/gm);
+
+  var _version = Date.now();
+
+  var _sourcePath     = "";
+  var _includedScript = [];
+
+  _scope.sourcePath = function(v) {
+    _sourcePath = v;
+  }
+
+  _scope.require = function(fileName, autoRequire) {
+    var dfd = new ASJS.Promise();
+    var path = getPath(document.baseURI + _sourcePath, fileName);
+
+    if (_includedScript.indexOf(path) > -1) dfd.resolve();
+    else {
+      _includedScript.push(path);
+
+      var loader = new ASJS.Loader();
+          loader.addEventListener(ASJS.LoaderEvent.LOAD, function() {
+            modScript(loader).finally(function(content) {
+              loader.destruct();
+              dfd.resolve(content);
+              if (!autoRequire) Function(content)();
+            });
+          });
+          loader.load(path + "?" + _version);
+    }
+
+    return dfd;
+  }
+
+  function getPath(baseUrl, filePath) {
+    var fileName     = filePath.substr(filePath.lastIndexOf("/") + 1);
+    var relativePath = filePath.substr(0, filePath.lastIndexOf("/"));
+    var absolutePath = resolvePath(baseUrl, relativePath);
+    return [absolutePath, fileName].join("/");
+  }
+
+  function modScript(loader) {
+    var dfd = new ASJS.Promise();
+
+    var script = "";
+    var url     = loader.url;
+    var content = loader.content;
+    var baseURL = url.substr(0, url.lastIndexOf("/"));
+    var m;
+    var requires = [];
+    while ((m = _priv.REQUIRE_REGEX.exec(content)) !== null) {
+      requires.push(m[1].substr(1, m[1].length - 2));
+      content = content.replace(m[0], "");
+    }
+
+    ito(requires, function(index, value, next, end) {
+      require(getPath(baseURL, value), true).finally(function(importedContent) {
+        script += importedContent;
+        next();
+      });
+    }, aff(function() {
+      dfd.resolve(script + content);
+    }));
+
+    return dfd;
+  }
+
+  return _scope;
+});
+
+var sourcePath = ASJS.Importer.instance.sourcePath;
+var require    = ASJS.Importer.instance.require;
 
 c0(ASJS, "BaseClass", Object, function(_scope, _super) {
   _scope.new       = function() {};
