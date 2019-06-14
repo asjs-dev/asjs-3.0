@@ -73,6 +73,6 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
   function callFinally() {
     if (!_calledFinally) return;
     while (_finallyFunction.length > 0) _finallyFunction.shift()(_resolveData || _rejectData);
-    _scope.destruct();
+    //_scope.destruct();
   }
 });

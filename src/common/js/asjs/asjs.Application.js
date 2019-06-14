@@ -1,3 +1,4 @@
+require("core/asjs.Utils.js");
 require("core/asjs.Core.js");
 require("core/asjs.Polyfill.js");
 
