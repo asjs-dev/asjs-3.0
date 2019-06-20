@@ -13,6 +13,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
   _scope.new = function(tag) {
     _el = !tag || tis(tag, "string") ? document.createElement(tag || "div") : tag;
+    if (_el.parentElement) _parent = new ASJS.Sprite(_el.parentElement);
   }
 
   prop(_scope, "text", {

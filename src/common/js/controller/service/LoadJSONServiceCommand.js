@@ -7,14 +7,14 @@ createClass(ASJSUtils, "LoadJSONServiceCommand", ASJS.AbstractCommand, function(
     var loader = new ASJS.Loader();
         loader.responseType = "json";
         loader.compressed   = true;
-        loader.method = ASJS.RequestMethod.GET;
+        loader.method       = ASJS.RequestMethod.GET;
         loader.addEventListener(ASJS.LoaderEvent.LOAD, function(e) {
           dfd.resolve(loader.content);
-          loader.unload();
+          loader.destruct();
         });
         loader.addEventListener(ASJS.LoaderEvent.ERROR, function(e) {
           dfd.reject(loader.content);
-          loader.unload();
+          loader.destruct();
         });
         loader.load(url + "?v={{date}}");
 

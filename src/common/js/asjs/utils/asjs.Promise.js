@@ -6,6 +6,8 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
   var _calledReject    = false;
   var _calledFinally   = false;
 
+  var _destructRequired = false;
+
   var _rejectData;
   var _resolveData;
 
@@ -50,29 +52,55 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
   }
 
   _scope.destruct = function() {
-    _resolveFunction = null;
-    _rejectFunction  = null;
-    _finallyFunction = null;
-    _calledResolve   = null;
-    _calledReject    = null;
-    _calledFinally   = null;
+    if (
+      _resolveFunction && _resolveFunction.length > 0 &&
+      _rejectFunction && _rejectFunction.length > 0 &&
+      _finallyFunction && _finallyFunction.length > 0
+    ) _destructRequired = true;
+    else {
+      _resolveFunction = null;
+      _rejectFunction  = null;
+      _finallyFunction = null;
+      _calledResolve   = null;
+      _calledReject    = null;
+      _calledFinally   = null;
 
-    _super.destruct();
+      _super.destruct();
+    }
   }
 
   function callResolve() {
     if (!_calledResolve) return;
     while (_resolveFunction.length > 0) _resolveFunction.shift()(_resolveData);
+    if (_destructRequired) _scope.destruct();
   }
 
   function callReject() {
     if (!_calledReject) return;
     while (_rejectFunction.length > 0) _rejectFunction.shift()(_rejectData);
+    if (_destructRequired) _scope.destruct();
   }
 
   function callFinally() {
     if (!_calledFinally) return;
     while (_finallyFunction.length > 0) _finallyFunction.shift()(_resolveData || _rejectData);
-    //_scope.destruct();
+    if (_destructRequired) _scope.destruct();
   }
+});
+rof(ASJS.Promise, "all", function(promises) {
+  var dfd = new ASJS.Promise();
+
+  var responses = [];
+  var i = -1;
+  var l = promises.length;
+  while (++i < l) {
+    var promise = promises[i];
+        promise.finally(function(promise, response) {
+          promise.destruct();
+          responses.push(response);
+          if (responses.length === promises.length) dfd.resolve(responses);
+        }.bind(this, promise));
+  }
+
+  return dfd;
 });

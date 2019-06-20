@@ -20,7 +20,7 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
 
   _scope.destruct = function() {
     (new NS.DestructCommand()).execute();
-    _styleLoader.unload();
+    _styleLoader.destruct();
     _language.clear();
     _config.clear();
 

@@ -16,6 +16,7 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
   var _url;
   var _data;
   var _content;
+  var _promise;
 
   _scope.new = function() {
     reset();
@@ -66,18 +67,21 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
   }
 
   _scope.load = function(url) {
-    if (!url) return;
-    _url = url;
+    if (url) {
+      _url = url;
 
-    _request.withCredentials = _withCredentials;
-    _request.open(_method, _url, _async, _username, _password);
-    _request.responseType = _compressed ? "text" : _responseType;
-    if (_headers) {
-      for (var k in _headers) {
-        _request.setRequestHeader(k, _headers[k]);
+      _request.withCredentials = _withCredentials;
+      _request.open(_method, _url, _async, _username, _password);
+      _request.responseType = _compressed ? "text" : _responseType;
+      if (_headers) {
+        for (var k in _headers) {
+          _request.setRequestHeader(k, _headers[k]);
+        }
       }
+      _request.send(_compressed ? ASJS.LZW.instance.compress(_data) : _data);
     }
-    _request.send(_compressed ? ASJS.LZW.instance.compress(_data) : _data);
+
+    return _promise;
   };
 
   _scope.destruct = function() {
@@ -98,6 +102,9 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
     _data         = null;
     _content      = null;
 
+    !emp(_promise) && _promise.destruct();
+    _promise = null;
+
     _super.destruct();
   }
 
@@ -108,6 +115,9 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
     }
 
     _content = null;
+
+    !emp(_promise) && _promise.destruct();
+    _promise = new ASJS.Promise();
 
     _request = XMLHttpRequest ? new XMLHttpRequest() : new XDomainRequest();
 
@@ -146,22 +156,29 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
 
   function onLoad(e) {
     if (_scope.status >= 400) onError(e);
-    else _scope.dispatchEvent(ASJS.LoaderEvent.LOAD, e);
+    else {
+      _promise.resolve(_scope);
+      _scope.dispatchEvent(ASJS.LoaderEvent.LOAD, e);
+    }
   };
 
   function onAbort(e) {
+    _promise.reject();
     _scope.dispatchEvent(ASJS.LoaderEvent.ABORT, e);
   };
 
   function onTimeout(e) {
     _scope.dispatchEvent(ASJS.LoaderEvent.TIMEOUT, e);
+    _promise.reject();
   };
 
   function onLoadEnd(e) {
+    _promise.reject();
     _scope.dispatchEvent(ASJS.LoaderEvent.LOAD_END, e);
   };
 
   function onError(e) {
+    _promise.reject();
     _scope.dispatchEvent(ASJS.LoaderEvent.ERROR, e);
   };
 });

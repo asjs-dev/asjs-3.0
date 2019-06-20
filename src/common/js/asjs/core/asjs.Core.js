@@ -59,14 +59,13 @@ c1(ASJS, "Importer", Object, function(_scope) {
 
       var loader = new ASJS.Loader();
           loader.compressed = compressed;
-          loader.addEventListener(ASJS.LoaderEvent.LOAD, function() {
+          loader.load(path + "?" + _version).then(function() {
             searchRequires(loader).finally(function(content) {
               loader.destruct();
               dfd.resolve(content);
               if (!autoRequire) Function(content)();
             });
           });
-          loader.load(path + "?" + _version);
     }
 
     return dfd;

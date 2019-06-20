@@ -12,20 +12,19 @@ createClass(NS, "ExternalApplicationMediator", ASJSUtils.AbstractResizeMediator,
 
     _view.addEventListener(NS.ExternalApplicationMediator.CLOSE, onClose);
 
-    _loader.addEventListener(ASJS.LoaderEvent.LOAD, onLoadExternalApplication);
+    _loader.addEventListener(ASJS.LoaderEvent.LOAD,     onLoadExternalApplication);
     _loader.addEventListener(ASJS.LoaderEvent.PROGRESS, onProgressExternalApplication);
   }
 
   function onShow() {
-    if (!_super.protected.view.contains(_view)) _super.protected.view.addChild(_view);
+    !_super.protected.view.contains(_view) && _super.protected.view.addChild(_view);
     loadExternalApplication();
 
     _super.protected.showView();
   }
 
   function onHide() {
-    if (_super.protected.view.contains(_view))
-      _super.protected.view.removeChild(_view);
+    _super.protected.view.contains(_view) && _super.protected.view.removeChild(_view);
     unloadExternalApplication();
   }
 
