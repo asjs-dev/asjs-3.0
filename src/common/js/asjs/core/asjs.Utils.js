@@ -137,13 +137,18 @@ var extendProperties = function(t) {
 };
 var extProps = extendProperties;
 
-var destructObject = function(t) {
+var destructObject = function(t, stack) {
+  var stack = stack || [];
   ito(t, function(key, item, next) {
-    if (tis(item, "object")) destObj(item);
-    destCls(item);
-    del(t, key);
+    if (!stack.indexOf(item)) {
+      stack.push(item);
+      if (tis(item, "object")) destObj(item, stack);
+      destCls(item);
+      del(t, key);
+    }
     next();
   });
+  stack = null;
   t = null;
 };
 var destObj = destructObject;

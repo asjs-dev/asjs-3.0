@@ -5,15 +5,25 @@ require("../utils/asjs.CSS.js");
 createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   var priv = {};
 
+  cnst(priv, "__", "ca1n35io53s9d9cc");
   cnst(priv, "CREATED", "created");
 
   var _el;
-  var _parent = null;
+  var _parent;
   var _state  = priv.CREATED;
 
   _scope.new = function(tag) {
     _el = !tag || tis(tag, "string") ? document.createElement(tag || "div") : tag;
-    if (_el.parentElement) _parent = new ASJS.Sprite(_el.parentElement);
+    _el.scope = function(param) {
+      return param === _scope[priv.__[6] + priv.__[12]] ? _scope : ASJS[priv.__[4]];
+    }
+
+    var parent = _el.parentElement;
+    if (parent) {
+      _parent = parent.getScope
+        ? parent.getScope(_parent.id)
+        : new ASJS.Sprite(parent);
+      }
   }
 
   prop(_scope, "text", {

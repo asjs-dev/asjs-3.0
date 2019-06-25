@@ -30,7 +30,7 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
     var l = 9;
     while (++i < l) _blocks[i].setCSS("background-image", "url(" + v + ")");
     var image = new ASJS.Image();
-        image.addEventListener(ASJS.LoaderEvent.LOAD, function() {
+        image.addEventListener(ASJS.Image.UPDATED, function() {
           image.removeEventListeners();
 
           _size.x = image.imageWidth;
@@ -46,7 +46,7 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
   });
 
   _scope.render = function() {
-    var rightSize = _size.x - (_rectangle.x + _rectangle.width);
+    var rightSize  = _size.x - (_rectangle.x + _rectangle.width);
     var bottomSize = _size.y - (_rectangle.y + _rectangle.height);
 
     var center = new ASJS.Point(

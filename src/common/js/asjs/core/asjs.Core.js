@@ -2,6 +2,8 @@ var stage;
 cnst(this, "ASJS", (function() {
   var _scope = {};
 
+  _scope.n = null;
+
   _scope.start = function(b) {
     ASJS.Polyfill.instance;
     isDocumentComplete()
