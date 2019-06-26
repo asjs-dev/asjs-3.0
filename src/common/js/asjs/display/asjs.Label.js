@@ -1,25 +1,12 @@
 require("./asjs.DisplayObject.js");
 
 createClass(ASJS, "Label", ASJS.DisplayObject, function(_scope, _super) {
-  var _for;
-
   _scope.new = function() {
     _super.new("label");
   }
 
   prop(_scope, "for", {
-    get: function() { return _for; },
-    set: function(v) {
-      if (v && v.id) {
-        _for = v;
-        _scope.setAttr("for", _for.id);
-      }
-    }
+    get: function() { return _scope.getAttr("for"); },
+    set: function(v) { _scope.setAttr("for", v); }
   });
-
-  _scope.destruct = function() {
-    _for = null;
-
-    _super.destruct();
-  }
 });

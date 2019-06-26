@@ -143,42 +143,42 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
   }
 
   function onReadyStateChange(e) {
-    _scope.dispatchEvent(ASJS.LoaderEvent.READY_STATE_CHANGE, e);
+    _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.READY_STATE_CHANGE, e);
   };
 
   function onLoadStart() {
-    _scope.dispatchEvent(ASJS.LoaderEvent.LOAD_START);
+    _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.LOAD_START);
   };
 
   function onProgress(e) {
-    if (e.lengthComputable) _scope.dispatchEvent(ASJS.LoaderEvent.PROGRESS, e);
+    e.lengthComputable && _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.PROGRESS, e);
   };
 
   function onLoad(e) {
     if (_scope.status >= 400) onError(e);
     else {
       _promise.resolve(_scope);
-      _scope.dispatchEvent(ASJS.LoaderEvent.LOAD, e);
+      _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.LOAD, e);
     }
   };
 
   function onAbort(e) {
     _promise.reject();
-    _scope.dispatchEvent(ASJS.LoaderEvent.ABORT, e);
+    _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.ABORT, e);
   };
 
   function onTimeout(e) {
-    _scope.dispatchEvent(ASJS.LoaderEvent.TIMEOUT, e);
     _promise.reject();
+    _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.TIMEOUT, e);
   };
 
   function onLoadEnd(e) {
     _promise.reject();
-    _scope.dispatchEvent(ASJS.LoaderEvent.LOAD_END, e);
+    _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.LOAD_END, e);
   };
 
   function onError(e) {
     _promise.reject();
-    _scope.dispatchEvent(ASJS.LoaderEvent.ERROR, e);
+    _scope.dispatchEvent && _scope.dispatchEvent(ASJS.LoaderEvent.ERROR, e);
   };
 });

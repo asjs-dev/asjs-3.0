@@ -5,26 +5,36 @@ require("../utils/asjs.CSS.js");
 createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   var priv = {};
 
-  cnst(priv, "__", "ca1n35io53s9d9cc");
   cnst(priv, "CREATED", "created");
 
   var _el;
-  var _parent;
+  var _parent = null;
   var _state  = priv.CREATED;
 
   _scope.new = function(tag) {
     _el = !tag || tis(tag, "string") ? document.createElement(tag || "div") : tag;
-    _el.scope = function(param) {
-      return param === _scope[priv.__[6] + priv.__[12]] ? _scope : ASJS[priv.__[4]];
-    }
+    _scope.setData("asjs-id", "instance_" + (++ASJS.Tag.instanceId));
 
-    var parent = _el.parentElement;
-    if (parent) {
-      _parent = parent.getScope
-        ? parent.getScope(_parent.id)
-        : new ASJS.Sprite(parent);
-      }
+    if (_el.parentElement) _parent = new ASJS.Sprite(_el.parentElement);
   }
+
+  prop(_scope, "id", {
+    get: function() { return _scope.getAttr("id"); },
+    set: function(v) { _scope.setAttr("id", v); }
+  });
+
+  prop(_scope, "enabled", {
+    get: function() { return _scope.getAttr("disabled") != "disabled"; },
+    set: function(v) {
+      if (v) {
+        _scope.removeAttr("disabled");
+        _scope.setCSS("pointer-events", "auto");
+      } else {
+        _scope.setAttr("disabled", "disabled");
+        _scope.setCSS("pointer-events", "none");
+      }
+    }
+  });
 
   prop(_scope, "text", {
     get: function() { return _el.textContent || _el.innerText; },
@@ -38,6 +48,8 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     get: function() { return _el.innerHTML; },
     set: function(v) { _el.innerHTML = v; }
   });
+
+  get(_scope, "asjsId", function() { return _scope.getData("asjs-id"); });
 
   get(_scope, "el", function() { return _el; });
 
@@ -96,15 +108,27 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   }
 
   _scope.getAttr = function(k) {
-    return _el.getAttribute( k );
+    return _el.getAttribute(k);
   }
 
-  _scope.setAttr = function( k, v ) {
-    _el.setAttribute( k, v );
+  _scope.setAttr = function(k, v) {
+    _el.setAttribute(k, v);
   }
 
-  _scope.removeAttr = function( k ) {
-    _el.removeAttribute( k );
+  _scope.removeAttr = function(k) {
+    _el.removeAttribute(k);
+  }
+
+  _scope.getData = function(k) {
+    return _scope.getAttr("data-" + k);
+  }
+
+  _scope.setData = function(k, v) {
+    _scope.setAttr("data-" + k, v);
+  }
+
+  _scope.removeData = function(k) {
+    _scope.removeAttr("data-" + k);
   }
 
   _scope.clear = function() {
@@ -130,3 +154,4 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     _state  = null;
   }
 });
+ASJS.Tag.instanceId = -1;

@@ -53,9 +53,9 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
 
   _scope.destruct = function() {
     if (
-      _resolveFunction && _resolveFunction.length > 0 &&
-      _rejectFunction && _rejectFunction.length > 0 &&
-      _finallyFunction && _finallyFunction.length > 0
+      (_resolveFunction && _resolveFunction.length > 0) ||
+      (_rejectFunction  && _rejectFunction.length  > 0) ||
+      (_finallyFunction && _finallyFunction.length > 0)
     ) _destructRequired = true;
     else {
       _resolveFunction = null;
@@ -64,26 +64,26 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
       _calledResolve   = null;
       _calledReject    = null;
       _calledFinally   = null;
-
+      
       _super.destruct();
     }
   }
 
   function callResolve() {
     if (!_calledResolve) return;
-    while (_resolveFunction.length > 0) _resolveFunction.shift()(_resolveData);
+    while (_resolveFunction && _resolveFunction.length > 0) _resolveFunction.shift()(_resolveData);
     if (_destructRequired) _scope.destruct();
   }
 
   function callReject() {
     if (!_calledReject) return;
-    while (_rejectFunction.length > 0) _rejectFunction.shift()(_rejectData);
+    while (_rejectFunction && _rejectFunction.length > 0) _rejectFunction.shift()(_rejectData);
     if (_destructRequired) _scope.destruct();
   }
 
   function callFinally() {
     if (!_calledFinally) return;
-    while (_finallyFunction.length > 0) _finallyFunction.shift()(_resolveData || _rejectData);
+    while (_finallyFunction && _finallyFunction.length > 0) _finallyFunction.shift()(_resolveData || _rejectData);
     if (_destructRequired) _scope.destruct();
   }
 });

@@ -2,8 +2,6 @@ var stage;
 cnst(this, "ASJS", (function() {
   var _scope = {};
 
-  _scope.n = null;
-
   _scope.start = function(b) {
     ASJS.Polyfill.instance;
     isDocumentComplete()
@@ -58,7 +56,6 @@ c1(ASJS, "Importer", Object, function(_scope) {
     if (_includedScript.indexOf(path) > -1) dfd.resolve();
     else {
       _includedScript.push(path);
-
       var loader = new ASJS.Loader();
           loader.compressed = compressed;
           loader.load(path + "?" + _version).then(function() {

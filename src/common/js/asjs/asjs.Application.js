@@ -42,7 +42,6 @@ require("display/asjs.Head.js");
 require("display/asjs.Window.js");
 
 require("display/asjs.Tag.js");
-require("display/asjs.PrimitiveDisplayObject.js");
 require("display/asjs.DisplayObject.js");
 require("display/asjs.Sprite.js");
 require("display/asjs.Stage.js");

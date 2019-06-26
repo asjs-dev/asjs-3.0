@@ -11,6 +11,9 @@ try {
 trc = trace;
 console.clear();
 
+var _d = document;
+var _w = window;
+
 var is = function(a, b) {
   return a instanceof b;
 }
@@ -140,7 +143,7 @@ var extProps = extendProperties;
 var destructObject = function(t, stack) {
   var stack = stack || [];
   ito(t, function(key, item, next) {
-    if (!stack.indexOf(item)) {
+    if (stack.indexOf(item) === -1) {
       stack.push(item);
       if (tis(item, "object")) destObj(item, stack);
       destCls(item);

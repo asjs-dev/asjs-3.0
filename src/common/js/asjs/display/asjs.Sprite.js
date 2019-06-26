@@ -115,7 +115,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     var l = _scope.numChildren;
     while (++i < l) {
       var child = _scope.getChildAt(i);
-      if (domObject.id === child.id) return child;
+      if (domObject.getAttribute("data-asjs-id") === child.asjsId) return child;
       else if (child.numChildren) {
         var grandChild = child.getChildByDOMObject(domObject);
         if (grandChild) return grandChild;

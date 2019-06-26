@@ -1,9 +1,9 @@
 require("../geom/asjs.Rectangle.js");
 require("../geom/asjs.GeomUtils.js");
 require("../utils/asjs.Mouse.js");
-require("./asjs.PrimitiveDisplayObject.js");
+require("./asjs.Tag.js");
 
-createClass(ASJS, "DisplayObject", ASJS.PrimitiveDisplayObject, function(_scope, _super) {
+createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _mouse      = ASJS.Mouse.instance;
   var _filters    = [];
   var _rotation   = 0;
