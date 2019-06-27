@@ -53,6 +53,8 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
   get(_scope, "el", function() { return _el; });
 
+  get(_scope, "attributes", function() { return _el.attributes; });
+
   get(_scope, "bounds", function() { return new ASJS.Rectangle(); });
 
   prop(_scope, "parent", {
@@ -147,11 +149,17 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
     _scope.clear && _scope.clear();
 
-    _super.destruct();
+    var attributeNames = [];
+    for (var key in _scope.attributes) attributeNames.push(_scope.attributes[key].name);
+    for (var key in attributeNames) _scope.removeAttr(attributeNames[key]);
+
+    destObj(_el);
 
     _el     = null;
     _parent = null;
     _state  = null;
+
+    _super.destruct();
   }
 });
 ASJS.Tag.instanceId = -1;

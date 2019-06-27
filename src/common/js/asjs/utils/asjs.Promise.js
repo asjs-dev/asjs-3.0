@@ -64,7 +64,7 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
       _calledResolve   = null;
       _calledReject    = null;
       _calledFinally   = null;
-      
+
       _super.destruct();
     }
   }
@@ -100,6 +100,27 @@ rof(ASJS.Promise, "all", function(promises) {
           responses.push(response);
           if (responses.length === promises.length) dfd.resolve(responses);
         }.bind(this, promise));
+  }
+
+  return dfd;
+});
+rof(ASJS.Promise, "race", function(promises) {
+  var dfd = new ASJS.Promise();
+
+  var hadResponse = false;
+  var i = -1;
+  var l = promises.length;
+  while (++i < l) {
+    promises[i].finally(function(response) {
+      !hadResponse && dfd.resolve(response);
+      hadResponse = true;
+      i = l;
+
+      var j = -1;
+      while (++j < l) {
+        promises[i] && promises[i].destruct && promises[i].destruct();
+      }
+    });
   }
 
   return dfd;
