@@ -6,14 +6,9 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
   var _handlers = {};
 
   _scope.dispatchEvent = function(event, data, bubble) {
-    if (!_handlers) return;
-    if (!event) return;
+    if (!_handlers || !event) return;
     if (_scope.el) {
-      try {
-        _polyfill.dispatchEvent(_scope.el, ASJS.EventDispatcher.createEvent(event, data, bubble));
-      } catch (error) {
-        trace(error);
-      }
+      _scope.el.dispatchEvent(ASJS.EventDispatcher.createEvent(event, data, bubble));
       return;
     }
 
@@ -31,12 +26,12 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     var i = -1;
     var l = types.length;
     while (++i < types.length) {
-      var t = _scope.el ? _polyfill.convertEventType(types[i]) : types[i];
+      var t = types[i];
       if (t !== "") {
         if (_scope.hasEventListener(t, handler)) return;
         if (!_handlers[t]) _handlers[t] = [];
         _handlers[t].push(handler);
-        if (_scope.el) _polyfill.addEventListener(_scope.el, t, handler, capture || false);
+        _scope.el && _scope.el.addEventListener(t, handler, capture || false);
       }
     }
   }
@@ -45,7 +40,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     if (!_handlers) return;
     if (_scope.el) {
       for (var type in _handlers) {
-        var t = _polyfill.convertEventType(type);
+        var t = type;
         var handlers = _handlers[t];
         while (handlers && handlers.length > 0) _scope.removeEventListener(t, handlers[0]);
       }
@@ -58,14 +53,14 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
   _scope.removeEventListener = function(type, handler) {
     if (!_handlers) return;
     if (_scope.el) {
-      var t = _polyfill.convertEventType(type);
+      var t = type;
       var handlers = _handlers[t];
       if (!handlers) return;
       if (handler) {
         var index = handlers.indexOf(handler);
         if (index === -1) return;
         handlers.splice(index, 1);
-        _polyfill.removeEventListener(_scope.el, t, handler);
+        _scope.el.removeEventListener(t, handler);
       } else {
         while (handlers.length > 0) _scope.removeEventListener(t, handlers[0]);
       }
@@ -79,7 +74,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
 
   _scope.hasEventListener = function(type, handler) {
     if (!_handlers) return;
-    var t = _scope.el ? _polyfill.convertEventType(type) : type;
+    var t = type;
     var handlers = _handlers[t];
     if (!handlers) return false;
     if (!handler)  return true;
@@ -98,7 +93,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
 rof(ASJS.EventDispatcher, "createEvent", function(event, data, bubble) {
   return !tis(event, "string")
     ? event
-    : new CustomEvent(ASJS.Polyfill.instance.convertEventType(event), {
+    : new CustomEvent(event, {
         detail     : data,
         cancelable : true,
         bubbles    : empty(bubble) ? true : bubble

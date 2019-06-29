@@ -54,7 +54,7 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractView, function(_sco
     _scope.removeExternalApplication();
     _externalApplication = new externalApplication();
     _externalApplication.addEventListener(ASJS.LoaderEvent.LOAD, function() {
-      _externalApplication.addEventListener(ASJS.LoaderEvent.LOAD);
+      _externalApplication.removeEventListener(ASJS.LoaderEvent.LOAD);
       _scope.title = _externalApplication.title;
     });
     _container.addChild(_externalApplication);

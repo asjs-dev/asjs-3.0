@@ -12,13 +12,6 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     "hidden"           : ""
   };
 
-  var _eventPolyfill = {
-    "dispatchEvent"       : "dispatchEvent",
-    "addEventListener"    : "addEventListener",
-    "removeEventListener" : "removeEventListener"
-  };
-
-  var _eventTypePrefix = "";
   var _stylePrefixJS   = "";
   var _stylePrefixCSS  = "";
   var _sid             = {};
@@ -28,7 +21,6 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     checkSetTimeout();
     checkVisibility();
     checkCustomEvent();
-    checkEventListeners();
     checkAnimationFrame();
     checkNavigator();
     checkAudioContext();
@@ -43,32 +35,10 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   }
 
   get(_scope, "isLittleEndian", function() { return _isLittleEndian; });
-
   get(_scope, "visibilitychange", function() { return _visibilityPolyfill.visibilitychange; });
   get(_scope, "documentHidden", function() { return document[_visibilityPolyfill.hidden]; });
-
-  get(_scope, "eventTypePrefix", function() { return _eventTypePrefix; });
-
   get(_scope, "stylePrefixJS", function() { return _stylePrefixJS; });
-
   get(_scope, "stylePrefixCSS", function() { return _stylePrefixCSS; });
-
-  _scope.convertEventType = function(type) {
-    if (type.indexOf(_eventTypePrefix) !== 0) return _eventTypePrefix + type;
-    return type;
-  }
-
-  _scope.dispatchEvent = function(element, event) {
-    element[_eventPolyfill.dispatchEvent](event);
-  }
-
-  _scope.addEventListener = function(element, event, listener, capture) {
-    element[_eventPolyfill.addEventListener](event, listener, capture);
-  }
-
-  _scope.removeEventListener = function(element, event, listener) {
-    element[_eventPolyfill.removeEventListener](event, listener);
-  }
 
   function addWorkerCallback(callback) {
     var newId = ++_workerCallbacksNum;
@@ -304,18 +274,6 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
         return null;
       }
     });
-  }
-
-  function checkEventListeners() {
-    var p = document.createElement("p");
-
-    if (p.addEventListener) return;
-
-    _eventPolyfill.addEventListener    = "attachEvent";
-    _eventPolyfill.removeEventListener = "detachEvent";
-    _eventPolyfill.dispatchEvent       = "fireEvent";
-
-    _eventTypePrefix = "on";
   }
 
   function checkMediaSource() {

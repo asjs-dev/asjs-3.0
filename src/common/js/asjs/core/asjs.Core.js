@@ -32,6 +32,12 @@ cnst(this, "ASJS", (function() {
 
   return _scope;
 })());
+cnst(ASJS, "on",     "addEventListener");
+cnst(ASJS, "off",    "removeEventListener");
+cnst(ASJS, "offAll", "removeEventListeners");
+cnst(ASJS, "de",     "dispatchEvent");
+cnst(ASJS, "has",    "hasEventListener");
+
 var stage;
 
 c1(ASJS, "Importer", Object, function(_scope) {

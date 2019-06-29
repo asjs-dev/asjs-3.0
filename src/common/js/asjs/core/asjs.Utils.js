@@ -114,7 +114,7 @@ var iterateOver = function(o, cb, ccb) {
       return;
     }
     k = ks[i];
-    if (!o.hasOwnProperty(k)) n();
+    if (o.hasOwnProperty && !o.hasOwnProperty(k)) n();
     var iv;
     try {
       iv = o[k];
