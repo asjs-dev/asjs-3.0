@@ -93,17 +93,32 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
     drawBackground(_blocks[4], tl.x,    tl.y,     ps.x,    ps.y);
     drawBackground(_blocks[5], "right", tl.y,     _size.x, ps.y);
     drawBackground(_blocks[7], tl.x,    "bottom", ps.x,    _size.y);
+
+    center.destruct();
+    center = null;
+
+    percent.destruct();
+    percent = null;
+
+    tl.destruct();
+    tl = null;
+
+    ps.destruct();
+    ps = null;
   }
 
   _scope.destruct = function() {
-    destructClass(_size);
-    destructClass(_rectangle);
+    _size.destruct();
+    _size = null;
 
+    _rectangle.destruct();
+    _rectangle = null;
+    
     var i = -1;
     var l = _blocks.length;
     while (++i < l) {
       _scope.removeChild(_blocks[i]);
-      destructClass(_blocks[i]);
+      _blocks[i].destruct();
       _blocks[i] = null;
     }
     _blocks = null;

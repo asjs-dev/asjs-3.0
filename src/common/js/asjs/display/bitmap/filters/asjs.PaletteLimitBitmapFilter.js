@@ -51,6 +51,8 @@ createClass(ASJS, "PaletteLimitBitmapFilter", ASJS.AbstractBitmapFilter, functio
 
     _map = {};
     _palette = {};
+    originalColor.destruct();
+    originalColor = null;
 
     return pixels;
   }

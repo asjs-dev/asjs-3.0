@@ -10,6 +10,7 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _scaleX     = 1;
   var _scaleY     = 1;
   var _cssDisplay = "block";
+  var _bounds     = new ASJS.Rectangle();
 
   _scope.new = function(tag) {
     _super.new(tag);
@@ -20,7 +21,13 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _scope.setCSS("box-sizing",     "border-box");
   }
 
-  get(_scope, "bounds", function() { return new ASJS.Rectangle(_scope.calcX, _scope.calcY, _scope.calcWidth, _scope.calcHeight); });
+  get(_scope, "bounds", function() {
+    _bounds.x      = _scope.calcX;
+    _bounds.y      = _scope.calcY;
+    _bounds.width  = _scope.calcWidth;
+    _bounds.height = _scope.calcHeight;
+    return _bounds;
+  });
 
   get(_scope, "calcX", function() { return _scope.x + _scope.getCSS("marginLeft"); });
 
@@ -172,6 +179,9 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _scaleX     = null;
     _scaleY     = null;
     _cssDisplay = null;
+
+    _bounds.destruct();
+    _bounds = null;
 
     _super.destruct();
   }

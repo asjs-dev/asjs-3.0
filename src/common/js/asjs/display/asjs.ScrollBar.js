@@ -39,31 +39,45 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     var scrollSize     = new ASJS.Point(_target.el.scrollWidth, _target.el.scrollHeight);
 
     if (
-      ASJS.GeomUtils.twoPointEquals(scrollSize,     _previousScrollSize) &&
-      ASJS.GeomUtils.twoPointEquals(scrollPosition, _previousScrollPosition) &&
-      ASJS.GeomUtils.twoPointEquals(offsetSize,     _previousOffsetSize)
-    ) return;
+      !ASJS.GeomUtils.twoPointEquals(scrollSize,     _previousScrollSize) ||
+      !ASJS.GeomUtils.twoPointEquals(scrollPosition, _previousScrollPosition) ||
+      !ASJS.GeomUtils.twoPointEquals(offsetSize,     _previousOffsetSize)
+    ) {
+      _previousOffsetSize.x = offsetSize.x;
+      _previousOffsetSize.y = offsetSize.y;
 
-    _previousOffsetSize     = offsetSize;
-    _previousScrollPosition = scrollPosition;
-    _previousScrollSize     = scrollSize;
+      _previousScrollPosition.x = scrollPosition.x;
+      _previousScrollPosition.y = scrollPosition.y;
 
-    _scope.setSize(offsetSize.x, offsetSize.y);
+      _previousScrollSize.x = scrollSize.x;
+      _previousScrollSize.y = scrollSize.y;
 
-    function draw(scrollBar, positionName, sizeName) {
-      if (offsetSize[positionName] < scrollSize[positionName]) {
-        !_scope.contains(scrollBar) && _scope.addChild(scrollBar);
-        var percent = (offsetSize[positionName] / scrollSize[positionName]);
-        scrollBar[sizeName]     = Math.floor(offsetSize[positionName] * percent);
-        scrollBar[positionName] = Math.floor(scrollPosition[positionName] * percent);
-        _scope[positionName]    = scrollPosition[positionName];
-      } else if (_scope.contains(scrollBar)) {
-        _scope.removeChild(scrollBar);
+      _scope.setSize(offsetSize.x, offsetSize.y);
+
+      function draw(scrollBar, positionName, sizeName) {
+        if (offsetSize[positionName] < scrollSize[positionName]) {
+          !_scope.contains(scrollBar) && _scope.addChild(scrollBar);
+          var percent = (offsetSize[positionName] / scrollSize[positionName]);
+          scrollBar[sizeName]     = Math.floor(offsetSize[positionName] * percent);
+          scrollBar[positionName] = Math.floor(scrollPosition[positionName] * percent);
+          _scope[positionName]    = scrollPosition[positionName];
+        } else if (_scope.contains(scrollBar)) {
+          _scope.removeChild(scrollBar);
+        }
       }
+
+      draw(_horizontalScrollBar, "x", "width");
+      draw(_verticalScrollBar,   "y", "height");
     }
 
-    draw(_horizontalScrollBar, "x", "width");
-    draw(_verticalScrollBar,   "y", "height");
+    offsetSize.destruct();
+    offsetSize = null;
+
+    scrollPosition.destruct();
+    scrollPosition = null;
+
+    scrollSize.destruct();
+    scrollSize = null;
   });
 
   _scope.destruct = function() {
@@ -72,19 +86,19 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     _target                 = null;
     _originalOverflow       = null;
 
-    destructClass(_previousOffsetSize);
+    _previousOffsetSize.destruct();
     _previousOffsetSize = null;
 
-    destructClass(_previousScrollSize);
+    _previousScrollSize.destruct();
     _previousScrollSize = null;
 
-    destructClass(_previousScrollPosition);
+    _previousScrollPosition.destruct();
     _previousScrollPosition = null;
 
-    destructClass(_verticalScrollBar);
+    _verticalScrollBar.destruct();
     _verticalScrollBar = null;
 
-    destructClass(_horizontalScrollBar);
+    _horizontalScrollBar.destruct();
     _horizontalScrollBar = null;
 
     _super.destruct();

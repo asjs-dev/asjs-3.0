@@ -5,5 +5,7 @@ createClass(NS, "ViewPrepCommand", ASJS.AbstractCommand, function(_scope) {
     new NS.ContentMediator(app);
 
     _scope.sendNotification(NS.ContentMediator.SHOW);
+
+    _scope.destruct();
   }
 });

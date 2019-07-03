@@ -47,7 +47,7 @@ createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
   }
 
   _scope.destruct = function() {
-    destructClass(_select);
+    _select.destruct();
     _select = null;
 
     _super.destruct();

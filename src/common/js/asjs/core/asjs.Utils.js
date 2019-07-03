@@ -143,9 +143,10 @@ var extProps = extendProperties;
 var destructObject = function(t, stack) {
   var stack = stack || [];
   ito(t, function(key, item, next) {
-    if (stack.indexOf(item) === -1) {
+    var isItemObject = tis(item, "object");
+    if (!isItemObject || stack.indexOf(item) === -1) {
       stack.push(item);
-      if (tis(item, "object")) destObj(item, stack);
+      isItemObject && destObj(item, stack);
       destCls(item);
       del(t, key);
     }

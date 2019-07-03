@@ -35,7 +35,13 @@ rof(ASJS.GeomUtils, "rectCutRect", function(rectA, rectB) {
     rectB.width  + rectA.width * 2,
     rectB.height + rectA.height * 2
   );
-  return ASJS.GeomUtils.rectInRect(rectA, newRectB);
+
+  var isRectCutRect = ASJS.GeomUtils.rectInRect(rectA, newRectB);
+
+  newRectB.destruct();
+  newRectB = null;
+
+  return isRectCutRect;
 });
 
 rof(ASJS.GeomUtils, "rectInRect", function(rectA, rectB) {
@@ -82,6 +88,7 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
     point.x - (globalPos.x + rect.width * 0.5),
     point.y - (globalPos.y + rect.height * 0.5)
   );
+
   var rotatedDiffPoint = new ASJS.Point(
     diffPoint.x * Math.cos(rotationDeg) - diffPoint.y * Math.sin(rotationDeg),
     diffPoint.x * Math.sin(rotationDeg) + diffPoint.y * Math.cos(rotationDeg)
@@ -92,5 +99,23 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
   );
 
   var localPoint = target.globalToLocal(recalcPoint);
-  return localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= rect.width && localPoint.y <= rect.height;
+
+  globalPos.destruct();
+  globalPos = null;
+
+  diffPoint.destruct();
+  diffPoint = null;
+
+  rotatedDiffPoint.destruct();
+  rotatedDiffPoint = null;
+
+  recalcPoint.destruct();
+  recalcPoint = null;
+
+  var isHit = localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= rect.width && localPoint.y <= rect.height;
+
+  localPoint.destruct();
+  localPoint = null;
+
+  return isHit;
 });

@@ -9,6 +9,7 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
 
   _scope.execute = function() {
     setupLanguage();
+    _scope.destruct();
   }
 
   function setupLanguage() {

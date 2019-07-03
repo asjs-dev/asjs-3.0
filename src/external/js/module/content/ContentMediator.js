@@ -13,7 +13,10 @@ createClass(NS, "ContentMediator", ASJSUtils.AbstractResizeMediator, function(_s
   _scope.destruct = function() {
     _super.protected.removeHandler(NS.ContentMediator.SHOW,     onShow);
     _super.protected.removeHandler(NS.ContentMediator.DESTRUCT, onDestruct);
+
     _contentView.destruct();
+    _contentView = null;
+
     _super.destruct();
   }
 

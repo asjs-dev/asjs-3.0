@@ -54,7 +54,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
 
   _scope.destruct = function() {
     _restrict = null;
-    destructClass(_helperElement);
+    _helperElement.destruct();
     _helperElement = null;
 
     _super.destruct();

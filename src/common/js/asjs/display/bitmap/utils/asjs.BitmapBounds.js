@@ -29,5 +29,8 @@ rof(ASJS.BitmapBounds, "execute", function(bitmap) {
     }
   }
 
+  pixelPos.destruct();
+  pixelPos = null;
+
   return size;
 });

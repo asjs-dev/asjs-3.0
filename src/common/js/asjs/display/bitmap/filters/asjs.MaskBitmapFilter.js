@@ -41,6 +41,9 @@ createClass(ASJS, "MaskBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
       } else if (_scope.cutout) srcD[i + 3] = 0;
     }
 
+    srcPixelPos.destruct();
+    srcPixelPos = null;
+
     return pixels;
   }
 });

@@ -30,6 +30,8 @@ createClass(ASJS, "ColorChangeBitmapFilter", ASJS.AbstractBitmapFilter, function
     }
 
     _palette = {};
+    oColor.destruct();
+    oColor = null;
 
     return pixels;
   }

@@ -64,6 +64,9 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
       }
     }
 
+    pixelPos.destruct();
+    pixelPos = null;
+
     return pixels;
   }
 });

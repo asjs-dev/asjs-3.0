@@ -39,10 +39,10 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
   });
 
   _scope.destruct = function() {
-    destructClass(_checkbox);
+    _checkbox.destruct();
     _checkbox = null;
 
-    destructClass(_label);
+    _label.destruct();
     _label = null;
 
     _super.destruct();

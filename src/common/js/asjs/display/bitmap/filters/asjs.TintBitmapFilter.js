@@ -23,6 +23,9 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
       d[i + 2] = _scope.blendModeFunction(color.b, _scope.color.b, color);
     }
 
+    color.destruct();
+    color = null;
+
     return pixels;
   }
 });

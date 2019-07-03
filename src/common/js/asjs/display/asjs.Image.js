@@ -27,11 +27,16 @@ createClass(ASJS, "Image", ASJS.DisplayObject, function(_scope, _super) {
     set: function(v) { _scope.setAttr("alt", v); }
   });
 
+  _scope.destruct = function() {
+    _originalSize.destruct();
+    _originalSize = null;
+    
+    _super.destruct();
+  }
+
   function updateOriginalSize() {
-    _originalSize = new ASJS.Point(
-      _scope.el.naturalWidth || _scope.imageWidth,
-      _scope.el.naturalHeight || _scope.imageHeight
-    );
+    _originalSize.x = _scope.el.naturalWidth || _scope.imageWidth;
+    _originalSize.y = _scope.el.naturalHeight || _scope.imageHeight;
     _scope.dispatchEvent(ASJS.Image.UPDATED);
   }
 });

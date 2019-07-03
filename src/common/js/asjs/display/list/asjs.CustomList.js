@@ -146,7 +146,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     _lastCellIndex  = null;
     _name           = null;
 
-    destructClass(_itemsContainer);
+    _itemsContainer.destruct();
     _itemsContainer = null;
 
     _super.destruct();

@@ -38,10 +38,10 @@ createClass(ASJS, "FileSelector", ASJS.FormElement, function(_scope, _super) {
   });
 
   _scope.destruct = function() {
-    destructClass(_super.protected.fileInput);
+    _super.protected.fileInput.destruct();
     _super.protected.fileInput = null;
 
-    destructClass(_preview);
+    _preview.destruct();
     _preview = null;
 
     _super.destruct();

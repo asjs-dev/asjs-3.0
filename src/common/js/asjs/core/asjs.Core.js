@@ -32,11 +32,11 @@ cnst(this, "ASJS", (function() {
 
   return _scope;
 })());
-cnst(ASJS, "on",     "addEventListener");
-cnst(ASJS, "off",    "removeEventListener");
-cnst(ASJS, "offAll", "removeEventListeners");
-cnst(ASJS, "de",     "dispatchEvent");
-cnst(ASJS, "has",    "hasEventListener");
+cnst(window, "on",     "addEventListener");
+cnst(window, "off",    "removeEventListener");
+cnst(window, "offAll", "removeEventListeners");
+cnst(window, "de",     "dispatchEvent");
+cnst(window, "has",    "hasEventListener");
 
 var stage;
 
@@ -67,6 +67,7 @@ c1(ASJS, "Importer", Object, function(_scope) {
           loader.load(path + "?" + _version).then(function() {
             searchRequires(loader).finally(function(content) {
               loader.destruct();
+              loader = null;
               dfd.resolve(content);
               if (!autoRequire) Function(content)();
             });
@@ -121,5 +122,7 @@ c0(ASJS, "BaseClass", Object, function(_scope, _super) {
   _scope.destruct  = function() {
     destObj(_scope);
     destObj(_super);
+    _scope = null;
+    _super = null;
   }
 });

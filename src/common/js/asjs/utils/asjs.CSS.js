@@ -5,6 +5,8 @@ require("../utils/asjs.CSS.js");
 createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
   var _head = ASJS.Head.instance;
 
+  var priv = {};
+
   var _runTimeStyle;
   var _merged;
 
@@ -54,7 +56,7 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
     var rule;
     while (rule = _merged[++i]) {
       if (rule.rule.selectorText === s) {
-        styles[rule.sheetId].deleteRule(rule.ruleId);
+        styles[rule.id].deleteRule(rule.ruleId);
         updateMergedList();
         return;
       }
@@ -70,7 +72,7 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
       var style = styles[i].cssRules;
       var j = -1;
       var m = style.length;
-      while (++j < m) _merged.push(new Rule(i, j, style[j]));
+      while (++j < m) _merged.push(new priv.Rule(i, j, style[j]));
     }
   }
 
@@ -89,15 +91,15 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
     _head.addChild(_runTimeStyle);
   }
 
-  createClass(this, "Rule", ASJS.BaseClass, function(_super) {
+  createClass(priv, "Rule", ASJS.BaseClass, function(_scope) {
     _scope.sheetId;
     _scope.ruleId;
     _scope.rule;
 
     _scope.new = function(sheetId, ruleId, rule) {
       _scope.sheetId = sheetId;
-      _scope.ruleId = ruleId;
-      _scope.rule = rule;
+      _scope.ruleId  = ruleId;
+      _scope.rule    = rule;
     }
   });
 });

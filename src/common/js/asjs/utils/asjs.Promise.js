@@ -97,6 +97,8 @@ rof(ASJS.Promise, "all", function(promises) {
     var promise = promises[i];
         promise.finally(function(promise, response) {
           promise.destruct();
+          promise = null;
+
           responses.push(response);
           if (responses.length === promises.length) dfd.resolve(responses);
         }.bind(this, promise));
@@ -119,6 +121,7 @@ rof(ASJS.Promise, "race", function(promises) {
       var j = -1;
       while (++j < l) {
         promises[i] && promises[i].destruct && promises[i].destruct();
+        promises[i] = null;
       }
     });
   }

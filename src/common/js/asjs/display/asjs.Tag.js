@@ -11,6 +11,8 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   var _parent = null;
   var _state  = priv.CREATED;
 
+  var _bounds = new ASJS.Rectangle();
+
   _scope.new = function(tag) {
     _el = !tag || tis(tag, "string") ? document.createElement(tag || "div") : tag;
     _scope.setData("asjs-id", "instance_" + (++ASJS.Tag.instanceId));
@@ -55,7 +57,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
   get(_scope, "attributes", function() { return _el.attributes; });
 
-  get(_scope, "bounds", function() { return new ASJS.Rectangle(); });
+  get(_scope, "bounds", function() { return _bounds; });
 
   prop(_scope, "parent", {
     get: function() { return _parent; },
@@ -158,6 +160,9 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     _el     = null;
     _parent = null;
     _state  = null;
+
+    _bounds.destruct();
+    _bounds = null;
 
     _super.destruct();
   }

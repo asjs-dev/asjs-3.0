@@ -29,6 +29,8 @@ createClass(NS, "StartupCommand", ASJS.AbstractCommand, function(_scope) {
   function initApplication() {
     (new NS.EnvironmentCommand()).execute();
     (new NS.ViewPrepCommand()).execute(_app);
+
+    _scope.destruct();
   }
 
   function loadJSON(url, callback) {

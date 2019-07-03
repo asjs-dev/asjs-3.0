@@ -22,6 +22,8 @@ createClass(ASJS, "GrayscaleBitmapFilter", ASJS.AbstractBitmapFilter, function(_
     }
 
     _map = {};
+    oColor.destruct();
+    oColor = null;
 
     return pixels;
   }

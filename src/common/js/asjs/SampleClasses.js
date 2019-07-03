@@ -50,7 +50,7 @@ var NameSpace = {};
 
   function privateFunction() {};
 
-  createClass(this, "InternalClass", [ASJS.BaseClass|parentClass], function(_scope, _super) {
+  createClass(priv, "InternalClass", [ASJS.BaseClass|parentClass], function(_scope, _super) {
     ...
   });
 });
