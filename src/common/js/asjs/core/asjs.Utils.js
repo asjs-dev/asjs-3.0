@@ -196,8 +196,9 @@ var createClass = function(nameSpace, name, base, body, singleton) {
   }
 
   var x = Function("var a=arguments;var name=a[0];var base=a[1];var body=a[2];var setup=a[3];var "+name+"=function(){setup.apply(this,[name,base,body,arguments]);};"+name+".prototype=Object.create(base.prototype);"+name+".prototype.constructor="+name+";return "+name+";")(name, base, body, setup);
+  var proto = x;
   if (singleton) {
-    var y = {}
+    var y = {};
     get(y, "instance", function() {
       if (!x.instance) {
         x.instance = new x();
@@ -205,8 +206,9 @@ var createClass = function(nameSpace, name, base, body, singleton) {
       }
       return x.instance;
     });
-    cnst(nameSpace, name, y);
-  } else cnst(nameSpace, name, x);
+    proto = y;
+  }
+  cnst(nameSpace, name, proto);
 }
 var c0 = createClass;
 
