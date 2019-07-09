@@ -20,7 +20,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     while (++i < l) handlers[i](e);
   }
 
-  _scope.addEventListener = function(type, handler, capture) {
+  _scope.addEventListener = function(type, handler) {
     if (!_handlers) return;
     var types = tis(type, "object") ? type : type.split(" ");
     var i = -1;
@@ -31,51 +31,34 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
         if (_scope.hasEventListener(t, handler)) return;
         if (!_handlers[t]) _handlers[t] = [];
         _handlers[t].push(handler);
-        _scope.el && _scope.el.addEventListener(t, handler, capture || false);
+        _scope.el && _scope.el.addEventListener(t, handler, true);
       }
     }
   }
 
   _scope.removeEventListeners = function() {
     if (!_handlers) return;
-    if (_scope.el) {
-      for (var type in _handlers) {
-        var t = type;
-        var handlers = _handlers[t];
-        while (handlers && handlers.length > 0) _scope.removeEventListener(t, handlers[0]);
-      }
-      return;
-    }
-
+    for (var type in _handlers) _scope.removeEventListener(type);
     _handlers = {};
   }
 
   _scope.removeEventListener = function(type, handler) {
     if (!_handlers) return;
-    if (_scope.el) {
-      var t = type;
-      var handlers = _handlers[t];
-      if (!handlers) return;
-      if (handler) {
-        var index = handlers.indexOf(handler);
-        if (index === -1) return;
-        handlers.splice(index, 1);
-        _scope.el.removeEventListener(t, handler);
-      } else {
-        while (handlers.length > 0) _scope.removeEventListener(t, handlers[0]);
-      }
-      if (handlers.length === 0) del(_handlers, t);
-      return;
+    var handlers = _handlers[type];
+    if (!handlers) return;
+    var removableHandlers = handler ? [handler] : handlers;
+    while (removableHandlers.length > 0) {
+      var h = removableHandlers.shift();
+      var index = handlers.indexOf(h);
+      index > -1 && handlers.splice(index, 1);
+      _scope.el && _scope.el.removeEventListener(type, h, true);
     }
-
-    if (!_scope.hasEventListener(type, handler)) return;
-    _handlers[type].slice(_handlers[type].indexOf(handler), 1);
+    _handlers[type].length === 0 && del(_handlers, type);
   };
 
   _scope.hasEventListener = function(type, handler) {
     if (!_handlers) return;
-    var t = type;
-    var handlers = _handlers[t];
+    var handlers = _handlers[type];
     if (!handlers) return false;
     if (!handler)  return true;
     return handlers.indexOf(handler) > -1;

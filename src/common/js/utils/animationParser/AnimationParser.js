@@ -1,6 +1,9 @@
 require("../../NameSpace.js");
 
 createSingletonClass(ASJSUtils, "AnimationParser", ASJS.BaseClass, function(_scope) {
+  var priv = {};
+  cnst(priv, "DEFAULT_FPS", 1000 / 24);
+
   _scope.createCSSAnimationsByJSON = function(list) {
     var i = -1;
     var l = list.length;
@@ -17,36 +20,39 @@ createSingletonClass(ASJSUtils, "AnimationParser", ASJS.BaseClass, function(_sco
     var pW = (data.imageSize.width / data.animationSize.width) * 100;
     var pH = (data.imageSize.height / data.animationSize.height) * 100;
 
-    var animationCSSKeyframes = "@keyframes animation-key-" + data.id + " {\n";
+    var isImageWidthNotZero = data.imageSize.width !== 0;
+    var isImageHeightNotZero = data.imageSize.height !== 0;
+
+    var restWidth = data.imageSize.width - data.animationSize.width;
+    var restHeight = data.imageSize.height - data.animationSize.height;
 
     var i = -1;
     var l = data.frames.length;
     var frames = [];
     while (++i < l) {
       var frame = data.frames[i];
-      var px = (data.imageSize.width !== 0 ? (frame.x / (data.imageSize.width - data.animationSize.width)) * 100 : 0);
-      var py = (data.imageSize.height !== 0 ? (frame.y / (data.imageSize.height - data.animationSize.height)) * 100 : 0);
+      var px = (isImageWidthNotZero ? (frame.x / restWidth) * 100 : 0);
+      var py = (isImageHeightNotZero ? (frame.y / restHeight) * 100 : 0);
       var j = -1;
       var m = (frame.delay || 1) * (data.frameDelay || 1);
 
-      var keyframe = "% {\n";
-          keyframe += "    background-position : " + px + "% " + py + "%;\n";
-          keyframe += "  }\n";
+      var keyframe = "background-position : " + px + "% " + py + "%;";
       while (++j < m) frames.push(keyframe);
     }
 
     i = -1;
     l = frames.length;
-    while (++i < l) animationCSSKeyframes += "  " + ((i / l) * 100) + frames[i];
+    var animationCSSKeyframes = "@keyframes animation-key-" + data.id + " {";
+    while (++i < l) animationCSSKeyframes += "  " + ((i / l) * 100) + "% {" + frames[i] + "}";
     animationCSSKeyframes += "}";
 
-    var animationCSS = ".animation-" + data.id + " {\n";
-        animationCSS += "  background-image          : url(" + data.image + ");\n";
-        animationCSS += "  background-size           : " + pW + "% " + pH + "%;\n";
-        animationCSS += "  animation                 : animation-key-" + data.id + " steps(1) " + ((1000 / 24) * frames.length) + "ms;\n";
-        animationCSS += "  animation-iteration-count : " + (data.repeat > 0 ? data.repeat : "infinite") + ";\n";
-        animationCSS += "  animation-direction       : " + (data.reverse ? "reverse" : "normal") + ";\n";
-        animationCSS += "}\n";
+    var animationCSS = ".animation-" + data.id + " {";
+        animationCSS += "background-image: url(" + data.image + ");";
+        animationCSS += "background-size: " + pW + "% " + pH + "%;";
+        animationCSS += "animation: animation-key-" + data.id + " steps(1) " + ((data.fps || priv.DEFAULT_FPS) * frames.length) + "ms;";
+        animationCSS += "animation-iteration-count: " + (data.repeat > 0 ? data.repeat : "infinite") + ";";
+        animationCSS += "animation-direction: " + (data.reverse ? "reverse" : "normal") + ";";
+        animationCSS += "}";
         animationCSS += animationCSSKeyframes;
 
     return animationCSS;
