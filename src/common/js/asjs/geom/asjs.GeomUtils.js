@@ -28,20 +28,19 @@ rof(ASJS.GeomUtils, "twoPointAngle", function(pointA, pointB) {
   return angle / ASJS.GeomUtils.THETA;
 });
 
-rof(ASJS.GeomUtils, "rectCutRect", function(rectA, rectB) {
-  var newRectB = new ASJS.Rectangle(
-    rectB.x      - rectA.width,
-    rectB.y      - rectA.height,
-    rectB.width  + rectA.width * 2,
-    rectB.height + rectA.height * 2
-  );
+rof(ASJS.GeomUtils, "twoRectsIntersect", function(rectA, rectB) {
+  var section        = new ASJS.Rectangle();
+      section.x      = Math.max(rectA.x, rectB.x);
+      section.y      = Math.max(rectA.y, rectB.y);
+      section.width  = Math.min((rectA.x + rectA.width) - section.x, (rectB.x + rectB.width) - section.x);
+      section.height = Math.min((rectA.y + rectA.height) - section.y, (rectB.y + rectB.height) - section.y);
 
-  var isRectCutRect = ASJS.GeomUtils.rectInRect(rectA, newRectB);
+  var isRectIntersection = ASJS.GeomUtils.rectInRect(section, rectA) && ASJS.GeomUtils.rectInRect(section, rectB);
 
-  newRectB.destruct();
-  newRectB = null;
+  section.destruct();
+  section = null;
 
-  return isRectCutRect;
+  return isRectIntersection;
 });
 
 rof(ASJS.GeomUtils, "rectInRect", function(rectA, rectB) {
