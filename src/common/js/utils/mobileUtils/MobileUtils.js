@@ -65,6 +65,10 @@ createSingletonClass(ASJSUtils, "MobileUtils", ASJS.BaseClass, function(_scope) 
     return _dpi;
   }
 
+  _scope.isLandscape = function() {
+    return _scope.getOrientation() === ASJSUtils.MobileUtils.ORIENTATION_LANDSCAPE;
+  }
+
   _scope.getScreenWidth = function(fp) {
     if (fp) return _scope.width;
     switch (_scope.type) {
