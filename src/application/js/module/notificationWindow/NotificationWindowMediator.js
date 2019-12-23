@@ -1,21 +1,23 @@
-require("../../../../common/js/mediator/AbstractResizeMediator.js");
 require("../../../../common/js/utils/dataUtils/Language.js");
 require("./view/NotificationWindowView.js");
 
-createClass(NS, "NotificationWindowMediator", ASJSUtils.AbstractResizeMediator, function(_scope, _super) {
+createClass(NS, "NotificationWindowMediator", ASJS.AbstractMediator, function(_scope, _super) {
+  var _view = _super.protected.view = new NS.NotificationWindowView();
+
   var _language = ASJSUtils.Language.instance;
 
   var _pool               = [];
   var _showed             = false;
   var _defaultOkLabel     = "";
   var _defaultCancelLabel = "";
-  var _view               = new NS.NotificationWindowView();
 
   _scope.new = function(root) {
     _super.new(root);
+
     _super.protected.addHandler(NS.NotificationWindowMediator.SHOW, onShow);
 
-    _view.addEventListener(NS.NotificationWindowMediator.HIDE, hide);
+    _view.addEventListener(NS.NotificationWindowMediator.HIDE, onHide);
+
     _defaultOkLabel     = _language.getText('notification_ok_button');
     _defaultCancelLabel = _language.getText('notification_cancel_button');
   }
@@ -31,25 +33,22 @@ createClass(NS, "NotificationWindowMediator", ASJSUtils.AbstractResizeMediator, 
     if (!_showed) showWindow();
   }
 
-  function hide() {
+  function onHide() {
     if (_pool.length > 0) showWindow();
     else hideWindow();
   }
 
   function hideWindow() {
-    _super.protected.view.removeChild(_view);
+    _super.protected.hide();
     _showed = false;
   }
 
   function showWindow() {
-    var notificationItem = _pool[0];
-    _pool.shift();
+    var notificationItem = _pool.shift();
     _showed = true;
     _view.showWindow(notificationItem);
 
-    if (!_super.protected.view.contains(_view)) _super.protected.view.addChild(_view);
-
-    _super.protected.showView();
+    _super.protected.show();
   }
 });
 msg(NS.NotificationWindowMediator, "SHOW");

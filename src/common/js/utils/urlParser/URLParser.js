@@ -4,6 +4,15 @@ createSingletonClass(ASJSUtils, "URLParser", ASJS.BaseClass, function(_scope) {
   var _urlParams;
 
   _scope.getQueryParam = function(param) {
+    parseQueryString();
+    return _urlParams[param];
+  }
+
+  _scope.parseURL = function() {
+    return decodeURIComponent(location.href).split("/");
+  }
+
+  function parseQueryString() {
     if (!_urlParams || !_urlParams[param]) {
       var queryParams = decodeURIComponent(location.href);
       var qmi = queryParams.indexOf("?");
@@ -15,10 +24,5 @@ createSingletonClass(ASJSUtils, "URLParser", ASJS.BaseClass, function(_scope) {
         _urlParams[sline[0]] = sline[1];
       }
     }
-    return _urlParams[param];
-  }
-
-  _scope.parseURL = function() {
-    return decodeURIComponent(location.href).split("/");
   }
 });

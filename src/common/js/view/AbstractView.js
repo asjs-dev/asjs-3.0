@@ -21,6 +21,11 @@ createClass(ASJSUtils, "AbstractView", ASJS.Sprite, function(_scope, _super) {
     _super.protected.animateTo(0, callback);
   }
 
+  _scope.destruct = function() {
+    _completeCallback = null;
+    _super.destruct();
+  }
+
   function addedToStage() {
     _scope.alpha = 0;
 

@@ -1,13 +1,13 @@
-require("../../../../common/js/mediator/AbstractResizeMediator.js");
 require("../../../../common/js/utils/dataUtils/Language.js");
 require("../externalApplication/ExternalApplicationMediator.js");
 require("../notificationWindow/vo/NotificationWindowDataVo.js");
 require("../notificationWindow/NotificationWindowMediator.js");
 require("./view/ContentView.js");
 
-createClass(NS, "ContentMediator", ASJSUtils.AbstractResizeMediator, function(_scope, _super) {
+createClass(NS, "ContentMediator", ASJS.AbstractMediator, function(_scope, _super) {
+  var _view = _super.protected.view = new NS.ContentView();
+
   var _language = ASJSUtils.Language.instance;
-  var _view     = new NS.ContentView();
 
   _scope.new = function(root) {
     _super.new(root);
@@ -19,8 +19,7 @@ createClass(NS, "ContentMediator", ASJSUtils.AbstractResizeMediator, function(_s
   }
 
   function onShow() {
-    _super.protected.showView();
-    if (!_super.protected.view.contains(_view)) _super.protected.view.addChild(_view);
+    _super.protected.show();
   }
 
   function showNotificationWindow() {

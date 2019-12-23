@@ -8,18 +8,21 @@ createClass(ASJSUtils, "LoadJSONServiceCommand", ASJS.AbstractCommand, function(
         loader.responseType = "json";
         loader.compressed   = true;
         loader.method       = ASJS.RequestMethod.GET;
+
         loader.addEventListener(ASJS.LoaderEvent.LOAD, function(e) {
           dfd.resolve(loader.content);
           loader.destruct();
           loader = null;
           _scope.destruct();
         });
+
         loader.addEventListener(ASJS.LoaderEvent.ERROR, function(e) {
           dfd.reject(loader.content);
           loader.destruct();
           loader = null;
           _scope.destruct();
         });
+
         loader.load(url + "?v={{date}}");
 
     return dfd;

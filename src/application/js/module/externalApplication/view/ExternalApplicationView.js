@@ -27,8 +27,6 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractView, function(_sco
     _closeButton.addClass("close-button");
     _closeButton.addEventListener(ASJS.MouseEvent.CLICK, onCloseClick);
     _container.addChild(_closeButton);
-
-    requestAnimationFrame(_scope.render);
   }
 
   set(_scope, "title", function(v) { _title.text = v; });

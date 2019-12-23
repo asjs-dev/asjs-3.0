@@ -16,8 +16,6 @@ createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) 
 
     _background.addClass("background");
     _scope.addChild(_background);
-
-    _scope.render();
   }
 
   _scope.render = function() {

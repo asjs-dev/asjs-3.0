@@ -40,8 +40,6 @@ createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) 
     _externalApplicationButton.addClass("button show-external-application-button");
     _externalApplicationButton.addEventListener(ASJS.MouseEvent.CLICK, onExternalApplicationButtonClick);
     _scope.addChild(_externalApplicationButton);
-
-    requestAnimationFrame(_scope.render);
   }
 
   _scope.render = function() {

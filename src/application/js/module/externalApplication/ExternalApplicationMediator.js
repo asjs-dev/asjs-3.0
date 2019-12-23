@@ -1,12 +1,13 @@
-require("../../../../common/js/mediator/AbstractResizeMediator.js");
 require("./view/ExternalApplicationView.js");
 
-createClass(NS, "ExternalApplicationMediator", ASJSUtils.AbstractResizeMediator, function(_scope, _super) {
-  var _view   = new NS.ExternalApplicationView();
+createClass(NS, "ExternalApplicationMediator", ASJS.AbstractMediator, function(_scope, _super) {
+  var _view = _super.protected.view = new NS.ExternalApplicationView();
+
   var _loader = new ASJS.ScriptLoader();
 
   _scope.new = function(root) {
     _super.new(root);
+
     _super.protected.addHandler(NS.ExternalApplicationMediator.SHOW, onShow);
     _super.protected.addHandler(NS.ExternalApplicationMediator.HIDE, onHide);
 
@@ -17,14 +18,12 @@ createClass(NS, "ExternalApplicationMediator", ASJSUtils.AbstractResizeMediator,
   }
 
   function onShow() {
-    !_super.protected.view.contains(_view) && _super.protected.view.addChild(_view);
+    _super.protected.show();
     loadExternalApplication();
-
-    _super.protected.showView();
   }
 
   function onHide() {
-    _super.protected.view.contains(_view) && _super.protected.view.removeChild(_view);
+    _super.protected.hide();
     unloadExternalApplication();
   }
 
