@@ -14,6 +14,10 @@ console.clear();
 var _d = document;
 var _w = window;
 
+var isDocumentComplete = function() {
+  return document.readyState === "complete";
+}
+
 var is = function(a, b) {
   return a instanceof b;
 }

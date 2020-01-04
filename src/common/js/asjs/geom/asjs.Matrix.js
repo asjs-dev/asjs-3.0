@@ -1,11 +1,11 @@
 createClass(ASJS, "Matrix", ASJS.BaseClass, function(_scope) {
   _scope.new = function(a, b, c, d, e, f) {
-    _scope.a = !tis(a, "number") ? 1 : a;
-    _scope.b = !tis(b, "number") ? 0 : b;
-    _scope.c = !tis(c, "number") ? 0 : c;
-    _scope.d = !tis(d, "number") ? 1 : d;
-    _scope.e = !tis(e, "number") ? 0 : e;
-    _scope.f = !tis(f, "number") ? 0 : f;
+    _scope.a = tis(a, "number") ? a : 1;
+    _scope.b = tis(b, "number") ? b : 0;
+    _scope.c = tis(c, "number") ? c : 0;
+    _scope.d = tis(d, "number") ? d : 1;
+    _scope.e = tis(e, "number") ? e : 0;
+    _scope.f = tis(f, "number") ? f : 0;
   }
 
   _scope.translate = function(tx, ty) {

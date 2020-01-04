@@ -1,7 +1,7 @@
 require("../../../../common/js/utils/dataUtils/Language.js");
 require("./view/NotificationWindowView.js");
 
-createClass(NS, "NotificationWindowMediator", ASJS.AbstractMediator, function(_scope, _super) {
+createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
   var _view = _super.protected.view = new NS.NotificationWindowView();
 
   var _language = ASJSUtils.Language.instance;

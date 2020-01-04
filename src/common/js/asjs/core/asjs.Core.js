@@ -11,10 +11,6 @@ cnst(this, "ASJS", (function() {
     });
   }
 
-  function isDocumentComplete() {
-    return document.readyState === "complete";
-  }
-
   function start(b) {
     if (!stage) {
       stage = ASJS.Stage.instance;

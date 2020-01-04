@@ -1,8 +1,8 @@
 require("../module/content/ContentMediator.js");
 
-createClass(NS, "DestructCommand", ASJS.AbstractCommand, function(_scope) {
+createClass(NS, "DestructCommand", ASJS.AbstractCommand, function(_scope, _super) {
   _scope.execute = function() {
-    _scope.sendNotification(NS.ContentMediator.DESTRUCT);
+    _super.protected.sendNotification(NS.ContentMediator.DESTRUCT);
     _scope.destruct();
   }
 });

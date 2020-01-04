@@ -1,6 +1,6 @@
 require("./view/ExternalApplicationView.js");
 
-createClass(NS, "ExternalApplicationMediator", ASJS.AbstractMediator, function(_scope, _super) {
+createClass(NS, "ExternalApplicationMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
   var _view = _super.protected.view = new NS.ExternalApplicationView();
 
   var _loader = new ASJS.ScriptLoader();

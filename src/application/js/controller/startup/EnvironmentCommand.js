@@ -3,7 +3,7 @@ require("../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../common/js/utils/dataUtils/Cookies.js");
 require("../../../../common/js/utils/dataUtils/Config.js");
 
-createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
+createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _super) {
   var _language  = ASJSUtils.Language.instance;
   var _cookies   = ASJSUtils.Cookies;
   var _config    = ASJSUtils.Config.instance;
@@ -41,7 +41,7 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
   function onTimeout() {
     _sleepToResizeId = clearTimeout(_sleepToResizeId);
     requestAnimationFrame(function() {
-      _scope.sendNotification(ASJS.Stage.RESIZE);
+      _super.protected.sendNotification(ASJS.Stage.RESIZE);
     });
   }
 });

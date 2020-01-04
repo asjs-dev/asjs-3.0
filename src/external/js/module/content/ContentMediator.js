@@ -1,6 +1,6 @@
 require("./view/ContentView.js");
 
-createClass(NS, "ContentMediator", ASJS.AbstractMediator, function(_scope, _super) {
+createClass(NS, "ContentMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
   var _view = _super.protected.view = new NS.ContentView();
 
   _scope.new = function(root) {

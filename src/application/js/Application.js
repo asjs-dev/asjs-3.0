@@ -8,5 +8,4 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
     (new NS.StartupCommand()).execute(_scope);
   }
 });
-// -------------------- //
 ASJS.start(NS.Application);

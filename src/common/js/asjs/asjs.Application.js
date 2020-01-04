@@ -18,6 +18,7 @@ require("mvc/asjs.NotificationHandler.js");
 require("mvc/asjs.NotificationDispatcher.js");
 require("mvc/model/asjs.AbstractModel.js");
 require("mvc/mediator/asjs.AbstractMediator.js");
+require("mvc/mediator/asjs.AbstractViewMediator.js");
 require("mvc/controller/asjs.AbstractCommand.js");
 
 require("utils/asjs.Promise.js");

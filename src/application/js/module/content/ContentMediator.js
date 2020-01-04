@@ -4,7 +4,7 @@ require("../notificationWindow/vo/NotificationWindowDataVo.js");
 require("../notificationWindow/NotificationWindowMediator.js");
 require("./view/ContentView.js");
 
-createClass(NS, "ContentMediator", ASJS.AbstractMediator, function(_scope, _super) {
+createClass(NS, "ContentMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
   var _view = _super.protected.view = new NS.ContentView();
 
   var _language = ASJSUtils.Language.instance;
@@ -27,11 +27,11 @@ createClass(NS, "ContentMediator", ASJS.AbstractMediator, function(_scope, _supe
         notificationWindowDataVo.title   = _language.getText("notification_title");
         notificationWindowDataVo.content = _language.getText("notification_content");
         notificationWindowDataVo.height  = 230;
-    _scope.sendNotification(NS.NotificationWindowMediator.SHOW, notificationWindowDataVo);
+    _super.protected.sendNotification(NS.NotificationWindowMediator.SHOW, notificationWindowDataVo);
   }
 
   function showExternalApplication() {
-    _scope.sendNotification(NS.ExternalApplicationMediator.SHOW);
+    _super.protected.sendNotification(NS.ExternalApplicationMediator.SHOW);
   }
 });
 msg(NS.ContentMediator, "SHOW");
