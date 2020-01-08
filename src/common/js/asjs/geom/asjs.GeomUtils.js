@@ -32,8 +32,8 @@ rof(ASJS.GeomUtils, "twoRectsIntersect", function(rectA, rectB) {
   var section        = new ASJS.Rectangle();
       section.x      = Math.max(rectA.x, rectB.x);
       section.y      = Math.max(rectA.y, rectB.y);
-      section.width  = Math.min((rectA.x + rectA.width) - section.x, (rectB.x + rectB.width) - section.x);
-      section.height = Math.min((rectA.y + rectA.height) - section.y, (rectB.y + rectB.height) - section.y);
+      section.width  = Math.abs(Math.min((rectA.x + rectA.width) - section.x, (rectB.x + rectB.width) - section.x));
+      section.height = Math.abs(Math.min((rectA.y + rectA.height) - section.y, (rectB.y + rectB.height) - section.y));
 
   var isRectIntersection = ASJS.GeomUtils.rectInRect(section, rectA) && ASJS.GeomUtils.rectInRect(section, rectB);
 

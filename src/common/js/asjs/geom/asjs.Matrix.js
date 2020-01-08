@@ -7,19 +7,19 @@ createClass(ASJS, "Matrix", ASJS.BaseClass, function(_scope) {
     _scope.e = tis(e, "number") ? e : 0;
     _scope.f = tis(f, "number") ? f : 0;
   }
+});
 
-  _scope.translate = function(tx, ty) {
-    _scope.e = tx;
-    _scope.f = ty;
-  }
+rof(ASJS.Matrix, "translate", function(m, tx, ty) {
+  m.e = tx;
+  m.f = ty;
+});
 
-  _scope.skew = function(sx, sy) {
-    _scope.b = sx;
-    _scope.c = sy;
-  }
+rof(ASJS.Matrix, "skew", function(m, sx, sy) {
+  m.b = sx;
+  m.c = sy;
+});
 
-  _scope.scale = function(sw, sh) {
-    _scope.a = sw;
-    _scope.d = sh;
-  }
+rof(ASJS.Matrix, "scale", function(m, sw, sh) {
+  m.a = sw;
+  m.d = sh;
 });
