@@ -121,4 +121,7 @@ c0(ASJS, "BaseClass", Object, function(_scope, _super) {
     _scope = null;
     _super = null;
   }
+  _scope.toObject  = function() {
+    return JSON.parse(JSON.stringify(_scope));
+  }
 });

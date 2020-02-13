@@ -239,6 +239,18 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     return bmp;
   }
 
+  _scope.getCanvasClone = function() {
+      var newCanvas = document.createElement('canvas');
+      var context = newCanvas.getContext('2d');
+
+      newCanvas.width = _scope.bitmapWidth;
+      newCanvas.height = _scope.bitmapHeight;
+
+      context.drawImage(_scope.el, 0, 0);
+
+      return newCanvas;
+  }
+
   _scope.getOriginal = function() {
     if (!_original) return _scope;
 
