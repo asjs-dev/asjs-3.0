@@ -12,7 +12,7 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   var _filtersReady = true;
   var _drawLine     = false;
   var _drawFill     = false;
-  var _keepOriginal = true;
+  var _keepOriginal = false;
   var _context;
   var _bitmapFilters;
   var _original;
@@ -141,6 +141,7 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.drawCircle = function(x, y, r) {
+    if (y === undefined && r === undefined) y = r = x;
     _scope.drawArc(x, y, r, 0, 2 * Math.PI);
   }
 
@@ -221,11 +222,12 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.destroy = function() {
     _scope.clearRect(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
-    _scope.setBitmapSize(1, 1);
+    _scope.setBitmapSize(1);
     _original = null;
   }
 
   _scope.setBitmapSize = function(width, height) {
+    if (height === undefined) height = width;
     _scope.bitmapWidth = width;
     _scope.bitmapHeight = height;
   }
