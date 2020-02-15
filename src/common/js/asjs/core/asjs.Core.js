@@ -2,32 +2,41 @@ var stage;
 cnst(this, "ASJS", (function() {
   var _scope = {};
 
-  _scope.start = function(b) {
-    ASJS.Polyfill.instance;
-    isDocumentComplete()
-    ? start(b)
-    : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function() {
-      isDocumentComplete() && start(b);
-    });
-  }
+  trace("<AS/JS> core version: {{appVersion}}.{{date}}");
 
-  function start(b) {
+  _scope.start = function(application, root) {
+    ASJS.Polyfill.instance;
     if (!stage) {
       stage = ASJS.Stage.instance;
       stage.clear();
     }
-    trc("<AS/JS> core version: {{appVersion}}.{{date}}");
-    try {
-      var app = new b();
-      is(app, ASJS.Tag) && stage.addChild(app);
-    } catch (e) {
-      trc(e);
+
+    var parent = stage;
+    if (root) {
+      if (is(root, ASJS.Sprite)) parent = root;
+      if (is(root, Element)) parent = new ASJS.Sprite(root);
     }
-    return b;
+
+    isDocumentComplete()
+    ? start(application, parent)
+    : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function listener() {
+        isDocumentComplete() && start(application, parent) && document.removeEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, listener);
+      });
+  }
+
+  function start(application, root) {
+    try {
+      var app = new application();
+      is(app, ASJS.Tag) && root.addChild(app);
+    } catch (e) {
+      trace(e);
+    }
+    return application;
   }
 
   return _scope;
 })());
+
 cnst(window, "on",     "addEventListener");
 cnst(window, "off",    "removeEventListener");
 cnst(window, "offAll", "removeEventListeners");

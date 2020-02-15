@@ -19,7 +19,6 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.new = function(bitmapWidth, bitmapHeight) {
     _super.new("canvas");
-    if (!getContext()) throw new Error("ASJS.Bitmap (canvas) is not supported in your browser!");
     _scope.setBitmapSize(bitmapWidth, bitmapHeight);
   }
 
@@ -204,7 +203,7 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     );
   }
 
-  _scope.setColor = function(x, y) {
+  _scope.setPixel = function(x, y) {
     _scope.drawRect(x, y, 1, 1);
   }
 

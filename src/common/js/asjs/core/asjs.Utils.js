@@ -17,6 +17,7 @@ var _w = window;
 var isDocumentComplete = function() {
   return document.readyState === "complete";
 }
+var idc = isDocumentComplete;
 
 var is = function(a, b) {
   return a instanceof b;

@@ -73,13 +73,9 @@ createSingletonClass(ASJSUtils, "MobileUtils", ASJS.BaseClass, function(_scope) 
     if (fp) return _scope.width;
     switch (_scope.type) {
       case ASJSUtils.MobileUtils.TYPE_WIDTH: return _scope.width;
-      break;
       case ASJSUtils.MobileUtils.TYPE_HEIGHT: return _scope.height;
-      break;
       case ASJSUtils.MobileUtils.TYPE_MINIMUM: return Math.min(_scope.width, _scope.height);
-      break;
       case ASJSUtils.MobileUtils.TYPE_MAXIMUM: return Math.max(_scope.width, _scope.height);
-      break;
     }
   }
 
