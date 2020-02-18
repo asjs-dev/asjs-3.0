@@ -5,6 +5,13 @@ html, body {
   font-size        : 100px;
 }
 
+* {
+  pointer-events : auto;
+  position       : absolute;
+  display        : block;
+  box-sizing     : border-box;
+}
+
 .button {
   border-radius    : 5px;
   font-size        : 0.16rem;

@@ -91,10 +91,9 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.setChildIndex = function(child, index) {
     if (!child || index < 0) return null;
-    var childActualIndex = _scope.getChildIndex(child);
-    if (childActualIndex > -1) _children.splice(childActualIndex, 1);
+    _children.remove(child);
     var afterChild = _scope.getChildAt(index);
-    if (afterChild) _scope.el.insertBefore(child.el, afterChild.el);
+    afterChild && _scope.el.insertBefore(child.el, afterChild.el);
     _children.splice(index, 0, child);
     return child;
   }

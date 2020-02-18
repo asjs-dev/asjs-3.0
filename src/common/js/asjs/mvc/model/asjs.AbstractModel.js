@@ -42,8 +42,9 @@ createClass(ASJS, "AbstractModel", ASJS.EventDispatcher, function(_scope) {
 
   function merge(oData, nData) {
     map(nData, function(k, item) {
-      if (tis(oData[k], "object")) merge(oData[k], item);
-      else oData[k] = item;
+      tis(oData[k], "object")
+        ? merge(oData[k], item)
+        : oData[k] = item;
     });
   }
 });

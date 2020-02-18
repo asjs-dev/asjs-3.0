@@ -16,8 +16,7 @@ createClass(ASJS, "Keyboard", ASJS.BaseClass, function(_scope, _super) {
   };
 
   _scope.addKeyListener = function(target, downCallback, upCallback) {
-    if (!target) return;
-    if (_targets.has(target)) return;
+    if (!target || _targets.has(target)) return;
     _targets.push(target);
 
     _downCallback = downCallback;

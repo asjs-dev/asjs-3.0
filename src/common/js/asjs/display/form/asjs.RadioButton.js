@@ -31,7 +31,7 @@ createClass(ASJS, "RadioButton", ASJS.FormElement, function(_scope, _super) {
     get: function() { return _radio.el.checked; },
     set: function(v) {
       _radio.el.checked = v;
-      if (v) _radio.el.change();
+      v && _radio.el.change();
     }
   });
 
@@ -46,7 +46,7 @@ createClass(ASJS, "RadioButton", ASJS.FormElement, function(_scope, _super) {
 
     _label.destruct();
     _label = null;
-    
+
     _super.destruct();
   }
 });

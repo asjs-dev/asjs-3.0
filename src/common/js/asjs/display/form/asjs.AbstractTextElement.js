@@ -16,8 +16,9 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   prop(_scope, "readonly", {
     get: function() { return _scope.getAttr("readonly"); },
     set: function(v) {
-      if (v) _scope.setAttr("readonly", "readonly");
-      else _scope.removeAttr("readonly");
+      v
+      ? _scope.setAttr("readonly", "readonly")
+      : _scope.removeAttr("readonly");
     }
   });
 
@@ -47,8 +48,9 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   prop(_scope, "autofocus", {
     get: function() { return _scope.getAttr("autofocus"); },
     set: function(v) {
-      if (v) _scope.setAttr("autofocus", "autofocus");
-      else _scope.removeAttr("autofocus");
+      v
+      ? _scope.setAttr("autofocus", "autofocus")
+      : _scope.removeAttr("autofocus");
     }
   });
 

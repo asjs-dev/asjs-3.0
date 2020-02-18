@@ -49,8 +49,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     var removableHandlers = handler ? [handler] : handlers;
     while (removableHandlers.length > 0) {
       var h = removableHandlers.shift();
-      var index = handlers.indexOf(h);
-      index > -1 && handlers.splice(index, 1);
+      handlers.remove(h);
       _scope.el && _scope.el.removeEventListener(type, h, true);
     }
     _handlers[type].length === 0 && del(_handlers, type);

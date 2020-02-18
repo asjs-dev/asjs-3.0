@@ -7,9 +7,9 @@ rof(ASJS.FileDragAndDropUtil, "getFilesByEvent", function(e) {
   var type = dt["items"] ? "items" : "files";
   var f;
   while (f = dt[type][++i]) {
-    if (type === "items") {
-      if (f.kind === "file") files.push(f.getAsFile());
-    } else files.push(f);
+    type === "items"
+      ? f.kind === "file" && files.push(f.getAsFile())
+      : files.push(f);
   }
 
   return files;

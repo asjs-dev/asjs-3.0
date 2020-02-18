@@ -15,7 +15,7 @@ createClass(ASJS, "StyleLoader", ASJS.Loader, function(_scope, _super) {
   }
 
   _scope.unload = function() {
-    if (_style && _head.contains(_style)) _head.removeChild(_style);
+    _style && _head.contains(_style) && _head.removeChild(_style);
     _style = null;
     _super.unload();
   }

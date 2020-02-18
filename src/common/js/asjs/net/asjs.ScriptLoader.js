@@ -6,9 +6,8 @@ createClass(ASJS, "ScriptLoader", ASJS.Loader, function(_scope, _super) {
   get(_scope, "rawContent", function() { return _super.content; });
 
   get(_scope, "content", function() {
-    if (!_content && _super.content !== "") {
+    if (!_content && _super.content !== "")
       _content = Function((_super.content.indexOf("(function()") === 0 ? "return" : "") + _super.content)();
-    }
     return _content;
   });
 

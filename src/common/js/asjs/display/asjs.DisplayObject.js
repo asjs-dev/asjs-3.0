@@ -9,16 +9,14 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _rotation   = 0;
   var _scaleX     = 1;
   var _scaleY     = 1;
-  var _cssDisplay = "block";
   var _bounds     = new ASJS.Rectangle();
+
+  var _cssDisplay;
 
   _scope.new = function(tag) {
     _super.new(tag);
     _scope.tabindex = -1;
-    _scope.setCSS("pointer-events", "auto");
-    _scope.setCSS("position",       "absolute");
-    _scope.setCSS("display",        _cssDisplay);
-    _scope.setCSS("box-sizing",     "border-box");
+    _cssDisplay = _scope.setCSS("display");
   }
 
   get(_scope, "bounds", function() {
@@ -136,13 +134,11 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   });
 
   _scope.requestFullscreen = function() {
-    if (!document.fullscreenEnabled) return;
-    _scope.el.requestFullscreen();
+    document.fullscreenEnabled && _scope.el.requestFullscreen();
   };
 
   _scope.exitFullscreen = function() {
-    if (!document.fullscreenEnabled) return;
-    document.exitFullscreen();
+    document.fullscreenEnabled && document.exitFullscreen();
   };
 
   _scope.scale = function(scaleX, scaleY) {

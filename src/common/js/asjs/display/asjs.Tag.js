@@ -80,7 +80,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     var classList  = _scope.getClassList();
     var newClass;
     while (newClass = newClasses.shift()) {
-      if (!_scope.hasClass(newClass)) classList.push(newClass);
+      !_scope.hasClass(newClass) && classList.push(newClass);
     }
     _el.className = classList.join(" ");
   }
@@ -89,9 +89,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     var removeClasses = v.split(" ");
     var classList     = _scope.getClassList();
     var removeClass;
-    while (removeClass = removeClasses.shift()) {
-      if (_scope.hasClass(removeClass)) classList.splice(classList.indexOf(removeClass), 1);
-    }
+    while (removeClass = removeClasses.shift()) classList.remove(removeClass);
     _el.className = classList.join(" ");
   }
 
@@ -142,7 +140,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
   _scope.sendParentChangeEvent = function() {
     var state = _scope.stage ? ASJS.Stage.ADDED_TO_STAGE : ASJS.Stage.REMOVED_FROM_STAGE;
-    if (_state !== priv.CREATED || state !== ASJS.Stage.REMOVED_FROM_STAGE) _scope.dispatchEvent(state, null, false);
+    (_state !== priv.CREATED || state !== ASJS.Stage.REMOVED_FROM_STAGE) && _scope.dispatchEvent(state, null, false);
     _state = state;
   }
 

@@ -32,7 +32,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
       var l = _scope.length;
       while (++i < l) {
         var item = _scope.getCellAt(i);
-        if (item.checked) v.push(item);
+        item.checked && v.push(item);
       }
       return v;
     },

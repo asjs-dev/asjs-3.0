@@ -34,11 +34,11 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     checkArray();
   }
 
-  get(_scope, "isLittleEndian", function() { return _isLittleEndian; });
+  get(_scope, "isLittleEndian",   function() { return _isLittleEndian; });
   get(_scope, "visibilitychange", function() { return _visibilityPolyfill.visibilitychange; });
-  get(_scope, "documentHidden", function() { return document[_visibilityPolyfill.hidden]; });
-  get(_scope, "stylePrefixJS", function() { return _stylePrefixJS; });
-  get(_scope, "stylePrefixCSS", function() { return _stylePrefixCSS; });
+  get(_scope, "documentHidden",   function() { return document[_visibilityPolyfill.hidden]; });
+  get(_scope, "stylePrefixJS",    function() { return _stylePrefixJS; });
+  get(_scope, "stylePrefixCSS",   function() { return _stylePrefixCSS; });
 
   function addWorkerCallback(callback) {
     var newId = ++_workerCallbacksNum;
@@ -169,9 +169,7 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
 
     if (!window.cancelAnimationFrame) {
       trace("window.cancelAnimationFrame is not supported, but replaceable");
-      window.cancelAnimationFrame = function(id) {
-        window.clearTimeout(id);
-      };
+      window.cancelAnimationFrame = window.clearTimeout;
     }
   };
 
@@ -319,7 +317,8 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
       return this.indexOf(item) > -1;
     }
     Array.prototype.remove = function(item) {
-      this.has(item) && this.splice(this.indexOf(item), 1);
+      var index = this.indexOf(item);
+      index > -1 && this.splice(index, 1);
     }
   }
 });

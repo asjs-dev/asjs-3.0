@@ -5,11 +5,18 @@ cnst(this, "ASJS", (function() {
   trace("<AS/JS> core version: {{appVersion}}.{{date}}");
 
   _scope.start = function(application, root) {
+    isDocumentComplete()
+      ? start(application, root)
+      : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function listener() {
+          isDocumentComplete() &&
+          start(application, root) &&
+          document.removeEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, listener);
+        });
+  }
+
+  function start(application, root) {
     ASJS.Polyfill.instance;
-    if (!stage) {
-      stage = ASJS.Stage.instance;
-      stage.clear();
-    }
+    if (!stage) stage = ASJS.Stage.instance;
 
     var parent = stage;
     if (root) {
@@ -17,21 +24,12 @@ cnst(this, "ASJS", (function() {
       if (is(root, Element)) parent = new ASJS.Sprite(root);
     }
 
-    isDocumentComplete()
-    ? start(application, parent)
-    : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function listener() {
-        isDocumentComplete() && start(application, parent) && document.removeEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, listener);
-      });
-  }
-
-  function start(application, root) {
     try {
       var app = new application();
-      is(app, ASJS.Tag) && root.addChild(app);
+      is(app, ASJS.Tag) && parent.addChild(app);
     } catch (e) {
       trace(e);
     }
-    return application;
   }
 
   return _scope;

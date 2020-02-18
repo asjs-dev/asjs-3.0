@@ -4,9 +4,7 @@ rof(ASJS.LZW, "compress", function(uncompressed) {
   var i;
   var dictSize = 256;
   var dictionary = [];
-  for (i = 0; i < dictSize; i++) {
-    dictionary[String.fromCharCode(i)] = i;
-  }
+  for (i = 0; i < dictSize; i++) dictionary[String.fromCharCode(i)] = i;
   var w = "";
   var result = [];
   map(uncompressed, function(i) {
@@ -28,9 +26,7 @@ rof(ASJS.LZW, "decompress", function(compressed) {
   var i;
   var dictSize = 256;
   var dictionary = [];
-  for (i = 1; i < dictSize; i++) {
-    dictionary[i] = String.fromCharCode(i);
-  }
+  for (i = 1; i < dictSize; i++) dictionary[i] = String.fromCharCode(i);
   var w = String.fromCharCode(compressed[0]);
   var result = w;
   for (i = 1; i < compressed.length; i++) {

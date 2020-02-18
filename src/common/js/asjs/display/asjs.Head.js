@@ -8,7 +8,7 @@ createSingletonClass(ASJS, "Head", ASJS.BaseClass, function(_scope) {
 
   _scope.addChild = function(child) {
     if (!child) return null;
-    if (child.parent) child.parent.removeChild(child);
+    child.parent && child.parent.removeChild(child);
     _children.push(child);
     _el.appendChild(child.el);
     child.parent = _scope;
@@ -18,8 +18,7 @@ createSingletonClass(ASJS, "Head", ASJS.BaseClass, function(_scope) {
   _scope.removeChild = function(child) {
     if (!child) return null;
     _el.removeChild(child.el);
-    var index = _scope.getChildIndex(child);
-    if (index > -1) _children.splice(index, 1);
+    _children.remove(child);
     child.parent = null;
     return child;
   }

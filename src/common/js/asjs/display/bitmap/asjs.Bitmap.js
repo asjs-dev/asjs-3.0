@@ -106,14 +106,14 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.endLineStyle = function() {
     var ctx = getContext();
-    if (_drawLine) ctx.stroke();
+    _drawLine && ctx.stroke();
     _drawLine = false;
   }
 
   _scope.endFill = function() {
     var ctx = getContext();
     getContext().closePath();
-    if (_drawFill) ctx.fill();
+    _drawFill && ctx.fill();
     _drawFill = false;
   }
 
@@ -135,8 +135,8 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.drawRect = function(x, y, w, h) {
     var ctx = getContext();
-    if (_drawFill) ctx.fillRect(x, y, w, h);
-    if (_drawLine) ctx.strokeRect(x, y, w, h);
+    _drawFill && ctx.fillRect(x, y, w, h);
+    _drawLine && ctx.strokeRect(x, y, w, h);
   }
 
   _scope.drawCircle = function(x, y, r) {
@@ -177,8 +177,8 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.drawText = function(text, x, y) {
     var ctx = getContext();
-    if (_drawFill) ctx.fillText(text, x, y);
-    if (_drawLine) ctx.strokeText(text, x, y);
+    _drawFill && ctx.fillText(text, x, y);
+    _drawLine && ctx.strokeText(text, x, y);
   }
 
   _scope.measureText = function(text) {

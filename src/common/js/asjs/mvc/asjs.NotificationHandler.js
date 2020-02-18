@@ -9,11 +9,7 @@ createSingletonClass(ASJS, "NotificationHandler", ASJS.BaseClass, function(_scop
   }
 
   _scope.remove = function(type, callback) {
-    if (!type || !callback) return;
-    if (_handlers[type]) {
-      var index = _handlers[type].indexOf(callback);
-      if (index > -1) _handlers[type].splice(index, 1);
-    }
+    type && callback && _handlers[type] && _handlers[type].remove(callback);
   }
 
   _scope.sendNotification = function(type, data) {

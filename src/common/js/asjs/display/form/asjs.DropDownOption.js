@@ -23,16 +23,18 @@ createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
   prop(_scope, "selected", {
     get: function() { return _scope.getAttr("selected"); },
     set: function(v) {
-      if (v) _scope.setAttr("selected", "selected");
-      else _scope.removeAttr("selected");
+      v
+      ? _scope.setAttr("selected", "selected")
+      : _scope.removeAttr("selected");
     }
   });
 
   prop(_scope, "disabled", {
     get: function() { return _scope.getAttr("disabled"); },
     set: function(v) {
-      if (v) _scope.setAttr("disabled", "disabled");
-      else _scope.removeAttr("disabled");
+      v
+      ? _scope.setAttr("disabled", "disabled")
+      : _scope.removeAttr("disabled");
     }
   });
 });
