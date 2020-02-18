@@ -11,7 +11,7 @@ createClass(ASJS, "IFrame", ASJS.DisplayObject, function(_scope, _super) {
   });
 
   _scope.isLoaded = function() {
-    return _scope.el.contentDocument.title.indexOf("404") == -1;
+    return _scope.el.contentDocument.title.indexOf("404") === -1;
   }
 
   _scope.sendMessage = function(data) {

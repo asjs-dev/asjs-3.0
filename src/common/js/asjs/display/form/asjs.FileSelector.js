@@ -53,7 +53,7 @@ createClass(ASJS, "FileSelector", ASJS.FormElement, function(_scope, _super) {
   }
 
   function onClick(e) {
-    if (e.target == _super.protected.fileInput.el) return;
+    if (e.target === _super.protected.fileInput.el) return;
     _super.protected.fileInput.el.click();
   }
 });

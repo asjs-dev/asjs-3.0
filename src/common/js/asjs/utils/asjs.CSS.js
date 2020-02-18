@@ -10,9 +10,7 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
   var _runTimeStyle;
   var _merged;
 
-  _scope.new = function() {
-    updateMergedList();
-  }
+  _scope.new = updateMergedList;
 
   get(_scope, "styles", function() { return _merged; });
 
@@ -37,10 +35,9 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
 
   _scope.setPropertyToRule = function(s, t, v) {
     var r = _scope.getRuleBySelector(s);
-    if (r) {
-      r.style[t] = v;
-      updateMergedList();
-    }
+    if (!r) return;
+    r.style[t] = v;
+    updateMergedList();
   }
 
   _scope.addRule = function(s, t) {

@@ -23,7 +23,7 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
       pixelPos.y = Math.floor(pixelLinearPos / w);
 
       if (pixelPos.x % pixS > 0) i = i - pixelPos.x * 4 - step;
-      else if ((pixelPos.y % pixS) == 0) {
+      else if ((pixelPos.y % pixS) === 0) {
         var x;
         var y;
         var r = 0;

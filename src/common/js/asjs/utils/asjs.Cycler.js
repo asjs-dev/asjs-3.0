@@ -17,7 +17,7 @@ createSingletonClass(ASJS, "Cycler", ASJS.BaseClass, function(_scope) {
   });
 
   _scope.addCallback = function(callback) {
-    if (!_scope.callbackExists(callback)) _callbacks.push(callback);
+    !_scope.callbackExists(callback) && _callbacks.push(callback);
   };
 
   _scope.removeCallback = function(callback) {

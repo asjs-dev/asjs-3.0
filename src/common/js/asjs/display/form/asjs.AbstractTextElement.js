@@ -60,9 +60,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
     _super.destruct();
   }
 
-  function onChange() {
-    checkRestrict();
-  }
+  var onChange = checkRestrict;
 
   function checkRestrict() {
     if (empty(_restrict)) return;
@@ -73,7 +71,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
       var range = document.selection.createRange();
       range.moveStart('character', -_scope.el.value.length);
       caretPos = range.text.length;
-    } else if (_scope.el.selectionStart || _scope.el.selectionStart == '0') {
+    } else if (_scope.el.selectionStart || _scope.el.selectionStart === '0') {
       caretPos = _scope.el.selectionStart;
     }
 

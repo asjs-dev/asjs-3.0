@@ -27,9 +27,7 @@ createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
     set: function(v) { _select.el.value = v; }
   });
 
-  _scope.clearOptions = function() {
-    _select.clear();
-  }
+  _scope.clearOptions = _select.clear;
 
   _scope.setOptions = function(options) {
     _scope.clearOptions();
@@ -38,9 +36,7 @@ createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
     while (++i < l) _scope.addOption(options[ i ]);
   }
 
-  _scope.addOption = function(option) {
-    _select.addChild(option);
-  }
+  _scope.addOption = _select.addChild;
 
   _scope.render = function() {
     _select.setSize(_scope.width + 30, _scope.height);

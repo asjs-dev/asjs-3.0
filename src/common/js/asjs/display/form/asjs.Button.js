@@ -12,7 +12,7 @@ createClass(ASJS, "Button", ASJS.FormElement, function(_scope, _super) {
   });
 
   prop(_scope, "submit", {
-    get: function() { return _scope.getAttr("type") == "submit"; },
+    get: function() { return _scope.getAttr("type") === "submit"; },
     set: function(v) { _scope.setAttr("type", v ? "submit" : "button"); }
   });
 });

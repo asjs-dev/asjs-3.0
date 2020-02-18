@@ -6,11 +6,10 @@ createClass(ASJSUtils, "Iterator", ASJS.BaseClass, function(_scope) {
   var _step = -1;
 
   _scope.new = function(steps) {
-    if (steps && steps.length) {
-      var i = -1;
-      var l = steps.length;
-      while (++i < l) _scope.add(steps[i]);
-    }
+    if (!steps || steps.length === 0) return;
+    var i = -1;
+    var l = steps.length;
+    while (++i < l) _scope.add(steps[i]);
   }
 
   _scope.add = function(fv) {

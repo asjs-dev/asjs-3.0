@@ -5,9 +5,7 @@ createClass(ASJSUtils, "EventStreamer", ASJS.EventDispatcher, function(_scope) {
   var _eventTypes;
   var _stream;
 
-  _scope.new = function() {
-    _scope.reset();
-  }
+  _scope.new = _scope.reset;
 
   prop(_scope, "target", {
     get: function() { return _target; },
@@ -19,9 +17,7 @@ createClass(ASJSUtils, "EventStreamer", ASJS.EventDispatcher, function(_scope) {
     set: function(v) { _eventTypes = v; }
   });
 
-  prop(_scope, "stream", {
-    get: function() { return _stream; }
-  });
+  get(_scope, "stream", function() { return _stream; });
 
   _scope.reset = function() {
     _scope.stopWatch();

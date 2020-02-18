@@ -302,7 +302,7 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   function fillStyle(targetType, v) {
     var ctx = getContext();
-    if (targetType == priv.TARGET_FILL) ctx.fillStyle = v;
+    if (targetType === priv.TARGET_FILL) ctx.fillStyle = v;
     else ctx.strokeStyle = v;
   }
 

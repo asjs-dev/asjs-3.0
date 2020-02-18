@@ -46,8 +46,8 @@ cnst(window, "has",    "hasEventListener");
 var stage;
 
 c1(ASJS, "Importer", Object, function(_scope) {
-  var _priv = {};
-  cnst(_priv, "REQUIRE_REGEX", /require\((\"[^\"]*\"|\'[^\']*\')\)\;/gm);
+  var priv = {};
+  cnst(priv, "REQUIRE_REGEX", /require\((\"[^\"]*\"|\'[^\']*\')\)\;/gm);
 
   var _version = Date.now();
 
@@ -98,7 +98,7 @@ c1(ASJS, "Importer", Object, function(_scope) {
     var baseURL = url.substr(0, url.lastIndexOf("/"));
     var m;
     var requires = [];
-    while ((m = _priv.REQUIRE_REGEX.exec(content)) !== null) requires.push(m);
+    while ((m = priv.REQUIRE_REGEX.exec(content)) !== null) requires.push(m);
 
     ito(requires, function(index, value, next, end) {
       var path = value[1].substr(1, value[1].length - 2);

@@ -127,11 +127,11 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
 });
 msg(ASJSUtils.PitchDetect, "DETECTED");
 cnst(ASJSUtils.PitchDetect, "A", 440);
-cnst(ASJSUtils.PitchDetect, "noteFromPitch", function(frequency) {
-var noteNum = 12 * (Math.log(frequency / ASJSUtils.PitchDetect.A) / Math.log(2));
-return Math.round(noteNum) + 69;
+rof(ASJSUtils.PitchDetect, "noteFromPitch", function(frequency) {
+  var noteNum = 12 * (Math.log(frequency / ASJSUtils.PitchDetect.A) / Math.log(2));
+  return Math.round(noteNum) + 69;
 });
-cnst(ASJSUtils.PitchDetect, "centsOffFromPitch", function(frequency, note) {
-var freqFromNoteNum = ASJSUtils.PitchDetect.A * Math.pow(2, (note - 69) / 12);
-return Math.floor(1200 * Math.log(frequency / freqFromNoteNum) / Math.log(2));
+rof(ASJSUtils.PitchDetect, "centsOffFromPitch", function(frequency, note) {
+  var freqFromNoteNum = ASJSUtils.PitchDetect.A * Math.pow(2, (note - 69) / 12);
+  return Math.floor(1200 * Math.log(frequency / freqFromNoteNum) / Math.log(2));
 });

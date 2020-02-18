@@ -18,14 +18,12 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
   var _content;
   var _promise;
 
-  _scope.new = function() {
-    reset();
-  }
+  _scope.new = reset;
 
   get(_scope, "content", function() {
     if (!_content) {
       _content = _request.response;
-      if (_compressed) _content = ASJS.LZW.instance.decompress(_content);
+      if (_compressed) _content = ASJS.LZW.decompress(_content);
       if (_responseType === "json" && tis(_request.response, "string")) _content = JSON.parse(_content);
     }
     return _content;
@@ -45,9 +43,7 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
   set(_scope, "compressed",      function(v) { _compressed = v; });
   set(_scope, "withCredentials", function(v) { _withCredentials = v; });
 
-  _scope.unload = function() {
-    _scope.free();
-  }
+  _scope.unload = reset;
 
   _scope.setHeader = function(k, v) {
     if (!_headers) _headers = {};
@@ -62,10 +58,6 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
     _request.abort();
   };
 
-  _scope.free = function() {
-    reset();
-  }
-
   _scope.load = function(url) {
     if (url) {
       _url = url;
@@ -78,7 +70,7 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
           _request.setRequestHeader(k, _headers[k]);
         }
       }
-      _request.send(_compressed ? ASJS.LZW.instance.compress(_data) : _data);
+      _request.send(_compressed ? ASJS.LZW.compress(_data) : _data);
     }
 
     return _promise;

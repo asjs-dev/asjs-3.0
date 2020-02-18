@@ -37,11 +37,9 @@ createClass(ASJS, "AbstractViewMediator", ASJS.AbstractMediator, function(_scope
     _super.protected.isViewAttached && _container.removeChild(_super.protected.view);
   }
 
-  function onResize() {
-    _super.protected.render();
-  }
-
   _super.protected.render = function() {
     _super.protected.isViewAttached && _super.protected.view.render();
   }
+
+  var onResize = _super.protected.render;
 });

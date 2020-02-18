@@ -30,7 +30,7 @@ createClass(ASJSUtils, "WS", ASJS.EventDispatcher, function(_scope) {
     _url = url;
 
     if (_ws) {
-      if (_scope.isOpen) _ws.close();
+      _scope.isOpen && _ws.close();
       _ws = null;
     }
 
@@ -42,11 +42,11 @@ createClass(ASJSUtils, "WS", ASJS.EventDispatcher, function(_scope) {
   }
 
   _scope.send = function(data) {
-    if (_scope.isOpen) _ws.send(data);
+    _scope.isOpen && _ws.send(data);
   }
 
   _scope.close = function() {
-    if (_scope.isOpen) _ws.close();
+    _scope.isOpen && _ws.close();
   }
 
   function onOpen(e) {

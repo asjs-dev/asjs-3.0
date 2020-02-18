@@ -23,7 +23,7 @@ createSingletonClass(ASJSUtils, "Geolocaton", ASJS.EventDispatcher, function(_sc
   }
 
   _scope.stop = function() {
-    if (_geolocation && _watchID) _geolocation.clearWatch(_watchID);
+    _geolocation && _watchID && _geolocation.clearWatch(_watchID);
   }
 
   _scope.isSupported = function() {

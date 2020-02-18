@@ -45,7 +45,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
       while (++j < vLength) {
         var i = -1;
         while (++i < l) {
-          if (i == v[j]) _scope.getCellAt(i).checked = true;
+          if (i === v[j]) _scope.getCellAt(i).checked = true;
         }
       }
     }
@@ -100,7 +100,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     var l = _scope.length;
     while (++i < l) {
       var cell = _scope.getCellAt(i);
-      if (cell.id == id) return cell;
+      if (cell.id === id) return cell;
     }
     return null;
   }

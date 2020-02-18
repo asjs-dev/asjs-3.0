@@ -9,7 +9,7 @@ rof(ASJSUtils.Cookies, "createCookie", function(n, v, d) {
   } else var expires = "";
   document.cookie = n + "=" + v + expires + "; path=/";
   try {
-    if (!empty(Storage)) localStorage.setItem(n, v);
+    !empty(Storage) && localStorage.setItem(n, v);
   } catch (e) {
     trace(e);
   }
@@ -34,7 +34,7 @@ rof(ASJSUtils.Cookies, "readCookie", function(n) {
 rof(ASJSUtils.Cookies, "eraseCookie", function(n) {
   _scope.createCookie(n, "", -1);
   try {
-    if (!empty(Storage)) localStorage.removeItem(n);
+    !empty(Storage) && localStorage.removeItem(n);
   } catch (e) {
     trace(e);
   }
