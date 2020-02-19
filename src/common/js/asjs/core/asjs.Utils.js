@@ -74,8 +74,7 @@ var cnst = constant;
 
 var message = function(t, n) {
   try {
-    if (!emp(t.name)) cnst(t, n, t.name + "_" + n);
-    else cnst(t, n, n + "_" + Date.now() + message.id++);
+    cnst(t, n, "e" + Date.now() + "" + message.id++);
   } catch (e) {
     trace("ERROR", n);
   }
