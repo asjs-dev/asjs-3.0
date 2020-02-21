@@ -17,5 +17,5 @@ createClass(ASJS, "AlphaBitmapFilter", ASJS.AbstractBitmapFilter, function(_scop
     return pixels;
   }
 });
-cnst(ASJS.AlphaBitmapFilter, "TYPE_DARKNESS",   "ASJS-AlphaBitmapFilter-typeDarkness");
-cnst(ASJS.AlphaBitmapFilter, "TYPE_BRIGHTNESS", "ASJS-AlphaBitmapFilter-typeBrightness");
+cnst(ASJS.AlphaBitmapFilter, "TYPE_DARKNESS",   "darkness");
+cnst(ASJS.AlphaBitmapFilter, "TYPE_BRIGHTNESS", "brightness");

@@ -13,6 +13,7 @@ console.clear();
 
 var _d = document;
 var _w = window;
+var _m = Math;
 
 var isDocumentComplete = function() {
   return document.readyState === "complete";

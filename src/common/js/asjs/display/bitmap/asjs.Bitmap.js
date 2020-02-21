@@ -370,8 +370,8 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     _filtersReady = true;
   }
 });
-cnst(ASJS.Bitmap, "GRADIENT_LINEAR",   "ASJS-Bitmap-gradientLinear");
-cnst(ASJS.Bitmap, "GRADIENT_RADIAL",   "ASJS-Bitmap-gradientRadial");
+cnst(ASJS.Bitmap, "GRADIENT_LINEAR",   "gradientLinear");
+cnst(ASJS.Bitmap, "GRADIENT_RADIAL",   "gradientRadial");
 cnst(ASJS.Bitmap, "PATTERN_REPEAT",    "repeat");
 cnst(ASJS.Bitmap, "PATTERN_NO_REPEAT", "no-repeat");
 cnst(ASJS.Bitmap, "PATTERN_REPEAT_X",  "repeat-x");
