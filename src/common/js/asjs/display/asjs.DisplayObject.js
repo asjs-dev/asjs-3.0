@@ -4,6 +4,13 @@ require("../utils/asjs.Mouse.js");
 require("./asjs.Tag.js");
 
 createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
+  var priv = {};
+
+  cnst(priv, "OFFSET_TOP",    "Top");
+  cnst(priv, "OFFSET_LEFT",   "Left");
+  cnst(priv, "OFFSET_WIDTH",  "Width");
+  cnst(priv, "OFFSET_HEIGHT", "Height");
+
   var _mouse      = ASJS.Mouse.instance;
   var _filters    = [];
   var _rotation   = 0;
@@ -20,31 +27,11 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   }
 
   get(_scope, "bounds", function() {
-    _bounds.x      = _scope.calcX;
-    _bounds.y      = _scope.calcY;
-    _bounds.width  = _scope.calcWidth;
-    _bounds.height = _scope.calcHeight;
+    _bounds.x      = _scope.x;
+    _bounds.y      = _scope.y;
+    _bounds.width  = _scope.width;
+    _bounds.height = _scope.height;
     return _bounds;
-  });
-
-  get(_scope, "calcX", function() { return _scope.x + _scope.getCSS("marginLeft"); });
-
-  get(_scope, "calcY", function() { return _scope.y + _scope.getCSS("marginTop"); });
-
-  get(_scope, "calcWidth", function() {
-    var paddingLeft  = _scope.getCSS("paddingLeft");
-    var paddingRight = _scope.getCSS("paddingRight");
-    var borderLeft   = _scope.getCSS("borderLeft");
-    var borderRight  = _scope.getCSS("borderRight");
-    return _scope.width + paddingLeft + paddingRight + borderLeft + borderRight;
-  });
-
-  get(_scope, "calcHeight", function() {
-    var paddingTop    = _scope.getCSS("paddingTop");
-    var paddingBottom = _scope.getCSS("paddingBottom");
-    var borderTop     = _scope.getCSS("borderTop");
-    var borderBottom  = _scope.getCSS("borderBottom");
-    return _scope.height + paddingTop + paddingBottom + borderTop + borderBottom;
   });
 
   get(_scope, "mouse", function() { return _mouse.getRelativePosition(_scope); });
@@ -90,22 +77,22 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   });
 
   prop(_scope, "x", {
-    get: function() { return _scope.getCSS("left"); },
+    get: function() { return getOffset(priv.OFFSET_LEFT); },
     set: function(v) { _scope.setCSS("left", v); }
   });
 
   prop(_scope, "y", {
-    get: function() { return _scope.getCSS("top"); },
+    get: function() { return getOffset(priv.OFFSET_TOP); },
     set: function(v) { _scope.setCSS("top", v); }
   });
 
   prop(_scope, "width", {
-    get: function() { return _scope.getCSS("width"); },
+    get: function() { return getOffset(priv.OFFSET_WIDTH); },
     set: function(v) { _scope.setCSS("width", v); }
   });
 
   prop(_scope, "height", {
-    get: function() { return _scope.getCSS("height"); },
+    get: function() { return getOffset(priv.OFFSET_HEIGHT); },
     set: function(v) { _scope.setCSS("height", v); }
   });
 
@@ -180,6 +167,18 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _bounds = null;
 
     _super.destruct();
+  }
+
+  function getOffset(type) {
+    var offset         = _scope.el["offset" + type];
+    var position       = _scope.getCSS(type.toLowerCase());
+    var margin         = _scope.getCSS("margin" + type);
+    var parsedPosition = parseFloat(position);
+    var parsedMargin   = parseFloat(margin);
+
+    return position === parsedPosition && margin === parsedMargin
+      ? parsedMargin + parsedPosition
+      : offset;
   }
 
   function drawTransform() {
