@@ -1,22 +1,9 @@
 require("./asjs.Sprite.js");
 
 createClass(ASJS, "Link", ASJS.Sprite, function(_scope, _super) {
-  _scope.new = function() {
-    _super.new("a");
-  }
+  _scope.new = _super.new.bind(_scope, "a");
 
-  prop(_scope, "href", {
-    get: function() { return _scope.getAttr("href"); },
-    set: function(v) { _scope.setAttr("href", v); }
-  });
-
-  prop(_scope, "target", {
-    get: function() { return _scope.getAttr("target"); },
-    set: function(v) { _scope.setAttr("target", v); }
-  });
-
-  prop(_scope, "download", {
-    get: function() { return _scope.getAttr("download"); },
-    set: function(v) { _scope.setAttr("download", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "href");
+  ASJS.Tag.attrProp(_scope, "target");
+  ASJS.Tag.attrProp(_scope, "download");
 });

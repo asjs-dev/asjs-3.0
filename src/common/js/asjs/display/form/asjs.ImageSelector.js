@@ -18,7 +18,6 @@ createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
 
   _scope.destruct = function() {
     _reader = null;
-
     _super.destruct();
   }
 

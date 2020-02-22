@@ -86,6 +86,9 @@ var msg = message;
 var readOnlyFunction = cnst;
 var rof = readOnlyFunction;
 
+var placeholderFunction = function() {};
+var phf = placeholderFunction;
+
 var animationFrameFunction = function(callback) {
   return function() {
     var args = arguments;

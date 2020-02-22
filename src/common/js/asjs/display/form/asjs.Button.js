@@ -6,10 +6,7 @@ createClass(ASJS, "Button", ASJS.FormElement, function(_scope, _super) {
     _scope.setAttr("type", "button");
   }
 
-  prop(_scope, "label", {
-    get: function() { return _scope.getAttr("value"); },
-    set: function(v) { _scope.setAttr("value", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "label", "value");
 
   prop(_scope, "submit", {
     get: function() { return _scope.getAttr("type") === "submit"; },

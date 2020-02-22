@@ -34,8 +34,9 @@ createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, functio
   }
 
   function onHide() {
-    if (_pool.length > 0) showWindow();
-    else hideWindow();
+    _pool.length > 0
+      ? showWindow()
+      : hideWindow();
   }
 
   function hideWindow() {

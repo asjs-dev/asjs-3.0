@@ -26,8 +26,8 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
   });
 
   prop(_scope, "name", {
-    get: function() { return _checkbox.getAttr("name"); },
-    set: function(v) { _checkbox.setAttr("name", v); }
+    get: _checkbox.getAttr.bind(_checkbox, "name"),
+    set: _checkbox.setAttr.bind(_checkbox, "name")
   });
 
   prop(_scope, "checked", {

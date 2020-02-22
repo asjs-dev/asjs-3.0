@@ -22,11 +22,7 @@ createClass(ASJS, "ColorChangeBitmapFilter", ASJS.AbstractBitmapFilter, function
       var hexValue      = ASJS.Color.colorToRgbHex(oColor);
       var selectedColor = _palette[hexValue];
 
-      if (selectedColor) {
-        d[i]     = selectedColor.r;
-        d[i + 1] = selectedColor.g;
-        d[i + 2] = selectedColor.b;
-      }
+      selectedColor && d.set([selectedColor.r, selectedColor.g, selectedColor.b], i);
     }
 
     _palette = {};

@@ -17,9 +17,7 @@ createClass(ASJSUtils, "AbstractView", ASJS.Sprite, function(_scope, _super) {
     _scope.alpha = bw(0, 1, to);
   }
 
-  _scope.hide = function(callback) {
-    _super.protected.animateTo(0, callback);
-  }
+  _scope.hide = _super.protected.animateTo.bind(_scope, 0);
 
   _scope.destruct = function() {
     _completeCallback = null;

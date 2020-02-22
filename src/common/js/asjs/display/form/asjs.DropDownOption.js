@@ -10,10 +10,7 @@ createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
     _scope.selected = selected || false;
   }
 
-  prop(_scope, "value", {
-    get: function() { return _scope.getAttr("value"); },
-    set: function(v) { _scope.setAttr("value", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "value");
 
   prop(_scope, "label", {
     get: function() { return _scope.text; },
@@ -21,7 +18,7 @@ createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
   });
 
   prop(_scope, "selected", {
-    get: function() { return _scope.getAttr("selected"); },
+    get: _scope.getAttr.bind(_scope, "selected"),
     set: function(v) {
       v
       ? _scope.setAttr("selected", "selected")
@@ -30,7 +27,7 @@ createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
   });
 
   prop(_scope, "disabled", {
-    get: function() { return _scope.getAttr("disabled"); },
+    get: _scope.getAttr.bind(_scope, "disabled"),
     set: function(v) {
       v
       ? _scope.setAttr("disabled", "disabled")

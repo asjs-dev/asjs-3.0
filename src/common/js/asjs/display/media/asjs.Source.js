@@ -7,15 +7,8 @@ createClass(ASJS, "Source", ASJS.Tag, function(_scope, _super) {
     _scope.type = type;
   }
 
-  prop(_scope, "type", {
-    get: function() { return _scope.getAttr("type"); },
-    set: function(v) { _scope.setAttr("type", v); }
-  });
-
-  prop(_scope, "src", {
-    get: function() { return _scope.getAttr("src"); },
-    set: function(v) { _scope.setAttr("src", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "type");
+  ASJS.Tag.attrProp(_scope, "src");
 });
 cnst(ASJS.Source, "TYPE_AUDIO_MP3",  "audio/mpeg");
 cnst(ASJS.Source, "TYPE_AUDIO_OGG",  "audio/ogg");

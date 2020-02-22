@@ -27,6 +27,7 @@ createClass(ASJS, "AbstractConvoluteBitmapFilter", ASJS.AbstractBitmapFilter, fu
 
     var bitmapHelper = new ASJS.Bitmap(w, h);
     var output = bitmapHelper.getImageData(0, 0, w, h);
+    bitmapHelper.destruct();
     var dst = output.data;
 
     var alphaFac = _scope.opaque ? 1 : 0;
@@ -60,10 +61,7 @@ createClass(ASJS, "AbstractConvoluteBitmapFilter", ASJS.AbstractBitmapFilter, fu
             }
           }
         }
-        dst[dstOff] = r;
-        dst[dstOff + 1] = g;
-        dst[dstOff + 2] = b;
-        dst[dstOff + 3] = a + alphaFac * (255 - a);
+        dst.set([r, g, b, a + alphaFac * (255 - a)], dstOff);
       }
     }
     return output;

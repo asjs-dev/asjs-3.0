@@ -6,9 +6,7 @@ require("../geom/asjs.Point.js");
 createClass(ASJS, "Image", ASJS.DisplayObject, function(_scope, _super) {
   var _originalSize = new ASJS.Point();
 
-  _scope.new = function() {
-    _super.new("img");
-  }
+  _scope.new = _super.new.bind(_scope, "img");
 
   get(_scope, "imageWidth", function() { return _originalSize.x; });
   get(_scope, "imageHeight", function() { return _originalSize.y; });
@@ -22,15 +20,12 @@ createClass(ASJS, "Image", ASJS.DisplayObject, function(_scope, _super) {
     }
   });
 
-  prop(_scope, "alt", {
-    get: function() { return _scope.getAttr("alt"); },
-    set: function(v) { _scope.setAttr("alt", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "alt");
 
   _scope.destruct = function() {
     _originalSize.destruct();
     _originalSize = null;
-    
+
     _super.destruct();
   }
 

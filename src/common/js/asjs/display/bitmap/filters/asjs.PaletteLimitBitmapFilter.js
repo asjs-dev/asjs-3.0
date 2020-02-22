@@ -44,9 +44,7 @@ createClass(ASJS, "PaletteLimitBitmapFilter", ASJS.AbstractBitmapFilter, functio
       }
       _map[hexValue] = selectedColor;
 
-      d[i]     = selectedColor.r;
-      d[i + 1] = selectedColor.g;
-      d[i + 2] = selectedColor.b;
+      d.set([selectedColor.r, selectedColor.g, selectedColor.b], i);
     }
 
     _map = {};

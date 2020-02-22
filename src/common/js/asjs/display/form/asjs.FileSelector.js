@@ -33,8 +33,8 @@ createClass(ASJS, "FileSelector", ASJS.FormElement, function(_scope, _super) {
   });
 
   prop(_scope, "name", {
-    get: function() { return _super.protected.fileInput.getAttr("name"); },
-    set: function(v) { _super.protected.fileInput.setAttr("name", v); }
+    get: _super.protected.fileInput.getAttr.bind(_super.protected.fileInput, "name"),
+    set: _super.protected.fileInput.setAttr.bind(_super.protected.fileInput, "name")
   });
 
   _scope.destruct = function() {

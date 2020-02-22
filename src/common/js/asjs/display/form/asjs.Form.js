@@ -1,24 +1,11 @@
 require("../asjs.DisplayObject.js");
 
 createClass(ASJS, "Form", ASJS.Sprite, function(_scope, _super) {
-  _scope.new = function() {
-    _super.new("form");
-  }
+  _scope.new = _super.new.bind(_scope, "form");
 
-  prop(_scope, "action", {
-    get: function() { return _scope.getAttr("action"); },
-    set: function(v) { _scope.setAttr("action", v); }
-  });
-
-  prop(_scope, "method", {
-    get: function() { return _scope.getAttr("method"); },
-    set: function(v) { _scope.setAttr("method", v); }
-  });
-
-  prop(_scope, "enctype", {
-    get: function() { return _scope.getAttr("enctype"); },
-    set: function(v) { _scope.setAttr("enctype", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "action");
+  ASJS.Tag.attrProp(_scope, "method");
+  ASJS.Tag.attrProp(_scope, "enctype");
 
   _scope.reset = function() {
     _scope.el.reset();

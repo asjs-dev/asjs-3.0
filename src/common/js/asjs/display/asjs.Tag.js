@@ -22,7 +22,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
   prop(_scope, "id", {
     get: function() { return _scope.getAttr("id"); },
-    set: function(v) { _scope.setAttr("id", v); }
+    set: function(v) { _scope.setAttr("id"); }
   });
 
   prop(_scope, "enabled", {
@@ -101,13 +101,9 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     return _el.className.split(" ");
   }
 
-  _scope.getCSS = function(k) {
-    return ASJS.CSS.getCSS(_scope, k);
-  }
+  _scope.getCSS = ASJS.CSS.getCSS.bind(_scope, _scope);
 
-  _scope.setCSS = function(k, v) {
-    ASJS.CSS.setCSS(_scope, k, v);
-  }
+  _scope.setCSS = ASJS.CSS.setCSS.bind(_scope, _scope);
 
   _scope.getAttr = function(k) {
     return _el.getAttribute(k);
@@ -164,5 +160,19 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
     _super.destruct();
   }
+});
+rof(ASJS.Tag, "cssProp", function(s, l, pn) {
+  pn = pn || l;
+  prop(s, l, {
+    get: s.getCSS.bind(s, pn),
+    set: s.setCSS.bind(s, pn)
+  });
+});
+rof(ASJS.Tag, "attrProp", function(s, l, pn) {
+  pn = pn || l;
+  prop(s, l, {
+    get: s.getAttr.bind(s, pn),
+    set: s.setAttr.bind(s, pn)
+  });
 });
 ASJS.Tag.instanceId = -1;

@@ -12,10 +12,7 @@ createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
     _scope.addEventListener(ASJS.MouseEvent.CLICK, onClick);
   }
 
-  prop(_scope, "name", {
-    get: function() { return _scope.getAttr("name"); },
-    set: function(v) { _scope.setAttr("name", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "name");
 
   prop(_scope, "checked", {
     get: function() { return _checked; },

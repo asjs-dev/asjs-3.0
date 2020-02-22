@@ -16,9 +16,12 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _rotation   = 0;
   var _scaleX     = 1;
   var _scaleY     = 1;
+  var _skewX      = 0;
+  var _skewY      = 0;
   var _bounds     = new ASJS.Rectangle();
 
   var _cssDisplay;
+  var _transformTimeoutId;
 
   _scope.new = function(tag) {
     _super.new(tag);
@@ -36,25 +39,14 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
 
   get(_scope, "mouse", function() { return _mouse.getRelativePosition(_scope); });
 
-  prop(_scope, "tabIndex", {
-    get: function() { return _scope.getAttr("tabindex"); },
-    set: function(v) { _scope.setAttr("tabindex", v); }
-  });
-
-  prop(_scope, "tooltip", {
-    get: function() { return _scope.setAttr("title"); },
-    set: function(v) { _scope.setAttr("title", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "tabindex");
+  ASJS.Tag.attrProp(_scope, "tooltip");
 
   prop(_scope, "filters", {
     get: function() { return _filters; },
     set: function(v) {
       _filters = v;
-      var filters = "";
-      var filter;
-      var i = -1;
-      while (filter = _filters[++i]) filters += " " + filter.execute();
-      _scope.setCSS("filter", filters);
+      drawFilters();
     }
   });
 
@@ -71,29 +63,26 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     set: function(v) { _scope.setCSS("display", v ? _cssDisplay : "none"); }
   });
 
-  prop(_scope, "alpha", {
-    get: function() { return _scope.getCSS("opacity"); },
-    set: function(v) { _scope.setCSS("opacity", v); }
-  });
+  ASJS.Tag.cssProp(_scope, "alpha", "opacity");
 
   prop(_scope, "x", {
     get: function() { return getOffset(priv.OFFSET_LEFT); },
-    set: function(v) { _scope.setCSS("left", v); }
+    set: _scope.setCSS.bind(_scope, "left")
   });
 
   prop(_scope, "y", {
     get: function() { return getOffset(priv.OFFSET_TOP); },
-    set: function(v) { _scope.setCSS("top", v); }
+    set: _scope.setCSS.bind(_scope, "top")
   });
 
   prop(_scope, "width", {
     get: function() { return getOffset(priv.OFFSET_WIDTH); },
-    set: function(v) { _scope.setCSS("width", v); }
+    set: _scope.setCSS.bind(_scope, "width")
   });
 
   prop(_scope, "height", {
     get: function() { return getOffset(priv.OFFSET_HEIGHT); },
-    set: function(v) { _scope.setCSS("height", v); }
+    set: _scope.setCSS.bind(_scope, "height")
   });
 
   prop(_scope, "rotation", {
@@ -120,6 +109,22 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     }
   });
 
+  prop(_scope, "skewX", {
+    get: function() { return _skewX; },
+    set: function(v) {
+      _skewX = parseFloat(v);
+      drawTransform();
+    }
+  });
+
+  prop(_scope, "skewY", {
+    get: function() { return _skewY; },
+    set: function(v) {
+      _skewY = parseFloat(v);
+      drawTransform();
+    }
+  });
+
   _scope.requestFullscreen = function() {
     document.fullscreenEnabled && _scope.el.requestFullscreen();
   };
@@ -133,6 +138,11 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _scope.scaleY = scaleY;
   };
 
+  _scope.skew = function(skewX, skewY) {
+    _scope.skewX = skewX;
+    _scope.skewY = skewY;
+  };
+
   _scope.move = function(x, y) {
     _scope.x = x;
     _scope.y = y;
@@ -143,25 +153,22 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _scope.height = h;
   }
 
-  _scope.hitTest = function(point) {
-    return ASJS.GeomUtils.hitTest(_scope, point);
-  }
+  _scope.hitTest = ASJS.GeomUtils.hitTest.bind(_scope, _scope);
 
-  _scope.localToGlobal = function(point) {
-    return ASJS.GeomUtils.localToGlobal(_scope, point);
-  };
+  _scope.localToGlobal = ASJS.GeomUtils.localToGlobal.bind(_scope, _scope);
 
-  _scope.globalToLocal = function(point) {
-    return ASJS.GeomUtils.globalToLocal(_scope, point);
-  };
+  _scope.globalToLocal = ASJS.GeomUtils.globalToLocal.bind(_scope, _scope);
 
   _scope.destruct = function() {
-    _mouse      = null;
-    _filters    = null;
-    _rotation   = null;
-    _scaleX     = null;
-    _scaleY     = null;
-    _cssDisplay = null;
+    _mouse              = null;
+    _filters            = null;
+    _rotation           = null;
+    _scaleX             = null;
+    _scaleY             = null;
+    _skewX              = null;
+    _skewY              = null;
+    _cssDisplay         = null;
+    _transformTimeoutId = null;
 
     _bounds.destruct();
     _bounds = null;
@@ -181,7 +188,27 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
       : offset;
   }
 
+  function drawFilters() {
+    var filters = "";
+    var filter;
+    var i = -1;
+    while (filter = _filters[++i]) filters += " " + filter.execute();
+    _scope.setCSS("filter", filters);
+  }
+
   function drawTransform() {
-    _scope.setCSS("transform", 'rotate(' + _rotation + 'deg) scaleX(' + _scaleX + ') scaleY(' + _scaleY + ')');
+    clearTimeout(_transformTimeoutId);
+    _transformTimeoutId = setTimeout(transform, 1);
+  }
+
+  function transform() {
+    _scope.setCSS(
+      "transform",
+      "rotate(" + _rotation + "deg) " +
+      "scaleX(" + _scaleX + ") " +
+      "scaleY(" + _scaleY + ") " +
+      "skewX(" + _skewX + "deg) " +
+      "skewY(" + _skewY + "deg) "
+    );
   }
 });

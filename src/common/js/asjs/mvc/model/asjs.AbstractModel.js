@@ -36,8 +36,8 @@ createClass(ASJS, "AbstractModel", ASJS.EventDispatcher, function(_scope) {
     _scope.addEventListener(priv.PREFIX + k, l);
   }
 
-  _scope.merge = function(d) {
-    merge(_data, d);
+  _scope.merge = function(data) {
+    merge(_data, data);
   }
 
   function merge(oData, nData) {

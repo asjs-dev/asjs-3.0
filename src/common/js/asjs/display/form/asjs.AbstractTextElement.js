@@ -14,7 +14,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   }
 
   prop(_scope, "readonly", {
-    get: function() { return _scope.getAttr("readonly"); },
+    get: _scope.getAttr.bind(_scope, "readonly"),
     set: function(v) {
       v
       ? _scope.setAttr("readonly", "readonly")
@@ -23,7 +23,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   });
 
   prop(_scope, "placeholder", {
-    get: function() { return _scope.getAttr("placeholder"); },
+    get: _scope.getAttr.bind(_scope, "placeholder"),
     set: function(v) {
       _helperElement.html = v;
       _scope.setAttr("placeholder", _helperElement.text);
@@ -35,10 +35,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
     set: function(v) { _scope.el.value = v; }
   });
 
-  prop(_scope, "maxChar", {
-    get: function() { return _scope.getAttr("maxLength"); },
-    set: function(v) { _scope.setAttr("maxLength", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "maxChar", "maxLength");
 
   prop(_scope, "restrict", {
     get: function() { return _restrict; },
@@ -46,7 +43,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   });
 
   prop(_scope, "autofocus", {
-    get: function() { return _scope.getAttr("autofocus"); },
+    get: _scope.getAttr.bind(_scope, "autofocus"),
     set: function(v) {
       v
       ? _scope.setAttr("autofocus", "autofocus")

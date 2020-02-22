@@ -27,9 +27,7 @@ createClass(NS, "ExternalApplicationMediator", ASJS.AbstractViewMediator, functi
     unloadExternalApplication();
   }
 
-  function onClose() {
-    onHide();
-  }
+  var onClose = onHide;
 
   function loadExternalApplication() {
     unloadExternalApplication();

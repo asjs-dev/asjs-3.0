@@ -6,10 +6,7 @@ createClass(ASJS, "TextInput", ASJS.AbstractTextElement, function(_scope, _super
     _scope.type = ASJS.TextInput.TYPE_TEXT;
   }
 
-  prop(_scope, "type", {
-    get: function() { return _scope.getAttr("type"); },
-    set: function(v) { _scope.setAttr("type", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "type");
 });
 cnst(ASJS.TextInput, "TYPE_TEXT",     "text");
 cnst(ASJS.TextInput, "TYPE_PASSWORD", "password");

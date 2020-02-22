@@ -18,8 +18,8 @@ createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
   });
 
   prop(_scope, "name", {
-    get: function() { return _select.getAttr("name"); },
-    set: function(v) { _select.setAttr("name", v); }
+    get: _select.getAttr.bind(_select, "name"),
+    set: _select.setAttr.bind(_select, "name")
   });
 
   prop(_scope, "val", {

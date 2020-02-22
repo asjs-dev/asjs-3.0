@@ -55,10 +55,7 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
           y = -1;
           while (++y < maxH) {
             var pos = i + y * 4 * w + x * 4;
-            d[pos] = r;
-            d[pos + 1] = g;
-            d[pos + 2] = b;
-            d[pos + 3] = a;
+            d.set([r, g, b, a], pos);
           }
         }
       }

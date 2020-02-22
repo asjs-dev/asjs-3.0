@@ -1,29 +1,12 @@
 require("../asjs.Tag.js");
 
 createClass(ASJS, "VideoTrack", ASJS.Tag, function(_scope, _super) {
-  _scope.new = function() {
-    _super.new("track");
-  }
+  _scope.new = _super.new.bind(_scope, "track");
 
-  prop(_scope, "src", {
-    get: function() { return _scope.getAttr("src"); },
-    set: function(v) { _scope.setAttr("src", v); }
-  });
-
-  prop(_scope, "kind", {
-    get: function() { return _scope.getAttr("kind"); },
-    set: function(v) { _scope.setAttr("kind", v); }
-  });
-
-  prop( _scope, "label", {
-    get: function() { return _scope.getAttr("label"); },
-    set: function(v) { _scope.setAttr("label", v); }
-  });
-
-  prop(_scope, "srclang", {
-    get: function() { return _scope.getAttr("srclang"); },
-    set: function(v) { _scope.setAttr("srclang", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "src");
+  ASJS.Tag.attrProp(_scope, "kind");
+  ASJS.Tag.attrProp(_scope, "label");
+  ASJS.Tag.attrProp(_scope, "srclang");
 });
 cnst(ASJS.VideoTrack, "KIND_CAPTIONS",     "captions");
 cnst(ASJS.VideoTrack, "KIND_CHAPTERS",     "chapters");

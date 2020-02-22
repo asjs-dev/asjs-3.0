@@ -1,14 +1,9 @@
 require("./asjs.DisplayObject.js");
 
 createClass(ASJS, "IFrame", ASJS.DisplayObject, function(_scope, _super) {
-  _scope.new = function() {
-    _super.new("iframe");
-  }
+  _scope.new = _super.new.bind(_scope, "iframe");
 
-  prop(_scope, "src", {
-    get: function() { return _scope.getAttr("src"); },
-    set: function(v) { _scope.setAttr("src", v); }
-  });
+  ASJS.Tag.attrProp(_scope, "src");
 
   _scope.isLoaded = function() {
     return _scope.el.contentDocument.title.indexOf("404") === -1;
