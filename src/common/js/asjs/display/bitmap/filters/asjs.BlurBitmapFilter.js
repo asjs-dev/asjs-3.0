@@ -9,10 +9,10 @@ createClass(ASJS, "BlurBitmapFilter", ASJS.AbstractConvoluteBitmapFilter, functi
   get(_super.protected, "matrix", function() {
     var value = 1 / Math.pow(_scope.value, 2);
     var matrix = [];
-    var i = -1;
-    while (++i < _scope.value) {
-      var j = -1;
-      while (++j < _scope.value) matrix.push(value);
+    var i = _scope.value;
+    while (i--) {
+      var j = _scope.value;
+      while (j--) matrix.push(value);
     }
     return matrix;
   });

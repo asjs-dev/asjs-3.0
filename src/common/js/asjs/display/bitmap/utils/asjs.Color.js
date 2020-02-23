@@ -13,6 +13,14 @@ createClass(ASJS, "Color", ASJS.BaseClass, function(_scope) {
   get(_scope, "isGray", function() {
     return _scope.r === _scope.g && _scope.g === _scope.b;
   });
+
+  get(_scope, "isWhite", function() {
+    return _scope.r === 255 && _scope.isGray;
+  });
+
+  get(_scope, "isBlack", function() {
+    return _scope.r === 0 && _scope.isGray;
+  });
 });
 
 rof(ASJS.Color, "twoColorDistance", function(c1, c2) {

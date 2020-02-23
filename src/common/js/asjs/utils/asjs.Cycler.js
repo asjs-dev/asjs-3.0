@@ -41,14 +41,12 @@ createSingletonClass(ASJS, "Cycler", ASJS.BaseClass, function(_scope) {
     _isPlaying = false;
     _timeoutId = clearTimeout(_timeoutId);
   };
+
   function tick() {
     _timeoutId = clearTimeout(_timeoutId);
 
-    var i = -1;
-    var l = _callbacks.length;
-    while (++i < l) {
-      _callbacks[i] && _callbacks[i]();
-    }
+    var i = _callbacks.length;
+    while (i--) _callbacks[i] && _callbacks[i]();
 
     _timeoutId = setTimeout(tick, _interval);
   };

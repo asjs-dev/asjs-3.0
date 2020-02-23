@@ -32,10 +32,10 @@ createClass(ASJS, "AbstractConvoluteBitmapFilter", ASJS.AbstractBitmapFilter, fu
 
     var alphaFac = _scope.opaque ? 1 : 0;
 
-    var y = -1;
-    while (++y < h) {
-      var x = -1;
-      while (++x < w) {
+    var y = h;
+    while (y--) {
+      var x = w;
+      while (x--) {
         var sy = y;
         var sx = x;
         var dstOff = (y * w + x) * 4;
@@ -45,10 +45,10 @@ createClass(ASJS, "AbstractConvoluteBitmapFilter", ASJS.AbstractBitmapFilter, fu
         var b = 0;
         var a = 0;
 
-        var cy = -1;
-        while (++cy < side) {
-          var cx = -1;
-          while (++cx < side) {
+        var cy = side;
+        while (cy--) {
+          var cx = side;
+          while (cx--) {
             var scy = sy + cy - halfSide;
             var scx = sx + cx - halfSide;
             if (scy >= 0 && scy < sh && scx >= 0 && scx < sw) {

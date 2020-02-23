@@ -9,9 +9,8 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     var rect = _super.bounds;
     var size = new ASJS.Rectangle();
 
-    var i = -1;
-    var l = _scope.numChildren;
-    while (++i < l) {
+    var i = _scope.numChildren;
+    while (i--) {
       var child = _scope.getChildAt(i);
       var childRect = child.bounds;
       if (i === 0) {
@@ -42,16 +41,15 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     get: function() { return _mouseChildren; },
     set: function(v) {
       _mouseChildren = v;
-      var i = -1;
-      var l = _scope.numChildren;
-      while (++i < l) _scope.getChildAt(i).enabled = _mouseChildren;
+      var i = _scope.numChildren;
+      while (i--) _scope.getChildAt(i).enabled = _mouseChildren;
     }
   });
 
   get(_scope, "numChildren", function() { return !empty(_children) ? _children.length : 0; });
 
   _scope.clear = function() {
-    while (_scope.numChildren > 0) _scope.removeChildAt(0);
+    while (_scope.numChildren) _scope.removeChildAt(0);
     _super.clear();
   }
 
@@ -113,9 +111,8 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.getChildByDOMObject = function(domObject) {
     if (!domObject) return null;
-    var i = -1;
-    var l = _scope.numChildren;
-    while (++i < l) {
+    var i = _scope.numChildren;
+    while (i--) {
       var child = _scope.getChildAt(i);
       if (domObject.getAttribute("data-asjs-id") === child.asjsId) return child;
       else if (child.numChildren) {
@@ -128,9 +125,8 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.sendParentChangeEvent = function() {
     _super.sendParentChangeEvent();
-    var i = -1;
-    var l = _scope.numChildren;
-    while (++i < l) _scope.getChildAt(i).sendParentChangeEvent();
+    var i = _scope.numChildren;
+    while (i--) _scope.getChildAt(i).sendParentChangeEvent();
   }
 
   _scope.destruct = function() {

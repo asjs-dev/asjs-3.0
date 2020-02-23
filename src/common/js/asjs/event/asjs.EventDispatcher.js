@@ -15,16 +15,14 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     var e = ASJS.EventDispatcher.createEvent(event, data, bubble);
     if (!_scope.hasEventListener(e.type)) return;
     var handlers = _handlers[e.type];
-    var i = -1;
-    var l = handlers.length;
-    while (++i < l) handlers[i](e);
+    var i = handlers.length;
+    while (i--) handlers[i](e);
   }
 
   _scope.addEventListener = function(type, handler) {
     if (!_handlers) return;
     var types = tis(type, "object") ? type : type.split(" ");
     var i = -1;
-    var l = types.length;
     while (++i < types.length) {
       var t = types[i];
       if (t !== "") {
@@ -47,7 +45,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     var handlers = _handlers[type];
     if (!handlers) return;
     var removableHandlers = handler ? [handler] : handlers;
-    while (removableHandlers.length > 0) {
+    while (removableHandlers.length) {
       var h = removableHandlers.shift();
       handlers.remove(h);
       _scope.el && _scope.el.removeEventListener(type, h, true);

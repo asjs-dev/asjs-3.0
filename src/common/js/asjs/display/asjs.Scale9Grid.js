@@ -11,9 +11,8 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
 
   _scope.new = function() {
     _super.new();
-    var i = -1;
-    var l = 9;
-    while (++i < l) {
+    var i = 9;
+    while (i--) {
       _blocks[i] = new ASJS.Sprite();
       _blocks[i].setCSS("background-repeat", "no-repeat");
       _scope.addChild(_blocks[i]);
@@ -26,11 +25,10 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
   }
 
   set(_scope, "backgroundImage", function(v) {
-    var i = -1;
-    var l = 9;
-    while (++i < l) _blocks[i].setCSS("background-image", "url(" + v + ")");
+    var i = 9;
+    while (i--) _blocks[i].setCSS("background-image", "url(" + v + ")");
     var image = new ASJS.Image();
-        image.addEventListener(ASJS.Image.UPDATED, function() {
+        image.addEventListener(ASJS.LoaderEvent.LOAD, function() {
           image.removeEventListeners();
 
           _size.x = image.imageWidth;
@@ -113,10 +111,9 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
 
     _rectangle.destruct();
     _rectangle = null;
-    
-    var i = -1;
-    var l = _blocks.length;
-    while (++i < l) {
+
+    var i = _blocks.length;
+    while (i--) {
       _scope.removeChild(_blocks[i]);
       _blocks[i].destruct();
       _blocks[i] = null;

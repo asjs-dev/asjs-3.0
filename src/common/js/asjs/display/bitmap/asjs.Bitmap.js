@@ -220,7 +220,6 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.destroy = function() {
-    _scope.clearRect(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     _scope.setBitmapSize(1);
     _original = null;
   }

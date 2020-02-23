@@ -14,10 +14,9 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
     var h = pixels.height;
 
     var step = 4 * pixS;
-    var i = - step;
-    var l = d.length;
+    var i = d.length;
     var pixelPos = new ASJS.Point();
-    while ((i += step) < l) {
+    while ((i -= step) > -1) {
       var pixelLinearPos = Math.floor(i / 4);
       pixelPos.x = Math.floor(pixelLinearPos % w);
       pixelPos.y = Math.floor(pixelLinearPos / w);
@@ -32,10 +31,10 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
         var a = 0;
         var maxW = Math.min(w - pixelPos.x, pixS);
         var maxH = Math.min(h - pixelPos.y, pixS);
-        x = -1;
-        while (++x < maxW) {
-          y = -1;
-          while (++y < maxH) {
+        x = maxW;
+        while (x--) {
+          y = maxH;
+          while (y--) {
             var pos = i + y * 4 * w + x * 4;
             r += d[pos];
             g += d[pos + 1];
@@ -50,10 +49,10 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
         b = Math.round(b / pb);
         a = Math.round(a / pb);
 
-        x = -1;
-        while (++x < maxW) {
-          y = -1;
-          while (++y < maxH) {
+        x = maxW;
+        while (x--) {
+          y = maxH;
+          while (y--) {
             var pos = i + y * 4 * w + x * 4;
             d.set([r, g, b, a], pos);
           }

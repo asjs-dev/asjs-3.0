@@ -28,23 +28,22 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   prop(_scope, "selected", {
     get: function() {
       var v = [];
-      var i = -1;
-      var l = _scope.length;
-      while (++i < l) {
+      var i = _scope.length;
+      while (i--) {
         var item = _scope.getCellAt(i);
-        item.checked && v.push(item);
+        item.checked && v.unshift(item);
       }
       return v;
     },
     set: function(v) {
       _scope.clearSelection();
 
-      var j = -1;
+      var j = _scope.multiselect ? v.length : 1;
       var l = _scope.length;
-      var vLength = _scope.multiselect ? v.length : 1;
-      while (++j < vLength) {
-        var i = -1;
-        while (++i < l) {
+      var i;
+      while (j--) {
+        i = l;
+        while (i--) {
           if (i === v[j]) _scope.getCellAt(i).checked = true;
         }
       }
@@ -55,34 +54,30 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     get: function() { return _name; },
     set: function(v) {
       _name = v;
-      var i = -1;
-      var l = _scope.length;
-      while (++i < l) _scope.getCellAt(i).name = _name;
+      var i = _scope.length;
+      while (i--) _scope.getCellAt(i).name = _name;
     }
   });
 
   _scope.clearSelection = function() {
-    var i = -1;
-    var l = _scope.length;
-    while (++i < l) _scope.getCellAt(i).checked = false;
+    var i = _scope.length;
+    while (i--) _scope.getCellAt(i).checked = false;
   }
 
   _scope.clearList = function() {
-    while (_scope.length > 0) _itemsContainer.removeChildAt(0);
+    while (_scope.length) _itemsContainer.removeChildAt(0);
   }
 
   _scope.setList = function(cellDataVoList) {
     _scope.clearList();
-    var i = -1;
-    var l = cellDataVoList.length;
-    while (++i < l) _scope.addItem(cellDataVoList[ i ]);
+    var i = cellDataVoList.length;
+    while (i--) _scope.addItemAt(cellDataVoList[i], 0);
   }
 
   _scope.getList = function() {
     var list = [];
-    var i = -1;
-    var l = _scope.length;
-    while (++i < l) list.push(_scope.getItemAt(i));
+    var i = _scope.length;
+    while (i--) list.unshift(_scope.getItemAt(i));
     return list;
   }
 
@@ -96,9 +91,8 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   }
 
   _scope.getCellById = function(id) {
-    var i = -1;
-    var l = _scope.length;
-    while (++i < l) {
+    var i = _scope.length;
+    while (i--) {
       var cell = _scope.getCellAt(i);
       if (cell.id === id) return cell;
     }
@@ -131,9 +125,8 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   }
 
   _scope.render = function() {
-    var i = -1;
-    var l = _scope.length;
-    while (++i < l) {
+    var i = _scope.length;
+    while (i--) {
       var cell = _scope.getCellAt(i);
       cell.setSize(_scope.width, _scope.height);
       cell.render();
@@ -162,10 +155,9 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     var cellIndex = _itemsContainer.getChildIndex(cell);
 
     if (_scope.multiselect && !e.detail.ctrlKey && e.detail.shiftKey) {
-      var i = -1;
-      var l = Math.abs(cellIndex - _lastCellIndex);
+      var i = Math.abs(cellIndex - _lastCellIndex);
       var step = cellIndex > _lastCellIndex ? -1 : 1;
-      while (++i < l) {
+      while (i--) {
         cell = _scope.getCellAt(cellIndex + ((i + 1) * step));
         cell.checked = true;
       }

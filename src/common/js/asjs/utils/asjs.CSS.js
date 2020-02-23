@@ -15,9 +15,8 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
   get(_scope, "styles", function() { return _merged; });
 
   _scope.getRuleBySelector = function(s) {
-    var i = -1;
-    var l = _merged.length;
-    while (++i < l) {
+    var i = _merged.length;
+    while (i--) {
       var rule = _merged[i].rule;
       if (rule.selectorText === s) return rule;
     }
@@ -63,13 +62,11 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
   function updateMergedList() {
     var styles = getSheets();
     var i = -1;
-    var l = styles.length;
     _merged = [];
-    while (++i < l) {
+    while (++i < styles.length) {
       var style = styles[i].cssRules;
       var j = -1;
-      var m = style.length;
-      while (++j < m) _merged.push(new priv.Rule(i, j, style[j]));
+      while (++j < style.length) _merged.push(new priv.Rule(i, j, style[j]));
     }
   }
 

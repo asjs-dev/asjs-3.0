@@ -31,12 +31,12 @@ createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
 
   _scope.setOptions = function(options) {
     _scope.clearOptions();
-    var i = -1;
-    var l = options.length;
-    while (++i < l) _scope.addOption(options[ i ]);
+    var i = options.length;
+    while (i--) _scope.addOptionAt(options[i], 0);
   }
 
   _scope.addOption = _select.addChild;
+  _scope.addOptionAt = _select.addChildAt;
 
   _scope.render = function() {
     _select.setSize(_scope.width + 30, _scope.height);

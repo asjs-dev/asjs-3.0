@@ -9,9 +9,8 @@ createClass(ASJS, "ContrastBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
 
   _scope.execute = function(pixels) {
     var d = pixels.data;
-    var i = -4;
-    var l = d.length;
-    while ((i += 4) < l) {
+    var i = d.length;
+    while ((i -= 4) > -1) {
       d[i + 3] > 0 && d.set([convert(d[i]), convert(d[i + 1]), convert(d[i + 2])], i);
     }
 

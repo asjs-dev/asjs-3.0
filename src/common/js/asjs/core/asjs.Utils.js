@@ -25,9 +25,7 @@ var is = function(a, b) {
 }
 
 var tis = function(a, b) {
-  return b === "number"
-    ? parseFloat(a) == a
-    : typeof a === b;
+  return typeof a === b;
 }
 
 var empty = function(a) {

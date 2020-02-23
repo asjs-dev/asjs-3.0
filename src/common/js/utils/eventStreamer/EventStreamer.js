@@ -34,9 +34,8 @@ createClass(ASJSUtils, "EventStreamer", ASJS.EventDispatcher, function(_scope) {
   _scope.stopWatch = function() {
     if (!_eventTypes || !_target) return;
     var types = _eventTypes.indexOf(" ") > -1 ? _eventTypes.split(" ") : [eventTypes];
-    var i = -1;
-    var l = types.length;
-    while (++i < l) _target.removeEventListener(types[i], onEventStream);
+    var i = types.length;
+    while (i--) _target.removeEventListener(types[i], onEventStream);
   }
 
   function onEventStream(e) {

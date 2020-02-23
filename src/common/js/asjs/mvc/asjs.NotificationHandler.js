@@ -15,15 +15,7 @@ createSingletonClass(ASJS, "NotificationHandler", ASJS.BaseClass, function(_scop
   _scope.sendNotification = function(type, data) {
     var handlers = _handlers[type];
     if (!handlers) return;
-    var i = -1;
-    var l = handlers.length;
-    while (++i < l) {
-      if (handlers[i]) {
-        handlers[i](data, type);
-      } else {
-        handlers.splice(i, 1);
-        l--;
-      }
-    }
+    var i = handlers.length;
+    while (i--) handlers[i](data, type);
   }
 });

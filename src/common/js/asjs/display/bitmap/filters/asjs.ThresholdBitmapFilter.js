@@ -10,10 +10,9 @@ createClass(ASJS, "ThresholdBitmapFilter", ASJS.AbstractBitmapFilter, function(_
 
   _scope.execute = function(pixels) {
     var d = pixels.data;
-    var i = -4;
-    var l = d.length;
+    var i = d.length;
     var oColor = new ASJS.Color();
-    while ((i += 4) < l) {
+    while ((i -= 4) > -1) {
       if (d[i + 3] === 0) continue;
 
       oColor.set(d[i], d[i + 1], d[i + 2]);
