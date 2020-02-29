@@ -20,6 +20,7 @@ require("mvc/model/asjs.AbstractModel.js");
 require("mvc/mediator/asjs.AbstractMediator.js");
 require("mvc/mediator/asjs.AbstractViewMediator.js");
 require("mvc/controller/asjs.AbstractCommand.js");
+require("mvc/view/asjs.AbstractView.js");
 
 require("utils/asjs.Promise.js");
 require("utils/asjs.Keyboard.js");

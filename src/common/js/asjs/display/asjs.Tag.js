@@ -22,7 +22,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
   prop(_scope, "id", {
     get: function() { return _scope.getAttr("id"); },
-    set: function(v) { _scope.setAttr("id"); }
+    set: function(v) { _scope.setAttr("id", v); }
   });
 
   prop(_scope, "enabled", {
