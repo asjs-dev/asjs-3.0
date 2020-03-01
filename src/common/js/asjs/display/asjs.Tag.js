@@ -82,7 +82,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     while (newClass = newClasses.shift()) {
       !_scope.hasClass(newClass) && classList.push(newClass);
     }
-    _el.className = classList.join(" ");
+    _el.className = classList.join(" ").trim();
   }
 
   _scope.removeClass = function(v) {
@@ -90,7 +90,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     var classList     = _scope.getClassList();
     var removeClass;
     while (removeClass = removeClasses.shift()) classList.remove(removeClass);
-    _el.className = classList.join(" ");
+    _el.className = classList.join(" ").trim();
   }
 
   _scope.removeClassList = function() {
