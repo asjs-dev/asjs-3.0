@@ -183,6 +183,17 @@ var deleteProperty = function(t, p) {
 }
 var del = deleteProperty;
 
+var dataMapper = function(data, objectType) {
+  var instance = new objectType();
+  map(data, function(key) {
+    instance[key] = data[key];
+  });
+
+  return instance;
+}
+
+var dm = dataMapper;
+
 var createClass = function(nameSpace, name, base, body, singleton) {
   function setup(name, base, body, args) {
     if (!this.$n) this.$n = [];
