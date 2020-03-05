@@ -6,6 +6,7 @@ createSingletonClass(ASJS, "Window", ASJS.EventDispatcher, function(_scope) {
   var _browserStatus;
 
   var _el = window;
+  _scope.el = _el;
 
   _scope.new = function() {
     _browserStatus = navigator.onLine ? ASJS.WindowEvent.ONLINE : ASJS.WindowEvent.OFFLINE;

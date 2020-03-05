@@ -2,15 +2,23 @@ require("../../utils/dataUtils/Language.js");
 require("../../utils/dataUtils/Config.js");
 require("../service/LoadJSONServiceCommand.js");
 
-createClass(ASJSUtils, "LoadStartupDataCommand", ASJS.AbstractCommand, function(_scope) {
+createClass(ASJSUtils, "LoadStartupDataCommand", ASJS.AbstractCommand, function(_scope, _super) {
   var _dfd;
 
-  _scope.execute = function() {
+  _scope.new = function() {
     _dfd = new ASJS.Promise();
+  }
 
+  _scope.execute = function() {
     loadConfig();
-
     return _dfd;
+  }
+
+  _scope.destruct = function() {
+    _dfd.destruct();
+    _dfd = null;
+
+    _super.destruct();
   }
 
   function loadConfig() {
@@ -40,6 +48,7 @@ createClass(ASJSUtils, "LoadStartupDataCommand", ASJS.AbstractCommand, function(
 
   function onLoadError(data) {
     _dfd.reject();
+    _scope.destruct();
     throw new Error("JSON load error");
   }
 });
