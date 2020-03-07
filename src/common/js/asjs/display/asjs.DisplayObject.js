@@ -20,13 +20,11 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _skewY      = 0;
   var _bounds     = new ASJS.Rectangle();
 
-  var _cssDisplay;
   var _transformTimeoutId;
 
   _scope.new = function(tag) {
     _super.new(tag);
     _scope.tabindex = -1;
-    _cssDisplay = _scope.setCSS("display");
   }
 
   get(_scope, "bounds", function() {
@@ -50,17 +48,13 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     }
   });
 
-  prop(_scope, "display", {
-    get: function() { return _cssDisplay; },
-    set: function(v) {
-      _cssDisplay = v;
-      _scope.setCSS("display", _cssDisplay);
-    }
-  });
-
   prop(_scope, "visible", {
-    get: function() { return _scope.getCSS("display") != "none"; },
-    set: function(v) { _scope.setCSS("display", v ? _cssDisplay : "none"); }
+    get: function() { return _scope.getCSS("display") !== "none" && _scope.alpha > 0; },
+    set: function(v) {
+      v
+        ? _scope.removeCSS("display")
+        : _scope.setCSS("display", "none");
+    }
   });
 
   ASJS.Tag.cssProp(_scope, "alpha", "opacity");
@@ -167,7 +161,6 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _scaleY             = null;
     _skewX              = null;
     _skewY              = null;
-    _cssDisplay         = null;
     _transformTimeoutId = null;
 
     _bounds.destruct();

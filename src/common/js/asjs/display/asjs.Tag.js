@@ -16,7 +16,6 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   _scope.new = function(tag) {
     _el = !tag || tis(tag, "string") ? document.createElement(tag || "div") : tag;
     _scope.setData("asjs-id", "instance_" + (++ASJS.Tag.instanceId));
-
     if (_el.parentElement) _parent = new ASJS.Sprite(_el.parentElement);
   }
 
@@ -30,7 +29,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     set: function(v) {
       if (v) {
         _scope.removeAttr("disabled");
-        _scope.setCSS("pointer-events", "auto");
+        _scope.removeCSS("pointer-events");
       } else {
         _scope.setAttr("disabled", "disabled");
         _scope.setCSS("pointer-events", "none");
@@ -104,6 +103,8 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   _scope.getCSS = ASJS.CSS.getCSS.bind(_scope, _scope);
 
   _scope.setCSS = ASJS.CSS.setCSS.bind(_scope, _scope);
+
+  _scope.removeCSS = ASJS.CSS.removeCSS.bind(_scope, _scope);
 
   _scope.getAttr = function(k) {
     return _el.getAttribute(k);

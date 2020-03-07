@@ -72,9 +72,9 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.removeChild = function(child) {
-    if (!child) return null;
-    _scope.el.removeChild(child.el);
+    if (!child || !_scope.contains(child)) return null;
     _children.remove(child);
+    _scope.el.removeChild(child.el);
     child.parent = null;
     return child;
   }

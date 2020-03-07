@@ -184,3 +184,7 @@ rof(ASJS.CSS, "getCSS", function(t, k) {
       : v
   ) || 0;
 });
+
+rof(ASJS.CSS, "removeCSS", function(t, k) {
+  t.el.style[ASJS.CSS.replaceHyphen(k)] = "";
+});
