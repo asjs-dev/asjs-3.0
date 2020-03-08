@@ -13,7 +13,6 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scop
     _super.new();
 
     _scope.addClass("notification-window-view");
-    _scope.setCSS("position", "fixed");
 
     _window.rect = new ASJS.Rectangle(13, 60, 4, 7);
     _window.backgroundImage = "images/window.png?v={{date}}";

@@ -1,4 +1,6 @@
 html, body {
+  min-width        : 100%;
+  min-height       : 100%;
   overflow         : hidden;
   background-color : $black;
   font-family      : Arial, Helvetica, sans-serif;
@@ -34,7 +36,7 @@ body *:not(script):not(style) {
 }
 
 .animated {
-  animation  : fade-in 0.2s ease-in;
+  animation : fade-in 0.2s ease-in;
 
   @keyframes fade-in {
     from {

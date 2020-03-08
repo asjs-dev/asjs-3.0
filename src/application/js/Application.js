@@ -1,12 +1,14 @@
 require("./NameSpace.js");
 require("./controller/StartupCommand.js");
 
-createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
+createClass(NS, "Application", ASJS.BaseClass, function(_scope) {
   _scope.new = function() {
-    _super.new();
     stage.clear();
+
     trace("<AS/JS> Application {{appVersion}}.{{date}}");
-    (new NS.StartupCommand()).execute(_scope);
+
+    (new NS.StartupCommand()).execute(stage);
   }
 });
+
 ASJS.start(NS.Application);

@@ -10,31 +10,25 @@ createSingletonClass(ASJS, "Stage", ASJS.Sprite, function(_scope, _super) {
 
   _scope.new = function() {
     _super.new(document.body);
-    _scope.setSize("100%", "100%");
     window.addEventListener(ASJS.WindowEvent.RESIZE, recalcStageSize);
     recalcStageSize();
 
     ASJS.Mouse.instance.init();
   }
 
-  get(_scope, "stage", function() { return _scope; });
-
-  get(_scope, "stageWidth", function() { return _stageWidth; });
-
+  get(_scope, "stage",       function() { return _scope; });
+  get(_scope, "stageWidth",  function() { return _stageWidth; });
   get(_scope, "stageHeight", function() { return _stageHeight; });
 
   function recalcStageSize() {
-    var overflowX = _scope.getCSS("overflow-x");
-    var overflowY = _scope.getCSS("overflow-y");
-
     _scope.setCSS("overflow-x", "hidden");
     _scope.setCSS("overflow-y", "hidden");
 
     _stageWidth  = _window.width;
     _stageHeight = _window.height;
 
-    _scope.setCSS("overflow-x", overflowX);
-    _scope.setCSS("overflow-y", overflowY);
+    _scope.removeCSS("overflow-x");
+    _scope.removeCSS("overflow-y");
 
     _scope.dispatchEvent(ASJS.Stage.RESIZE);
   }

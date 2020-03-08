@@ -6,7 +6,6 @@ require("../event/asjs.DocumentEvent.js");
 createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   var _target;
 
-  var _originalOverflow;
   var _previousOffsetSize     = new ASJS.Point();
   var _previousScrollSize     = new ASJS.Point();
   var _previousScrollPosition = new ASJS.Point();
@@ -83,8 +82,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   _scope.destruct = function() {
     destruct();
 
-    _target                 = null;
-    _originalOverflow       = null;
+    _target = null;
 
     _previousOffsetSize.destruct();
     _previousOffsetSize = null;
@@ -104,7 +102,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     _super.destruct();
   }
 
-  function scroll(event) {
+  function onScroll(event) {
     if (!_target) return;
 
     var scrollDelta = ASJS.Polyfill.getScrollData(event);
@@ -119,9 +117,9 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     if (!_target) return;
 
     _target.removeEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
-    _target.removeEventListener(ASJS.MouseEvent.WHEEL,                   scroll);
+    _target.removeEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
 
-    _target.setCSS("overflow", _originalOverflow);
+    _target.removeCSS("overflow");
 
     _scope.contains(_horizontalScrollBar) && _scope.removeChild(_horizontalScrollBar);
     _scope.contains(_verticalScrollBar)   && _scope.removeChild(_verticalScrollBar);
@@ -133,9 +131,8 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     if (!_target) return;
 
     _target.addEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
-    _target.addEventListener(ASJS.MouseEvent.WHEEL,                   scroll);
+    _target.addEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
 
-    _originalOverflow = _target.getCSS("overflow");
     _target.setCSS("overflow", "hidden");
 
     _scope.update();

@@ -10,8 +10,6 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
 
   _scope.new = function() {
     _super.new();
-    _itemsContainer.setCSS("position", "relative");
-    _itemsContainer.setSize("auto", "auto");
     _itemsContainer.addEventListener(ASJS.Cell.CLICK, onCellClick);
     _scope.addChild(_itemsContainer);
   }

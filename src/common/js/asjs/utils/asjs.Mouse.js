@@ -9,7 +9,7 @@ createSingletonClass(ASJS, "Mouse", ASJS.BaseClass, function(_scope) {
   get(_scope, "mouseY", function() { return _mousePos.y; });
 
   _scope.show = function() {
-    stage.setCSS("cursor", "default");
+    stage.removeCSS("cursor");
   };
 
   _scope.hide = function() {

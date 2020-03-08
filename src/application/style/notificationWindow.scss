@@ -1,18 +1,19 @@
 .notification-window-view {
   background-color : rgba($black, $alpha-4);
+  position         : fixed;
 
   .title-label {
-    font-size   : 0.2rem;
     font-weight : 700;
-    color       : $white;
     line-height : 50px;
+    font-size   : 0.2rem;
     height      : 50px;
+    color       : $white;
   }
 
   .content-label {
-    font-size   : 0.14rem;
     font-weight : 500;
-    color       : $grey-390;
+    font-size   : 0.14rem;
     overflow    : auto;
+    color       : $grey-390;
   }
 }
