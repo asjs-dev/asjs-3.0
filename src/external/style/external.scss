@@ -1,8 +1,23 @@
-.external-content-view {
-  .background {
-    background-position : center center;
-    background-repeat   : no-repeat;
-    background-size     : cover;
-    background-image    : url(images/external/background.jpg?v={{date}});
+.external-application {
+  width  : 100%;
+  height : 100%;
+
+  & > div {
+    width  : 100%;
+    height : 100%;
+  }
+
+  .external-content-view {
+    width  : 100%;
+    height : 100%;
+
+    .background {
+      width               : 100%;
+      height              : 100%;
+      background-position : center center;
+      background-repeat   : no-repeat;
+      background-size     : cover;
+      background-image    : url(images/external/background.jpg?v={{date}});
+    }
   }
 }

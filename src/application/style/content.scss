@@ -1,12 +1,22 @@
 .content-view {
+  width            : 100%;
+  height           : 100%;
   background-color : rgba($black, $alpha-4);
 
   .background {
+    width               : 100%;
+    height              : 100%;
     transition          : 0.2s ease-out;
     background-position : center center;
     background-repeat   : no-repeat;
     background-size     : cover;
     background-image    : url(../images/background.jpg?v={{date}});
+    opacity             : 0.5;
+  }
+
+  .animated-sprite {
+    top  : 10px;
+    left : 10px;
   }
 
   .box {
@@ -14,7 +24,6 @@
     border-radius    : 5px;
     background-color : rgba($white, $alpha-2);
     box-shadow       : 0 0 60px rgba($black, $alpha-2);
-    width            : 320px;
     height           : 130px;
 
     .label {
@@ -35,9 +44,15 @@
     }
   }
 
+  .box,
   .show-external-application-button {
-    width : 320px;
-    top   : 250px;
+    width     : 320px;
+    transform : translateX(-50%);
+    left      : 50vw;
+  }
+
+  .show-external-application-button {
+    top : 250px;
   }
 }
 
@@ -48,6 +63,7 @@
   animation-iteration-count : 1;
   animation-direction       : normal;
 }
+
 @keyframes animation-key-explode {
   0% {
     background-position : 0% 0%;

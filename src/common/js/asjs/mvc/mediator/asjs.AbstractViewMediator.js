@@ -2,12 +2,12 @@ require("../../display/asjs.Sprite.js");
 require("./asjs.AbstractMediator.js");
 
 createClass(ASJS, "AbstractViewMediator", ASJS.AbstractMediator, function(_scope, _super) {
-  var _container = new ASJS.Sprite();
+  var _root;
 
-  get(_super.protected, "isViewAttached", function() { return _container.contains(_super.protected.view); });
+  get(_super.protected, "isViewAttached", function() { return _root.contains(_super.protected.view); });
 
   _scope.new = function(root) {
-    root.addChild(_container);
+    _root = root;
     _super.protected.addHandler(ASJS.Stage.RESIZE, onResize);
   }
 
@@ -15,26 +15,22 @@ createClass(ASJS, "AbstractViewMediator", ASJS.AbstractMediator, function(_scope
     _super.protected.removeHandler(ASJS.Stage.RESIZE, onResize);
 
     _super.protected.view.destruct();
-    _container.destruct();
-
-    destructClass(_container);
     destructClass(_super.protected.view);
-
-    _container = null;
     _super.protected.view = null;
+    _root = null;
 
     _super.destruct();
   }
 
   _super.protected.show = function() {
     if (!_super.protected.isViewAttached) {
-      _container.addChild(_super.protected.view);
+      _root.addChild(_super.protected.view);
       _super.protected.render();
     }
   }
 
   _super.protected.hide = function() {
-    _super.protected.isViewAttached && _container.removeChild(_super.protected.view);
+    _super.protected.isViewAttached && _root.removeChild(_super.protected.view);
   }
 
   _super.protected.render = function() {

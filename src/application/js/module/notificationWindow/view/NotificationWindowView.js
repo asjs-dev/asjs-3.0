@@ -4,6 +4,7 @@ require("../NotificationWindowMediator.js");
 createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scope, _super) {
   var _notificationItem = {};
   var _window           = new ASJS.Scale9Grid();
+  var _container        = new ASJS.Sprite();
   var _title            = new ASJS.Sprite();
   var _content          = new ASJS.Sprite();
   var _okButton         = new ASJS.Button();
@@ -14,27 +15,31 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scop
 
     _scope.addClass("notification-window-view");
 
+    _window.addClass("notification-window");
     _window.rect = new ASJS.Rectangle(13, 60, 4, 7);
     _window.backgroundImage = "images/window.png?v={{date}}";
     _scope.addChild(_window);
 
+    _container.addClass("notification-window-container");
+    _scope.addChild(_container);
+
     _title.addClass("title-label");
-    _scope.addChild(_title);
+    _container.addChild(_title);
 
     _content.addClass("content-label");
-    _scope.addChild(_content);
+    _container.addChild(_content);
 
     _okButton.addEventListener(ASJS.MouseEvent.CLICK, function() {
       _scope.hideWindow();
       if (!empty(_notificationItem['okCallback'])) _notificationItem['okCallback']();
     });
-    _okButton.addClass("button");
+    _okButton.addClass("ok-button button");
 
     _cancelButton.addEventListener(ASJS.MouseEvent.CLICK, function() {
       _scope.hideWindow();
       if (!empty(_notificationItem['cancelCallback'])) _notificationItem['cancelCallback']();
     });
-    _cancelButton.addClass("button");
+    _cancelButton.addClass("cancel-button button");
   }
 
   _scope.hideWindow = function() {
@@ -60,57 +65,46 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scop
 
     if (_notificationItem['showOk']) {
       _okButton.label = _notificationItem['okLabel'];
-      if (!hasOkButton()) _scope.addChild(_okButton);
-    } else if (hasOkButton()) _scope.removeChild(_okButton);
+      !hasOkButton() && _container.addChild(_okButton);
+    } else hasOkButton() && _container.removeChild(_okButton);
 
     if (_notificationItem['showCancel']) {
       _cancelButton.label = _notificationItem['cancelLabel'];
-      if (!hasCancelButton()) _scope.addChild(_cancelButton);
-    } else if (hasCancelButton()) _scope.removeChild(_cancelButton);
+      !hasCancelButton() && _container.addChild(_cancelButton);
+    } else hasCancelButton() && _container.removeChild(_cancelButton);
   }
 
   _scope.render = function() {
-    _scope.setSize(stage.stageWidth, stage.stageHeight);
-
     _window.setSize(
       bw(150, stage.stageWidth, _notificationItem.width),
       bw(150, stage.stageHeight, _notificationItem.height)
     );
-    _window.move(
-      (stage.stageWidth - _window.width) * 0.5,
-      Math.max(0, (stage.stageHeight - _window.height) * 0.5)
-    );
+
     _window.render();
 
-    _title.move(_window.x + 25, _window.y + 10);
-    _title.width = _window.width - 50;
+    _container.setSize(_window.width, _window.height);
 
-    _content.move(_title.x, _title.y + _title.height + 25);
-    _content.setSize(_title.width, _window.height - _title.height - 55 - (hasOkButton() || hasCancelButton() ? 60 : 0));
-    if (_content.render) _content.render();
+    _content.height = (_container.height - _content.y) - (hasOkButton() || hasCancelButton() ? (_okButton.height + 20) : 0) - 25;
+    _content.render && _content.render();
 
-    _okButton.width = _window.width * 0.5 - 20;
     if (hasOkButton()) {
-      _okButton.x = _window.x + (hasCancelButton()
-        ? _window.width * 0.5 - 10 - _okButton.width
-        : ((_window.width - _okButton.width) * 0.5));
-      _okButton.y = _window.y + _window.height - _okButton.height - 30;
+      _okButton.x = hasCancelButton()
+        ? _container.width * 0.5 - 10 - _okButton.width
+        : ((_container.width - _okButton.width) * 0.5);
     }
 
-    _cancelButton.width = _okButton.width;
     if (hasCancelButton()) {
-      _cancelButton.x = _window.x + (hasOkButton()
-        ? _window.width * 0.5 + 10
-        : ((_window.width - _cancelButton.width) * 0.5));
-      _cancelButton.y = _window.y + _window.height - _cancelButton.height - 30;
+      _cancelButton.x = hasOkButton()
+        ? _container.width * 0.5 + 10
+        : ((_container.width - _cancelButton.width) * 0.5);
     }
   }
 
   function hasOkButton() {
-    return _scope.contains(_okButton);
+    return _container.contains(_okButton);
   }
 
   function hasCancelButton() {
-    return _scope.contains(_cancelButton);
+    return _container.contains(_cancelButton);
   }
 });

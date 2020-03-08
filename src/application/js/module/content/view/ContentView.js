@@ -21,13 +21,11 @@ createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) 
     _scope.addEventListener(ASJS.Stage.REMOVED_FROM_STAGE, removedFromStage);
 
     _background.addClass("background");
-    _background.setCSS("position", "fixed");
-    _background.alpha = 0.5;
     _scope.addChild(_background);
 
     _scope.addChild(_box);
 
-    _animatedSprite.move(10, 10);
+    _animatedSprite.addClass("animated-sprite");
     _scope.addChild(_animatedSprite);
 
     _animatedSprite.addEventListener(ASJS.MouseEvent.CLICK, onAnimatedSpriteClick);
@@ -40,11 +38,6 @@ createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) 
     _externalApplicationButton.addClass("button show-external-application-button");
     _externalApplicationButton.addEventListener(ASJS.MouseEvent.CLICK, onExternalApplicationButtonClick);
     _scope.addChild(_externalApplicationButton);
-  }
-
-  _scope.render = function() {
-    _background.setSize(stage.stageWidth, stage.stageHeight);
-    _externalApplicationButton.x = _box.x = (stage.stageWidth - _box.width) * 0.5;
   }
 
   function addedToStage() {

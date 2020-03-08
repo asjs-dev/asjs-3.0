@@ -6,9 +6,10 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractView, function(_sco
   var _language = ASJSUtils.Language.instance;
   var _mouse    = ASJS.Mouse.instance;
 
-  var _container   = new ASJS.Sprite();
-  var _title       = new ASJS.Label();
-  var _closeButton = new ASJS.DisplayObject();
+  var _container                    = new ASJS.Sprite();
+  var _title                        = new ASJS.Label();
+  var _closeButton                  = new ASJS.DisplayObject();
+  var _externalApplicationContainer = new ASJS.Sprite();
 
   var _externalApplication;
 
@@ -27,26 +28,12 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractView, function(_sco
     _closeButton.addClass("close-button");
     _closeButton.addEventListener(ASJS.MouseEvent.CLICK, onCloseClick);
     _container.addChild(_closeButton);
+
+    _externalApplicationContainer.addClass("external-application-container");
+    _container.addChild(_externalApplicationContainer);
   }
 
   set(_scope, "title", function(v) { _title.text = v; });
-
-  _scope.render = function() {
-    _scope.setSize(stage.stageWidth, stage.stageHeight);
-    _container.setSize(_scope.width - _container.x * 2, _scope.height - _container.y * 2);
-
-    _closeButton.x = _container.width - _closeButton.width - 10;
-
-    _title.width = _closeButton.x - _title.x * 2;
-
-    if (_externalApplication && _container.contains(_externalApplication)) {
-      _externalApplication.move(10, _closeButton.y * 2 + _closeButton.height);
-      _externalApplication.setSize(
-        _container.width - _externalApplication.x * 2,
-        _container.height - _externalApplication.y - _closeButton.y
-      );
-    }
-  }
 
   _scope.addExternalApplication = function(externalApplication) {
     _scope.removeExternalApplication();
@@ -55,13 +42,13 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractView, function(_sco
       _externalApplication.removeEventListener(ASJS.LoaderEvent.LOAD);
       _scope.title = _externalApplication.title;
     });
-    _container.addChild(_externalApplication);
+    _externalApplicationContainer.addChild(_externalApplication);
     _scope.render();
   }
 
   _scope.removeExternalApplication = function() {
     if (!_externalApplication) return;
-    _container.removeChild(_externalApplication);
+    _externalApplicationContainer.removeChild(_externalApplication);
     _externalApplication.destruct();
     _externalApplication = null;
   }

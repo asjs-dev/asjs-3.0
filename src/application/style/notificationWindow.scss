@@ -1,19 +1,44 @@
 .notification-window-view {
+  width            : 100%;
+  height           : 100%;
   background-color : rgba($black, $alpha-4);
   position         : fixed;
 
-  .title-label {
-    font-weight : 700;
-    line-height : 50px;
-    font-size   : 0.2rem;
-    height      : 50px;
-    color       : $white;
+  .notification-window,
+  .notification-window-container {
+    transform : translate(-50%, -50%);
+    top       : 50vh;
+    left      : 50vw;
   }
 
-  .content-label {
-    font-weight : 500;
-    font-size   : 0.14rem;
-    overflow    : auto;
-    color       : $grey-390;
+  .notification-window-container {
+    .title-label,
+    .content-label {
+      left  : 25px;
+      width : calc(100% - 50px);
+    }
+
+    .ok-button,
+    .cancel-button {
+      width  : calc(50% - 20px);
+      bottom : 25px;
+    }
+
+    .title-label {
+      top         : 10px;
+      height      : 50px;
+      font-weight : 700;
+      line-height : 50px;
+      font-size   : 0.2rem;
+      color       : $white;
+    }
+
+    .content-label {
+      top         : 75px;
+      font-weight : 500;
+      font-size   : 0.14rem;
+      overflow    : auto;
+      color       : $grey-390;
+    }
   }
 }

@@ -12,7 +12,11 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
 
   _scope.new = function() {
     _super.new();
+
+    _scope.addClass("external-application");
+    
     trace("<AS/JS> External Application {{appVersion}}.{{date}}");
+
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
   }
 

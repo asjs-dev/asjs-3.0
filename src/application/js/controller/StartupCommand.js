@@ -3,18 +3,14 @@ require("./startup/EnvironmentCommand.js");
 require("./startup/ViewPrepCommand.js");
 
 createClass(NS, "StartupCommand", ASJS.AbstractCommand, function(_scope) {
-  var _app;
-
   _scope.execute = function(app) {
-    _app = app;
-
     (new ASJSUtils.LoadStartupDataCommand()).execute()
-      .then(initApplication);
+      .then(initApplication.bind(_scope, app));
   }
 
-  function initApplication() {
+  function initApplication(app) {
     (new NS.EnvironmentCommand()).execute();
-    (new NS.ViewPrepCommand()).execute(_app);
+    (new NS.ViewPrepCommand()).execute(app);
 
     _scope.destruct();
   }

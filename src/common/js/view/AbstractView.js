@@ -1,6 +1,6 @@
 require("../NameSpace.js");
 
-createClass(ASJSUtils, "AbstractView", ASJS.Sprite, function(_scope, _super) {
+createClass(ASJSUtils, "AbstractView", ASJS.AbstractView, function(_scope, _super) {
   var _completeCallback;
 
   _scope.new = function() {
@@ -9,7 +9,7 @@ createClass(ASJSUtils, "AbstractView", ASJS.Sprite, function(_scope, _super) {
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE,          addedToStage);
     _scope.addEventListener(ASJS.AnimationEvent.TRANSITION_END, onTransitionEnd);
 
-    _scope.addClass("animate");
+    _scope.addClass("abstract-view animate");
   }
 
   _super.protected.animateTo = function(to, completeCallback) {

@@ -6,10 +6,11 @@ require("./asjs.Tag.js");
 createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var priv = {};
 
-  cnst(priv, "OFFSET_TOP",    "Top");
-  cnst(priv, "OFFSET_LEFT",   "Left");
-  cnst(priv, "OFFSET_WIDTH",  "Width");
-  cnst(priv, "OFFSET_HEIGHT", "Height");
+  cnst(priv, "OFFSET_TOP",       "Top");
+  cnst(priv, "OFFSET_LEFT",      "Left");
+  cnst(priv, "OFFSET_WIDTH",     "Width");
+  cnst(priv, "OFFSET_HEIGHT",    "Height");
+  cnst(priv, "TRANSLATE_OFFSET", [priv.OFFSET_LEFT, priv.OFFSET_TOP]);
 
   var _mouse      = ASJS.Mouse.instance;
   var _filters    = [];
@@ -170,15 +171,25 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   }
 
   function getOffset(type) {
-    var offset         = _scope.el["offset" + type];
-    var position       = _scope.getCSS(type.toLowerCase());
-    var margin         = _scope.getCSS("margin" + type);
+    var offset   = _scope.el["offset" + type];
+    var position = _scope.getCSS(type.toLowerCase());
+    var margin   = _scope.getCSS("margin" + type);
+
+    var translate = 0;
+    if (priv.TRANSLATE_OFFSET.indexOf(type) > -1) {
+      var transform = _scope.getCSS("transform");
+      if ([0, "none"].indexOf(transform) === -1) {
+        var parsedTransform = transform.replace("matrix(", "").replace(")", "").split(",");
+        translate = parseFloat(parsedTransform[type === priv.OFFSET_LEFT ? 4 : 5]);
+      }
+    }
+
     var parsedPosition = parseFloat(position);
     var parsedMargin   = parseFloat(margin);
 
     return position === parsedPosition && margin === parsedMargin
-      ? parsedMargin + parsedPosition
-      : offset;
+      ? parsedMargin + parsedPosition + translate
+      : offset + translate;
   }
 
   function drawFilters() {
