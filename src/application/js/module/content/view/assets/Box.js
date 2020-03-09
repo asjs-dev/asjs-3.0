@@ -8,7 +8,7 @@ createClass(NS, "Box", ASJS.Sprite, function(_scope, _super) {
 
   _scope.new = function() {
     _super.new();
-    
+
     _scope.addClass("box");
 
     _label.text = _language.getText("new_asjs_base_site");
