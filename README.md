@@ -31,13 +31,13 @@ Good for single page applications, browser games and other apps.
 
 ## HOW TO
 
-* Create your index html ( include asjs.3.0.min.js, normalize.css )
+* Create your index html ( include asjs.3.0.min.js, asjs.3.0.min.css )
 
 ```html
 <!DOCTYPE html>
 <html>
     <head>
-        <link href="src/common/style/lib/normalize.scss" rel="stylesheet" type="text/css">
+        <link href="src/common/style/asjs/asjs.3.0.min.css" rel="stylesheet" type="text/css">
         <script src="src/common/js/asjs/asjs.3.0.min.js" type="text/javascript"></script>
     </head>
     <body>

@@ -23,8 +23,6 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _skewY      = 0;
   var _bounds     = new ASJS.Rectangle();
 
-  var _isAbsolutePositioning = false;
-
   var _transformTimeoutId;
 
   _scope.new = function(tag) {
@@ -66,20 +64,12 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
 
   prop(_scope, "x", {
     get: function() { return getOffset(priv.OFFSET_LEFT); },
-    set: function(v) {
-      _isAbsolutePositioning = tis(v, "number") || v.indexOf("px") === -1;
-      _scope.setCSS("left", v);
-      setPositioning();
-    }
+    set: _scope.setCSS.bind(_scope, "left")
   });
 
   prop(_scope, "y", {
     get: function() { return getOffset(priv.OFFSET_TOP); },
-    set: function(v) {
-      _isAbsolutePositioning = tis(v, "number") || v.indexOf("px") === -1;
-      _scope.setCSS("top", v);
-      setPositioning();
-    }
+    set: _scope.setCSS.bind(_scope, "top")
   });
 
   prop(_scope, "width", {
@@ -132,13 +122,6 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     }
   });
 
-  prop(_scope, "parent", {
-    set: function(v) {
-      _super.parent = v;
-      setPositioning();
-    }
-  });
-
   _scope.requestFullscreen = function() {
     document.fullscreenEnabled && _scope.el.requestFullscreen();
   };
@@ -187,13 +170,6 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _bounds = null;
 
     _super.destruct();
-  }
-
-  function setPositioning() {
-    if (_isAbsolutePositioning) {
-      _scope.parent && priv.PARENT_POSITIONS.indexOf(_scope.parent.getCSS("position")) > -1 && _scope.parent.setCSS("position", "relative");
-      priv.POSITIONS.indexOf(_scope.getCSS("position")) === -1 && _scope.setCSS("position", "absolute");
-    }
   }
 
   function getOffset(type) {
