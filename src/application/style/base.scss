@@ -5,6 +5,10 @@ html, body {
   font-size        : 100px;
 }
 
+body *:not(script):not(style) {
+	font-family : Arial, Helvetica, sans-serif;
+}
+
 .button {
   border-radius    : 5px;
   font-size        : 0.16rem;
