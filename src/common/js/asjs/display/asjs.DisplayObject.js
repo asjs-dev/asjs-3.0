@@ -4,26 +4,14 @@ require("../utils/asjs.Mouse.js");
 require("./asjs.Tag.js");
 
 createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
-  var priv = {};
-
-  cnst(priv, "OFFSET_TOP",       "Top");
-  cnst(priv, "OFFSET_LEFT",      "Left");
-  cnst(priv, "OFFSET_WIDTH",     "Width");
-  cnst(priv, "OFFSET_HEIGHT",    "Height");
-  cnst(priv, "TRANSLATE_OFFSET", [priv.OFFSET_LEFT, priv.OFFSET_TOP]);
-  cnst(priv, "POSITIONS",        ["absolute", "fixed", "sticky"]);
-  cnst(priv, "PARENT_POSITIONS", [0, "unset", "static", "inherit", "initial"]);
-
-  var _mouse      = ASJS.Mouse.instance;
-  var _filters    = [];
-  var _rotation   = 0;
-  var _scaleX     = 1;
-  var _scaleY     = 1;
-  var _skewX      = 0;
-  var _skewY      = 0;
-  var _bounds     = new ASJS.Rectangle();
-
-  var _transformTimeoutId;
+  var _mouse    = ASJS.Mouse.instance;
+  var _filters  = [];
+  var _rotation = 0;
+  var _scaleX   = 1;
+  var _scaleY   = 1;
+  var _skewX    = 0;
+  var _skewY    = 0;
+  var _bounds   = new ASJS.Rectangle();
 
   _scope.new = function(tag) {
     _super.new(tag);
@@ -63,22 +51,22 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   ASJS.Tag.cssProp(_scope, "alpha", "opacity");
 
   prop(_scope, "x", {
-    get: function() { return getOffset(priv.OFFSET_LEFT); },
+    get: function() { return getOffset(ASJS.DisplayObject.OFFSET_LEFT); },
     set: _scope.setCSS.bind(_scope, "left")
   });
 
   prop(_scope, "y", {
-    get: function() { return getOffset(priv.OFFSET_TOP); },
+    get: function() { return getOffset(ASJS.DisplayObject.OFFSET_TOP); },
     set: _scope.setCSS.bind(_scope, "top")
   });
 
   prop(_scope, "width", {
-    get: function() { return getOffset(priv.OFFSET_WIDTH); },
+    get: function() { return getOffset(ASJS.DisplayObject.OFFSET_WIDTH); },
     set: _scope.setCSS.bind(_scope, "width")
   });
 
   prop(_scope, "height", {
-    get: function() { return getOffset(priv.OFFSET_HEIGHT); },
+    get: function() { return getOffset(ASJS.DisplayObject.OFFSET_HEIGHT); },
     set: _scope.setCSS.bind(_scope, "height")
   });
 
@@ -157,14 +145,13 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   _scope.globalToLocal = ASJS.GeomUtils.globalToLocal.bind(_scope, _scope);
 
   _scope.destruct = function() {
-    _mouse              = null;
-    _filters            = null;
-    _rotation           = null;
-    _scaleX             = null;
-    _scaleY             = null;
-    _skewX              = null;
-    _skewY              = null;
-    _transformTimeoutId = null;
+    _mouse    = null;
+    _filters  = null;
+    _rotation = null;
+    _scaleX   = null;
+    _scaleY   = null;
+    _skewX    = null;
+    _skewY    = null;
 
     _bounds.destruct();
     _bounds = null;
@@ -178,11 +165,11 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     var margin   = _scope.getCSS("margin" + type);
 
     var translate = 0;
-    if (priv.TRANSLATE_OFFSET.indexOf(type) > -1) {
+    if (ASJS.DisplayObject.TRANSLATE_OFFSET.indexOf(type) > -1) {
       var transform = _scope.getCSS("transform");
-      if ([0, "none"].indexOf(transform) === -1) {
+      if (ASJS.DisplayObject.EMPTY_CSS_VALUES.indexOf(transform) === -1) {
         var parsedTransform = transform.replace("matrix(", "").replace(")", "").split(",");
-        translate = parseFloat(parsedTransform[type === priv.OFFSET_LEFT ? 4 : 5]);
+        translate = parseFloat(parsedTransform[type === ASJS.DisplayObject.OFFSET_LEFT ? 4 : 5]);
       }
     }
 
@@ -202,12 +189,7 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     _scope.setCSS("filter", filters);
   }
 
-  function drawTransform() {
-    clearTimeout(_transformTimeoutId);
-    _transformTimeoutId = setTimeout(transform, 1);
-  }
-
-  function transform() {
+  var drawTransform = throttleFunction(function() {
     _scope.setCSS(
       "transform",
       "rotate(" + _rotation + "deg) " +
@@ -216,5 +198,14 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
       "skewX(" + _skewX + "deg) " +
       "skewY(" + _skewY + "deg) "
     );
-  }
+  });
 });
+
+cnst(ASJS.DisplayObject, "OFFSET_TOP",       "Top");
+cnst(ASJS.DisplayObject, "OFFSET_LEFT",      "Left");
+cnst(ASJS.DisplayObject, "OFFSET_WIDTH",     "Width");
+cnst(ASJS.DisplayObject, "OFFSET_HEIGHT",    "Height");
+cnst(ASJS.DisplayObject, "TRANSLATE_OFFSET", [ASJS.DisplayObject.OFFSET_LEFT, ASJS.DisplayObject.OFFSET_TOP]);
+cnst(ASJS.DisplayObject, "POSITIONS",        ["absolute", "fixed", "sticky"]);
+cnst(ASJS.DisplayObject, "PARENT_POSITIONS", ["", 0, "unset", "static", "inherit", "initial"]);
+cnst(ASJS.DisplayObject, "EMPTY_CSS_VALUES", ["", 0, "none"]);

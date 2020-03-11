@@ -1,16 +1,14 @@
 require("../../../../../common/js/utils/dataUtils/Language.js");
-require("../../../../../common/js/view/AbstractView.js");
+require("../../../../../common/js/view/AbstractAnimatedView.js");
 require("../ContentMediator.js");
 require("./assets/Box.js");
 
-createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) {
+createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
   var _language                  = ASJSUtils.Language.instance;
   var _mouse                     = ASJS.Mouse.instance;
   var _background                = new ASJS.DisplayObject();
   var _box                       = new NS.Box();
   var _externalApplicationButton = new ASJS.Button();
-  var _animatedSprite            = new ASJS.DisplayObject();
-  var _drag                      = false;
   var _blurFilter                = new ASJS.BlurFilter();
 
   _scope.new = function() {
@@ -25,15 +23,6 @@ createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) 
 
     _scope.addChild(_box);
 
-    _animatedSprite.addClass("animated-sprite");
-    _scope.addChild(_animatedSprite);
-
-    _animatedSprite.addEventListener(ASJS.MouseEvent.CLICK, onAnimatedSpriteClick);
-    _animatedSprite.addEventListener(
-      ASJS.MouseEvent.MOUSE_DOWN + " " + ASJS.MouseEvent.TOUCH_START,
-      onAnimatedSpriteMouseDown
-    );
-
     _externalApplicationButton.label = _language.getText("show_external_application_button_label");
     _externalApplicationButton.addClass("button show-external-application-button");
     _externalApplicationButton.addEventListener(ASJS.MouseEvent.CLICK, onExternalApplicationButtonClick);
@@ -41,56 +30,20 @@ createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) 
   }
 
   function addedToStage() {
-    stage.addEventListener(ASJS.MouseEvent.MOUSE_UP + " " + ASJS.MouseEvent.TOUCH_END,    onDragStop);
-    stage.addEventListener(ASJS.MouseEvent.MOUSE_LEAVE,                                   onDragStop);
     stage.addEventListener(ASJS.MouseEvent.MOUSE_MOVE + " " + ASJS.MouseEvent.TOUCH_MOVE, onStageMouseMove);
 
     _scope.addEventListener(ASJS.MouseEvent.CLICK, onMouseClick);
-
-    playFireworksAnimation();
   }
 
   function removedFromStage() {
-    stage.removeEventListener([ASJS.MouseEvent.MOUSE_UP, ASJS.MouseEvent.TOUCH_END],    onDragStop);
-    stage.removeEventListener(ASJS.MouseEvent.MOUSE_LEAVE,                              onDragStop);
     stage.removeEventListener([ASJS.MouseEvent.MOUSE_MOVE, ASJS.MouseEvent.TOUCH_MOVE], onStageMouseMove);
 
     _scope.removeEventListener(ASJS.MouseEvent.CLICK, onMouseClick);
   }
 
-  function playExplodeAnimation() {
-    if (!_animatedSprite) return;
-    _animatedSprite.setSize(256, 128);
-    _animatedSprite.removeClass("animation-fireworks");
-    _animatedSprite.addClass("animation-explode");
-  }
-
-  function playFireworksAnimation() {
-    if (!_animatedSprite) return;
-    _animatedSprite.setSize(200, 200);
-    _animatedSprite.removeClass("animation-explode");
-    _animatedSprite.addClass("animation-fireworks");
-  }
-
-  function onAnimatedSpriteClick() {
-    if (_animatedSprite.hasClass("animation-fireworks")) playExplodeAnimation();
-    else playFireworksAnimation();
-  }
-
-  function onAnimatedSpriteMouseDown() {
-    _drag = true;
-  }
-
-  function onDragStop() {
-    _drag = false;
-  }
-
   function onStageMouseMove() {
     _blurFilter.value = (Math.max(0, stage.stageHeight / (stage.stageHeight - _mouse.mouseY)) / 10);
-
     _background.filters = [_blurFilter];
-    if (!_drag) return;
-    _animatedSprite.move(_mouse.mouseX - _animatedSprite.width * 0.5, _mouse.mouseY - _animatedSprite.height * 0.5);
   }
 
   function onMouseClick() {

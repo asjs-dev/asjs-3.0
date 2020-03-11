@@ -1,8 +1,8 @@
 require("../../../../../common/js/utils/dataUtils/Language.js");
-require("../../../../../common/js/view/AbstractView.js");
+require("../../../../../common/js/view/AbstractAnimatedView.js");
 require("../ExternalApplicationMediator.js");
 
-createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractView, function(_scope, _super) {
+createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
   var _language = ASJSUtils.Language.instance;
   var _mouse    = ASJS.Mouse.instance;
 

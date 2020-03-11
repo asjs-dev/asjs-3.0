@@ -281,3 +281,25 @@ html, body {
 	font-family: Verdana;
 	-webkit-overflow-scrolling: touch;
 }
+
+.abstract-view {
+  width  : 100%;
+  height : 100%;
+}
+
+.animated {
+  animation : fade-in 0.2s ease-in;
+
+  @keyframes fade-in {
+    from {
+      opacity : 0;
+    }
+    to {
+      opacity : 1;
+    }
+  }
+}
+
+.animate {
+  transition : 0.2s ease-out;
+}

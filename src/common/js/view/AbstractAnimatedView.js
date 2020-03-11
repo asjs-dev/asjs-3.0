@@ -1,6 +1,6 @@
 require("../NameSpace.js");
 
-createClass(ASJSUtils, "AbstractView", ASJS.AbstractView, function(_scope, _super) {
+createClass(ASJSUtils, "AbstractAnimatedView", ASJS.AbstractView, function(_scope, _super) {
   var _completeCallback;
 
   _scope.new = function() {

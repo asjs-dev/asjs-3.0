@@ -8,7 +8,6 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _su
   var _cookies   = ASJSUtils.Cookies;
   var _config    = ASJSUtils.Config.instance;
   var _urlParser = ASJSUtils.URLParser.instance;
-  var _sleepToResizeId;
 
   _scope.execute = function() {
     setupLanguage();
@@ -33,15 +32,7 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _su
     stage.addEventListener(ASJS.Stage.RESIZE, onStageResize);
   }
 
-  function onStageResize() {
-    _sleepToResizeId = clearTimeout(_sleepToResizeId);
-    _sleepToResizeId = setTimeout(onTimeout, _config.get("resizeInterval"));
-  }
-
-  function onTimeout() {
-    _sleepToResizeId = clearTimeout(_sleepToResizeId);
-    requestAnimationFrame(function() {
-      _super.protected.sendNotification(ASJS.Stage.RESIZE);
-    });
-  }
+  var onStageResize = throttleFunction(function() {
+    _super.protected.sendNotification(ASJS.Stage.RESIZE);
+  })
 });

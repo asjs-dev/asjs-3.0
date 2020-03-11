@@ -1,14 +1,15 @@
-require("../../../../../common/js/view/AbstractView.js");
+require("../../../../../common/js/view/AbstractAnimatedView.js");
 require("../NotificationWindowMediator.js");
 
-createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scope, _super) {
+createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
   var _notificationItem = {};
-  var _window           = new ASJS.Scale9Grid();
-  var _container        = new ASJS.Sprite();
-  var _title            = new ASJS.Sprite();
-  var _content          = new ASJS.Sprite();
-  var _okButton         = new ASJS.Button();
-  var _cancelButton     = new ASJS.Button();
+
+  var _window       = new ASJS.Scale9Grid();
+  var _container    = new ASJS.Sprite();
+  var _title        = new ASJS.Label();
+  var _content      = new ASJS.Sprite();
+  var _okButton     = new ASJS.Button();
+  var _cancelButton = new ASJS.Button();
 
   _scope.new = function() {
     _super.new();
@@ -16,8 +17,10 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scop
     _scope.addClass("notification-window-view");
 
     _window.addClass("notification-window");
-    _window.rect = new ASJS.Rectangle(13, 60, 4, 7);
-    _window.backgroundImage = "images/window.png?v={{date}}";
+    _window.init(
+      "images/window.png?v={{date}}",
+      new ASJS.Rectangle(13, 60, 4, 7)
+    );
     _scope.addChild(_window);
 
     _container.addClass("notification-window-container");
@@ -31,13 +34,13 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scop
 
     _okButton.addEventListener(ASJS.MouseEvent.CLICK, function() {
       _scope.hideWindow();
-      if (!empty(_notificationItem['okCallback'])) _notificationItem['okCallback']();
+      !empty(_notificationItem['okCallback']) && _notificationItem['okCallback']();
     });
     _okButton.addClass("ok-button button");
 
     _cancelButton.addEventListener(ASJS.MouseEvent.CLICK, function() {
       _scope.hideWindow();
-      if (!empty(_notificationItem['cancelCallback'])) _notificationItem['cancelCallback']();
+      !empty(_notificationItem['cancelCallback']) && _notificationItem['cancelCallback']();
     });
     _cancelButton.addClass("cancel-button button");
   }
@@ -46,14 +49,13 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scop
     _super.protected.animateTo(0, function() {
       _scope.dispatchEvent(NS.NotificationWindowMediator.HIDE);
 
-      _title.html   = "";
-      _content.html = "";
-
-      if (hasOkButton()) _scope.removeChild(_okButton);
-      _okButton.label = "";
-
-      if (hasCancelButton()) _scope.removeChild(_cancelButton);
+      _title.html         =
+      _content.html       =
+      _okButton.label     =
       _cancelButton.label = "";
+
+      hasOkButton() && _scope.removeChild(_okButton);
+      hasCancelButton() && _scope.removeChild(_cancelButton);
     });
   }
 
@@ -76,11 +78,9 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractView, function(_scop
 
   _scope.render = function() {
     _window.setSize(
-      bw(150, stage.stageWidth, _notificationItem.width),
+      bw(150, stage.stageWidth,  _notificationItem.width),
       bw(150, stage.stageHeight, _notificationItem.height)
     );
-
-    _window.render();
 
     _container.setSize(_window.width, _window.height);
 

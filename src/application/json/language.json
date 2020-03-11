@@ -28,7 +28,7 @@
 			"en": "<AS/JS> Notification Window"
 		},
 		"notification_content": {
-			"en": "Press \"OK\" in this window and click the fireworks animation.<br>Or drag the animation."
+			"en": "Simple notification window with Scale9Grid background."
 		},
 		"show_external_application_button_label": {
 			"en": "Show External Application"

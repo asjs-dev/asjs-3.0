@@ -97,6 +97,16 @@ var animationFrameFunction = function(callback) {
 }
 var aff = animationFrameFunction;
 
+var throttleFunction = function(callback) {
+  var timeout;
+  return function() {
+    clearTimeout(timeout);
+    var args = arguments;
+    timeout = setTimeout(callback.bind(this, args), 1);
+  }
+}
+var tf = throttleFunction;
+
 var map = function(o, cb) {
   for (var k in o) {
     if (!o.hasOwnProperty(k)) continue;

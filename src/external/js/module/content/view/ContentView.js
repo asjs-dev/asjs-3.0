@@ -1,8 +1,8 @@
-require("../../../../../common/js/view/AbstractView.js");
+require("../../../../../common/js/view/AbstractAnimatedView.js");
 require("../../../../../common/js/utils/dataUtils/Language.js");
 require("../ContentMediator.js");
 
-createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) {
+createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
   var _language = ASJSUtils.Language.instance;
   var _parent;
 
@@ -10,7 +10,7 @@ createClass(NS, "ContentView", ASJSUtils.AbstractView, function(_scope, _super) 
 
   _scope.new = function() {
     _super.new();
-    
+
     _scope.addClass("external-content-view");
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE,     addedToStage);
     _scope.addEventListener(ASJS.Stage.REMOVED_FROM_STAGE, removedFromStage);
