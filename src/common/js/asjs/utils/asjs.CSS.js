@@ -100,7 +100,11 @@ createSingletonClass(ASJS, "CSS", ASJS.BaseClass, function(_scope) {
 
 cnst(ASJS.CSS, "ADD_PIXEL_TYPES", [
   "width",
+  "min-width",
+  "max-width",
   "height",
+  "min-height",
+  "max-height",
   "top",
   "bottom",
   "left",
