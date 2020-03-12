@@ -24,7 +24,9 @@ createClass(ASJSUtils, "AbstractAnimatedView", ASJS.AbstractView, function(_scop
     _super.destruct();
   }
 
-  function addedToStage() {
+  function addedToStage(event) {
+    if (event.target !== _scope.el) return;
+
     _scope.alpha = 0;
 
     requestAnimationFrame(function() {
@@ -32,7 +34,9 @@ createClass(ASJSUtils, "AbstractAnimatedView", ASJS.AbstractView, function(_scop
     });
   }
 
-  function onTransitionEnd() {
+  function onTransitionEnd(event) {
+    if (event.target !== _scope.el) return;
+
     _completeCallback && _completeCallback();
     _completeCallback = null;
   }

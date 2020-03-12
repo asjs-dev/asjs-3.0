@@ -6,31 +6,40 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
   var _window       = new ASJS.Scale9Grid();
   var _container    = new ASJS.Sprite();
-  var _title        = new ASJS.Label();
+  var _title        = new ASJS.DisplayObject();
   var _content      = new ASJS.Sprite();
   var _okButton     = new ASJS.Button();
   var _cancelButton = new ASJS.Button();
+  var _scrollBar    = new ASJS.ScrollBar();
 
   _scope.new = function() {
     _super.new();
 
     _scope.addClass("notification-window-view");
 
-    _window.addClass("notification-window");
+    _window.addClass("window");
     _window.init(
       "images/window.png?v={{date}}",
       new ASJS.Rectangle(13, 60, 4, 7)
     );
     _scope.addChild(_window);
 
-    _container.addClass("notification-window-container");
+    _container.addClass("container");
     _scope.addChild(_container);
 
     _title.addClass("title-label");
     _container.addChild(_title);
 
     _content.addClass("content-label");
-    _container.addChild(_content);
+
+    _scrollBar.addClass("scrollbar");
+    _scrollBar.horizontalAngle = -1;
+    _scrollBar.verticalAngle   = -1;
+    _scrollBar.scrollSpeed     = 0.15;
+    _scrollBar.target          = _content;
+    _scrollBar.verticalScrollBar.addClass("animate scrollbar-vertical");
+    _scrollBar.horizontalScrollBar.addClass("animate scrollbar-horizontal");
+    _container.addChild(_scrollBar);
 
     _okButton.addEventListener(ASJS.MouseEvent.CLICK, function() {
       _scope.hideWindow();
@@ -84,8 +93,13 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
     _container.setSize(_window.width, _window.height);
 
-    _content.height = (_container.height - _content.y) - (hasOkButton() || hasCancelButton() ? (_okButton.height + 20) : 0) - 25;
+    _scrollBar.setSize(
+      _container.width - _scrollBar.x * 2,
+      (_container.height - _scrollBar.y) - (hasOkButton() || hasCancelButton() ? (_okButton.height + 20) : 0) - 25
+    );
     _content.render && _content.render();
+
+    requestAnimationFrame(_scrollBar.update);
 
     if (hasOkButton()) {
       _okButton.x = hasCancelButton()

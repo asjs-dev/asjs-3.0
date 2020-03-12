@@ -2,18 +2,22 @@
   background-color : rgba($black, $alpha-4);
   position         : fixed;
 
-  .notification-window,
-  .notification-window-container {
+  .window,
+  .container {
     transform : translate(-50%, -50%);
     top       : 50vh;
     left      : 50vw;
   }
 
-  .notification-window-container {
+  .container {
     .title-label,
-    .content-label {
+    .scrollbar {
       left  : 25px;
       width : calc(100% - 50px);
+    }
+
+    .scrollbar {
+      top : 75px;
     }
 
     .ok-button,
@@ -32,7 +36,6 @@
     }
 
     .content-label {
-      top         : 75px;
       font-weight : 500;
       font-size   : 0.14rem;
       overflow    : auto;

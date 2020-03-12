@@ -7,12 +7,12 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
 
   _scope.dispatchEvent = function(event, data, bubble) {
     if (!_handlers || !event) return;
+    var e = ASJS.EventDispatcher.createEvent(event, data, bubble);
     if (_scope.el) {
-      _scope.el.dispatchEvent(ASJS.EventDispatcher.createEvent(event, data, bubble));
+      _scope.el.dispatchEvent(e);
       return;
     }
 
-    var e = ASJS.EventDispatcher.createEvent(event, data, bubble);
     if (!_scope.hasEventListener(e.type)) return;
     var handlers = _handlers[e.type];
     var i = handlers.length;

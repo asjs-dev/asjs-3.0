@@ -29,3 +29,54 @@ body *:not(script):not(style) {
     background-color : rgba($blue-900, $alpha-1);
   }
 }
+
+$inactive-opacity            : 0.5;
+$transparent-dark-background : rgba(black, $inactive-opacity);
+$scrollBar-size              : 5px;
+$margin-size                 : 3px;
+
+.scrollbar-vertical,
+.scrollbar-horizontal {
+  width  : $scrollBar-size;
+  height : $scrollBar-size;
+}
+
+.scrollbar-vertical::before,
+.scrollbar-horizontal::before {
+  display          : block;
+  content          : "";
+  width            : 100%;
+  height           : 100%;
+  border-radius    : $scrollBar-size;
+  background-color : $transparent-dark-background;
+  border-top       : 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom    : 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.scrollbar-vertical {
+  right        : 0;
+  margin-right : $margin-size;
+}
+
+.scrollbar-horizontal {
+  bottom        : 0;
+  margin-bottom : $margin-size;
+}
+
+.scrollbar-vertical-outer {
+  margin-right : 0;
+}
+
+.scrollbar-horizontal-outer {
+  margin-bottom : 0;
+}
+
+.scrollbar-vertical::before {
+  height     : calc(100% - calc(#{$scrollBar-size} * 2));
+  margin-top : $scrollBar-size;
+}
+
+.scrollbar-horizontal::before {
+  width       : calc(100% - calc(#{$scrollBar-size} * 2));
+  margin-left : $scrollBar-size;
+}

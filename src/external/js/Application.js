@@ -14,7 +14,7 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
     _super.new();
 
     _scope.addClass("external-application");
-    
+
     trace("<AS/JS> External Application {{appVersion}}.{{date}}");
 
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
@@ -36,7 +36,9 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
     _super.destruct();
   }
 
-  function addedToStage() {
+  function addedToStage(event) {
+    if (event.target !== _scope.el) return;
+    
     _scope.removeEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
 
     _styleLoader.addEventListener(ASJS.LoaderEvent.LOAD, onStyleLoaded);

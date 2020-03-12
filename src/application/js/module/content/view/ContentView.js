@@ -29,7 +29,9 @@ createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, 
     _scope.addChild(_externalApplicationButton);
   }
 
-  function addedToStage() {
+  function addedToStage(event) {
+    if (event.target !== _scope.el) return;
+    
     stage.addEventListener(ASJS.MouseEvent.MOUSE_MOVE + " " + ASJS.MouseEvent.TOUCH_MOVE, onStageMouseMove);
 
     _scope.addEventListener(ASJS.MouseEvent.CLICK, onMouseClick);

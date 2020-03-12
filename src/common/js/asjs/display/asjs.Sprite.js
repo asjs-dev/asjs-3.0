@@ -4,6 +4,10 @@ require("./asjs.DisplayObject.js");
 createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   var _children      = [];
   var _mouseChildren = true;
+  var _locked        = false;
+
+  _super.protected.lock   = function() { _locked = true; };
+  _super.protected.unlock = function() { _locked = false; };
 
   get(_scope, "bounds", function() {
     var rect = _super.bounds;
@@ -62,7 +66,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.addChildAt = function(child, index) {
-    if (!child) return null;
+    if (!child || _locked) return null;
     _scope.el.appendChild(child.el);
     child.enabled = child.enabled ? _mouseChildren : child.enabled;
     _children.push(child);
@@ -72,7 +76,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.removeChild = function(child) {
-    if (!child || !_scope.contains(child)) return null;
+    if (!child || !_scope.contains(child) || _locked) return null;
     _children.remove(child);
     _scope.el.removeChild(child.el);
     child.parent = null;
@@ -88,7 +92,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.setChildIndex = function(child, index) {
-    if (!child || index < 0) return null;
+    if (!child || index < 0 || _locked) return null;
     _children.remove(child);
     var afterChild = _scope.getChildAt(index);
     afterChild && _scope.el.insertBefore(child.el, afterChild.el);
@@ -101,6 +105,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.swapChildren = function(childA, childB) {
+    if (_locked) return null;
     var childAIndex = _scope.getChildIndex(childA);
     var childBIndex = _scope.getChildIndex(childB);
     if (childAIndex === -1 || childBIndex === -1) return false;

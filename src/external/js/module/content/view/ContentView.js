@@ -28,11 +28,13 @@ createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, 
     _super.destruct();
   }
 
-  function addedToStage() {
+  function addedToStage(event) {
+    if (event.target !== _scope.el) return;
     _parent = _scope.parent.parent;
   }
 
-  function removedFromStage() {
+  function removedFromStage(event) {
+    if (event.target !== _scope.el) return;
     _parent = null;
   }
 });
