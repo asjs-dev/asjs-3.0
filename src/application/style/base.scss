@@ -72,11 +72,11 @@ $margin-size                 : 3px;
 }
 
 .scrollbar-vertical::before {
-  height     : calc(100% - calc(#{$scrollBar-size} * 2));
+  height     : calc(100% - calc(#{$scrollBar-size} * 2.5));
   margin-top : $scrollBar-size;
 }
 
 .scrollbar-horizontal::before {
-  width       : calc(100% - calc(#{$scrollBar-size} * 2));
+  width       : calc(100% - calc(#{$scrollBar-size} * 2.5));
   margin-left : $scrollBar-size;
 }

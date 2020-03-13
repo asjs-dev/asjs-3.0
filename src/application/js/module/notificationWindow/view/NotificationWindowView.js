@@ -36,7 +36,8 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
     _scrollBar.horizontalAngle = -1;
     _scrollBar.verticalAngle   = -1;
     _scrollBar.scrollSpeed     = 0.15;
-    _scrollBar.target          = _content;
+    _scrollBar.container.addClass("animate");
+    _scrollBar.container.addChild(_content);
     _scrollBar.verticalScrollBar.addClass("animate scrollbar-vertical");
     _scrollBar.horizontalScrollBar.addClass("animate scrollbar-horizontal");
     _container.addChild(_scrollBar);

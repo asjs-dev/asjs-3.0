@@ -4,12 +4,11 @@ require("../geom/asjs.GeomUtils.js");
 require("../event/asjs.DocumentEvent.js");
 
 createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
-  var _target;
-
   var _previousOffsetSize     = new ASJS.Point();
   var _previousScrollSize     = new ASJS.Point();
   var _previousScrollPosition = new ASJS.Point();
 
+  var _scrollableContainer = new ASJS.Sprite();
   var _scrollBarContainer  = new ASJS.Sprite();
   var _verticalScrollBar   = new ASJS.DisplayObject();
   var _horizontalScrollBar = new ASJS.DisplayObject();
@@ -21,12 +20,22 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   _scope.new = function() {
     _super.new();
 
+    _scope.addChild(_scrollableContainer);
+
+    _scrollableContainer.addEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
+    _scrollableContainer.addEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
+
+    _scrollableContainer.setSize("100%", "100%");
+    _scrollableContainer.setCSS("overflow", "hidden");
+
     _scrollBarContainer.enabled = false;
     _scrollBarContainer.setSize("100%", "100%");
     _scope.addChild(_scrollBarContainer);
 
     _super.protected.lock();
   }
+
+  get(_scope, "container", function() { return _scrollableContainer; });
 
   prop(_scope, "horizontalAngle", {
     get: function() { return _horizontalAngle; },
@@ -43,29 +52,24 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     set: function(v) { _scrollSpeed = tis(v, "number") ? v : 1; }
   });
 
-  prop(_scope, "target", {
-    get: function() { return _target; },
-    set: function(v) {
-      if (_target === v) return;
-      _super.protected.unlock();
-      _target && _scope.contains(_target) && _scope.removeChild(_target);
-      destruct();
-      _target = v;
-      _target && !_scope.contains(_target) && _scope.addChildAt(_target, 0);
-      _super.protected.lock();
-      init();
-    }
-  });
-
   get(_scope, "verticalScrollBar",   function() { return _verticalScrollBar; });
   get(_scope, "horizontalScrollBar", function() { return _horizontalScrollBar; });
 
   _scope.update = throttleFunction(function() {
-    if (!_target) return;
+    var offsetSize = new ASJS.Point(
+      _scrollableContainer.width,
+      _scrollableContainer.height
+    );
 
-    var offsetSize     = new ASJS.Point(_target.width,          _target.height);
-    var scrollPosition = new ASJS.Point(_target.el.scrollLeft,  _target.el.scrollTop);
-    var scrollSize     = new ASJS.Point(_target.el.scrollWidth, _target.el.scrollHeight);
+    var scrollPosition = new ASJS.Point(
+      _scrollableContainer.el.scrollLeft,
+      _scrollableContainer.el.scrollTop
+    );
+
+    var scrollSize = new ASJS.Point(
+      _scrollableContainer.el.scrollWidth,
+      _scrollableContainer.el.scrollHeight
+    );
 
     if (
       !ASJS.GeomUtils.twoPointEquals(scrollSize,     _previousScrollSize) ||
@@ -96,9 +100,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   });
 
   _scope.destruct = function() {
-    destruct();
-
-    _target = null;
+    _super.destruct();
 
     _previousOffsetSize.destruct();
     _previousOffsetSize = null;
@@ -109,6 +111,9 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     _previousScrollPosition.destruct();
     _previousScrollPosition = null;
 
+    _scrollableContainer.destruct();
+    _scrollableContainer = null;
+
     _scrollBarContainer.destruct();
     _scrollBarContainer = null;
 
@@ -117,8 +122,6 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
 
     _horizontalScrollBar.destruct();
     _horizontalScrollBar = null;
-
-    _super.destruct();
   }
 
   function draw(scrollBar, offsetSize, scrollSize, scrollPosition, positionName, sizeName) {
@@ -131,38 +134,10 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   }
 
   function onScroll(event) {
-    if (!_target) return;
-
     var scrollDelta = ASJS.Polyfill.getScrollData(event);
 
-    _target.el.scrollLeft += scrollDelta.x * _horizontalAngle * _scrollSpeed;
-    _target.el.scrollTop  += scrollDelta.y * _verticalAngle * _scrollSpeed;
-
-    _scope.update();
-  }
-
-  function destruct() {
-    if (!_target) return;
-
-    _target.removeEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
-    _target.removeEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
-
-    _target.removeCSS("width");
-    _target.removeCSS("height");
-    _target.removeCSS("overflow");
-
-    _scrollBarContainer.contains(_horizontalScrollBar) && _scrollBarContainer.removeChild(_horizontalScrollBar);
-    _scrollBarContainer.contains(_verticalScrollBar)   && _scrollBarContainer.removeChild(_verticalScrollBar);
-  }
-
-  function init() {
-    if (!_target) return;
-
-    _target.addEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
-    _target.addEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
-
-    _target.setSize("100%", "100%");
-    _target.setCSS("overflow", "hidden");
+    _scrollableContainer.el.scrollLeft += scrollDelta.x * _horizontalAngle * _scrollSpeed;
+    _scrollableContainer.el.scrollTop  += scrollDelta.y * _verticalAngle * _scrollSpeed;
 
     _scope.update();
   }
