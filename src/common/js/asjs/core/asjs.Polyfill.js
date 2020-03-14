@@ -16,6 +16,8 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   var _stylePrefixCSS  = "";
   var _sid             = {};
 
+  var _scrollBarSize = 0;
+
   _scope.new = function() {
     checkWorker();
     checkSetTimeout();
@@ -32,6 +34,7 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     checkCSSPrefix();
     checkEndian();
     checkArray();
+    checkScrollbarSize();
   }
 
   get(_scope, "isLittleEndian",   function() { return _isLittleEndian; });
@@ -39,6 +42,7 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   get(_scope, "documentHidden",   function() { return document[_visibilityPolyfill.hidden]; });
   get(_scope, "stylePrefixJS",    function() { return _stylePrefixJS; });
   get(_scope, "stylePrefixCSS",   function() { return _stylePrefixCSS; });
+  get(_scope, "scrollBarSize",    function() { return _scrollBarSize; });
 
   function addWorkerCallback(callback) {
     var newId = ++_workerCallbacksNum;
@@ -320,6 +324,30 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
       var index = this.indexOf(item);
       index > -1 && this.splice(index, 1);
     }
+  }
+
+  function checkScrollbarSize() {
+    var d = document;
+    var containerSize = 20;
+
+    var container = d.createElement("div");
+        container.style.width =
+        container.style.height = containerSize + "px";
+        container.style.overflow = "auto";
+
+    var content = d.createElement("div");
+        content.style.width = "100%";
+        content.style.height = (containerSize + 1) + "px";
+
+    container.appendChild(content);
+
+    d.body.appendChild(container);
+    _scrollBarSize = containerSize - content.offsetWidth;
+    d.body.removeChild(container);
+
+    container.removeChild(content);
+    container =
+    content   = null;
   }
 });
 cnst(ASJS.Polyfill, "SCROLL_SIZE", -20);

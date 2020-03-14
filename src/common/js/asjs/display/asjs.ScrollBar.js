@@ -38,7 +38,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     get: function() { return _useNative; },
     set: function(v) {
       if (_useNative === v) return;
-      _useNative = v;
+      _useNative = ASJS.Polyfill.instance.scrollBarSize === 0 ? true : v;
       update();
     }
   });
@@ -152,7 +152,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
       _scrollableContainer.setCSS("overflow", "hidden");
       !containsScrollBarContainer && _scope.addChild(_scrollBarContainer);
     }
-    
+
     _scope.update();
     _super.protected.lock();
   }
