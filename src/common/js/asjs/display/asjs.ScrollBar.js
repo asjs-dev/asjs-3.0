@@ -141,14 +141,18 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     _super.protected.unlock();
     var hasListener = _scrollableContainer.hasEventListener(ASJS.MouseEvent.WHEEL, onScroll);
     var containsScrollBarContainer = _scope.contains(_scrollBarContainer);
-    if (_useNative && hasListener) {
-      _scrollableContainer.removeEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
-      _scrollableContainer.removeEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
+    if (_useNative) {
+      if (hasListener) {
+        _scrollableContainer.removeEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
+        _scrollableContainer.removeEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
+      }
       _scrollableContainer.setCSS("overflow", "auto");
       containsScrollBarContainer && _scope.removeChild(_scrollBarContainer);
-    } else if (!hasListener) {
-      _scrollableContainer.addEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
-      _scrollableContainer.addEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
+    } else {
+      if (!hasListener) {
+        _scrollableContainer.addEventListener(ASJS.DocumentEvent.DOM_SUBTREE_MODIFIED, _scope.update);
+        _scrollableContainer.addEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
+      }
       _scrollableContainer.setCSS("overflow", "hidden");
       !containsScrollBarContainer && _scope.addChild(_scrollBarContainer);
     }
