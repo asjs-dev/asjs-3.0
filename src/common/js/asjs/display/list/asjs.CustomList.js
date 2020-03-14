@@ -10,8 +10,11 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
 
   _scope.new = function() {
     _super.new();
+
     _itemsContainer.addEventListener(ASJS.Cell.CLICK, onCellClick);
     _scope.addChild(_itemsContainer);
+
+    _super.protected.lock();
   }
 
   get(_scope, "length", function() { return _itemsContainer.numChildren; });
@@ -132,6 +135,8 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   }
 
   _scope.destruct = function() {
+    _super.protected.unlock();
+    
     _itemsContainer.destruct();
 
     _itemsContainer =

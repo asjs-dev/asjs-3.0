@@ -151,9 +151,9 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
       _scrollableContainer.addEventListener(ASJS.MouseEvent.WHEEL,                   onScroll);
       _scrollableContainer.setCSS("overflow", "hidden");
       !containsScrollBarContainer && _scope.addChild(_scrollBarContainer);
-
-      _scope.update();
     }
+    
+    _scope.update();
     _super.protected.lock();
   }
 
