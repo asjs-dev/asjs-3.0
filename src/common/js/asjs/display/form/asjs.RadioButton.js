@@ -42,9 +42,9 @@ createClass(ASJS, "RadioButton", ASJS.FormElement, function(_scope, _super) {
 
   _scope.destruct = function() {
     _radio.destruct();
-    _radio = null;
-
     _label.destruct();
+
+    _radio =
     _label = null;
 
     _super.destruct();

@@ -25,20 +25,19 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
   _scope.destruct = function() {
     (new NS.DestructCommand()).execute();
     _styleLoader.destruct();
-    _styleLoader = null;
-
     _language.clear();
-    _language = null;
-
     _config.clear();
-    _config = null;
+
+    _styleLoader =
+    _language    =
+    _config      = null;
 
     _super.destruct();
   }
 
   function addedToStage(event) {
     if (event.target !== _scope.el) return;
-    
+
     _scope.removeEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
 
     _styleLoader.addEventListener(ASJS.LoaderEvent.LOAD, onStyleLoaded);

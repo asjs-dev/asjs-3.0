@@ -48,9 +48,11 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
   }
 
   _scope.destruct = function() {
-    _blendModeFunction = null;
     _color.destruct();
-    _color = null;
+
+    _blendModeFunction =
+    _color             = null;
+
     _super.destruct();
   }
 });

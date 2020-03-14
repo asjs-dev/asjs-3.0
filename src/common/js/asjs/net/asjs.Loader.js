@@ -82,20 +82,20 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
       removeListeners();
     }
 
-    _async        = null;
-    _method       = null;
-    _headers      = null;
-    _responseType = null;
-    _compressed   = null;
-    _request      = null;
-    _username     = null;
-    _password     = null;
-    _url          = null;
-    _data         = null;
-    _content      = null;
-
     !emp(_promise) && _promise.destruct();
-    _promise = null;
+
+    _async        =
+    _method       =
+    _headers      =
+    _responseType =
+    _compressed   =
+    _request      =
+    _username     =
+    _password     =
+    _url          =
+    _data         =
+    _content      =
+    _promise      = null;
 
     _super.destruct();
   }

@@ -135,8 +135,9 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.destruct = function() {
-    _children      = null;
-    _mouseChildren = null;
+    _children      =
+    _mouseChildren =
+    _locked        = null;
 
     _super.destruct();
   }

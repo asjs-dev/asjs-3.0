@@ -25,7 +25,7 @@ createClass(ASJS, "AbstractViewMediator", ASJS.AbstractMediator, function(_scope
     destructClass(_container);
     destructClass(_super.protected.view);
 
-    _container = null;
+    _container            =
     _super.protected.view = null;
 
     _super.destruct();

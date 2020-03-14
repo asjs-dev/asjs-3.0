@@ -33,7 +33,7 @@ createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
   _scope.showData = function() {}
 
   _scope.destruct = function() {
-    _data    = null;
+    _data    =
     _checked = null;
 
     _super.destruct();

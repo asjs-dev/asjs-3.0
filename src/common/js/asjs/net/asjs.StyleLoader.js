@@ -21,7 +21,7 @@ createClass(ASJS, "StyleLoader", ASJS.Loader, function(_scope, _super) {
   }
 
   _scope.destruct = function() {
-    _head  = null;
+    _head  =
     _style = null;
 
     _super.destruct();

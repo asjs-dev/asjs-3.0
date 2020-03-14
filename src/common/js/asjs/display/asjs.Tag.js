@@ -75,7 +75,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   }
 
   _scope.addClass = function(v) {
-    var newClasses = v.split(" ");
+    var newClasses = parseClassNames(v);
     var classList  = _scope.getClassList();
     var newClass;
     while (newClass = newClasses.shift()) {
@@ -85,7 +85,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   }
 
   _scope.removeClass = function(v) {
-    var removeClasses = v.split(" ");
+    var removeClasses = parseClassNames(v);
     var classList     = _scope.getClassList();
     var removeClass;
     while (removeClass = removeClasses.shift()) classList.remove(removeClass);
@@ -152,14 +152,18 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
 
     destObj(_el);
 
-    _el     = null;
-    _parent = null;
+    _bounds.destruct();
+
+    _bounds =
+    _el     =
+    _parent =
     _state  = null;
 
-    _bounds.destruct();
-    _bounds = null;
-
     _super.destruct();
+  }
+
+  function parseClassNames(classNames) {
+    return tis(classNames, "object") ? classNames : classNames.split(" ");
   }
 });
 rof(ASJS.Tag, "cssProp", function(s, l, pn) {

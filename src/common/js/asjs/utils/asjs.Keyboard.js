@@ -43,9 +43,9 @@ createClass(ASJS, "Keyboard", ASJS.BaseClass, function(_scope, _super) {
   _scope.destruct = function() {
     while (_targets.length > 0) _scope.removeKeyListener(_targets.shift());
 
-    _pressedKeys  = null;
-    _downCallback = null;
-    _upCallback   = null;
+    _pressedKeys  =
+    _downCallback =
+    _upCallback   =
     _targets      = null;
 
     _super.destruct();

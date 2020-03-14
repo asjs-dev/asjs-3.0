@@ -22,7 +22,7 @@ createClass(ASJSUtils, "LoadJSONServiceCommand", ASJS.AbstractCommand, function(
     _loader.destruct();
     _dfd.destruct();
 
-    _loader = null;
+    _loader =
     _dfd    = null;
 
     _super.destruct();

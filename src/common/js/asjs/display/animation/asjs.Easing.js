@@ -47,17 +47,17 @@ createClass(ASJS, "Easing", ASJS.BaseClass, function(_scope, _super) {
   _scope.destruct = function() {
     _scope.stop();
 
-    _cycler           = null;
-    _isPlaying        = null;
-    _id               = null;
-    _step             = null;
-    _target           = null;
-    _from             = null;
-    _change           = null;
-    _to               = null;
-    _type             = null;
-    _duration         = null;
-    _stepCallback     = null;
+    _cycler           =
+    _isPlaying        =
+    _id               =
+    _step             =
+    _target           =
+    _from             =
+    _change           =
+    _to               =
+    _type             =
+    _duration         =
+    _stepCallback     =
     _completeCallback = null;
 
     _super.destruct();

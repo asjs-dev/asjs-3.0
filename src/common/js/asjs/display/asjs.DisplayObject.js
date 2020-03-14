@@ -145,16 +145,16 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   _scope.globalToLocal = ASJS.GeomUtils.globalToLocal.bind(_scope, _scope);
 
   _scope.destruct = function() {
-    _mouse    = null;
-    _filters  = null;
-    _rotation = null;
-    _scaleX   = null;
-    _scaleY   = null;
-    _skewX    = null;
-    _skewY    = null;
-
     _bounds.destruct();
-    _bounds = null;
+
+    _bounds   =
+    _mouse    =
+    _filters  =
+    _rotation =
+    _scaleX   =
+    _scaleY   =
+    _skewX    =
+    _skewY    = null;
 
     _super.destruct();
   }

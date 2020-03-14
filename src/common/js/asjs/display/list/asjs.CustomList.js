@@ -132,13 +132,13 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   }
 
   _scope.destruct = function() {
-    _multiselect    = null;
-    _cell           = null;
-    _lastCellIndex  = null;
-    _name           = null;
-
     _itemsContainer.destruct();
-    _itemsContainer = null;
+
+    _itemsContainer =
+    _multiselect    =
+    _cell           =
+    _lastCellIndex  =
+    _name           = null;
 
     _super.destruct();
   }

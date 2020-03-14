@@ -21,6 +21,8 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
       _blocks[i].setCSS("position", "absolute");
       _scope.addChild(_blocks[i]);
     }
+    
+    _super.protected.lock();
   }
 
   _scope.init = function(backgroundImage, rectangle) {
@@ -107,6 +109,8 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
   }
 
   _scope.destruct = function() {
+    _super.protected.unlock();
+
     _helperImage.destruct();
     _helperBitmap.destruct();
 

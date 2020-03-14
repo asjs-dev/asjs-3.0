@@ -125,7 +125,7 @@ c0(ASJS, "BaseClass", Object, function(_scope, _super) {
   _scope.destruct  = function() {
     destObj(_scope);
     destObj(_super);
-    _scope = null;
+    _scope =
     _super = null;
   }
   _scope.toObject  = function() {

@@ -58,11 +58,11 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
       (_finallyFunction && _finallyFunction.length > 0)
     ) _destructRequired = true;
     else {
-      _resolveFunction = null;
-      _rejectFunction  = null;
-      _finallyFunction = null;
-      _calledResolve   = null;
-      _calledReject    = null;
+      _resolveFunction =
+      _rejectFunction  =
+      _finallyFunction =
+      _calledResolve   =
+      _calledReject    =
       _calledFinally   = null;
 
       _super.destruct();

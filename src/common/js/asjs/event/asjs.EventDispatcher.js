@@ -78,14 +78,14 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
   _scope.destruct = function() {
     _scope.removeEventListeners && _scope.removeEventListeners();
 
-    _polyfill = null;
+    _polyfill =
     _handlers = null;
 
     _super.destruct();
   }
 
   function parseTypes(type) {
-    return tis(type, "object") ? [type] : type.split(" ");
+    return tis(type, "object") ? type : type.split(" ");
   }
 });
 rof(ASJS.EventDispatcher, "createEvent", function(event, data, bubble) {

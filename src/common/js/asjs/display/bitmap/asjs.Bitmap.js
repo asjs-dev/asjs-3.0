@@ -271,13 +271,13 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   _scope.destruct = function() {
     _scope.destroy();
 
-    priv           = null;
-    _filtersReady  = null;
-    _drawLine      = null;
-    _keepOriginal  = null;
-    _drawFill      = null;
-    _context       = null;
-    _bitmapFilters = null;
+    priv           =
+    _filtersReady  =
+    _drawLine      =
+    _keepOriginal  =
+    _drawFill      =
+    _context       =
+    _bitmapFilters =
     _original      = null;
 
     _super.destruct();

@@ -98,23 +98,20 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
   );
 
   var localPoint = target.globalToLocal(recalcPoint);
-
-  globalPos.destruct();
-  globalPos = null;
-
-  diffPoint.destruct();
-  diffPoint = null;
-
-  rotatedDiffPoint.destruct();
-  rotatedDiffPoint = null;
-
-  recalcPoint.destruct();
-  recalcPoint = null;
-
   var isHit = localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= rect.width && localPoint.y <= rect.height;
 
+  globalPos.destruct();
+  diffPoint.destruct();
+  rotatedDiffPoint.destruct();
+  recalcPoint.destruct();
   localPoint.destruct();
-  localPoint = null;
+
+  rect             =
+  globalPos        =
+  diffPoint        =
+  rotatedDiffPoint =
+  recalcPoint      =
+  localPoint       = null;
 
   return isHit;
 });

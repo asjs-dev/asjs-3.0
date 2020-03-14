@@ -168,8 +168,8 @@ var destructObject = function(t, stack) {
     }
     next();
   });
-  stack = null;
-  t = null;
+  stack =
+  t     = null;
 };
 var destObj = destructObject;
 

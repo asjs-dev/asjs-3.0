@@ -107,6 +107,8 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   });
 
   _scope.destruct = function() {
+    _super.protected.unlock();
+
     _super.destruct();
 
     _previousOffsetSize.destruct();
