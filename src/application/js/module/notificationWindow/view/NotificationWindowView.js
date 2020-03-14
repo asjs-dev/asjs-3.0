@@ -59,8 +59,8 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
     _super.protected.animateTo(0, function() {
       _scope.dispatchEvent(NS.NotificationWindowMediator.HIDE);
 
-      _title.html         =
-      _content.html       =
+      _title.text         =
+      _content.text       =
       _okButton.label     =
       _cancelButton.label = "";
 
@@ -72,8 +72,8 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
   _scope.showWindow = function(notificationItem) {
     _notificationItem = notificationItem;
 
-    _title.html   = _notificationItem.title;
-    _content.html = _notificationItem.content;
+    _title.text   = _notificationItem.title;
+    _content.text = _notificationItem.content;
 
     if (_notificationItem['showOk']) {
       _okButton.label = _notificationItem['okLabel'];
@@ -98,7 +98,6 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
       _container.width - _scrollBar.x * 2,
       (_container.height - _scrollBar.y) - (hasOkButton() || hasCancelButton() ? (_okButton.height + 20) : 0) - 25
     );
-    _content.render && _content.render();
 
     requestAnimationFrame(_scrollBar.update);
 

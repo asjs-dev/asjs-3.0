@@ -27,12 +27,15 @@
     }
 
     .title-label {
-      top         : 10px;
-      height      : 50px;
-      font-weight : 700;
-      line-height : 50px;
-      font-size   : 0.2rem;
-      color       : $white;
+      top           : 10px;
+      height        : 50px;
+      font-weight   : 700;
+      line-height   : 50px;
+      font-size     : 0.2rem;
+      color         : $white;
+      white-space   : nowrap;
+      overflow      : hidden;
+      text-overflow : ellipsis;
     }
 
     .content-label {
