@@ -25,7 +25,7 @@
 			"en": "Clicked outside"
 		},
 		"notification_title": {
-			"en": "<AS/JS> Notification Window"
+			"en": "&lt;AS/JS&gt; Notification Window"
 		},
 		"notification_content": {
 			"en": "Simple notification window with Scale9Grid background."

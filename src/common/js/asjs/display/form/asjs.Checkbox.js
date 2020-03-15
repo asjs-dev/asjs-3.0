@@ -8,6 +8,7 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
 
   _scope.new = function() {
     _super.new("label");
+    
     _checkbox.setAttr("type", "checkbox");
     _checkbox.visible = false;
     _scope.addChild(_checkbox);

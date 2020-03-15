@@ -71,10 +71,10 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
     _notificationItem = notificationItem;
 
-    if (tis(_notificationItem.title, "string")) _title.text = _notificationItem.title;
+    if (tis(_notificationItem.title, "string")) _title.html = _notificationItem.title;
     else if (is(_notificationItem.title, ASJS.Tag)) _title.addChild(_notificationItem.title);
 
-    if (tis(_notificationItem.content, "string")) _content.text = _notificationItem.content;
+    if (tis(_notificationItem.content, "string")) _content.html = _notificationItem.content;
     else if (is(_notificationItem.content, ASJS.Tag)) _content.addChild(_notificationItem.content);
 
     if (_notificationItem['showOk']) {
