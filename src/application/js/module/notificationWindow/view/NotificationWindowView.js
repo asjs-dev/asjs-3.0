@@ -6,7 +6,7 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
   var _window       = new ASJS.Scale9Grid();
   var _container    = new ASJS.Sprite();
-  var _title        = new ASJS.DisplayObject();
+  var _title        = new ASJS.Sprite();
   var _content      = new ASJS.Sprite();
   var _okButton     = new ASJS.Button();
   var _cancelButton = new ASJS.Button();
@@ -33,7 +33,7 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
     _content.addClass("content-label");
 
     _scrollBar.addClass("scrollbar");
-    _scrollBar.horizontalAngle = -1;
+    _scrollBar.horizontalAngle =
     _scrollBar.verticalAngle   = -1;
     _scrollBar.scrollSpeed     = 0.15;
     _scrollBar.container.addClass("animate");
@@ -59,10 +59,7 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
     _super.protected.animateTo(0, function() {
       _scope.dispatchEvent(NS.NotificationWindowMediator.HIDE);
 
-      _title.text         =
-      _content.text       =
-      _okButton.label     =
-      _cancelButton.label = "";
+      destruct();
 
       hasOkButton() && _scope.removeChild(_okButton);
       hasCancelButton() && _scope.removeChild(_cancelButton);
@@ -70,10 +67,15 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
   }
 
   _scope.showWindow = function(notificationItem) {
+    destruct();
+
     _notificationItem = notificationItem;
 
-    _title.text   = _notificationItem.title;
-    _content.text = _notificationItem.content;
+    if (tis(_notificationItem.title, "string")) _title.text = _notificationItem.title;
+    else if (is(_notificationItem.title, ASJS.Tag)) _title.addChild(_notificationItem.title);
+
+    if (tis(_notificationItem.content, "string")) _content.text = _notificationItem.content;
+    else if (is(_notificationItem.content, ASJS.Tag)) _content.addChild(_notificationItem.content);
 
     if (_notificationItem['showOk']) {
       _okButton.label = _notificationItem['okLabel'];
@@ -99,6 +101,9 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
       (_container.height - _scrollBar.y) - (hasOkButton() || hasCancelButton() ? (_okButton.height + 20) : 0) - 25
     );
 
+    isTag(_notificationItem.title) && _notificationItem.title.render && _notificationItem.title.render();
+    isTag(_notificationItem.content) && _notificationItem.content.render && _notificationItem.content.render();
+
     requestAnimationFrame(_scrollBar.update);
 
     if (hasOkButton()) {
@@ -120,5 +125,21 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
   function hasCancelButton() {
     return _container.contains(_cancelButton);
+  }
+
+  function destruct() {
+    if (_notificationItem) {
+      isTag(_notificationItem.title) && _title.removeChild(_notificationItem.title);
+      isTag(_notificationItem.content) && _content.removeChild(_notificationItem.content);
+    }
+
+    _title.text         =
+    _content.text       =
+    _okButton.label     =
+    _cancelButton.label = "";
+  }
+
+  function isTag(data) {
+    return tis(data, "object") && is(data, ASJS.Tag);
   }
 });
