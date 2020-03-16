@@ -16,7 +16,7 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _su
 
   function setupLanguage() {
     function validateLanguage(sl) {
-      return empty(sl) || _language.supportedLanguages.indexOf(sl) === -1 ? null : sl;
+      return empty(sl) || !_language.supportedLanguages.has(sl) ? null : sl;
     }
     var selectedLanguage = validateLanguage(_urlParser.getQueryParam('lang')) ||
                            validateLanguage(_cookies.readCookie('language')) ||

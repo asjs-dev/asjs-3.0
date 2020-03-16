@@ -3,7 +3,7 @@ createSingletonClass(ASJS, "NotificationHandler", ASJS.BaseClass, function(_scop
 
   _scope.add = function(type, callback) {
     if (!type || !callback) return;
-    if (_handlers[type] && _handlers[type].indexOf(callback) > -1) return;
+    if (_handlers[type] && _handlers[type].has(callback)) return;
     if (!_handlers[type]) _handlers[type] = [];
     _handlers[type].push(callback);
   }
@@ -15,7 +15,8 @@ createSingletonClass(ASJS, "NotificationHandler", ASJS.BaseClass, function(_scop
   _scope.sendNotification = function(type, data) {
     var handlers = _handlers[type];
     if (!handlers) return;
-    var i = handlers.length;
-    while (i--) handlers[i](data, type);
+    map(handlers, function(handlerIndex, handlerItem) {
+      handlerItem(data, type);
+    });
   }
 });

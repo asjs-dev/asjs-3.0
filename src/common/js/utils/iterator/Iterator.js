@@ -13,7 +13,7 @@ createClass(ASJSUtils, "Iterator", ASJS.BaseClass, function(_scope) {
   }
 
   _scope.add = function(fv) {
-    fv && tis(fv, "function") && _steps.indexOf(fv) === -1 && _steps.push(fv);
+    fv && tis(fv, "function") && !_steps.has(fv) && _steps.push(fv);
     return _scope;
   }
 

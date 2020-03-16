@@ -14,53 +14,49 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     }
 
     if (!_scope.hasEventListener(e.type)) return;
-    var handlers = _handlers[e.type];
-    var i = -1;
-    var l = handlers.length;
-    while (++i < l) handlers[i](e);
+
+    map(_handlers[e.type], function(handlerIndex, handlerItem) {
+      handlerItem(e);
+    });
   }
 
   _scope.addEventListener = function(type, handler) {
-    if (!_handlers) return;
     var types = parseTypes(type);
-    var i = -1;
-    var l = types.length;
-    var t;
-    while (++i < l) {
-      t = types[i];
-      if (t !== "" && !_scope.hasEventListener(t, handler)) {
-        if (!_handlers[t]) _handlers[t] = [];
-        _handlers[t].push(handler);
-        _scope.el && _scope.el.addEventListener(t, handler, true);
+    map(types, function(typeIndex, typeItem) {
+      if (typeItem !== "" && !_scope.hasEventListener(typeItem, handler)) {
+        if (!_handlers[typeItem]) _handlers[typeItem] = [];
+        _handlers[typeItem].push(handler);
+        _scope.el && _scope.el.addEventListener(typeItem, handler, true);
       }
-    }
+    });
   }
 
   _scope.removeEventListeners = function() {
-    if (!_handlers) return;
-    for (var type in _handlers) _scope.removeEventListener(type);
+    map(_handlers, function(handlerIndex, handlerItem) {
+      _scope.removeEventListener(handlerIndex);
+    });
     _handlers = {};
   }
 
   _scope.removeEventListener = function(type, handler) {
-    if (!_handlers) return;
     var types = parseTypes(type);
-    var i = types.length;
-    while (i--) {
-      var t = types[i];
-      if (t !== "" && _scope.hasEventListener(t, handler)) {
-        var handlers = _handlers[t];
-        while (handlers.length) {
-          var h = handlers.shift();
-          _scope.el && _scope.el.removeEventListener(t, h, true);
+    map(types, function(typeIndex, typeItem) {
+      if (typeItem !== "" && _scope.hasEventListener(typeItem, handler)) {
+        var handlers = _handlers[typeItem];
+        var i = handlers.length;
+        while (i--) {
+          var handlerItem = handlers[i];
+          if (!handler || handlerItem === handler) {
+            _handlers[typeItem].remove(handlerItem);
+            _scope.el && _scope.el.removeEventListener(typeItem, handlerItem, true);
+          }
         }
-        _handlers[t].length === 0 && del(_handlers, t);
+        _handlers[typeItem].length === 0 && del(_handlers, typeItem);
       }
-    }
-  };
+    });
+  }
 
   _scope.hasEventListener = function(type, handler) {
-    if (!_handlers) return false;
     var types = parseTypes(type);
     var i = types.length;
     while (i--) {
@@ -69,7 +65,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
         t !== "" &&
         _handlers[t] &&
         _handlers[t].length > 0 &&
-        (!handler || _handlers[t].indexOf(handler) > -1)
+        (!handler || _handlers[t].has(handler))
       ) return true;
     }
     return false;

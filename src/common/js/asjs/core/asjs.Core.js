@@ -62,7 +62,7 @@ c1(ASJS, "Importer", Object, function(_scope) {
     basePath = basePath || document.baseURI + _sourcePath;
     var path = getPath(basePath, fileName);
 
-    if (_includedScript.indexOf(path) > -1) dfd.resolve();
+    if (_includedScript.has(path)) dfd.resolve();
     else {
       _includedScript.push(path);
       var loader = new ASJS.Loader();

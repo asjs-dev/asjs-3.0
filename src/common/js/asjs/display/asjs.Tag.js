@@ -71,7 +71,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   get(_scope, "stage", function() { return _scope.parent ? _scope.parent.stage : null; });
 
   _scope.hasClass = function(v) {
-    return _scope.getClassList().indexOf(v) > -1;
+    return _scope.getClassList().has(v);
   }
 
   _scope.addClass = function(v) {

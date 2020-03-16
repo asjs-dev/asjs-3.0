@@ -168,7 +168,7 @@ rof(ASJS.CSS, "convertValue", function(v) {
 });
 
 rof(ASJS.CSS, "setCSS", function(t, k, v) {
-  v = tis(v, "number") && ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 ? v + "px" : v;
+  v = tis(v, "number") && ASJS.CSS.ADD_PIXEL_TYPES.has(k) ? v + "px" : v;
   var nk = ASJS.CSS.convertProperty(k);
   var nv = ASJS.CSS.convertValue(v);
   t.el.style[ASJS.CSS.replaceHyphen(k)] = v;
@@ -182,7 +182,7 @@ rof(ASJS.CSS, "getCSS", function(t, k) {
     v = style.getPropertyValue(k);
   }
   return (
-    ASJS.CSS.ADD_PIXEL_TYPES.indexOf(k) > -1 &&
+    ASJS.CSS.ADD_PIXEL_TYPES.has(k) &&
     (tis(v, "number") || v.indexOf("px") > -1)
       ? parseFloat(v)
       : v

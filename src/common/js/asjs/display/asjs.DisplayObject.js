@@ -165,9 +165,9 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
     var margin   = _scope.getCSS("margin" + type);
 
     var translate = 0;
-    if (ASJS.DisplayObject.TRANSLATE_OFFSET.indexOf(type) > -1) {
+    if (ASJS.DisplayObject.TRANSLATE_OFFSET.has(type)) {
       var transform = _scope.getCSS("transform");
-      if (ASJS.DisplayObject.EMPTY_CSS_VALUES.indexOf(transform) === -1) {
+      if (!ASJS.DisplayObject.EMPTY_CSS_VALUES.has(transform)) {
         var parsedTransform = transform.replace("matrix(", "").replace(")", "").split(",");
         translate = parseFloat(parsedTransform[type === ASJS.DisplayObject.OFFSET_LEFT ? 4 : 5]);
       }
