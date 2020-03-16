@@ -35,6 +35,7 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     checkEndian();
     checkArray();
     checkScrollbarSize();
+    checkMath();
   }
 
   get(_scope, "isLittleEndian",   function() { return _isLittleEndian; });
@@ -348,6 +349,12 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     container.removeChild(content);
     container =
     content   = null;
+  }
+
+  function checkMath() {
+    Math.sign = Math.sign || function(x) {
+      return ((x > 0) - (x < 0)) || +x;
+    };
   }
 });
 cnst(ASJS.Polyfill, "SCROLL_SIZE", -20);
