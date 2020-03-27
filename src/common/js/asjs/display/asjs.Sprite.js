@@ -67,6 +67,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.addChildAt = function(child, index) {
     if (!child || _locked) return null;
+    child.parent && child.parent.removeChild(child);
     _scope.el.appendChild(child.el);
     child.enabled = child.enabled ? _mouseChildren : child.enabled;
     _children.push(child);
