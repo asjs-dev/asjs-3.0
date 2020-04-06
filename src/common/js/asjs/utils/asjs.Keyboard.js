@@ -11,6 +11,16 @@ createClass(ASJS, "Keyboard", ASJS.BaseClass, function(_scope, _super) {
   var _downCallback;
   var _upCallback;
 
+  _scope.isAnyPressed = function() {
+    var any = false;
+
+    map(_pressedKeys, function(key, item) {
+      item && (any = true);
+    });
+
+    return any;
+  };
+
   _scope.isPressed = function(w) {
     return _pressedKeys[w];
   };
@@ -52,7 +62,7 @@ createClass(ASJS, "Keyboard", ASJS.BaseClass, function(_scope, _super) {
   }
 
   function onBlur() {
-    map(_pressedKeys, function(k) {
+    map(_pressedKeys, function() {
       return false;
     });
   };

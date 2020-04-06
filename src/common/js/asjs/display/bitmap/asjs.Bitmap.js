@@ -294,7 +294,7 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   function addColorToGradient(gradient, stop, color, alpha) {
-    var rgba = is(color, ASJS.Color) ? color : ASJS.Color.rgbHexToColor(color);
+    var rgba = is(color, ASJS.Color) ? ASJS.Color.clone(color) : ASJS.Color.rgbHexToColor(color);
         rgba.a = alpha;
     gradient.addColorStop(stop, ASJS.Color.colorToString(rgba));
   }
@@ -307,14 +307,14 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   function setLineStyle(size, miterLimit, lineJoin, lineCap) {
     var ctx = getContext();
-      ctx.lineWidth = size;
-      ctx.miterLimit = miterLimit || 10;
-      ctx.lineJoin = lineJoin || ASJS.Bitmap.LINE_JOIN_MITER;
-      ctx.lineCap = lineCap || ASJS.Bitmap.LINE_CAP_BUTT;
+        ctx.lineWidth = size;
+        ctx.miterLimit = miterLimit || 10;
+        ctx.lineJoin = lineJoin || ASJS.Bitmap.LINE_JOIN_MITER;
+        ctx.lineCap = lineCap || ASJS.Bitmap.LINE_CAP_BUTT;
   }
 
   function beginColorFill(targetType, rgb, alpha) {
-    var rgba = is(rgb, ASJS.Color) ? rgb : ASJS.Color.rgbHexToColor(rgb);
+    var rgba = is(rgb, ASJS.Color) ? ASJS.Color.clone(rgb) : ASJS.Color.rgbHexToColor(rgb);
         rgba.a = alpha;
     fillStyle(targetType, ASJS.Color.colorToString(rgba));
   }

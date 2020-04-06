@@ -10,6 +10,18 @@ createClass(ASJS, "Color", ASJS.BaseClass, function(_scope) {
     _scope.a = tis(a, "number") ? a : 1;
   }
 
+  get(_scope, "floatAlpha", function() {
+    return _scope.a / 255;
+  });
+
+  _scope.setVector = function(v) {
+    _scope.set(v[0], v[1], v[2], v[3]);
+  }
+
+  _scope.getVector = function() {
+    return [_scope.r, _scope.g, _scope.b, _scope.a];
+  }
+
   get(_scope, "isGray", function() {
     return _scope.r === _scope.g && _scope.g === _scope.b;
   });
@@ -153,4 +165,8 @@ rof(ASJS.Color, "colorToArgbInt", function(color) {
 
 rof(ASJS.Color, "colorToAbgrInt", function(color) {
   return parseInt(ASJS.Color.colorToAbgrHex(color), 16);
+});
+
+rof(ASJS.Color, "clone", function(color) {
+  return new ASJS.Color(color.r, color.g, color.b, color.a);
 });
