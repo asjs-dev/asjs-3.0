@@ -18,10 +18,10 @@ createClass(ASJS, "PaletteLimitBitmapFilter", ASJS.AbstractBitmapFilter, functio
     var selectedColor;
     var i = d.length;
     var m = _palette.length;
-    var originalColor = new ASJS.Color();
+    var originalColor = ASJS.Color.create();
     while ((i -= 4) > -1) {
       if (d[i + 3] === 0) continue;
-      originalColor.set(d[i], d[i + 1], d[i + 2]);
+      ASJS.Color.set(originalColor, d[i], d[i + 1], d[i + 2]);
 
       var hexValue = ASJS.Color.colorToRgbHex(originalColor);
 
@@ -47,7 +47,7 @@ createClass(ASJS, "PaletteLimitBitmapFilter", ASJS.AbstractBitmapFilter, functio
 
     _map = {};
     _palette = {};
-    originalColor.destruct();
+    originalColor = null;
     originalColor = null;
 
     return pixels;

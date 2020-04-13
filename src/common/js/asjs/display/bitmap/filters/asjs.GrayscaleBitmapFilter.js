@@ -6,12 +6,12 @@ createClass(ASJS, "GrayscaleBitmapFilter", ASJS.AbstractBitmapFilter, function(_
 
   _scope.execute = function(pixels) {
     var d = pixels.data;
-    var oColor = new ASJS.Color();
+    var oColor = ASJS.Color.create();
     var i = d.length;
     while ((i -= 4) > -1) {
       if (d[i + 3] === 0) continue;
 
-      oColor.set(d[i], d[i + 1], d[i + 2]);
+      ASJS.Color.set(oColor, d[i], d[i + 1], d[i + 2]);
 
       var hexValue = ASJS.Color.colorToRgbHex(oColor);
 
@@ -21,7 +21,7 @@ createClass(ASJS, "GrayscaleBitmapFilter", ASJS.AbstractBitmapFilter, function(_
     }
 
     _map = {};
-    oColor.destruct();
+    oColor = null;
     oColor = null;
 
     return pixels;

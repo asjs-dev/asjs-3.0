@@ -21,7 +21,11 @@ var isDocumentComplete = function() {
 var idc = isDocumentComplete;
 
 var is = function(a, b) {
-  return a instanceof b;
+  try {
+    return a instanceof b;
+  } catch (e) {
+    return false;
+  }
 }
 
 var tis = function(a, b) {

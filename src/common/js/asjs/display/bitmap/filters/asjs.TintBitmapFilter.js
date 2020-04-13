@@ -1,4 +1,4 @@
-//require("./asjs.AbstractBitmapFilter.js");
+require("./asjs.AbstractBitmapFilter.js");
 
 createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope, _super) {
   var _color;
@@ -11,7 +11,7 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
 
   prop(_scope, "color", {
     get: function() { return _color; },
-    set: function(v) { _color = v || new ASJS.Color(); }
+    set: function(v) { _color = v || ASJS.Color.create(); }
   });
 
   prop(_scope, "blendModeFunction", {
@@ -23,14 +23,14 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
     var d = pixels.data;
     var i = d.length;
 
-    var color = new ASJS.Color();
+    var color = ASJS.Color.create();
 
     var checkBefore = _blendModeFunction.before;
 
     while ((i -= 4) > -1) {
       if (d[i + 3] === 0) continue;
 
-      color.set(d[i], d[i + 1], d[i + 2]);
+      ASJS.Color.set(color, d[i], d[i + 1], d[i + 2]);
 
       if (checkBefore && !checkBefore(color)) continue;
 
@@ -41,15 +41,13 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
       ], i);
     }
 
-    color.destruct();
+    color = null;
     color = null;
 
     return pixels;
   }
 
   _scope.destruct = function() {
-    _color.destruct();
-
     _blendModeFunction =
     _color             = null;
 
@@ -70,5 +68,5 @@ rof(ASJS.TintBitmapFilter, "REAL", function(s, d) {
   return bw(0, 255, Math.round(d + ((s - 127) << 1)));
 });
 rof(ASJS.TintBitmapFilter.REAL, "before", function(c) {
-  return c.isGray && !c.isWhite && !c.isBlack;
+  return ASJS.Color.isGray(c) && !ASJS.Color.isWhite(c) && !ASJS.Color.isBlack(c);
 });

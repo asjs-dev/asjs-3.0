@@ -157,7 +157,7 @@ rof(SampleApp.Utils, "getRand", function(v) {
 
 createClass(SampleApp, "Particle", ASJS.BaseClass, function(_scope) {
   _scope.new = function() {
-    _scope.color = new ASJS.Color(
+    _scope.color = ASJS.Color.create(
       SampleApp.Utils.getRand(255),
       SampleApp.Utils.getRand(255),
       SampleApp.Utils.getRand(255),
@@ -232,14 +232,14 @@ createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
     var s = ((now - _time) / 100) * _speed;
     _time = now;
 
-    _bitmap.beginColorFill("#000000", 0.5);
+    _bitmap.beginColorFill("rgba(0, 0, 0, 0.5)");
     _bitmap.drawRect(0, 0, _bitmap.bitmapWidth, _bitmap.bitmapHeight);
     var i = -1;
     var l = _particles.length;
     while (++i < l) {
       var particle = _particles[i];
       particle.render(s);
-      _bitmap.beginColorFill(particle.color, particle.color.a);
+      _bitmap.beginColorFill(particle.color);
       _bitmap.drawCircle(particle.x, particle.y, particle.size);
       _bitmap.endFill();
     }

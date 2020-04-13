@@ -77,6 +77,8 @@ require("display/bitmap/filters/asjs.GrayscaleBitmapFilter.js");
 require("display/bitmap/filters/asjs.PixelateBitmapFilter.js");
 require("display/bitmap/filters/asjs.BrightnessBitmapFilter.js");
 require("display/bitmap/asjs.BlendMode.js");
+require("display/bitmap/asjs.CanvasApi.js");
+require("display/bitmap/asjs.OffscreenCanvas.js");
 require("display/bitmap/asjs.Bitmap.js");
 
 require("display/list/vo/asjs.CellDataVo.js");

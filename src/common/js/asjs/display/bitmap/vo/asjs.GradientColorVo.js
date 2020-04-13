@@ -1,7 +1,8 @@
-createClass(ASJS, "GradientColorVo", ASJS.BaseClass, function(_scope) {
-  _scope.new = function(stop, color, alpha) {
-    _scope.stop  = stop || 0;
-    _scope.color = color || "#0";
-    _scope.alpha = tis(alpha, "number") ? alpha : 1;
-  }
+/* TODO: createUtility */
+createUtility(ASJS, "GradientColorVo");
+rof(ASJS.GradientColorVo, "create", function(stop, color) {
+  return {
+    "stop"  : stop || 0,
+    "color" : color || ASJS.Color.create()
+  };
 });
