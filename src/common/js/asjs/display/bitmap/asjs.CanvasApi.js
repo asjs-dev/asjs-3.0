@@ -312,7 +312,7 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
   }
 
   function beginColorFill(targetType, color) {
-    fillStyle(targetType, ASJS.Color.colorToString(ASJS.Color.parse(color));
+    fillStyle(targetType, ASJS.Color.colorToString(ASJS.Color.parse(color)));
   }
 
   function beginGradientFill(targetType, type, gradientData, colors) {
@@ -372,3 +372,33 @@ cnst(ASJS.CanvasApi, "LINE_CAP_SQUARE",   "square");
 cnst(ASJS.CanvasApi, "LINE_JOIN_BEVEL",   "bevel");
 cnst(ASJS.CanvasApi, "LINE_JOIN_ROUND",   "round");
 cnst(ASJS.CanvasApi, "LINE_JOIN_MITER",   "miter");
+
+rof(ASJS.CanvasApi, "drawTriangle", function(ctx, im, x0, y0, x1, y1, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2) {
+  drawQuad(ctx, im, x0, y0, x1, y1, x2, y2, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2);
+});
+rof(ASJS.CanvasApi, "drawQuad", function(ctx, im, x0, y0, x1, y1, x2, y2, x3, y3, sx0, sy0, sx1, sy1, sx2, sy2) {
+  ctx.save();
+
+  ctx.beginPath();
+  ctx.moveTo(x0, y0);
+  ctx.lineTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.lineTo(x3, y3);
+  ctx.closePath();
+  ctx.clip();
+
+  var denom = (sx0 * (sy2 - sy1) - sx1 * sy2 + sx2 * sy1 + (sx1 - sx2) * sy0);
+  if (denom === 0) return;
+
+  var m11 = - (sy0 * (x2 - x1) - sy1 * x2 + sy2 * x1 + (sy1 - sy2) * x0) / denom;
+  var m12 = (sy1 * y2 + sy0 * (y1 - y2) - sy2 * y1 + (sy2 - sy1) * y0) / denom;
+  var m21 = (sx0 * (x2 - x1) - sx1 * x2 + sx2 * x1 + (sx1 - sx2) * x0) / denom;
+  var m22 = - (sx1 * y2 + sx0 * (y1 - y2) - sx2 * y1 + (sx2 - sx1) * y0) / denom;
+  var dx = (sx0 * (sy2 * x1 - sy1 * x2) + sy0 * (sx1 * x2 - sx2 * x1) + (sx2 * sy1 - sx1 * sy2) * x0) / denom;
+  var dy = (sx0 * (sy2 * y1 - sy1 * y2) + sy0 * (sx1 * y2 - sx2 * y1) + (sx2 * sy1 - sx1 * sy2) * y0) / denom;
+
+  ctx.transform(m11, m12, m21, m22, dx, dy);
+
+  ctx.drawImage(im, 0, 0);
+  ctx.restore();
+});

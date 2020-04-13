@@ -115,3 +115,23 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
 
   return isHit;
 });
+
+rof(ASJS.GeomUtils, "getQuadCenter", function(x1, y1, x2, y2, x3, y3, x4, y4) {
+  var a = x1 * y2;
+  var b = y1 * x2;
+  var c = x3 - x4;
+  var d = y3 - y4;
+  var e = x1 - x2;
+  var f = y1 - y2;
+  var g = x3 * y4;
+  var h = y3 * x4;
+  var i = a - b;
+  var j = g - h;
+  var k = e * d;
+  var l = f * c;
+  var m = k - l;
+  return {
+    x: ((i * c) - (e * j)) / m,
+    y: ((i * d) - (f * j)) / m
+  };
+});
