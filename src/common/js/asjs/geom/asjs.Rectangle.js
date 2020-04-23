@@ -1,9 +1,9 @@
 require("./asjs.Point.js");
 
-createClass(ASJS, "Rectangle", ASJS.Point, function(_scope, _super) {
-  _scope.new = function(x, y, w, h) {
-    _super.new(x, y);
-    _scope.width  = tis(w, "number") ? w : 0;
-    _scope.height = tis(h, "number") ? h : 0;
-  }
+createUtility(ASJS, "Rectangle");
+rof(ASJS.Rectangle, "create", function(x, y, w, h) {
+  var rect = ASJS.Point.create(x, y);
+      rect.width  = w || 0;
+      rect.height = h || 0;
+  return rect;
 });

@@ -31,7 +31,7 @@ createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, 
 
   function addedToStage(event) {
     if (event.target !== _scope.el) return;
-    
+
     stage.addEventListener(ASJS.MouseEvent.MOUSE_MOVE + " " + ASJS.MouseEvent.TOUCH_MOVE, onStageMouseMove);
 
     _scope.addEventListener(ASJS.MouseEvent.CLICK, onMouseClick);
@@ -49,7 +49,7 @@ createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, 
   }
 
   function onMouseClick() {
-    var hitTest = _box.hitTest(new ASJS.Point(_mouse.mouseX, _mouse.mouseY));
+    var hitTest = _box.hitTest(ASJS.Point.create(_mouse.mouseX, _mouse.mouseY));
     _box.label.text = _language.getText(hitTest ? "hit_test_inside" : "hit_test_outside");
   }
 

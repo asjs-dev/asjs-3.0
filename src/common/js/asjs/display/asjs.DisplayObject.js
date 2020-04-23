@@ -11,7 +11,7 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _scaleY   = 1;
   var _skewX    = 0;
   var _skewY    = 0;
-  var _bounds   = new ASJS.Rectangle();
+  var _bounds   = ASJS.Rectangle.create();
 
   _scope.new = function(tag) {
     _super.new(tag);
@@ -145,8 +145,6 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   _scope.globalToLocal = ASJS.GeomUtils.globalToLocal.bind(_scope, _scope);
 
   _scope.destruct = function() {
-    _bounds.destruct();
-
     _bounds   =
     _mouse    =
     _filters  =

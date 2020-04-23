@@ -22,14 +22,11 @@ rof(ASJS.GeomUtils, "twoPointEquals", function(pointA, pointB) {
 });
 
 rof(ASJS.GeomUtils, "twoPointAngle", function(pointA, pointB) {
-  var dot = pointA.x * pointB.x + pointA.y * pointB.y;
-  var det = pointA.x * pointB.y - pointA.y * pointB.x;
-  var angle = Math.atan2(det, dot);
-  return angle / ASJS.GeomUtils.THETA;
+  return Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x) / ASJS.GeomUtils.THETA;
 });
 
 rof(ASJS.GeomUtils, "twoRectsIntersect", function(rectA, rectB) {
-  var section        = new ASJS.Rectangle();
+  var section        = ASJS.Rectangle.create();
       section.x      = Math.max(rectA.x, rectB.x);
       section.y      = Math.max(rectA.y, rectB.y);
       section.width  = Math.abs(Math.min((rectA.x + rectA.width) - section.x, (rectB.x + rectB.width) - section.x));
@@ -37,7 +34,6 @@ rof(ASJS.GeomUtils, "twoRectsIntersect", function(rectA, rectB) {
 
   var isRectIntersection = ASJS.GeomUtils.rectInRect(section, rectA) && ASJS.GeomUtils.rectInRect(section, rectB);
 
-  section.destruct();
   section = null;
 
   return isRectIntersection;
@@ -50,7 +46,7 @@ rof(ASJS.GeomUtils, "rectInRect", function(rectA, rectB) {
 });
 
 rof(ASJS.GeomUtils, "localToGlobal", function(target, point) {
-  var pos = new ASJS.Point(point.x, point.y);
+  var pos = ASJS.Point.create(point.x, point.y);
   var child = target;
   while (child) {
     pos.x *= child.scaleX;
@@ -63,7 +59,7 @@ rof(ASJS.GeomUtils, "localToGlobal", function(target, point) {
 });
 
 rof(ASJS.GeomUtils, "globalToLocal", function(target, point) {
-  var pos = new ASJS.Point(point.x, point.y);
+  var pos = ASJS.Point.create(point.x, point.y);
   var child = target;
   var children = [child];
   while (child = child.parent) children.unshift(child);
@@ -82,29 +78,23 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
 
   var rect = target.bounds;
 
-  var globalPos = target.localToGlobal(new ASJS.Point(0, 0));
-  var diffPoint = new ASJS.Point(
+  var globalPos = target.localToGlobal(ASJS.Point.create(0, 0));
+  var diffPoint = ASJS.Point.create(
     point.x - (globalPos.x + rect.width * 0.5),
     point.y - (globalPos.y + rect.height * 0.5)
   );
 
-  var rotatedDiffPoint = new ASJS.Point(
+  var rotatedDiffPoint = ASJS.Point.create(
     diffPoint.x * Math.cos(rotationDeg) - diffPoint.y * Math.sin(rotationDeg),
     diffPoint.x * Math.sin(rotationDeg) + diffPoint.y * Math.cos(rotationDeg)
   );
-  var recalcPoint = new ASJS.Point(
+  var recalcPoint = ASJS.Point.create(
     point.x - (diffPoint.x - rotatedDiffPoint.x),
     point.y - (diffPoint.y - rotatedDiffPoint.y)
   );
 
   var localPoint = target.globalToLocal(recalcPoint);
   var isHit = localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= rect.width && localPoint.y <= rect.height;
-
-  globalPos.destruct();
-  diffPoint.destruct();
-  rotatedDiffPoint.destruct();
-  recalcPoint.destruct();
-  localPoint.destruct();
 
   rect             =
   globalPos        =

@@ -29,6 +29,7 @@ require("utils/asjs.CSS.js");
 require("utils/asjs.Mouse.js");
 require("utils/asjs.FileDragAndDropUtil.js");
 require("utils/asjs.LZW.js");
+require("utils/asjs.Timer.js");
 
 require("net/asjs.ScriptLoader.js");
 require("net/asjs.RequestMethod.js");

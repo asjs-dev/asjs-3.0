@@ -15,7 +15,7 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
 
     var step = 4 * pixS;
     var i = d.length;
-    var pixelPos = new ASJS.Point();
+    var pixelPos = ASJS.Point.create();
     while ((i -= step) > -1) {
       var pixelLinearPos = Math.floor(i / 4);
       pixelPos.x = Math.floor(pixelLinearPos % w);
@@ -60,7 +60,6 @@ createClass(ASJS, "PixelateBitmapFilter", ASJS.AbstractBitmapFilter, function(_s
       }
     }
 
-    pixelPos.destruct();
     pixelPos = null;
 
     return pixels;

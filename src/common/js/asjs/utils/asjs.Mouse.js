@@ -2,10 +2,9 @@ require("../event/asjs.MouseEvent.js");
 require("../geom/asjs.Point.js");
 
 createSingletonClass(ASJS, "Mouse", ASJS.BaseClass, function(_scope) {
-  var _mousePos = new ASJS.Point();
+  var _mousePos = ASJS.Point.create();
 
   get(_scope, "mouseX", function() { return _mousePos.x; });
-
   get(_scope, "mouseY", function() { return _mousePos.y; });
 
   _scope.show = function() {

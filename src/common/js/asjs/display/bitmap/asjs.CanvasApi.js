@@ -4,24 +4,62 @@ require("../asjs.DisplayObject.js");
 require("../asjs.Image.js");
 
 createUtility(ASJS, "CanvasApi");
-rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
-  if (typeof _scope.getContext === "function") return;
+rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
+  var _context;
+  var _contextAttributes;
+  var _contextType;
 
-  var priv = {};
+  get(_scope, "contextAttributes", function() { return _contextAttributes; });
+  set(_super.protected, "contextAttributes", function(v) { _contextAttributes = v; });
 
-  cnst(priv, "TARGET_FILL",   "targetFill");
-  cnst(priv, "TARGET_STROKE", "targetStroke");
+  get(_scope, "contextType", function() { return _contextType; });
+  set(_super.protected, "contextType", function(v) { _contextType = v; });
+
+  prop(_scope, "bitmapWidth", {
+    get: function() { return _scope.el.width; },
+    set: function(v) { _scope.el.width = Math.max(1, v || 1); }
+  });
+
+  prop(_scope, "bitmapHeight", {
+    get: function() { return _scope.el.height; },
+    set: function(v) { _scope.el.height = Math.max(1, v || 1); }
+  });
+
+  _scope.getContext = function() {
+    if (!_context || (_context.isContextLost && _context.isContextLost())) {
+      _context = _scope.el.getContext(_contextType, _contextAttributes);
+    }
+    return _context;
+  }
+
+  _scope.setBitmapSize = function(width, height) {
+    if (height === undefined) height = width;
+    _scope.bitmapWidth  = width;
+    _scope.bitmapHeight = height;
+  }
+
+  _scope.destroyBaseCanvas = function() {
+    _scope.setBitmapSize(1);
+  }
+
+  _scope.destructBaseCanvasApi = function() {
+    _scope.destroyBaseCanvas();
+
+    _context           =
+    _contextAttributes =
+    _contextType       = null;
+  }
+});
+rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
+  ASJS.CanvasApi.initBaseCanvas(_scope, _super);
 
   var _filtersReady = true;
   var _drawLine     = false;
   var _drawFill     = false;
   var _keepOriginal = false;
-  var _context;
   var _bitmapFilters;
   var _original;
-  var _contextAttributes = contextAttributes;
 
-  get(_scope, "contextAttributes", function() { return _contextAttributes; });
   get(_scope, "original", function() { return _original; });
 
   prop(_scope, "keepOriginal", {
@@ -37,16 +75,6 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
     }
   });
 
-  prop(_scope, "bitmapWidth", {
-    get: function() { return _scope.el.width; },
-    set: function(v) { _scope.el.width = Math.max(1, v || 1); }
-  });
-
-  prop(_scope, "bitmapHeight", {
-    get: function() { return _scope.el.height; },
-    set: function(v) { _scope.el.height = Math.max(1, v || 1); }
-  });
-
   prop(_scope, "blendMode", {
     get: function() { return _scope.getContext().globalCompositeOperation; },
     set: function(v) { _scope.getContext().globalCompositeOperation = v; }
@@ -57,42 +85,37 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
     set: function(v) { _scope.getContext().globalAlpha = v; }
   });
 
-  _scope.getContext = function() {
-    if (!_context) _context = _scope.el.getContext("2d", _contextAttributes);
-    return _context;
-  }
-
   _scope.beginLineColorStyle = function(size, color, miterLimit, lineJoin, lineCap) {
     beginPath();
     setLineStyle(size, miterLimit, lineJoin, lineCap);
-    beginColorFill(priv.TARGET_STROKE, color);
+    beginColorFill(ASJS.CanvasApi.TARGET_STROKE, color);
   }
 
   _scope.beginLineGradientStyle = function(size, type, gradientParams, colors, lineMitter, lineJoin, lineCap) {
     beginPath();
     setLineStyle(size, miterLimit, lineJoin, lineCap);
-    beginGradientFill(priv.TARGET_STROKE, type, gradientParams, colors);
+    beginGradientFill(ASJS.CanvasApi.TARGET_STROKE, type, gradientParams, colors);
   }
 
   _scope.beginLinePatternStyle = function(size, image, repeat, lineMitter, lineJoin, lineCap) {
     beginPath();
     setLineStyle(size, miterLimit, lineJoin, lineCap);
-    beginPatternFill(priv.TARGET_STROKE, image, repeat);
+    beginPatternFill(ASJS.CanvasApi.TARGET_STROKE, image, repeat);
   }
 
   _scope.beginColorFill = function(color) {
     beginFill();
-    beginColorFill(priv.TARGET_FILL, color);
+    beginColorFill(ASJS.CanvasApi.TARGET_FILL, color);
   }
 
   _scope.beginGradientFill = function(type, gradientParams, colors) {
     beginFill();
-    beginGradientFill(priv.TARGET_FILL, type, gradientParams, colors);
+    beginGradientFill(ASJS.CanvasApi.TARGET_FILL, type, gradientParams, colors);
   }
 
   _scope.beginPatternFill = function(image, repeat) {
     beginFill();
-    beginPatternFill(priv.TARGET_FILL, image, repeat);
+    beginPatternFill(ASJS.CanvasApi.TARGET_FILL, image, repeat);
   }
 
   _scope.translate = function(x, y) {
@@ -235,14 +258,8 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
   }
 
   _scope.destroy = function() {
-    _scope.setBitmapSize(1);
+    _scope.destroyBaseCanvas();
     _original = null;
-  }
-
-  _scope.setBitmapSize = function(width, height) {
-    if (height === undefined) height = width;
-    _scope.bitmapWidth = width;
-    _scope.bitmapHeight = height;
   }
 
   _scope.getCanvasClone = function() {
@@ -266,17 +283,18 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
   }
 
   _scope.destructCanvasApi = function() {
-    _scope.destroy();
+    _scope.destructBaseCanvasApi();
 
-    priv               =
-    _filtersReady      =
-    _drawLine          =
-    _keepOriginal      =
-    _drawFill          =
-    _context           =
-    _bitmapFilters     =
-    _contextAttributes =
-    _original          = null;
+    _filtersReady  =
+    _drawLine      =
+    _keepOriginal  =
+    _drawFill      =
+    _bitmapFilters =
+    _original      = null;
+  }
+
+  _scope.fillStyle = function(v) {
+    _scope.getContext().fillStyle = v;
   }
 
   function beginPath() {
@@ -293,13 +311,9 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
     gradient.addColorStop(stop, ASJS.Color.colorToString(ASJS.Color.parse(color)));
   }
 
-  _scope.fillStyle = function(v) {
-    _scope.getContext().fillStyle = v;
-  }
-
   function fillStyle(targetType, v) {
     var ctx = _scope.getContext();
-    if (targetType === priv.TARGET_FILL) ctx.fillStyle = v;
+    if (targetType === ASJS.CanvasApi.TARGET_FILL) ctx.fillStyle = v;
     else ctx.strokeStyle = v;
   }
 
@@ -360,6 +374,8 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, contextAttributes) {
     _filtersReady = true;
   }
 });
+cnst(ASJS.CanvasApi, "TARGET_FILL",       "targetFill");
+cnst(ASJS.CanvasApi, "TARGET_STROKE",     "targetStroke");
 cnst(ASJS.CanvasApi, "GRADIENT_LINEAR",   "gradientLinear");
 cnst(ASJS.CanvasApi, "GRADIENT_RADIAL",   "gradientRadial");
 cnst(ASJS.CanvasApi, "PATTERN_REPEAT",    "repeat");
@@ -373,6 +389,7 @@ cnst(ASJS.CanvasApi, "LINE_JOIN_BEVEL",   "bevel");
 cnst(ASJS.CanvasApi, "LINE_JOIN_ROUND",   "round");
 cnst(ASJS.CanvasApi, "LINE_JOIN_MITER",   "miter");
 
+/*
 rof(ASJS.CanvasApi, "drawTriangle", function(ctx, im, x0, y0, x1, y1, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2) {
   drawQuad(ctx, im, x0, y0, x1, y1, x2, y2, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2);
 });
@@ -402,3 +419,4 @@ rof(ASJS.CanvasApi, "drawQuad", function(ctx, im, x0, y0, x1, y1, x2, y2, x3, y3
   ctx.drawImage(im, 0, 0);
   ctx.restore();
 });
+*/

@@ -20,7 +20,7 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
     _window.addClass("window");
     _window.init(
       "images/window.png?v={{date}}",
-      new ASJS.Rectangle(13, 60, 4, 7)
+      ASJS.Rectangle.create(13, 60, 4, 7)
     );
     _scope.addChild(_window);
 

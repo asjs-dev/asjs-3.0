@@ -9,11 +9,11 @@ rof(ASJS.BitmapBounds, "execute", function(bitmap) {
   var w = pixels.width;
   var h = pixels.height;
 
-  var size = new ASJS.Rectangle(1/0, 1/0, -1/0, -1/0);
+  var size = ASJS.Rectangle.create(1/0, 1/0, -1/0, -1/0);
 
   var i = -4;
   var l = d.length;
-  var pixelPos = new ASJS.Point();
+  var pixelPos = ASJS.Point.create();
   while ((i += 4) < l) {
     if (d[ i + 3 ] > 0) {
       var pixelLinearPos = Math.floor(i / 4);
@@ -29,7 +29,6 @@ rof(ASJS.BitmapBounds, "execute", function(bitmap) {
     }
   }
 
-  pixelPos.destruct();
   pixelPos = null;
 
   return size;

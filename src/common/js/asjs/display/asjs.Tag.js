@@ -11,7 +11,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   var _parent = null;
   var _state  = priv.CREATED;
 
-  var _bounds = new ASJS.Rectangle();
+  var _bounds = ASJS.Rectangle.create();
 
   _scope.new = function(tag) {
     _el = !tag || tis(tag, "string") ? document.createElement(tag || "div") : tag;
@@ -151,8 +151,6 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     for (var key in attributeNames) _scope.removeAttr(attributeNames[key]);
 
     destObj(_el);
-
-    _bounds.destruct();
 
     _bounds =
     _el     =

@@ -11,7 +11,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   get(_scope, "bounds", function() {
     var rect = _super.bounds;
-    var size = new ASJS.Rectangle();
+    var size = ASJS.Rectangle.create();
 
     var i = _scope.numChildren;
     while (i--) {
@@ -35,7 +35,6 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     if (size.width - size.x > rect.width) rect.width = size.width - size.x;
     if (size.height - size.y > rect.height) rect.height = size.height - size.y;
 
-    size.destruct();
     size = null;
 
     return rect;

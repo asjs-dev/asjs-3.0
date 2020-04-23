@@ -24,7 +24,7 @@ createClass(ASJS, "MaskBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
     var maxMaskH = _scope.pos.y + maskH;
 
     var i = srcD.length;
-    var srcPixelPos = new ASJS.Point();
+    var srcPixelPos = ASJS.Point.create();
     while ((i -= 4) > -1) {
       var srcPixelLinearPos = Math.floor(i / 4);
 
@@ -40,7 +40,6 @@ createClass(ASJS, "MaskBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
       } else if (_scope.cutout) srcD[i + 3] = 0;
     }
 
-    srcPixelPos.destruct();
     srcPixelPos = null;
 
     return pixels;

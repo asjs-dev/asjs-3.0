@@ -369,7 +369,7 @@ cnst(ASJS.Polyfill, "SCROLL_DELTA", {
   }
 });
 rof(ASJS.Polyfill, "getScrollData", function(event) {
-  return new ASJS.Point(
+  return ASJS.Point.create(
     event.wheelDeltaX || event.deltaX || (event.detail * ASJS.Polyfill.SCROLL_DELTA.X[event.axis]),
     event.wheelDeltaY || event.deltaY || (event.detail * ASJS.Polyfill.SCROLL_DELTA.Y[event.axis])
   );

@@ -4,9 +4,9 @@ require("../geom/asjs.GeomUtils.js");
 require("../event/asjs.DocumentEvent.js");
 
 createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
-  var _previousOffsetSize     = new ASJS.Point();
-  var _previousScrollSize     = new ASJS.Point();
-  var _previousScrollPosition = new ASJS.Point();
+  var _previousOffsetSize     = ASJS.Point.create();
+  var _previousScrollSize     = ASJS.Point.create();
+  var _previousScrollPosition = ASJS.Point.create();
 
   var _scrollableContainer = new ASJS.Sprite();
   var _scrollBarContainer  = new ASJS.Sprite();
@@ -64,17 +64,17 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   _scope.update = throttleFunction(function() {
     if (_useNative) return;
 
-    var offsetSize = new ASJS.Point(
+    var offsetSize = ASJS.Point.create(
       _scrollableContainer.width,
       _scrollableContainer.height
     );
 
-    var scrollPosition = new ASJS.Point(
+    var scrollPosition = ASJS.Point.create(
       _scrollableContainer.el.scrollLeft,
       _scrollableContainer.el.scrollTop
     );
 
-    var scrollSize = new ASJS.Point(
+    var scrollSize = ASJS.Point.create(
       _scrollableContainer.el.scrollWidth,
       _scrollableContainer.el.scrollHeight
     );
@@ -97,10 +97,6 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
       drawScrollBar(_verticalScrollBar,   offsetSize, scrollSize, scrollPosition, "y", "height");
     }
 
-    offsetSize.destruct();
-    scrollPosition.destruct();
-    scrollSize.destruct();
-
     offsetSize     =
     scrollPosition =
     scrollSize     = null;
@@ -111,9 +107,6 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
 
     _super.destruct();
 
-    _previousOffsetSize.destruct();
-    _previousScrollSize.destruct();
-    _previousScrollPosition.destruct();
     _scrollableContainer.destruct();
     _scrollBarContainer.destruct();
     _verticalScrollBar.destruct();
