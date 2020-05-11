@@ -1,4 +1,4 @@
-createClass(ASJS, "Timer", ASJS.BaseClass, function(_scope) {
+createClass(ASJS, "Timer", ASJS.BaseClass, function(_scope, _super) {
   var _then;
 
   _scope.start = function() {
@@ -14,5 +14,10 @@ createClass(ASJS, "Timer", ASJS.BaseClass, function(_scope) {
     var delta = now - _then;
     _then = now;
     return delta;
+  }
+
+  _scope.destruct = function() {
+    _scope.stop();
+    _super.destruct();
   }
 });

@@ -15,7 +15,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
 
     if (!_scope.hasEventListener(e.type)) return;
 
-    map(_handlers[e.type], function(handlerIndex, handlerItem) {
+    map(_handlers[e.type].clone(), function(handlerIndex, handlerItem) {
       handlerItem(e);
     });
   }

@@ -45,6 +45,7 @@ var stage;
 
 c1(ASJS, "Importer", Object, function(_scope) {
   var priv = {};
+
   cnst(priv, "REQUIRE_REGEX", /require\((\"[^\"]*\"|\'[^\']*\')\)\;/gm);
 
   var _version = Date.now();
@@ -61,18 +62,24 @@ c1(ASJS, "Importer", Object, function(_scope) {
 
     basePath = basePath || document.baseURI + _sourcePath;
     var path = getPath(basePath, fileName);
-
-    if (_includedScript.has(path)) dfd.resolve();
+    if (_includedScript.indexOf(path) > -1) dfd.resolve("");
     else {
       _includedScript.push(path);
       var loader = new ASJS.Loader();
           loader.compressed = compressed;
+          loader.responseType = "text/plain";
+          loader.async = false;
           loader.load(path + "?" + _version).then(function() {
             searchRequires(loader).finally(function(content) {
               loader.destruct();
               loader = null;
               dfd.resolve(content);
-              if (!autoRequire) Function(content)();
+              if (!autoRequire) {
+                var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.innerHTML = content;
+                document.body.appendChild(script);
+              }
             });
           });
     }
@@ -90,23 +97,27 @@ c1(ASJS, "Importer", Object, function(_scope) {
   function searchRequires(loader) {
     var dfd = new ASJS.Promise();
 
-    var script = "";
     var url     = loader.url;
     var content = loader.content;
-    var baseURL = url.substr(0, url.lastIndexOf("/"));
+    var baseUrl = url.substr(0, url.lastIndexOf("/"));
+    var basePath = basePath || document.baseURI + _sourcePath;
     var m;
     var requires = [];
     while ((m = priv.REQUIRE_REGEX.exec(content)) !== null) requires.push(m);
 
     ito(requires, function(index, value, next, end) {
       var path = value[1].substr(1, value[1].length - 2);
-      content = content.replace(value[0], "");
-      require(path, baseURL, true).finally(function(importedContent) {
-        script += importedContent;
-        next();
-      });
+
+      require(path, baseUrl, true)
+        .finally(function(importedContent) {
+          content = content.replace(value[0], importedContent !== undefined
+            ? importedContent
+            : ""
+          );
+          next();
+        });
     }, function() {
-      dfd.resolve(script + content);
+      dfd.resolve(content);
     });
 
     return dfd;

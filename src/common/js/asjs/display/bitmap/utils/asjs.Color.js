@@ -4,11 +4,31 @@ rof(ASJS.Color, "create", function(r, g, b, a) {
 });
 
 rof(ASJS.Color, "set", function(c, r, g, b, a) {
-  c.r = tis(r, "number") ? r : (!empty(c.r) ? c.r : 0);
-  c.g = tis(g, "number") ? g : (!empty(c.g) ? c.g : 0);
-  c.b = tis(b, "number") ? b : (!empty(c.b) ? c.b : 0);
-  c.a = tis(a, "number") ? a : (!empty(c.a) ? c.a : 1);
+  c.r = valueOrDefault(r, 0);
+  c.g = valueOrDefault(g, 0);
+  c.b = valueOrDefault(b, 0);
+  c.a = valueOrDefault(a, 1);
   return c;
+});
+
+rof(ASJS.Color, "multiply", function(a, b) {
+  var aPercentage = ASJS.Color.toPercentage(a);
+  var bPercentage = ASJS.Color.toPercentage(b);
+  return {
+    "r": (aPercentage.r * bPercentage.r) * 255,
+    "g": (aPercentage.g * bPercentage.g) * 255,
+    "b": (aPercentage.b * bPercentage.b) * 255,
+    "a": aPercentage.a * bPercentage.a
+  };
+});
+
+rof(ASJS.Color, "toPercentage", function(v) {
+  return {
+    "r": v.r / 255,
+    "g": v.g / 255,
+    "b": v.b / 255,
+    "a": v.a
+  };
 });
 
 rof(ASJS.Color, "parse", function(v) {

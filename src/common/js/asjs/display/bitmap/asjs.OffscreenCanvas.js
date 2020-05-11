@@ -1,15 +1,15 @@
 require("./asjs.CanvasApi.js");
 
 createClass(ASJS, "OffscreenCanvas", ASJS.BaseClass, function(_scope, _super) {
+  _super.protected.contextType = "2d";
+  _super.protected.contextAttributes = contextAttributes;
+  
+  ASJS.CanvasApi.initCanvas(_scope, _super);
+
   var _el;
 
   _scope.new = function(bitmapWidth, bitmapHeight, contextAttributes) {
     _el = new OffscreenCanvas(bitmapWidth || 1, bitmapHeight || 1);
-
-    ASJS.CanvasApi.initCanvas(_scope, _super);
-    
-    _super.protected.contextType = "2d";
-    _super.protected.contextAttributes = contextAttributes;
   }
 
   get(_scope, "el", function() { return _el; });

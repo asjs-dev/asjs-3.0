@@ -51,6 +51,26 @@ var between = function(a, b, c) {
 }
 var bw = between;
 
+var valueOrDefault = function(value, def) {
+  return empty(value) ? def : value;
+}
+var vod = valueOrDefault;
+
+var isBetween = function(value, from, to) {
+  return bw(from, to, value) === value;
+}
+var isBW = isBetween;
+
+var isGreaterThan = function(value, from) {
+  return value > from;
+}
+var isGT = isGreaterThan;
+
+var isLowerThan = function(value, to) {
+  return value < to;
+}
+var isLT = isLowerThan;
+
 var property = function(t, n, v) {
   v.enumerable   = true;
   v.configurable = true;

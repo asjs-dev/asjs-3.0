@@ -4,10 +4,10 @@ require("./asjs.FormElement.js");
 createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
   _scope.new = function(value, label, disabled, selected) {
     _super.new("option");
-    _scope.value = value || 0;
-    _scope.label = label || "";
-    _scope.disabled = disabled || false;
-    _scope.selected = selected || false;
+    _scope.value = valueOrDefault(value, 0);
+    _scope.label = valueOrDefault(label, "");
+    _scope.disabled = valueOrDefault(disabled, false);
+    _scope.selected = valueOrDefault(selected, false);
   }
 
   ASJS.Tag.attrProp(_scope, "value");

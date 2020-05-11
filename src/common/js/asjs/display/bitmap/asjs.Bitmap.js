@@ -2,13 +2,13 @@ require("../asjs.DisplayObject.js");
 require("./asjs.CanvasApi.js");
 
 createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
+  _super.protected.contextType = "2d";
+  _super.protected.contextAttributes = contextAttributes;
+
+  ASJS.CanvasApi.initCanvas(_scope, _super);
+
   _scope.new = function(bitmapWidth, bitmapHeight, contextAttributes) {
     _super.new("canvas");
-
-    ASJS.CanvasApi.initCanvas(_scope, _super);
-
-    _super.protected.contextType = "2d";
-    _super.protected.contextAttributes = contextAttributes;
 
     _scope.setBitmapSize(bitmapWidth, bitmapHeight);
   }

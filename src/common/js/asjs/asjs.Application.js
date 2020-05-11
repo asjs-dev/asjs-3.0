@@ -37,7 +37,6 @@ require("net/asjs.Loader.js");
 require("net/asjs.StyleLoader.js");
 
 require("geom/asjs.Rectangle.js");
-require("geom/asjs.Matrix.js");
 require("geom/asjs.Point.js");
 require("geom/asjs.GeomUtils.js");
 

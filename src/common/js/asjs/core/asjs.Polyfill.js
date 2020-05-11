@@ -325,6 +325,18 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
       var index = this.indexOf(item);
       index > -1 && this.splice(index, 1);
     }
+    Array.prototype.clone = function() {
+      return this.slice(0);
+    }
+    Array.prototype.equal = function(arr) {
+      if (!arr || arr.length !== this.length) return false;
+
+      for (var i = 0; i < this.length; i++) {
+        if (this[i] !== arr[i]) return false;
+      }
+
+      return true;
+    }
   }
 
   function checkScrollbarSize() {

@@ -17,12 +17,18 @@ rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
 
   prop(_scope, "bitmapWidth", {
     get: function() { return _scope.el.width; },
-    set: function(v) { _scope.el.width = Math.max(1, v || 1); }
+    set: function(v) {
+      _scope.el.width = Math.max(1, v || 1);
+      _scope.update();
+    }
   });
 
   prop(_scope, "bitmapHeight", {
     get: function() { return _scope.el.height; },
-    set: function(v) { _scope.el.height = Math.max(1, v || 1); }
+    set: function(v) {
+      _scope.el.height = Math.max(1, v || 1);
+      _scope.update();
+    }
   });
 
   _scope.getContext = function() {
@@ -49,6 +55,8 @@ rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
     _contextAttributes =
     _contextType       = null;
   }
+
+  _scope.update = function() {}
 });
 rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
   ASJS.CanvasApi.initBaseCanvas(_scope, _super);
