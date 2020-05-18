@@ -16,7 +16,7 @@ createClass(ASJS, "ColorChangeBitmapFilter", ASJS.AbstractBitmapFilter, function
     while ((i -= 4) > -1) {
       if (d[i + 3] === 0) continue;
 
-      ASJS.Color.set(oColor, d[i], d[i + 1], d[i + 2]);
+      ASJS.Color.set(d[i], d[i + 1], d[i + 2], 1, oColor);
 
       var hexValue      = ASJS.Color.colorToRgbHex(oColor);
       var selectedColor = _palette[hexValue];

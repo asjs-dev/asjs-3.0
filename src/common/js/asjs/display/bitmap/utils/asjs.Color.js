@@ -1,41 +1,75 @@
 createUtility(ASJS, "Color");
 rof(ASJS.Color, "create", function(r, g, b, a) {
-  return ASJS.Color.set({}, r, g, b, a);
+  return ASJS.Color.set(r, g, b, a);
 });
 
-rof(ASJS.Color, "set", function(c, r, g, b, a) {
-  c.r = valueOrDefault(r, 0);
-  c.g = valueOrDefault(g, 0);
-  c.b = valueOrDefault(b, 0);
-  c.a = valueOrDefault(a, 1);
-  return c;
+rof(ASJS.Color, "createFloat", function(r, g, b, a) {
+  return ASJS.Color.setFloat(r, g, b, a);
 });
 
-rof(ASJS.Color, "multiply", function(a, b) {
-  var aPercentage = ASJS.Color.toPercentage(a);
-  var bPercentage = ASJS.Color.toPercentage(b);
-  return {
-    "r": (aPercentage.r * bPercentage.r) * 255,
-    "g": (aPercentage.g * bPercentage.g) * 255,
-    "b": (aPercentage.b * bPercentage.b) * 255,
-    "a": aPercentage.a * bPercentage.a
-  };
+rof(ASJS.Color, "set", function(r, g, b, a, dst) {
+  dst = dst || {};
+  dst.r = valueOrDefault(r, 0);
+  dst.g = valueOrDefault(g, 0);
+  dst.b = valueOrDefault(b, 0);
+  dst.a = valueOrDefault(a, 1);
+  return dst;
 });
 
-rof(ASJS.Color, "toPercentage", function(v) {
-  return {
-    "r": v.r / 255,
-    "g": v.g / 255,
-    "b": v.b / 255,
-    "a": v.a
-  };
+rof(ASJS.Color, "setFloat", function(r, g, b, a, dst) {
+  dst = dst || new Float32Array(4);
+  dst[0] = valueOrDefault(r, 0);
+  dst[1] = valueOrDefault(g, 0);
+  dst[2] = valueOrDefault(b, 0);
+  dst[3] = valueOrDefault(a, 1);
+  return dst;
 });
 
-rof(ASJS.Color, "parse", function(v) {
-  if (tis(v, "number") || parseFloat(v) == v) return ASJS.Color.rgbIntToColor(v);
+rof(ASJS.Color, "multiply", function(a, b, dst) {
+  return ASJS.Color.set(
+    (a.r * b.r) / 255,
+    (a.g * b.g) / 255,
+    (a.b * b.b) / 255,
+    a.a * b.a,
+    dst
+  );
+});
+
+rof(ASJS.Color, "multiplyFloat", function(a, b, dst) {
+  return ASJS.Color.setFloat(
+    a[0] * b[0],
+    a[1] * b[1],
+    a[2] * b[2],
+    a[3] * b[3],
+    dst
+  );
+});
+
+rof(ASJS.Color, "toFloat", function(v, dst) {
+  return ASJS.Color.setFloat(
+    v.r / 255,
+    v.g / 255,
+    v.b / 255,
+    v.a,
+    dst
+  );
+});
+
+rof(ASJS.Color, "fromFloat", function(v, dst) {
+  return ASJS.Color.set(
+    v[0] * 255,
+    v[1] * 255,
+    v[2] * 255,
+    v[3],
+    dst
+  );
+});
+
+rof(ASJS.Color, "parse", function(v, dst) {
+  if (tis(v, "number") || parseFloat(v) == v) return ASJS.Color.rgbIntToColor(v, dst);
   if (tis(v, "string")) {
-    if (v.length > 7) return ASJS.Color.rgbaHexToColor(v);
-    return ASJS.Color.rgbHexToColor(v);
+    if (v.length > 7) return ASJS.Color.rgbaHexToColor(v, dst);
+    return ASJS.Color.rgbHexToColor(v, dst);
   }
   return v;
 });
@@ -74,58 +108,52 @@ rof(ASJS.Color, "intToHex", function(v) {
   return (hex.length < 2 ? "0" : "") + hex;
 });
 
-rof(ASJS.Color, "rgbHexToColor", function(hex, colorObject) {
+rof(ASJS.Color, "rgbHexToColor", function(hex, dst) {
   var result = ASJS.Color.valuesFromHex(hex);
   while (result.length < 3) result.unshift(0);
-  if (!colorObject) colorObject = ASJS.Color.create();
-  ASJS.Color.set(
-    colorObject,
-    parseInt(result[0], 16),
-    parseInt(result[1], 16),
-    parseInt(result[2], 16)
-  );
-  return colorObject;
-});
-
-rof(ASJS.Color, "rgbaHexToColor", function(hex, colorObject) {
-  var result = ASJS.Color.valuesFromHex(hex);
-  while (result.length < 4) result.unshift(0);
-  if (!colorObject) colorObject = ASJS.Color.create();
-  ASJS.Color.set(
-    colorObject,
+  return ASJS.Color.set(
     parseInt(result[0], 16),
     parseInt(result[1], 16),
     parseInt(result[2], 16),
-    parseInt(result[3], 16)
+    1,
+    dst
   );
-  return colorObject;
 });
 
-rof(ASJS.Color, "argbHexToColor", function(hex, colorObject) {
+rof(ASJS.Color, "rgbaHexToColor", function(hex, dst) {
   var result = ASJS.Color.valuesFromHex(hex);
   while (result.length < 4) result.unshift(0);
-  if (!colorObject) colorObject = ASJS.Color.create();
-  ASJS.Color.set(
-    colorObject,
+  return ASJS.Color.set(
+    parseInt(result[0], 16),
     parseInt(result[1], 16),
     parseInt(result[2], 16),
     parseInt(result[3], 16),
-    parseInt(result[0], 16)
+    dst
   );
-  return colorObject;
 });
 
-rof(ASJS.Color, "abgrHexToColor", function(hex, colorObject) {
+rof(ASJS.Color, "argbHexToColor", function(hex, dst) {
   var result = ASJS.Color.valuesFromHex(hex);
   while (result.length < 4) result.unshift(0);
-  if (!colorObject) colorObject = ASJS.Color.create();
-  ASJS.Color.set(colorObject,
+  return ASJS.Color.set(
+    parseInt(result[1], 16),
+    parseInt(result[2], 16),
+    parseInt(result[3], 16),
+    parseInt(result[0], 16),
+    dst
+  );
+});
+
+rof(ASJS.Color, "abgrHexToColor", function(hex, dst) {
+  var result = ASJS.Color.valuesFromHex(hex);
+  while (result.length < 4) result.unshift(0);
+  return ASJS.Color.set(
     parseInt(result[3], 16),
     parseInt(result[2], 16),
     parseInt(result[1], 16),
-    parseInt(result[0], 16)
+    parseInt(result[0], 16) / 255,
+    dst
   );
-  return colorObject;
 });
 
 rof(ASJS.Color, "colorToRgbHex", function(color) {
@@ -155,20 +183,20 @@ rof(ASJS.Color, "colorToAbgrHex", function(color) {
          ASJS.Color.intToHex(color.r);
 });
 
-rof(ASJS.Color, "rgbIntToColor", function(int, colorObject) {
-  return ASJS.Color.rgbHexToColor(int.toString(16), colorObject);
+rof(ASJS.Color, "rgbIntToColor", function(int, dst) {
+  return ASJS.Color.rgbHexToColor(int.toString(16), dst);
 });
 
-rof(ASJS.Color, "rgbaIntToColor", function(int, colorObject) {
-  return ASJS.Color.rgbaHexToColor(int.toString(16), colorObject);
+rof(ASJS.Color, "rgbaIntToColor", function(int, dst) {
+  return ASJS.Color.rgbaHexToColor(int.toString(16), dst);
 });
 
-rof(ASJS.Color, "argbIntToColor", function(int, colorObject) {
-  return ASJS.Color.argbHexToColor(int.toString(16), colorObject);
+rof(ASJS.Color, "argbIntToColor", function(int, dst) {
+  return ASJS.Color.argbHexToColor(int.toString(16), dst);
 });
 
-rof(ASJS.Color, "abgrIntToColor", function(int, colorObject) {
-  return ASJS.Color.abgrHexToColor(int.toString(16), colorObject);
+rof(ASJS.Color, "abgrIntToColor", function(int, dst) {
+  return ASJS.Color.abgrHexToColor(int.toString(16), dst);
 });
 
 rof(ASJS.Color, "colorToRgbInt", function(color) {
@@ -189,4 +217,8 @@ rof(ASJS.Color, "colorToAbgrInt", function(color) {
 
 rof(ASJS.Color, "clone", function(color) {
   return ASJS.Color.create(color.r, color.g, color.b, color.a);
+});
+
+rof(ASJS.Color, "cloneFloat", function(color) {
+  return ASJS.Color.createFloat(color[0], color[1], color[2], color[3]);
 });

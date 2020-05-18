@@ -21,7 +21,7 @@ createClass(ASJS, "PaletteLimitBitmapFilter", ASJS.AbstractBitmapFilter, functio
     var originalColor = ASJS.Color.create();
     while ((i -= 4) > -1) {
       if (d[i + 3] === 0) continue;
-      ASJS.Color.set(originalColor, d[i], d[i + 1], d[i + 2]);
+      ASJS.Color.set(d[i], d[i + 1], d[i + 2], 1, originalColor);
 
       var hexValue = ASJS.Color.colorToRgbHex(originalColor);
 

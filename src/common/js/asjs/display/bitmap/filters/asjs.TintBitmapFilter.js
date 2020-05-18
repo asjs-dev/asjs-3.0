@@ -30,7 +30,7 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
     while ((i -= 4) > -1) {
       if (d[i + 3] === 0) continue;
 
-      ASJS.Color.set(color, d[i], d[i + 1], d[i + 2]);
+      ASJS.Color.set(d[i], d[i + 1], d[i + 2], 1, color);
 
       if (checkBefore && !checkBefore(color)) continue;
 
@@ -41,7 +41,6 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
       ], i);
     }
 
-    color = null;
     color = null;
 
     return pixels;
