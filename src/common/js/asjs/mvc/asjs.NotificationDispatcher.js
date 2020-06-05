@@ -7,6 +7,7 @@ createClass(ASJS, "NotificationDispatcher", ASJS.BaseClass, function(_scope, _su
   _super.protected.addHandler       = _nHandler.add;
   _super.protected.removeHandler    = _nHandler.remove;
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _nHandler = null;
     _super.destruct();

@@ -12,6 +12,7 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
   var _cancelButton = new ASJS.Button();
   var _scrollBar    = new ASJS.ScrollBar();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 

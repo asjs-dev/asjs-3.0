@@ -71,6 +71,7 @@ createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
     return false;
   };
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.removeEventListeners && _scope.removeEventListeners();
 

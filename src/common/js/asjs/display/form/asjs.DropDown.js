@@ -4,6 +4,7 @@ require("./asjs.FormElement.js");
 createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
   var _select = new ASJS.Sprite("select");
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     _scope.setCSS("overflow", "hidden");
@@ -12,6 +13,7 @@ createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
 
   get(_scope, "select", function() { return _select; });
 
+  override(_scope, _super, "enabled");
   set(_scope, "enabled", function(v) {
     _super.enabled = _select.enabled = v;
     _scope.render();
@@ -42,6 +44,7 @@ createClass(ASJS, "DropDown", ASJS.FormElement, function(_scope, _super) {
     _select.setSize(_scope.width + 30, _scope.height);
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _select.destruct();
     _select = null;

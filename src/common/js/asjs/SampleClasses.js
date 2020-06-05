@@ -11,6 +11,7 @@ var NameSpace = {};
 
   var _privateVar;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     trace("new SampleClass()");
     _super.new("parentParam");

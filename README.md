@@ -50,6 +50,7 @@ Good for single page applications, browser games and other apps.
 ```javascript
 var SampleApp = {};
 createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     trace("<AS/JS> Application");
@@ -64,6 +65,7 @@ ASJS.start(SampleApp.Application);
 ```javascript
 var SampleApp = {};
 createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     trace("<AS/JS> Application");
@@ -81,6 +83,7 @@ ASJS.start(SampleApp.Application);
 ```javascript
 var SampleApp = {};
 createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     trace("<AS/JS> Application");
@@ -101,6 +104,7 @@ ASJS.start(SampleApp.Application);
 ```javascript
 var SampleApp = {};
 createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     trace("<AS/JS> Application");
@@ -124,6 +128,7 @@ ASJS.start(SampleApp.Application);
 ```javascript
 var SampleApp = {};
 createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     trace("<AS/JS> Application");
@@ -204,6 +209,7 @@ createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
   var _particles = [];
   var _time;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     trace("Say hello to <AS/JS>!");

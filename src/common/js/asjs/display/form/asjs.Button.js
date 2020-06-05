@@ -1,6 +1,7 @@
 require("./asjs.FormElement.js");
 
 createClass(ASJS, "Button", ASJS.FormElement, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new("input");
     _scope.setAttr("type", "button");

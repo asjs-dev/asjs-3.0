@@ -3,6 +3,7 @@ require("./asjs.Loader.js");
 createClass(ASJS, "ScriptLoader", ASJS.Loader, function(_scope, _super) {
   var _content;
 
+  override(_scope, _super, "content");
   get(_scope, "rawContent", function() { return _super.content; });
 
   get(_scope, "content", function() {
@@ -11,11 +12,13 @@ createClass(ASJS, "ScriptLoader", ASJS.Loader, function(_scope, _super) {
     return _content;
   });
 
+  override(_scope, _super, "unload");
   _scope.unload = function() {
     _content = null;
     _super.unload();
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _content = null;
     _super.destruct();

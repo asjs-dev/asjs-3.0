@@ -11,6 +11,7 @@ createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, functio
   var _defaultOkLabel     = "";
   var _defaultCancelLabel = "";
 
+  override(_scope, _super, "new");
   _scope.new = function(root) {
     _super.new(root);
 

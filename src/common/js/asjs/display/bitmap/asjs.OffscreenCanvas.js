@@ -32,6 +32,7 @@ createClass(ASJS, "OffscreenCanvas", ASJS.BaseClass, function(_scope, _super) {
     return bmp;
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.destructCanvasApi();
     _super.destruct();

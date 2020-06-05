@@ -1,6 +1,7 @@
 require("./asjs.DisplayObject.js");
 
 createClass(ASJS, "IFrame", ASJS.DisplayObject, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = _super.new.bind(_scope, "iframe");
 
   ASJS.Tag.attrProp(_scope, "src");

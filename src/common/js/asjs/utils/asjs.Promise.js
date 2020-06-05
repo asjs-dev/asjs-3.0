@@ -51,6 +51,7 @@ createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
     return _scope;
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     if (
       (_resolveFunction && _resolveFunction.length > 0) ||

@@ -3,6 +3,7 @@ require("./asjs.FileSelector.js");
 createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
   var _reader = new FileReader();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     _reader.onload = readerOnLoad;
@@ -16,6 +17,7 @@ createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
     }
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _reader = null;
     _super.destruct();

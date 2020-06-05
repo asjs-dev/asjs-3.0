@@ -2,6 +2,7 @@ require("../asjs.Tag.js");
 require("./asjs.FormElement.js");
 
 createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function(value, label, disabled, selected) {
     _super.new("option");
     _scope.value = valueOrDefault(value, 0);

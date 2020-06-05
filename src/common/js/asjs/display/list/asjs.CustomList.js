@@ -8,6 +8,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   var _itemsContainer = new ASJS.Sprite("ul");
   var _name           = "";
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -134,9 +135,10 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     }
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.unlock();
-    
+
     _itemsContainer.destruct();
 
     _itemsContainer =

@@ -44,6 +44,7 @@ createClass(ASJS, "Easing", ASJS.BaseClass, function(_scope, _super) {
     letsPlay();
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.stop();
 

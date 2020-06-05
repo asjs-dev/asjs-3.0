@@ -19,6 +19,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
 
   var _useNative;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -102,6 +103,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     scrollSize     = null;
   });
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.unlock();
 

@@ -1,6 +1,7 @@
 require("../asjs.DisplayObject.js");
 
 createClass(ASJS, "Form", ASJS.Sprite, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = _super.new.bind(_scope, "form");
 
   ASJS.Tag.attrProp(_scope, "action");

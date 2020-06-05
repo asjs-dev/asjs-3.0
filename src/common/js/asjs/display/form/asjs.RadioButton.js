@@ -5,6 +5,7 @@ createClass(ASJS, "RadioButton", ASJS.FormElement, function(_scope, _super) {
   var _radio = new ASJS.DisplayObject("input");
   var _label = new ASJS.DisplayObject();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new("label");
     _radio.setAttr("type", "radio");
@@ -18,9 +19,8 @@ createClass(ASJS, "RadioButton", ASJS.FormElement, function(_scope, _super) {
 
   get(_scope, "radio", function() { return _radio; });
 
-  set(_scope, "enabled", function(v) {
-    _super.enabled = _radio.enabled = v;
-  });
+  override(_scope, _super, "enabled");
+  set(_scope, "enabled", function(v) { _super.enabled = _radio.enabled = v; });
 
   prop(_scope, "name", {
     get: function() { return _radio.getAttr("name"); },
@@ -40,6 +40,7 @@ createClass(ASJS, "RadioButton", ASJS.FormElement, function(_scope, _super) {
     set: function(v) { _radio.value = v; }
   });
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _radio.destruct();
     _label.destruct();

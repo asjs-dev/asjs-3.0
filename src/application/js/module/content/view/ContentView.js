@@ -11,6 +11,7 @@ createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, 
   var _externalApplicationButton = new ASJS.Button();
   var _blurFilter                = new ASJS.BlurFilter();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 

@@ -16,6 +16,7 @@ createClass(ASJS, "AbstractViewMediator", ASJS.AbstractMediator, function(_scope
     _super.protected.addHandler(ASJS.Stage.RESIZE, onResize);
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.removeHandler(ASJS.Stage.RESIZE, onResize);
 

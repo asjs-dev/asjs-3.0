@@ -172,13 +172,23 @@ var extendProperties = function(t) {
     if (["$n", "constructor"].indexOf(k) === -1) {
       var desc = Object.getOwnPropertyDescriptor(t, k);
       if (!desc) continue;
-      if (desc.writable) s[k] = t[k];
-      else prop(s, k, desc);
+      if (desc.writable) {
+        if (["prot", "protected"].indexOf(k) > -1 || ["number", "string", "boolean", "object"].indexOf(typeof(desc.value)) === -1) s[k] = t[k];
+      } else prop(s, k, desc);
     }
   }
   return s;
 };
 var extProps = extendProperties;
+
+var override = function(t, s, k) {
+  if (["$n", "constructor"].indexOf(k) === -1) {
+    var desc = Object.getOwnPropertyDescriptor(t, k);
+    if (desc.writable) s[k] = t[k];
+    else prop(s, k, desc);
+  }
+};
+var ovrd = override;
 
 var destructObject = function(t, stack) {
   var stack = stack || [];
@@ -225,7 +235,6 @@ var dataMapper = function(data, objectType) {
 
   return instance;
 }
-
 var dm = dataMapper;
 
 var createClass = function(nameSpace, name, base, body, singleton) {
@@ -233,7 +242,8 @@ var createClass = function(nameSpace, name, base, body, singleton) {
     if (!this.$n) this.$n = [];
     this.$n.push(name);
     base.apply(this, args);
-    var s = extProps(this);
+    var s = {};
+    s.protected = s.prot = this.protected;
     if (body) body.apply(this, [this, s]);
     if (this.$n[0] === name) {
       del(this, "$n");

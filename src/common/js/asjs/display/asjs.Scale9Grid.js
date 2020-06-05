@@ -10,6 +10,7 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
 
   var _blocks    = [];
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -21,7 +22,7 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
       _blocks[i].setCSS("position", "absolute");
       _scope.addChild(_blocks[i]);
     }
-    
+
     _super.protected.lock();
   }
 
@@ -108,6 +109,7 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
     _helperBitmap.destroy();
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.unlock();
 

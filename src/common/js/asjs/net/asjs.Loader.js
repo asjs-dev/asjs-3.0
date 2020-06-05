@@ -76,6 +76,7 @@ createClass(ASJS, "Loader", ASJS.EventDispatcher, function(_scope, _super) {
     return _promise;
   };
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     if (_request) {
       _scope.cancel();

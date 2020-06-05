@@ -6,6 +6,7 @@ createClass(NS, "Box", ASJS.Sprite, function(_scope, _super) {
   var _label    = new ASJS.Label();
   var _button   = new ASJS.Button();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 

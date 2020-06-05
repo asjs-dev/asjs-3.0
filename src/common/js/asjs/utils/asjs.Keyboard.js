@@ -50,6 +50,7 @@ createClass(ASJS, "Keyboard", ASJS.BaseClass, function(_scope, _super) {
     _window.removeEventListener(ASJS.FocusEvent.BLUR, onBlur);
   };
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     while (_targets.length > 0) _scope.removeKeyListener(_targets.shift());
 

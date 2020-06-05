@@ -141,6 +141,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     _state = state;
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _parent && _parent.removeChild && _parent.removeChild(_scope);
 

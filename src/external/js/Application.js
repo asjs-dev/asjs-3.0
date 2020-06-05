@@ -10,6 +10,7 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
   var _styleLoader    = new ASJS.StyleLoader();
   var _languageLoaded = false;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -22,6 +23,7 @@ createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
 
   get(_scope, "title", function() { return _language.getText("title"); });
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     (new NS.DestructCommand()).execute();
     _styleLoader.destruct();

@@ -18,6 +18,7 @@ createClass(ASJSUtils, "LoadJSONServiceCommand", ASJS.AbstractCommand, function(
     return _dfd;
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _loader.destruct();
     _dfd.destruct();

@@ -1,6 +1,7 @@
 require("../asjs.Tag.js");
 
 createClass(ASJS, "VideoTrack", ASJS.Tag, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = _super.new.bind(_scope, "track");
 
   ASJS.Tag.attrProp(_scope, "src");

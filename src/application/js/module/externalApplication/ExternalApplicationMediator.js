@@ -5,6 +5,7 @@ createClass(NS, "ExternalApplicationMediator", ASJS.AbstractViewMediator, functi
 
   var _loader = new ASJS.ScriptLoader();
 
+  override(_scope, _super, "new");
   _scope.new = function(root) {
     _super.new(root);
 

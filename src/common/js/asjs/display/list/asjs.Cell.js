@@ -5,6 +5,7 @@ createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
   var _data    = {};
   var _checked = false;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new("li");
     _scope.setCSS("position", "relative");
@@ -32,6 +33,7 @@ createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
 
   _scope.showData = function() {}
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _data    =
     _checked = null;

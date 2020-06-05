@@ -8,6 +8,7 @@ createClass(ASJS, "FileSelector", ASJS.FormElement, function(_scope, _super) {
 
   var _preview = new ASJS.Sprite();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     _super.protected.fileInput.setAttr("type", "file");
@@ -28,6 +29,7 @@ createClass(ASJS, "FileSelector", ASJS.FormElement, function(_scope, _super) {
 
   get(_scope, "fileInput", function() { return _fileInput; });
 
+  override(_scope, _super, "enabled");
   set(_scope, "enabled", function(v) {
     _super.enabled = _super.protected.fileInput.enabled = v;
   });
@@ -37,6 +39,7 @@ createClass(ASJS, "FileSelector", ASJS.FormElement, function(_scope, _super) {
     set: _super.protected.fileInput.setAttr.bind(_super.protected.fileInput, "name")
   });
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.fileInput.destruct();
     _preview.destruct();

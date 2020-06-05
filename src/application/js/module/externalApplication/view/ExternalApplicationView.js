@@ -13,6 +13,7 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractAnimatedView, funct
 
   var _externalApplication;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 

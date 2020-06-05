@@ -31,6 +31,9 @@ rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
     }
   });
 
+  _scope.getBitmapWidth  = function() { return _scope.el.width; }
+  _scope.getBitmapHeight = function() { return _scope.el.height; }
+
   _scope.getContext = function() {
     if (!_context || (_context.isContextLost && _context.isContextLost())) {
       _context = _scope.el.getContext(_contextType, _contextAttributes);

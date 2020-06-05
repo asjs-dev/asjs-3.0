@@ -8,6 +8,7 @@ createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, 
 
   var _background = new ASJS.DisplayObject();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -19,6 +20,7 @@ createClass(NS, "ContentView", ASJSUtils.AbstractAnimatedView, function(_scope, 
     _scope.addChild(_background);
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.clear();
 

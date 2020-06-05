@@ -3,6 +3,7 @@ require("../NameSpace.js");
 createClass(ASJSUtils, "AbstractAnimatedView", ASJS.AbstractView, function(_scope, _super) {
   var _completeCallback;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -19,6 +20,7 @@ createClass(ASJSUtils, "AbstractAnimatedView", ASJS.AbstractView, function(_scop
 
   _scope.hide = _super.protected.animateTo.bind(_scope, 0);
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _completeCallback = null;
     _super.destruct();

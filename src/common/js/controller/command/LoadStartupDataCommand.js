@@ -14,6 +14,7 @@ createClass(ASJSUtils, "LoadStartupDataCommand", ASJS.AbstractCommand, function(
     return _dfd;
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _dfd.destruct();
     _dfd = null;

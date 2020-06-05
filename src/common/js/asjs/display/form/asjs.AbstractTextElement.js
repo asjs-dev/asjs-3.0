@@ -7,6 +7,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   var _restrict;
   var _helperElement = new ASJS.Tag();
 
+  override(_scope, _super, "new");
   _scope.new = function(tag) {
     _super.new(tag);
     _scope.addEventListener(ASJS.Event.CHANGE, onChange);
@@ -51,6 +52,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
     }
   });
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _helperElement.destruct();
 

@@ -9,6 +9,7 @@ createClass(NS, "ContentMediator", ASJS.AbstractViewMediator, function(_scope, _
 
   var _language = ASJSUtils.Language.instance;
 
+  override(_scope, _super, "new");
   _scope.new = function(root) {
     _super.new(root);
 

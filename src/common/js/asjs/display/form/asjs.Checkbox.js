@@ -6,9 +6,10 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
   var _checkbox = new ASJS.DisplayObject("input");
   var _label    = new ASJS.DisplayObject();
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new("label");
-    
+
     _checkbox.setAttr("type", "checkbox");
     _checkbox.visible = false;
     _scope.addChild(_checkbox);
@@ -22,9 +23,8 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
 
   get(_scope, "checkbox", function() { return _checkbox; });
 
-  set(_scope, "enabled", function(v) {
-    _super.enabled = _checkbox.enabled = v;
-  });
+  override(_scope, _super, "enabled");
+  set(_scope, "enabled", function(v) { _super.enabled = _checkbox.enabled = v; });
 
   prop(_scope, "name", {
     get: _checkbox.getAttr.bind(_checkbox, "name"),
@@ -39,6 +39,7 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
     }
   });
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _checkbox.destruct();
     _label.destruct();

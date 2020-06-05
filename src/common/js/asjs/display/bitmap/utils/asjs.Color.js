@@ -35,16 +35,6 @@ rof(ASJS.Color, "multiply", function(a, b, dst) {
   );
 });
 
-rof(ASJS.Color, "multiplyFloat", function(a, b, dst) {
-  return ASJS.Color.setFloat(
-    a[0] * b[0],
-    a[1] * b[1],
-    a[2] * b[2],
-    a[3] * b[3],
-    dst
-  );
-});
-
 rof(ASJS.Color, "toFloat", function(v, dst) {
   return ASJS.Color.setFloat(
     v.r / 255,
@@ -57,9 +47,9 @@ rof(ASJS.Color, "toFloat", function(v, dst) {
 
 rof(ASJS.Color, "fromFloat", function(v, dst) {
   return ASJS.Color.set(
-    v[0] * 255,
-    v[1] * 255,
-    v[2] * 255,
+    Math.floor(v[0] * 255),
+    Math.floor(v[1] * 255),
+    Math.floor(v[2] * 255),
     v[3],
     dst
   );

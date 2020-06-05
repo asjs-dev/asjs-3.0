@@ -13,6 +13,7 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   var _skewY    = 0;
   var _bounds   = ASJS.Rectangle.create();
 
+  override(_scope, _super, "new");
   _scope.new = function(tag) {
     _super.new(tag);
     _scope.tabindex = -1;
@@ -144,6 +145,7 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
 
   _scope.globalToLocal = ASJS.GeomUtils.globalToLocal.bind(_scope, _scope);
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _bounds   =
     _mouse    =

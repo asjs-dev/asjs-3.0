@@ -1,6 +1,7 @@
 require("../asjs.Tag.js");
 
 createClass(ASJS, "Source", ASJS.Tag, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function(src, type) {
     _super.new("source");
     _scope.src = src;

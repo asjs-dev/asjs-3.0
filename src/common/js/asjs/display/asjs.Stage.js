@@ -8,6 +8,7 @@ createSingletonClass(ASJS, "Stage", ASJS.Sprite, function(_scope, _super) {
   var _stageWidth  = 0;
   var _stageHeight = 0;
 
+  override(_scope, _super, "new");
   _scope.new = function() {
     _super.new(document.body);
     window.addEventListener(ASJS.WindowEvent.RESIZE, recalcStageSize);

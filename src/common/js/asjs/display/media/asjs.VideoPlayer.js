@@ -1,6 +1,7 @@
 require("../media/asjs.AbstractMediaPlayer.js");
 
 createClass(ASJS, "VideoPlayer", ASJS.AbstractMediaPlayer, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = _super.new.bind(_scope, "video");
 
   prop(_scope, "poster", {

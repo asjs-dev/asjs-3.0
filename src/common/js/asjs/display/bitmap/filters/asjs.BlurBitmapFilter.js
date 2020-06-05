@@ -1,6 +1,7 @@
 require("./asjs.AbstractConvoluteBitmapFilter.js");
 
 createClass(ASJS, "BlurBitmapFilter", ASJS.AbstractConvoluteBitmapFilter, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = function(opaque, value) {
     _super.new(opaque);
     _scope.value = value;

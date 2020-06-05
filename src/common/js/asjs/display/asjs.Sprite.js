@@ -9,6 +9,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   _super.protected.lock   = function() { _locked = true; };
   _super.protected.unlock = function() { _locked = false; };
 
+  override(_scope, _super, "bounds");
   get(_scope, "bounds", function() {
     var rect = _super.bounds;
     var size = ASJS.Rectangle.create();
@@ -51,6 +52,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   get(_scope, "numChildren", function() { return !empty(_children) ? _children.length : 0; });
 
+  override(_scope, _super, "clear");
   _scope.clear = function() {
     while (_scope.numChildren) _scope.removeChildAt(0);
     _super.clear();
@@ -128,12 +130,14 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     return null;
   }
 
+  override(_scope, _super, "sendParentChangeEvent");
   _scope.sendParentChangeEvent = function() {
     _super.sendParentChangeEvent();
     var i = _scope.numChildren;
     while (i--) _scope.getChildAt(i).sendParentChangeEvent();
   }
 
+  override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _children      =
     _mouseChildren =

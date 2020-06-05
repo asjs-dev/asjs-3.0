@@ -4,6 +4,7 @@ require("../event/asjs.LoaderEvent.js");
 require("../geom/asjs.Point.js");
 
 createClass(ASJS, "Image", ASJS.DisplayObject, function(_scope, _super) {
+  override(_scope, _super, "new");
   _scope.new = _super.new.bind(_scope, "img");
 
   get(_scope, "imageWidth", function() { return _scope.el.naturalWidth; });
