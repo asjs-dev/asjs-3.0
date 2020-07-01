@@ -40,8 +40,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   prop(_scope, "text", {
     get: function() { return _el.textContent || _el.innerText; },
     set: function(v) {
-      _el.textContent = v;
-      _el.innerText = v;
+      _el.textContent = _el.innerText = v;
     }
   });
 

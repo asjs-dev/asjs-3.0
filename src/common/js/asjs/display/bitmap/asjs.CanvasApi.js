@@ -31,9 +31,6 @@ rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
     }
   });
 
-  _scope.getBitmapWidth  = function() { return _scope.el.width; }
-  _scope.getBitmapHeight = function() { return _scope.el.height; }
-
   _scope.getContext = function() {
     if (!_context || (_context.isContextLost && _context.isContextLost())) {
       _context = _scope.el.getContext(_contextType, _contextAttributes);
@@ -67,16 +64,12 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
   var _filtersReady = true;
   var _drawLine     = false;
   var _drawFill     = false;
-  var _keepOriginal = false;
   var _bitmapFilters;
   var _original;
 
-  get(_scope, "original", function() { return _original; });
+  _scope.keepOriginal = false;
 
-  prop(_scope, "keepOriginal", {
-    get: function() { return _keepOriginal; },
-    set: function(v) { _keepOriginal = v; }
-  });
+  get(_scope, "original", function() { return _original; });
 
   prop(_scope, "bitmapFilters", {
     get: function() { return _bitmapFilters; },
@@ -298,7 +291,6 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
 
     _filtersReady  =
     _drawLine      =
-    _keepOriginal  =
     _drawFill      =
     _bitmapFilters =
     _original      = null;

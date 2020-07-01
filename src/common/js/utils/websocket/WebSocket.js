@@ -6,10 +6,11 @@ createClass(ASJSUtils, "WS", ASJS.EventDispatcher, function(_scope) {
   cnst(priv, "RECONNECT_INTERVALS", [1, 2, 3, 15, 30, 60, 120, 240, 300]);
 
   var _reconnectCounter = 0;
-  var _tryToReconnect;
   var _reconnectTimeoutId;
   var _url;
   var _ws;
+
+  _scope.tryToReconnect;
 
   get(_scope, "url", function() { return _url; });
 
@@ -20,11 +21,6 @@ createClass(ASJSUtils, "WS", ASJS.EventDispatcher, function(_scope) {
   get(_scope, "protocol", function() { return _ws ? _ws.protocol : null; });
 
   get(_scope, "bufferedAmount", function() { return _ws ? _ws.bufferedAmount : 0; });
-
-  prop(_scope, "tryToReconnect", {
-    get: function() { return _tryToReconnect; },
-    set: function(v) { _tryToReconnect = v; }
-  });
 
   _scope.connect = function(url) {
     _url = url;

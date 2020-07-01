@@ -1,33 +1,25 @@
 require("./asjs.AbstractBitmapFilter.js");
 
 createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope, _super) {
-  var _color;
-  var _blendModeFunction;
+  _scope.color;
+  _scope.blendModeFunction;
 
   _scope.new = function(color, blendModeFunction) {
     _scope.color = color;
     _scope.blendModeFunction = blendModeFunction || ASJS.TintBitmapFilter.ADD;
   }
 
-  prop(_scope, "color", {
-    get: function() { return _color; },
-    set: function(v) { _color = v || ASJS.Color.create(); }
-  });
-
-  prop(_scope, "blendModeFunction", {
-    get: function() { return _blendModeFunction; },
-    set: function(v) { _blendModeFunction = v || ASJS.TintBitmapFilter.ADD; }
-  });
-
   _scope.execute = function(pixels) {
     var d = pixels.data;
-    var i = d.length;
+    var l = d.length;
 
     var color = ASJS.Color.create();
 
-    var checkBefore = _blendModeFunction.before;
+    var checkBefore = _scope.blendModeFunction.before;
 
-    while ((i -= 4) > -1) {
+    var vect = new Float32Array([_scope.color.r, _scope.color.g, _scope.color.b]);
+
+    for (var i = 0; i < l; i += 4) {
       if (d[i + 3] === 0) continue;
 
       ASJS.Color.set(d[i], d[i + 1], d[i + 2], 1, color);
@@ -35,9 +27,9 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
       if (checkBefore && !checkBefore(color)) continue;
 
       d.set([
-        _scope.blendModeFunction(color.r, _color.r),
-        _scope.blendModeFunction(color.g, _color.g),
-        _scope.blendModeFunction(color.b, _color.b)
+        _scope.blendModeFunction(color.r, vect[0]),
+        _scope.blendModeFunction(color.g, vect[1]),
+        _scope.blendModeFunction(color.b, vect[2])
       ], i);
     }
 
@@ -48,8 +40,8 @@ createClass(ASJS, "TintBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope
 
   override(_scope, _super, "destruct");
   _scope.destruct = function() {
-    _blendModeFunction =
-    _color             = null;
+    _scope.blendModeFunction =
+    _scope.color             = null;
 
     _super.destruct();
   }

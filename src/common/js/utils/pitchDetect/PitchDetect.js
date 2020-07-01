@@ -13,9 +13,8 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
   var _bufferLength;
   var _buffer;
 
-  var _minSamples;
-
-  var _interval;
+  _scope.minSamples;
+  _scope.samplingInterval;
 
   _scope.new = function() {
     _scope.bufferLength = 1024;
@@ -30,16 +29,6 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
       _bufferLength = v;
       _buffer = new Float32Array(_bufferLength);
     }
-  });
-
-  prop(_scope, "minSamples", {
-    get: function() { return _minSamples; },
-    set: function(v) { _minSamples = v; }
-  });
-
-  prop(_scope, "samplingInterval", {
-    get: function() { return _interval; },
-    set: function(v) { _interval = v; }
   });
 
   _scope.start = function() {
@@ -94,7 +83,7 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
     if (Math.sqrt(rms / size) < 0.01) return -1;
 
     var lastCorrelation = 1;
-    var offset = _minSamples - 1;
+    var offset = _scope.minSamples - 1;
     while (++offset < maxSamples) {
       var correlation = 0;
 
@@ -122,7 +111,7 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
   function updatePitch() {
     _analyser.getFloatTimeDomainData(_buffer);
      _scope.dispatchEvent(ASJSUtils.PitchDetect.DETECTED, autoCorrelate());
-    _rafID = setTimeout(updatePitch, _interval);
+    _rafID = setTimeout(updatePitch, _scope.samplingInterval);
   }
 });
 msg(ASJSUtils.PitchDetect, "DETECTED");

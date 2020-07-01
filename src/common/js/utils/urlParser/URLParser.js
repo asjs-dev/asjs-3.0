@@ -1,9 +1,10 @@
 require("../../NameSpace.js");
 
 createSingletonClass(ASJSUtils, "URLParser", ASJS.BaseClass, function(_scope) {
-  var _urlParams;
+  var _urlParams = {};
 
   _scope.getQueryParams = function() {
+    parseQueryString();
     return _urlParams;
   }
 
@@ -29,9 +30,9 @@ createSingletonClass(ASJSUtils, "URLParser", ASJS.BaseClass, function(_scope) {
   };
 
   function parseQueryString() {
-    if (!_urlParams) {
-      var queryParams = decodeURIComponent(location.href);
-      var qmi = queryParams.indexOf("?");
+    var queryParams = decodeURIComponent(location.href);
+    var qmi = queryParams.indexOf("?");
+    if (qmi > -1) {
       var params = queryParams.substring(qmi + 1).split("&");
       _urlParams = {};
       var line;

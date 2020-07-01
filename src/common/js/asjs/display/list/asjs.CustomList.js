@@ -2,11 +2,12 @@ require("../asjs.Sprite.js");
 require("./asjs.Cell.js");
 
 createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
-  var _multiselect    = false;
   var _cell           = ASJS.Cell;
   var _lastCellIndex  = 0;
   var _itemsContainer = new ASJS.Sprite("ul");
   var _name           = "";
+
+  _scope.multiselect    = false;
 
   override(_scope, _super, "new");
   _scope.new = function() {
@@ -21,11 +22,6 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   get(_scope, "length", function() { return _itemsContainer.numChildren; });
 
   set(_scope, "cell", function(v) { _cell = v; });
-
-  prop(_scope, "multiselect", {
-    get: function() { return _multiselect; },
-    set: function(v) { _multiselect = v; }
-  });
 
   prop(_scope, "selected", {
     get: function() {
@@ -142,7 +138,6 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     _itemsContainer.destruct();
 
     _itemsContainer =
-    _multiselect    =
     _cell           =
     _lastCellIndex  =
     _name           = null;

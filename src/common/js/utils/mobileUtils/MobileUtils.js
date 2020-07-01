@@ -2,20 +2,20 @@ require("../../NameSpace.js");
 
 createSingletonClass(ASJSUtils, "MobileUtils", ASJS.BaseClass, function(_scope) {
   var _dpi;
-  var _baseSize;
-  var _type;
-  var _useDPI;
-  var _useScreenSize;
   var _isDesktop;
+
+  _scope.baseSize;
+  _scope.type;
+  _scope.useDPI;
+  _scope.useScreenSize;
 
   _scope.new = function() {
     _dpi = 1;
 
-    _baseSize = 0;
-
-    _type          = ASJSUtils.MobileUtils.TYPE_WIDTH;
-    _useDPI        = false;
-    _useScreenSize = false;
+    _scope.baseSize      = 0;
+    _scope.type          = ASJSUtils.MobileUtils.TYPE_WIDTH;
+    _scope.useDPI        = false;
+    _scope.useScreenSize = false;
 
     var isIOS = new RegExp("iPad", "i").test(navigator.userAgent) || new RegExp("iPhone", "i").test(navigator.userAgent);
     _isDesktop = !isIOS && (empty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
@@ -25,29 +25,9 @@ createSingletonClass(ASJSUtils, "MobileUtils", ASJS.BaseClass, function(_scope) 
 
   get(_scope, "isDesktop", function() { return _isDesktop;});
 
-  get(_scope, "width", function() { return _useScreenSize ? stage.screenWidth : stage.stageWidth; });
+  get(_scope, "width", function() { return _scope.useScreenSize ? stage.screenWidth : stage.stageWidth; });
 
-  get(_scope, "height", function() { return _useScreenSize ? stage.screenHeight : stage.stageHeight; });
-
-  prop(_scope, "type", {
-    get: function() { return _type; },
-    set: function(v) { _type = v; }
-  });
-
-  prop(_scope, "useDPI", {
-    get: function() { return _useDPI; },
-    set: function(v) { _useDPI = v; }
-  });
-
-  prop(_scope, "useScreenSize", {
-    get: function() { return _useScreenSize; },
-    set: function(v) { _useScreenSize = v; }
-  });
-
-  prop(_scope, "baseSize", {
-    get: function() { return _baseSize; },
-    set: function(v) { _baseSize = v; }
-  });
+  get(_scope, "height", function() { return _scope.useScreenSize ? stage.screenHeight : stage.stageHeight; });
 
   _scope.getOrientation = function() {
     return _scope.width > _scope.height ? ASJSUtils.MobileUtils.ORIENTATION_LANDSCAPE : ASJSUtils.MobileUtils.ORIENTATION_PORTRAIT;

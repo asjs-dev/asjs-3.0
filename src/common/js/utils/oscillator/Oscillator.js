@@ -8,8 +8,9 @@ createClass(ASJSUtils, "Oscillator", ASJS.BaseClass, function(_scope) {
   var _sourceNode;
   var _flist;
   var _step;
-  var _interval;
   var _rafID;
+
+  _scope.stepInterval;
 
   _scope.new = function() {
     _scope.stepInterval = 200;
@@ -18,11 +19,6 @@ createClass(ASJSUtils, "Oscillator", ASJS.BaseClass, function(_scope) {
     _analyser.fftSize = 2048;
     _analyser.connect(_audioContext.destination);
   }
-
-  prop(_scope, "stepInterval", {
-    get: function() { return _interval; },
-    set: function(v) { _interval = v; }
-  });
 
   _scope.play = function(flist) {
     _flist = flist;
@@ -45,7 +41,7 @@ createClass(ASJSUtils, "Oscillator", ASJS.BaseClass, function(_scope) {
   function playList() {
     playFrequency(_flist[_step]);
     if (++_step >= _flist.length) _step = 0;
-    _rafID = setTimeout(playList, _interval);
+    _rafID = setTimeout(playList, _scope.stepInterval);
   }
 
   function playFrequency(frequency) {

@@ -13,11 +13,11 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   var _verticalScrollBar   = new ASJS.DisplayObject();
   var _horizontalScrollBar = new ASJS.DisplayObject();
 
-  var _scrollSpeed     = 1;
-  var _horizontalAngle = 1;
-  var _verticalAngle   = 1;
-
   var _useNative;
+
+  _scope.scrollSpeed     = 1;
+  _scope.horizontalAngle = 1;
+  _scope.verticalAngle   = 1;
 
   override(_scope, _super, "new");
   _scope.new = function() {
@@ -42,21 +42,6 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
       _useNative = ASJS.Polyfill.instance.scrollBarSize === 0 ? true : v;
       update();
     }
-  });
-
-  prop(_scope, "horizontalAngle", {
-    get: function() { return _horizontalAngle; },
-    set: function(v) { _horizontalAngle = tis(v, "number") ? Math.sign(v) : 1; }
-  });
-
-  prop(_scope, "verticalAngle", {
-    get: function() { return _verticalAngle; },
-    set: function(v) { _verticalAngle = tis(v, "number") ? Math.sign(v) : 1; }
-  });
-
-  prop(_scope, "scrollSpeed", {
-    get: function() { return _scrollSpeed; },
-    set: function(v) { _scrollSpeed = tis(v, "number") ? v : 1; }
   });
 
   get(_scope, "verticalScrollBar",   function() { return _verticalScrollBar; });
@@ -159,8 +144,8 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   function onScroll(event) {
     var scrollDelta = ASJS.Polyfill.getScrollData(event);
 
-    _scrollableContainer.el.scrollLeft += scrollDelta.x * _horizontalAngle * _scrollSpeed;
-    _scrollableContainer.el.scrollTop  += scrollDelta.y * _verticalAngle * _scrollSpeed;
+    _scrollableContainer.el.scrollLeft += scrollDelta.x * _scope.horizontalAngle * _scope.scrollSpeed;
+    _scrollableContainer.el.scrollTop  += scrollDelta.y * _scope.verticalAngle   * _scope.scrollSpeed;
 
     _scope.update();
   }

@@ -4,8 +4,9 @@ require("../../utils/asjs.Keyboard.js");
 require("./asjs.FormElement.js");
 
 createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _super) {
-  var _restrict;
   var _helperElement = new ASJS.Tag();
+
+  _scope.restrict;
 
   override(_scope, _super, "new");
   _scope.new = function(tag) {
@@ -38,11 +39,6 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
 
   ASJS.Tag.attrProp(_scope, "maxChar", "maxLength");
 
-  prop(_scope, "restrict", {
-    get: function() { return _restrict; },
-    set: function(v) { _restrict = v; }
-  });
-
   prop(_scope, "autofocus", {
     get: _scope.getAttr.bind(_scope, "autofocus"),
     set: function(v) {
@@ -56,8 +52,8 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   _scope.destruct = function() {
     _helperElement.destruct();
 
-    _restrict      =
-    _helperElement = null;
+    _scope.restrict =
+    _helperElement  = null;
 
     _super.destruct();
   }
@@ -65,7 +61,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   var onChange = checkRestrict;
 
   function checkRestrict() {
-    if (empty(_restrict)) return;
+    if (empty(_scope.restrict)) return;
 
     var caretPos = 0;
 
@@ -77,7 +73,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
       caretPos = _scope.el.selectionStart;
     }
 
-    var newValue = _scope.val.replace(new RegExp("(?!" + _restrict + ").", "g"), '');
+    var newValue = _scope.val.replace(new RegExp("(?!" + _scope.restrict + ").", "g"), '');
     if (newValue === _scope.val) return;
 
     _scope.val = newValue;
