@@ -76,6 +76,8 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
   var _width;
   var _height;
+  var _widthHalf;
+  var _heightHalf;
 
   var _pickedElements = [];
   var _isPickerSet         = false;
@@ -168,8 +170,8 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   _scope.setPickerPoint = function(x, y) {
     _isPickerSet = true;
 
-    _tempPickerVector[0] = (x - (_width * 0.5)) * _scope.parentMatrix[0];
-    _tempPickerVector[1] = (y - (_height * 0.5)) * _scope.parentMatrix[5];
+    _tempPickerVector[0] = (x - _widthHalf) * _scope.parentMatrix[0];
+    _tempPickerVector[1] = (y - _heightHalf) * _scope.parentMatrix[5];
   }
 
   override(_scope, _super, "destruct");
@@ -206,6 +208,8 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _lightEffects          =
     _width                 =
     _height                =
+    _widthHalf             =
+    _heightHalf            =
     _tempPickerVector      =
     _tempVector            =
     _tempInverseMatrix     =
@@ -368,6 +372,9 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
       _width  = _webGlBitmap.bitmapWidth;
       _height = _webGlBitmap.bitmapHeight;
+
+      _widthHalf  = _width * 0.5;
+      _heightHalf = _height * 0.5;
 
       _scope.parentMatrix = m4.orthographic(0, _width, _height, 0, -1, 1);
 

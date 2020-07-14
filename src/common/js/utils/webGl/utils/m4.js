@@ -3,8 +3,6 @@ var m4 = (function() {
 
   var PI = Math.PI;
   var PI_HALF = PI * 0.5;
-  var PI_2 = PI * 2;
-  var QUARTER_ROTATION = 90 * (PI / 180);
 
   _scope.isPointInMatrix = function(
     vec,
