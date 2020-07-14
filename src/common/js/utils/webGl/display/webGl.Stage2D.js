@@ -86,7 +86,6 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   var _tempInverseMatrix = new Float32Array(16);
   var _tempVector        = new Float32Array(4);
 
-
   override(_scope, _super, "new");
   _scope.new = function(webGlBitmap, vertexShader, fragmentShader) {
     _super.new();
@@ -126,7 +125,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
     resize();
     _scope.setParentColor([1, 1, 1, 1]);
-    _scope.filters = WebGl.Stage2D.FILTERS.NONE;
+    _scope.filters = WebGl.Stage2D.Filters.NONE;
   }
 
   set(_scope, "filters", function(f) {
@@ -230,10 +229,10 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
       id = i * 3;
       quadId = i * 4;
       if (i >= _attachedLights.length || !_attachedLights[i].renderable) {
-        _lightPositions.set(priv.DEFAULT_TRI,  id);
-        _lightVolumes.set(priv.DEFAULT_TRI,    id);
+        _lightPositions.set(priv.DEFAULT_TRI, id);
+        _lightVolumes.set(priv.DEFAULT_TRI,   id);
         _lightColors.set(priv.DEFAULT_QUAD,   quadId);
-        _lightEffects.set(priv.DEFAULT_QUAD, quadId);
+        _lightEffects.set(priv.DEFAULT_QUAD,  quadId);
       } else {
         var light = _attachedLights[i];
         _lightPositions.set(light.positionCache, id);
@@ -464,8 +463,8 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
       "vec4 lightValue(vec3 lightPosition, vec3 lightVolume, vec4 lightColor, vec4 lightEffect) {" +
         "vec2 dist = v_coord.xy - lightPosition.xy;" +
         "return lightColor * lightColor.a * max(0.0, min(1.0, 1.0 - sqrt(" +
-          "pow(dist.x + (abs(dist.x) * lightEffect.x), 2.0 * lightEffect.z) * (lightVolume.x / u_resolution.y) + " +
-          "pow(dist.y + (abs(dist.y) * lightEffect.y), 2.0 * lightEffect.w) * (lightVolume.y / u_resolution.x / u_resolution.y)" +
+          "pow(dist.x + (abs(dist.x) * lightEffect.x), 2.0/* * lightEffect.z*/) * (lightVolume.x / u_resolution.y) + " +
+          "pow(dist.y + (abs(dist.y) * lightEffect.y), 2.0/* * lightEffect.w*/) * (lightVolume.y / u_resolution.x / u_resolution.y)" +
         ")));" +
       "}";
   }
@@ -515,25 +514,25 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
     for (var i = 0; i < filters.length; i++) {
       shader += "if ((" + filters[i] + " & u_filters) > 0) {";
         switch (filters[i]) {
-          case WebGl.Stage2D.FILTERS.GRAYSCALE:
+          case WebGl.Stage2D.Filters.GRAYSCALE:
             shader += "fragColor = vec4(vec3(1.0) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), fragColor.a);";
           break;
-          case WebGl.Stage2D.FILTERS.SEPIA:
+          case WebGl.Stage2D.Filters.SEPIA:
             shader += "fragColor = vec4(vec3(0.874, 0.514, 0.156) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), fragColor.a);";
           break;
-          case WebGl.Stage2D.FILTERS.INVERT:
+          case WebGl.Stage2D.Filters.INVERT:
             shader += "fragColor = abs(vec4(fragColor.rgb - 1.0, fragColor.a));";
           break;
-          case WebGl.Stage2D.FILTERS.COLORLIMIT:
+          case WebGl.Stage2D.Filters.COLORLIMIT:
             shader += "fragColor = vec4((floor((fragColor.rgb * 256.0) / 32.0) / 256.0) * 32.0, fragColor.a);";
           break;
-          case WebGl.Stage2D.FILTERS.VIGNETTE:
+          case WebGl.Stage2D.Filters.VIGNETTE:
             shader += "fragColor = vec4(fragColor.rgb * (1.0 - sqrt(pow(v_coord.x, 4.0) + pow(v_coord.y, 4.0))), fragColor.a);";
           break;
-          case WebGl.Stage2D.FILTERS.RAINBOW:
+          case WebGl.Stage2D.Filters.RAINBOW:
             shader += "fragColor = vec4(fragColor.rgb + vec3(v_coord.x * 0.15, v_coord.y * 0.15, (v_coord.x - v_coord.y) * 0.15), fragColor.a);";
           break;
-          case WebGl.Stage2D.FILTERS.LINES:
+          case WebGl.Stage2D.Filters.LINES:
             shader += "fragColor += vec4(sin(v_coord.y * 500.0) * 0.2);";
           break;
         }
@@ -545,7 +544,7 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
 
   return shader;
 });
-cnst(WebGl.Stage2D, "FILTERS", {
+cnst(WebGl.Stage2D, "Filters", {
   "NONE"       : 0,
   "GRAYSCALE"  : 1,
   "SEPIA"      : 2,

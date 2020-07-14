@@ -8,7 +8,7 @@ createClass(WebGl, "Light", WebGl.Item, function(_scope, _super) {
     quadX   : 1,
     quadY   : 1
   };
-  
+
   _scope.positionCache = new Float32Array(3);
   _scope.volumeCache   = new Float32Array(3);
   _scope.effectCache   = new Float32Array([0, 0, 1, 1]);
