@@ -3,23 +3,25 @@ require("./webGl.BlendModes.js");
 require("../NameSpace.js");
 
 createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
+  var _matrixUtils = WebGl.MatrixUtils;
+
   _scope.textureProps = {
-    x         : 0,
-    y         : 0,
-    rotationZ : 0,
-    width     : 1,
-    height    : 1,
-    anchorX   : 0,
-    anchorY   : 0,
-    crop      : {
-      x      : 0,
-      y      : 0,
-      width  : 1,
-      height : 1
+    "x"         : 0,
+    "y"         : 0,
+    "rotationZ" : 0,
+    "width"     : 1,
+    "height"    : 1,
+    "anchorX"   : 0,
+    "anchorY"   : 0,
+    "crop"      : {
+      "x"      : 0,
+      "y"      : 0,
+      "width"  : 1,
+      "height" : 1
     }
   };
 
-  _scope.textureMatrixCache = m4.identity();
+  _scope.textureMatrixCache = _matrixUtils.identity();
   _scope.texture;
 
   _scope.tintType  = WebGl.Image.Tint.NORMAL;
@@ -46,7 +48,7 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
   _scope.updateTextureProps = function() {
     var textureProps = _scope.textureProps;
 
-    m4.transformTexture2D(
+    _matrixUtils.transformTexture2D(
       textureProps.x,
       textureProps.y,
 

@@ -2,35 +2,35 @@ require("../NameSpace.js");
 
 createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
   _scope.props = {
-    x         : 0,
-    y         : 0,
-    z         : 0,
-    rotationX : 0,
-    rotationY : 0,
-    rotationZ : 0,
-    scaleX    : 1,
-    scaleY    : 1,
-    scaleZ    : 1,
-    width     : 1,
-    height    : 1,
-    depth     : 1,
-    anchorX   : 0,
-    anchorY   : 0,
-    anchorZ   : 0,
+    "x"         : 0,
+    "y"         : 0,
+    "z"         : 0,
+    "rotationX" : 0,
+    "rotationY" : 0,
+    "rotationZ" : 0,
+    "scaleX"    : 1,
+    "scaleY"    : 1,
+    "scaleZ"    : 1,
+    "width"     : 1,
+    "height"    : 1,
+    "depth"     : 1,
+    "anchorX"   : 0,
+    "anchorY"   : 0,
+    "anchorZ"   : 0,
   };
 
   _scope.color = {
-    r : 1,
-    g : 1,
-    b : 1,
-    a : 1
+    "r" : 1,
+    "g" : 1,
+    "b" : 1,
+    "a" : 1
   };
 
   _scope.renderable  = true;
   _scope.enabled     = true;
   _scope.interactive = false;
 
-  _scope.matrixCache = m4.identity();
+  _scope.matrixCache = WebGl.MatrixUtils.identity();
   _scope.colorCache  = new Float32Array(4);
 
   _scope.parentMatrix = null;

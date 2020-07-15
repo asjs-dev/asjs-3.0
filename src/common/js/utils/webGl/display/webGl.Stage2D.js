@@ -3,7 +3,8 @@ require("./webGl.Container.js");
 require("./webGl.BlendModes.js");
 
 createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
-  var _wglUtils = WebGl.Utils.instance;
+  var _wglUtils    = WebGl.Utils.instance;
+  var _matrixUtils = WebGl.MatrixUtils;
 
   var priv = {};
   cnst(priv, "MAX_BATCH_ITEMS",  10000);
@@ -181,6 +182,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _renderTimer           =
     _wglUtils              =
     _webGlBitmap           =
+    _matrixUtils           =
     _program               =
     _shouldResize          =
     _locations             =
@@ -250,7 +252,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
   function drawItem(item) {
     if (item.renderable) {
-      item.updateProperties(m4.transform2D);
+      item.updateProperties(_matrixUtils.transform2D);
       if (is(item, WebGl.Container)) drawContainer(item);
       else if (is(item, WebGl.Image)) drawImage(item);
     }
@@ -269,7 +271,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
       _latestBlendMode = item.blendMode;
     }
 
-    if (_isPickerSet && item.interactive && m4.isPointInMatrix(_tempPickerVector, item.matrixCache, _tempInverseMatrix, _tempVector)) {
+    if (_isPickerSet && item.interactive && _matrixUtils.isPointInMatrix(_tempPickerVector, item.matrixCache, _tempInverseMatrix, _tempVector)) {
       _pickedElements.push(item);
     }
 
@@ -375,7 +377,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
       _widthHalf  = _width * 0.5;
       _heightHalf = _height * 0.5;
 
-      _scope.parentMatrix = m4.orthographic(0, _width, _height, 0, -1, 1);
+      _scope.parentMatrix = _matrixUtils.orthographic(0, _width, _height, 0, -1, 1);
 
       _gl.uniform2f(_locations["u_resolution"], _width / _height, 96 / _width);
     }
@@ -409,15 +411,15 @@ rof(WebGl.Stage2D, "createVertexShader", function() {
     "flat out int v_tintType;" +
 
     "void main() {" +
-      "gl_Position   = a_matrix * a_position;" +
-      "v_texcoord    = (a_textureMatrix * a_position).xy;" +
-      "v_coord       = gl_Position;" +
+      "gl_Position = a_matrix * a_position;" +
+      "v_texcoord = (a_textureMatrix * a_position).xy;" +
+      "v_coord = gl_Position;" +
 
       "v_textureCrop = a_textureCrop;" +
-      "v_fillColor   = a_fillColor;" +
-      "v_textureId   = int(a_textureId);" +
-      "v_tintColor   = a_tintColor;" +
-      "v_tintType    = int(a_tintType);" +
+      "v_fillColor = a_fillColor;" +
+      "v_textureId = int(a_textureId);" +
+      "v_tintColor = a_tintColor;" +
+      "v_tintType = int(a_tintType);" +
     "}";
 });
 rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {

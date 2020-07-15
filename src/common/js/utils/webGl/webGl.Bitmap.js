@@ -1,4 +1,4 @@
-require("./utils/m4.js");
+require("./utils/webGl.MatrixUtils.js");
 require("./utils/webGl.Utils.js");
 require("./NameSpace.js");
 

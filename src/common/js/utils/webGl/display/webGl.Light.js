@@ -3,10 +3,10 @@ require("../NameSpace.js");
 
 createClass(WebGl, "Light", WebGl.Item, function(_scope, _super) {
   _scope.effect = {
-    anchorX : 0,
-    anchorY : 0,
-    quadX   : 1,
-    quadY   : 1
+    "anchorX" : 0,
+    "anchorY" : 0,
+    "quadX"   : 1,
+    "quadY"   : 1
   };
 
   _scope.positionCache = new Float32Array(3);
