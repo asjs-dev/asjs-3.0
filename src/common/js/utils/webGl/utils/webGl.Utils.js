@@ -3,20 +3,31 @@ require("../NameSpace.js");
 createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
   var _webGlInfo = {};
 
-  _scope.new = function() {
-    parseWebglInfo();
-  }
+  _scope.new = parseWebglInfo;
 
   get(_scope, "webGlInfo", function() { return _webGlInfo; });
 
   function parseWebglInfo() {
-    _webGlInfo.maxTextureImageUnits = 0;
+    _webGlInfo.isWebGl2Supported = false;
     map(["webgl2"], function(id, item) {
       var canvas = document.createElement("canvas");
       var context;
       if (context = canvas.getContext(item)) {
-        _webGlInfo.maxTextureImageUnits = context.getParameter(context.MAX_TEXTURE_IMAGE_UNITS);
-        _webGlInfo.maxTextureSize       = context.getParameter(context.MAX_TEXTURE_SIZE);
+        _webGlInfo.isWebGl2Supported            = true;
+        _webGlInfo.maxTextureImageUnits         = context.getParameter(context.MAX_TEXTURE_IMAGE_UNITS);
+        _webGlInfo.maxTextureSize               = context.getParameter(context.MAX_TEXTURE_SIZE);
+        _webGlInfo.maxVertexAttributes          = context.getParameter(context.MAX_VERTEX_ATTRIBS);
+        _webGlInfo.maxVaryingVectors            = context.getParameter(context.MAX_VARYING_VECTORS);
+        _webGlInfo.maxVertexUniformVectors      = context.getParameter(context.MAX_VERTEX_UNIFORM_VECTORS);
+        _webGlInfo.maxFragmentUniformComponents = context.getParameter(context.MAX_FRAGMENT_UNIFORM_COMPONENTS);
+        _webGlInfo.maxFragmentUniformVectors    = context.getParameter(context.MAX_FRAGMENT_UNIFORM_VECTORS);
+        _webGlInfo.maxVaryingComponents         = context.getParameter(context.MAX_VARYING_COMPONENTS);
+        _webGlInfo.canShaderRun =
+          _webGlInfo.maxVertexAttributes >= 8 &&
+          _webGlInfo.maxVaryingVectors >= 5 &&
+          _webGlInfo.maxVaryingComponents >= 20 &&
+          _webGlInfo.maxFragmentUniformComponents >= 199 &&
+          _webGlInfo.maxFragmentUniformVectors >= 6;
       }
     });
   }
@@ -41,7 +52,7 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
     var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
     if (!compiled) {
       var lastError = gl.getShaderInfoLog(shader);
-      trace("Error compiling shader '" + shader + "':" + lastError);
+      trace("Error compiling shader " + shaderType + ":" + lastError);
       gl.deleteShader(shader);
       return null;
     }
