@@ -35,12 +35,22 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
   _scope.bindTexture2DSource = function(gl, textureInfo) {
     gl.activeTexture(gl.TEXTURE0 + _webGlInfo.maxTextureImageUnits + 1);
     gl.bindTexture(textureInfo.target, textureInfo.texture);
-    gl.texImage2D(textureInfo.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureInfo.source);
+    if (textureInfo.source.tagName.toLowerCase() !== "video") {
+      gl.texImage2D(textureInfo.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureInfo.source);
+    }
     gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_S, textureInfo.wrapS);
     gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_T, textureInfo.wrapT);
     gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
     gl.texParameteri(textureInfo.target, gl.TEXTURE_MAG_FILTER, textureInfo.magFilter);
     gl.generateMipmap(textureInfo.target);
+  }
+
+  _scope.useTexture = function(gl, index, textureInfo) {
+    gl.activeTexture(gl.TEXTURE0 + index);
+    gl.bindTexture(textureInfo.target, textureInfo.texture);
+    if (textureInfo.shouldUpdate) {
+      gl.texImage2D(textureInfo.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureInfo.source);
+    }
   }
 
   _scope.loadShader = function(gl, shaderType, shaderSource) {

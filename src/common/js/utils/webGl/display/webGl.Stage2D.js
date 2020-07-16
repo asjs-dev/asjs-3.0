@@ -20,6 +20,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     "a_textureCrop"    : "getAttribLocation",
     "a_fillColor"      : "getAttribLocation",
     "a_textureId"      : "getAttribLocation",
+    "a_textureMaskId"  : "getAttribLocation",
     "a_tintColor"      : "getAttribLocation",
     "a_tintType"       : "getAttribLocation",
     "u_resolution"     : "getUniformLocation",
@@ -41,16 +42,18 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
   var _latestBlendMode = WebGl.BlendModes.NORMAL;
 
-	var _matrixData        = new Float32Array(priv.MAX_BATCH_ITEMS * 16);
-  var _textureIdData     = new Uint8Array(priv.MAX_BATCH_ITEMS);
-	var _textureMatrixData = new Float32Array(priv.MAX_BATCH_ITEMS * 16);
-  var _textureCropData   = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
-  var _colorData         = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
-  var _tintColorData     = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
-  var _tintTypeData      = new Uint8Array(priv.MAX_BATCH_ITEMS);
+	var _matrixData;
+  var _textureIdData;
+  var _textureMaskIdData;
+	var _textureMatrixData;
+  var _textureCropData;
+  var _colorData;
+  var _tintColorData;
+  var _tintTypeData;
 
 	var _matrixBuffer;
   var _textureIdBuffer;
+  var _textureMaskIdBuffer;
 	var _textureMatrixBuffer;
 	var _textureCropBuffer;
   var _colorBuffer;
@@ -62,10 +65,10 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   var _textureMap = [];
 
   var _attachedLights   = [];
-  var _lightPositions = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 3);
-  var _lightVolumes   = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 3);
-  var _lightColors    = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 4);
-  var _lightEffects   = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 4);
+  var _lightPositions;
+  var _lightVolumes;
+  var _lightColors;
+  var _lightEffects;
 
   var _gl;
   var _webGlBitmap;
@@ -88,22 +91,26 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   var _tempInverseMatrix = new Float32Array(16);
   var _tempVector        = new Float32Array(4);
 
+  var _config;
+
   override(_scope, _super, "new");
-  _scope.new = function(webGlBitmap, vertexShader, fragmentShader) {
+  _scope.new = function(webGlBitmap, vertexShader, fragmentShader, config) {
     _super.new();
     /*
     if (!_webGlUtils.webGlInfo.canShaderRun) {
       return;
     }
     */
+    _config = config;
+
     _webGlBitmap = webGlBitmap;
     _webGlBitmap.addEventListener(WebGl.Bitmap.RESIZE, onResize);
 
     _gl = _webGlBitmap.getContext();
 
     _program = _webGlUtils.createProgram(_gl, [
-      _webGlUtils.loadShader(_gl, WebGl.Utils.ShaderType.VERTEX_SHADER,   vertexShader),
-      _webGlUtils.loadShader(_gl, WebGl.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader)
+      _webGlUtils.loadShader(_gl, WebGl.Utils.ShaderType.VERTEX_SHADER,   vertexShader(_config)),
+      _webGlUtils.loadShader(_gl, WebGl.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(_config))
     ]);
     _locations = _webGlUtils.getLocationsFor(_gl, _program, priv.SHADER_LOCATIONS);
 
@@ -117,6 +124,25 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _gl.enableVertexAttribArray(_locations["a_position"]);
     _gl.vertexAttribPointer(_locations["a_position"], 2, _gl.BYTE, false, 0, 0);
 
+  	_matrixData        = new Float32Array(priv.MAX_BATCH_ITEMS * 16);
+    _textureIdData     = new Uint8Array(priv.MAX_BATCH_ITEMS);
+  	_textureMatrixData = new Float32Array(priv.MAX_BATCH_ITEMS * 16);
+    _textureCropData   = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
+    _colorData         = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
+    _tintColorData     = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
+    _tintTypeData      = new Uint8Array(priv.MAX_BATCH_ITEMS);
+
+    if (_config.useMask) {
+      _textureMaskIdData = new Int8Array(priv.MAX_BATCH_ITEMS);
+    }
+
+    if (_config.showLights) {
+      _lightPositions = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 3);
+      _lightVolumes   = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 3);
+      _lightColors    = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 4);
+      _lightEffects   = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 4);
+    }
+
 		_matrixBuffer        = createArrayBuffer(_matrixData,        "a_matrix",        16, 4, 4, _gl.FLOAT, 4);
 		_textureIdBuffer     = createArrayBuffer(_textureIdData,     "a_textureId",      1, 1, 1, _gl.BYTE,  0);
     _textureMatrixBuffer = createArrayBuffer(_textureMatrixData, "a_textureMatrix", 16, 4, 4, _gl.FLOAT, 4);
@@ -124,6 +150,10 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _colorBuffer         = createArrayBuffer(_colorData,         "a_fillColor",      4, 1, 4, _gl.FLOAT, 4);
     _tintColorBuffer     = createArrayBuffer(_tintColorData,     "a_tintColor",      4, 1, 4, _gl.FLOAT, 4);
     _tintTypeBuffer      = createArrayBuffer(_tintTypeData,      "a_tintType",       1, 1, 1, _gl.BYTE,  0);
+
+    if (_config.useMask) {
+      _textureMaskIdBuffer = createArrayBuffer(_textureMaskIdData, "a_textureMaskId",  1, 1, 1, _gl.BYTE,  0);
+    }
 
     var textureIndices = new Uint8Array(_webGlUtils.webGlInfo.maxTextureImageUnits);
     var i = textureIndices.length;
@@ -151,7 +181,9 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     resize();
 
     updateFog();
-    collectLights();
+
+    _config.showLights && collectLights();
+
     drawItem(_scope);
 
     _batchItems > 0 && batchDraw();
@@ -194,6 +226,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _locations             =
     _matrixData            =
     _textureIdData         =
+    _textureMaskIdData     =
     _textureMatrixData     =
     _textureCropData       =
     _colorData             =
@@ -201,6 +234,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _tintTypeData          =
     _matrixBuffer          =
     _textureIdBuffer       =
+    _textureMaskIdBuffer   =
     _textureMatrixBuffer   =
     _textureCropBuffer     =
     _colorBuffer           =
@@ -275,6 +309,11 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
       _pickedElements.push(item);
     }
 
+    if (_config.useMask) {
+      var textureMaskIndex = drawTexture(item.mask);
+      _textureMaskIdData[_batchItems] = textureMaskIndex;
+    }
+
     var textureMapIndex = drawTexture(item.texture);
 
     var quadId = _batchItems * 4;
@@ -289,7 +328,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _tintTypeData[_batchItems] = item.tintType || 0;
 
     _batchItems++;
-    if (_batchItems === priv.MAX_BATCH_ITEMS) batchDraw();
+    _batchItems === priv.MAX_BATCH_ITEMS && batchDraw();
 
     item.postRender(_renderTimer);
   }
@@ -327,6 +366,8 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   }
 
   function batchDraw() {
+    _config.useMask && bindArrayBuffer(_textureMaskIdBuffer, _textureMaskIdData);
+
     bindArrayBuffer(_matrixBuffer,        _matrixData);
 		bindArrayBuffer(_textureIdBuffer,     _textureIdData);
     bindArrayBuffer(_textureMatrixBuffer, _textureMatrixData);
@@ -344,14 +385,17 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   }
 
   function drawTexture(textureInfo) {
-    var textureMapIndex = _textureMap.indexOf(textureInfo);
-    if (textureMapIndex === -1) {
-      _textureMap.length === _webGlUtils.webGlInfo.maxTextureImageUnits && batchDraw();
-      _textureMap.push(textureInfo);
-      textureMapIndex = _textureMap.length - 1;
+    if (!textureInfo) return -1;
 
-      _gl.activeTexture(_gl.TEXTURE0 + textureMapIndex);
-      _gl.bindTexture(textureInfo.target, textureInfo.texture);
+    var textureMapIndex = _textureMap.indexOf(textureInfo);
+    if (textureMapIndex === -1 || textureInfo.shouldUpdate) {
+      if (textureMapIndex === -1 || !textureInfo.shouldUpdate) {
+        _textureMap.length === _webGlUtils.webGlInfo.maxTextureImageUnits && batchDraw();
+        _textureMap.push(textureInfo);
+        textureMapIndex = _textureMap.length - 1;
+      }
+
+      _webGlUtils.useTexture(_gl, textureMapIndex, textureInfo);
     }
 
     return textureMapIndex;
@@ -392,41 +436,55 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   }
 });
 cnst(WebGl.Stage2D, "MAX_LIGHT_SOURCES", 16);
-rof(WebGl.Stage2D, "createVertexShader", function() {
-  return "#version 300 es\n" +
-    "precision lowp float;" +
+rof(WebGl.Stage2D, "createVertexShader", function(config) {
+  var shader = "#version 300 es\n" +
+  "precision lowp float;" +
 
-    "in vec4 a_position;" +
-    "in mat4 a_matrix;" +
-    "in mat4 a_textureMatrix;" +
-    "in vec4 a_textureCrop;" +
-    "in vec4 a_fillColor;" +
-    "in vec4 a_tintColor;" +
-    "in int a_textureId;" +
-    "in int a_tintType;" +
+  "in vec4 a_position;" +
+  "in mat4 a_matrix;" +
+  "in mat4 a_textureMatrix;" +
+  "in vec4 a_textureCrop;" +
+  "in vec4 a_fillColor;" +
+  "in vec4 a_tintColor;" +
+  "in int a_textureId;";
 
-    "out vec2 v_texcoord;" +
-    "out vec4 v_coord;" +
-    "out vec4 v_textureCrop;" +
-    "out vec4 v_fillColor;" +
-    "out vec4 v_tintColor;" +
-    "flat out int v_textureId;" +
-    "flat out int v_tintType;" +
+  if (config.useMask) shader += "in int a_textureMaskId;";
 
-    "void main() {" +
-      "gl_Position = a_matrix * a_position;" +
-      "v_texcoord = (a_textureMatrix * a_position).xy;" +
-      "v_coord = gl_Position;" +
-      "v_textureCrop = a_textureCrop;" +
-      "v_fillColor = a_fillColor;" +
-      "v_textureId = a_textureId;" +
-      "v_tintColor = a_tintColor;" +
-      "v_tintType = a_tintType;" +
-    "}";
+  shader +=
+  "in int a_tintType;" +
+
+  "out vec2 v_texcoord;" +
+  "out vec4 v_coord;" +
+  "out vec4 v_textureCrop;" +
+  "out vec4 v_fillColor;" +
+  "out vec4 v_tintColor;" +
+  "flat out int v_textureId;";
+  if (config.useMask) shader += "flat out int v_textureMaskId;";
+
+  shader +=
+  "flat out int v_tintType;" +
+
+  "void main() {" +
+    "gl_Position = a_matrix * a_position;" +
+    "v_texcoord = (a_textureMatrix * a_position).xy;" +
+    "v_coord = gl_Position;" +
+    "v_textureCrop = a_textureCrop;" +
+    "v_fillColor = a_fillColor;" +
+    "v_textureId = a_textureId;";
+
+    if (config.useMask) shader += "v_textureMaskId = a_textureMaskId;";
+
+    shader +=
+    "v_tintColor = a_tintColor;" +
+    "v_tintType = a_tintType;" +
+  "}";
+
+  return shader;
 });
-rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
+rof(WebGl.Stage2D, "createFragmentShader", function(config) {
   var maxTextureImageUnits = WebGl.Utils.instance.webGlInfo.maxTextureImageUnits;
   var maxLightSources = WebGl.Stage2D.MAX_LIGHT_SOURCES;
+
   var shader = "#version 300 es\n" +
   "precision lowp float;" +
 
@@ -435,7 +493,11 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
   "in vec4 v_textureCrop;" +
   "in vec4 v_fillColor;" +
   "in vec4 v_tintColor;" +
-  "flat in int v_textureId;" +
+  "flat in int v_textureId;";
+
+  if (config.useMask) shader += "flat in int v_textureMaskId;";
+
+  shader +=
   "flat in int v_tintType;" +
 
   "uniform sampler2D u_textureIndices[" + maxTextureImageUnits + "];" +
@@ -444,12 +506,12 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
   "uniform int u_filters;" +
   "uniform vec4 u_fog;";
 
-  if (showLights) {
+  if (config.showLights) {
     shader +=
-      "uniform vec3 u_lightPositions[" + maxLightSources + "];" +
-      "uniform vec3 u_lightVolumes[" + maxLightSources + "];" +
-      "uniform vec4 u_lightColors[" + maxLightSources + "];" +
-      "uniform vec4 u_lightEffects[" + maxLightSources + "];";
+    "uniform vec3 u_lightPositions[" + maxLightSources + "];" +
+    "uniform vec3 u_lightVolumes[" + maxLightSources + "];" +
+    "uniform vec4 u_lightColors[" + maxLightSources + "];" +
+    "uniform vec4 u_lightEffects[" + maxLightSources + "];";
   }
 
   shader += "out vec4 fragColor;";
@@ -459,15 +521,15 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
     "return crop.xy + mod(coord * size, size);" +
   "}";
 
-  if (showLights) {
+  if (config.showLights) {
     shader +=
-      "vec4 lightValue(vec3 lightPosition, vec3 lightVolume, vec4 lightColor, vec4 lightEffect) {" +
-        "vec2 dist = v_coord.xy - lightPosition.xy;" +
-        "return lightColor * lightColor.a * max(0.0, min(1.0, 1.0 - sqrt(" +
-          "pow(abs(dist.x + (abs(dist.x) * lightEffect.x)), 2.0 * lightEffect.z) * (lightVolume.x / u_resolution.y) + " +
-          "pow(abs(dist.y + (abs(dist.y) * lightEffect.y)), 2.0 * lightEffect.w) * (lightVolume.y / u_resolution.x / u_resolution.y)" +
-        ")));" +
-      "}";
+    "vec4 lightValue(vec3 lightPosition, vec3 lightVolume, vec4 lightColor, vec4 lightEffect) {" +
+      "vec2 dist = v_coord.xy - lightPosition.xy;" +
+      "return lightColor * lightColor.a * max(0.0, min(1.0, 1.0 - sqrt(" +
+        "pow(abs(dist.x + (abs(dist.x) * lightEffect.x)), 2.0 * lightEffect.z) * (lightVolume.x / u_resolution.y) + " +
+        "pow(abs(dist.y + (abs(dist.y) * lightEffect.y)), 2.0 * lightEffect.w) * (lightVolume.y / u_resolution.x / u_resolution.y)" +
+      ")));" +
+    "}";
   }
 
   shader +=
@@ -475,13 +537,25 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
     "vec2 textureCropSize = v_textureCrop.zw - v_textureCrop.xy;" +
     "vec2 coord = coordLimit(v_texcoord, textureCropSize, v_textureCrop);";
 
-  for (var i = 0; i < maxTextureImageUnits; i++) {
-    shader += (i > 0 ? " else " : "") +
-      "if (v_textureId == " + i + ") " +
+    for (var i = 0; i < maxTextureImageUnits; i++) {
+      shader += (i > 0 ? " else " : "") +
+      "if (v_textureId == " + i + ")" +
         "fragColor = texture(u_textureIndices[" + i + "], coord);";
-  }
+    }
 
-  shader +=
+    if (config.useMask) {
+      shader +=
+      "float maskAlpha = 1.0;" +
+      "if (v_textureMaskId > -1) {";
+      for (var i = 0; i < maxTextureImageUnits; i++) {
+        shader += (i > 0 ? " else " : "") +
+        "if (v_textureMaskId == " + i + ")" +
+          "maskAlpha = texture(u_textureIndices[" + i + "], (v_coord.xy + vec2(1.0, -1.0)) / vec2(2.0, -2.0)).a;";
+      }
+      shader += "}";
+    }
+
+    shader +=
     "if (fragColor.a < 0.01) discard;" +
     "if (v_tintType == 0) " +
       "fragColor *= v_tintColor;" +
@@ -492,16 +566,16 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
 
     "vec4 lightColor = vec4(0.0);";
 
-  if (showLights) {
-    for (var i = 0; i < maxLightSources; i++) {
-      shader +=
+    if (config.showLights) {
+      for (var i = 0; i < maxLightSources; i++) {
+        shader +=
         "if (u_lightColors[" + i + "].a > 0.0 && u_lightPositions[" + i + "].z <= v_coord.z) {" +
           "lightColor += lightValue(u_lightPositions[" + i + "], 1.0 / abs(u_lightVolumes[" + i + "]), u_lightColors[" + i + "], u_lightEffects[" + i + "]);" +
         "}";
+      }
     }
-  }
 
-  shader +=
+    shader +=
     "float colorLightMultiply = max(0.0, u_fog.a - lightColor.a);" +
     "float colorMultiply = max(0.0, 1.0 - colorLightMultiply);" +
     "vec4 fogColor = vec4(u_fog.rgb * colorLightMultiply, 0.0);" +
@@ -509,37 +583,38 @@ rof(WebGl.Stage2D, "createFragmentShader", function(showLights, filters) {
     "fragColor = (finalColor * (v_fillColor + lightColor)) + fogColor;" +
     "if (fragColor.a < 0.01) discard;";
 
-  if (filters && filters.length > 0) {
-    shader += "if (u_filters > 0) {";
-    for (var i = 0; i < filters.length; i++) {
-      shader += "if ((" + filters[i] + " & u_filters) > 0) {";
-        switch (filters[i]) {
-          case WebGl.Stage2D.Filters.GRAYSCALE:
-            shader += "fragColor = vec4(vec3(1.0) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), fragColor.a);";
-          break;
-          case WebGl.Stage2D.Filters.SEPIA:
-            shader += "fragColor = vec4(vec3(0.874, 0.514, 0.156) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), fragColor.a);";
-          break;
-          case WebGl.Stage2D.Filters.INVERT:
-            shader += "fragColor = abs(vec4(fragColor.rgb - 1.0, fragColor.a));";
-          break;
-          case WebGl.Stage2D.Filters.COLORLIMIT:
-            shader += "fragColor = vec4((floor((fragColor.rgb * 256.0) / 32.0) / 256.0) * 32.0, fragColor.a);";
-          break;
-          case WebGl.Stage2D.Filters.VIGNETTE:
-            shader += "fragColor = vec4(fragColor.rgb * (1.0 - sqrt(pow(v_coord.x, 4.0) + pow(v_coord.y, 4.0))), fragColor.a);";
-          break;
-          case WebGl.Stage2D.Filters.RAINBOW:
-            shader += "fragColor = vec4(fragColor.rgb + vec3(v_coord.x * 0.15, v_coord.y * 0.15, (v_coord.x - v_coord.y) * 0.15), fragColor.a);";
-          break;
-          case WebGl.Stage2D.Filters.LINES:
-            shader += "fragColor += vec4(sin(v_coord.y * 500.0) * 0.2);";
-          break;
-        }
+    if (config.filters && config.filters.length > 0) {
+      shader += "if (u_filters > 0) {";
+      for (var i = 0; i < config.filters.length; i++) {
+        shader += "if ((" + config.filters[i] + " & u_filters) > 0) {";
+          switch (config.filters[i]) {
+            case WebGl.Stage2D.Filters.GRAYSCALE:
+              shader += "fragColor = vec4(vec3(1.0) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), fragColor.a);";
+            break;
+            case WebGl.Stage2D.Filters.SEPIA:
+              shader += "fragColor = vec4(vec3(0.874, 0.514, 0.156) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), fragColor.a);";
+            break;
+            case WebGl.Stage2D.Filters.INVERT:
+              shader += "fragColor = abs(vec4(fragColor.rgb - 1.0, fragColor.a));";
+            break;
+            case WebGl.Stage2D.Filters.COLORLIMIT:
+              shader += "fragColor = vec4((floor((fragColor.rgb * 256.0) / 32.0) / 256.0) * 32.0, fragColor.a);";
+            break;
+            case WebGl.Stage2D.Filters.VIGNETTE:
+              shader += "fragColor = vec4(fragColor.rgb * (1.0 - sqrt(pow(v_coord.x, 4.0) + pow(v_coord.y, 4.0))), fragColor.a);";
+            break;
+            case WebGl.Stage2D.Filters.RAINBOW:
+              shader += "fragColor = vec4(fragColor.rgb + vec3(v_coord.x * 0.15, v_coord.y * 0.15, (v_coord.x - v_coord.y) * 0.15), fragColor.a);";
+            break;
+            case WebGl.Stage2D.Filters.LINES:
+              shader += "fragColor += vec4(sin(v_coord.y * 500.0) * 0.2);";
+            break;
+          }
+        shader += "}";
+      }
       shader += "}";
+      if (config.useMask) shader += "fragColor.a *= maskAlpha;";
     }
-    shader += "}";
-  }
   shader += "}";
 
   return shader;

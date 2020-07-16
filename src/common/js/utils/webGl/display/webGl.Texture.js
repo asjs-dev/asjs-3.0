@@ -3,6 +3,8 @@ require("../NameSpace.js");
 createClass(WebGl, "Texture", ASJS.EventDispatcher, function(_scope, _super) {
   var _wglUtils = WebGl.Utils.instance;
 
+  _scope.shouldUpdate = false;
+
   var _gl;
   var _target;
   var _textureLoader;
@@ -10,11 +12,13 @@ createClass(WebGl, "Texture", ASJS.EventDispatcher, function(_scope, _super) {
   var _texture;
 
   var _loaded = false;
+  var _isVideo = false;
 
-  _scope.new = function(gl, source) {
-    _textureLoader = new ASJS.Image();
-
+  _scope.new = function(gl, source, shouldUpdate) {
     _gl = gl;
+
+    _target = _gl.TEXTURE_2D;
+    _texture = _gl.createTexture();
 
     _scope.wrapS = gl.CLAMP_TO_EDGE;
     _scope.wrapT = gl.CLAMP_TO_EDGE;
@@ -22,9 +26,7 @@ createClass(WebGl, "Texture", ASJS.EventDispatcher, function(_scope, _super) {
     _scope.magFilter = gl.NEAREST;
 
     _scope.source = source;
-
-    _target = _gl.TEXTURE_2D;
-    _texture = _gl.createTexture();
+    _scope.shouldUpdate = shouldUpdate;
   }
 
   get(_scope, "loaded",  function() { return _loaded; });
@@ -61,6 +63,7 @@ createClass(WebGl, "Texture", ASJS.EventDispatcher, function(_scope, _super) {
   }
 
   function loadTexture() {
+    _textureLoader = _textureLoader || new ASJS.Image();
     _loaded = false;
 
     _textureLoader.removeEventListener(ASJS.LoaderEvent.LOAD, onTextureLoaded);

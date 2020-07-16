@@ -1,6 +1,8 @@
 require("./NameSpace.js");
 require("./webGl.Bitmap.js");
 
+require("./data/webGl.Config.js");
+
 require("./utils/webGl.MatrixUtils.js");
 require("./utils/webGl.Utils.js");
 

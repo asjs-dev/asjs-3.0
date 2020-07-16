@@ -24,6 +24,8 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
   _scope.textureMatrixCache = _matrixUtils.identity();
   _scope.texture;
 
+  _scope.mask;
+
   _scope.tintType  = WebGl.Image.Tint.NORMAL;
   _scope.blendMode = WebGl.BlendModes.NORMAL;
 
