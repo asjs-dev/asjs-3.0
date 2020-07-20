@@ -13,9 +13,22 @@ createClass(WebGl, "Light", WebGl.Item, function(_scope, _super) {
   _scope.volumeCache   = new Float32Array(3);
   _scope.effectCache   = new Float32Array(4);
 
-  override(_scope, _super, "updateProperties");
-  _scope.updateProperties = function(transformFunction) {
-    _super.updateProperties(transformFunction);
+  var _protectedOverride = {};
+
+  override(_scope, _super, "destruct");
+  _scope.destruct = function() {
+    _scope.effect        =
+    _scope.positionCache =
+    _scope.volumeCache   =
+    _scope.effectCache   =
+    _protectedOverride   = null;
+
+    _super.destruct();
+  }
+
+  override(_super.protected, _protectedOverride, "updateProps");
+  _super.protected.updateProps = function(transformFunction) {
+    _protectedOverride.updateProps(transformFunction);
 
     _scope.positionCache[0] = _scope.matrixCache[12];
     _scope.positionCache[1] = _scope.matrixCache[13];

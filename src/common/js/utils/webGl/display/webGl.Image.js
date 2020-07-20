@@ -31,8 +31,14 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
 
   _scope.textureCropCache = new Float32Array(4);
 
+  override(_scope, _super, "new");
   _scope.new = function(texture) {
+    _super.new();
+
     _scope.texture = texture;
+
+    _scope.shouldUpdateTextureProps();
+    _scope.shouldUpdateTextureCrop();
   }
 
   override(_scope, _super, "destruct");
@@ -47,7 +53,15 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
     _super.destruct();
   }
 
-  _scope.updateTextureProps = function() {
+  _scope.shouldUpdateTextureProps = function() {
+    _super.protected.updateList.addUnique(_super.protected.updateTextureProps);
+  }
+
+  _scope.shouldUpdateTextureCrop = function() {
+    _super.protected.updateList.addUnique(_super.protected.updateTextureCrop);
+  }
+
+  _super.protected.updateTextureProps = function() {
     var textureProps = _scope.textureProps;
 
     _matrixUtils.transformTexture2D(
@@ -64,17 +78,15 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
 
       _scope.textureMatrixCache
     );
-
-    _scope.updateTextureCrop();
   }
 
-  _scope.updateTextureCrop = function() {
-      var textureCrop = _scope.textureProps.crop;
+  _super.protected.updateTextureCrop = function() {
+    var textureCrop = _scope.textureProps.crop;
 
-      _scope.textureCropCache[0] = textureCrop.x;
-      _scope.textureCropCache[1] = textureCrop.y;
-      _scope.textureCropCache[2] = textureCrop.width;
-      _scope.textureCropCache[3] = textureCrop.height;
+    _scope.textureCropCache[0] = textureCrop.x;
+    _scope.textureCropCache[1] = textureCrop.y;
+    _scope.textureCropCache[2] = textureCrop.width;
+    _scope.textureCropCache[3] = textureCrop.height;
   }
 });
 cnst(WebGl.Image, "Tint", {

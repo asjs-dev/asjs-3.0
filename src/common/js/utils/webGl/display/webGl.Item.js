@@ -5,18 +5,13 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
     "x"         : 0,
     "y"         : 0,
     "z"         : 0,
-    "rotationX" : 0,
-    "rotationY" : 0,
     "rotationZ" : 0,
     "scaleX"    : 1,
     "scaleY"    : 1,
-    "scaleZ"    : 1,
     "width"     : 1,
     "height"    : 1,
-    "depth"     : 1,
     "anchorX"   : 0,
     "anchorY"   : 0,
-    "anchorZ"   : 0,
   };
 
   _scope.color = {
@@ -27,7 +22,6 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
   };
 
   _scope.renderable  = true;
-  _scope.enabled     = true;
   _scope.interactive = false;
 
   _scope.matrixCache = WebGl.MatrixUtils.identity();
@@ -35,7 +29,14 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
 
   _scope.parentMatrix = null;
 
+  _super.protected.updateList = [];
+
   var _parent = null;
+
+  _scope.new = function() {
+    _scope.shouldUpdateProps();
+    _scope.shouldUpdateColorCache();
+  }
 
   prop(_scope, "parent", {
     get: function() { return _parent; },
@@ -48,14 +49,13 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
 
   override(_scope, _super, "destruct");
   _scope.destruct = function() {
-    _scope.props                =
-    _scope.color                =
-    _scope.renderable           =
-    _scope.enabled              =
-    _scope.colorCache           =
-    _scope.matrixCache          =
-    _scope.parentMatrix         =
-    _scope.parent               = null;
+    _scope.props        =
+    _scope.color        =
+    _scope.renderable   =
+    _scope.colorCache   =
+    _scope.matrixCache  =
+    _scope.parentMatrix =
+    _scope.parent       = null;
 
     _super.destruct();
   }
@@ -63,12 +63,24 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
   _scope.preRender  = function() {}
   _scope.postRender = function() {}
 
-  _scope.updateProperties = function(transformFunction) {
+  _scope.shouldUpdateProps = function() {
+    _super.protected.updateList.addUnique(_super.protected.updateProps);
+  }
+
+  _scope.shouldUpdateColorCache = function() {
+    _super.protected.updateList.addUnique(_super.protected.updateColorCache);
+  }
+
+  _scope.update = function(transformFunction) {
+    var fv;
+    while (fv = _super.protected.updateList.shift()) fv(transformFunction);
+  }
+
+  _super.protected.updateProps = function(transformFunction) {
     var props = _scope.props;
 
     var sx = props.scaleX;
     var sy = props.scaleY;
-    var sz = props.scaleZ;
 
     transformFunction(
       _scope.parentMatrix,
@@ -77,25 +89,19 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
       props.y,
       props.z,
 
-      props.rotationX,
-      props.rotationY,
       props.rotationZ,
 
       props.anchorX * sx,
       props.anchorY * sy,
-      props.anchorZ * sz,
 
       props.width  * sx,
       props.height * sy,
-      props.depth  * sz,
 
       _scope.matrixCache
     );
-
-    _scope.updateColorCache();
   }
 
-  _scope.updateColorCache = function() {
+  _super.protected.updateColorCache = function() {
     var color = _scope.color;
 
     _scope.colorCache[0] = color.r;

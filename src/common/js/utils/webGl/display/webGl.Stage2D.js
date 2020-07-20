@@ -6,6 +6,8 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   var _webGlUtils  = WebGl.Utils.instance;
   var _matrixUtils = WebGl.MatrixUtils;
 
+  var _tranformFunction = _matrixUtils.transform2D;
+
   var priv = {};
   cnst(priv, "MAX_BATCH_ITEMS",  10000);
 
@@ -16,15 +18,15 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   cnst(priv, "SHADER_LOCATIONS", {
     "a_position"       : "getAttribLocation",
     "a_matrix"         : "getAttribLocation",
-    "a_textureMatrix"  : "getAttribLocation",
-    "a_textureCrop"    : "getAttribLocation",
+    "a_texMatrix"      : "getAttribLocation",
+    "a_texCrop"        : "getAttribLocation",
     "a_fillColor"      : "getAttribLocation",
-    "a_textureId"      : "getAttribLocation",
-    "a_textureMaskId"  : "getAttribLocation",
+    "a_texId"          : "getAttribLocation",
+    "a_maskTexId"      : "getAttribLocation",
     "a_tintColor"      : "getAttribLocation",
     "a_tintType"       : "getAttribLocation",
     "u_resolution"     : "getUniformLocation",
-    "u_textureIndices" : "getUniformLocation",
+    "u_texIds"         : "getUniformLocation",
     "u_lightPositions" : "getUniformLocation",
     "u_lightVolumes"   : "getUniformLocation",
     "u_lightColors"    : "getUniformLocation",
@@ -44,7 +46,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
 	var _matrixData;
   var _textureIdData;
-  var _textureMaskIdData;
+  var _maskTextureIdData;
 	var _textureMatrixData;
   var _textureCropData;
   var _colorData;
@@ -53,7 +55,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
 	var _matrixBuffer;
   var _textureIdBuffer;
-  var _textureMaskIdBuffer;
+  var _maskTextureIdBuffer;
 	var _textureMatrixBuffer;
 	var _textureCropBuffer;
   var _colorBuffer;
@@ -63,6 +65,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   var _batchItems = 0;
 
   var _textureMap = [];
+  var _textureIds = [];
 
   var _attachedLights = [];
   var _lightPositions;
@@ -100,11 +103,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   override(_scope, _super, "new");
   _scope.new = function(webGlBitmap, vertexShader, fragmentShader, config) {
     _super.new();
-    /*
-    if (!_webGlUtils.webGlInfo.canShaderRun) {
-      return;
-    }
-    */
+
     _config = config;
 
     _webGlBitmap = webGlBitmap;
@@ -139,23 +138,23 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
       : emptyFunction;
 
     _matrixData          = new Float32Array(priv.MAX_BATCH_ITEMS * 16);
-		_matrixBuffer        = createArrayBuffer(_matrixData,        "a_matrix",        16, 4, 4, _gl.FLOAT, 4);
+		_matrixBuffer        = createArrayBuffer(_matrixData,        "a_matrix",    16, 4, 4, _gl.FLOAT, 4);
     _textureIdData       = new Uint8Array(priv.MAX_BATCH_ITEMS);
-		_textureIdBuffer     = createArrayBuffer(_textureIdData,     "a_textureId",      1, 1, 1, _gl.BYTE,  0);
+		_textureIdBuffer     = createArrayBuffer(_textureIdData,     "a_texId",      1, 1, 1, _gl.BYTE,  0);
     _textureMatrixData   = new Float32Array(priv.MAX_BATCH_ITEMS * 16);
-    _textureMatrixBuffer = createArrayBuffer(_textureMatrixData, "a_textureMatrix", 16, 4, 4, _gl.FLOAT, 4);
+    _textureMatrixBuffer = createArrayBuffer(_textureMatrixData, "a_texMatrix", 16, 4, 4, _gl.FLOAT, 4);
     _textureCropData     = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
-    _textureCropBuffer   = createArrayBuffer(_textureCropData,   "a_textureCrop",    4, 1, 4, _gl.FLOAT, 4);
+    _textureCropBuffer   = createArrayBuffer(_textureCropData,   "a_texCrop",    4, 1, 4, _gl.FLOAT, 4);
     _colorData           = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
-    _colorBuffer         = createArrayBuffer(_colorData,         "a_fillColor",      4, 1, 4, _gl.FLOAT, 4);
+    _colorBuffer         = createArrayBuffer(_colorData,         "a_fillColor",  4, 1, 4, _gl.FLOAT, 4);
     _tintColorData       = new Float32Array(priv.MAX_BATCH_ITEMS * 4);
-    _tintColorBuffer     = createArrayBuffer(_tintColorData,     "a_tintColor",      4, 1, 4, _gl.FLOAT, 4);
+    _tintColorBuffer     = createArrayBuffer(_tintColorData,     "a_tintColor",  4, 1, 4, _gl.FLOAT, 4);
     _tintTypeData        = new Uint8Array(priv.MAX_BATCH_ITEMS);
-    _tintTypeBuffer      = createArrayBuffer(_tintTypeData,      "a_tintType",       1, 1, 1, _gl.BYTE,  0);
+    _tintTypeBuffer      = createArrayBuffer(_tintTypeData,      "a_tintType",   1, 1, 1, _gl.BYTE,  0);
 
     if (_config.useMask) {
-      _textureMaskIdData   = new Uint8Array(priv.MAX_BATCH_ITEMS);
-      _textureMaskIdBuffer = createArrayBuffer(_textureMaskIdData, "a_textureMaskId",  1, 1, 1, _gl.BYTE,  0);
+      _maskTextureIdData   = new Uint8Array(priv.MAX_BATCH_ITEMS);
+      _maskTextureIdBuffer = createArrayBuffer(_maskTextureIdData, "a_maskTexId",  1, 1, 1, _gl.BYTE,  0);
     }
     _setMaskDataFunc = _config.useMask
       ? setMaskData
@@ -163,11 +162,6 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _bindMaskBufferFunc = _config.useMask
       ? bindMaskBuffer
       : emptyFunction;
-
-    var textureIndices = new Uint8Array(_webGlUtils.webGlInfo.maxTextureImageUnits);
-    var i = textureIndices.length;
-    while (i--) textureIndices[i] = i;
-    _gl.uniform1iv(_locations["u_textureIndices"], textureIndices);
 
     resize();
     _scope.setParentColor([1, 1, 1, 1]);
@@ -236,7 +230,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _locations             =
     _matrixData            =
     _textureIdData         =
-    _textureMaskIdData     =
+    _maskTextureIdData     =
     _textureMatrixData     =
     _textureCropData       =
     _colorData             =
@@ -244,13 +238,14 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _tintTypeData          =
     _matrixBuffer          =
     _textureIdBuffer       =
-    _textureMaskIdBuffer   =
+    _maskTextureIdBuffer   =
     _textureMatrixBuffer   =
     _textureCropBuffer     =
     _colorBuffer           =
     _tintColorBuffer       =
     _tintTypeBuffer        =
     _textureMap            =
+    _textureIds            =
     _batchItems            =
     _attachedLights        =
     _lightPositions        =
@@ -301,7 +296,8 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
 
   function drawItem(item) {
     if (item.renderable) {
-      item.updateProperties(_matrixUtils.transform2D);
+      item.update(_tranformFunction);
+
       if (is(item, WebGl.Container)) drawContainer(item);
       else if (is(item, WebGl.Image)) drawImage(item);
     }
@@ -314,7 +310,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   }
 
   function setMaskData(item) {
-    _textureMaskIdData[_batchItems] = drawTexture(item.mask);
+    _maskTextureIdData[_batchItems] = drawTexture(item.mask);
   }
 
   function drawImage(item) {
@@ -389,7 +385,9 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
   var bindMaskBuffer = bindArrayBuffer.bind(this);
 
   function batchDraw() {
-    _bindMaskBufferFunc(_textureMaskIdBuffer, _textureMaskIdData);
+    _gl.uniform1iv(_locations["u_texIds"], new Uint8Array(_textureIds));
+
+    _bindMaskBufferFunc(_maskTextureIdBuffer, _maskTextureIdData);
 
     bindArrayBuffer(_matrixBuffer,        _matrixData);
 		bindArrayBuffer(_textureIdBuffer,     _textureIdData);
@@ -404,6 +402,7 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     _gl.drawArraysInstanced(_gl.TRIANGLE_FAN, 0, 4, _batchItems);
 
     _textureMap.length =
+    _textureIds.length =
     _batchItems = 0;
   }
 
@@ -411,11 +410,13 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
     if (!textureInfo) return 0;
 
     var textureMapIndex = _textureMap.indexOf(textureInfo);
-    if (textureMapIndex === -1 || textureInfo.shouldUpdate) {
-      if (textureMapIndex === -1 || !textureInfo.shouldUpdate) {
+    var isIndexUnset = textureMapIndex === -1;
+    if (isIndexUnset || textureInfo.shouldUpdate) {
+      if (isIndexUnset || !textureInfo.shouldUpdate) {
         _textureMap.length === _webGlUtils.webGlInfo.maxTextureImageUnits && batchDraw();
         _textureMap.push(textureInfo);
         textureMapIndex = _textureMap.length - 1;
+        _textureIds.push(textureMapIndex);
       }
 
       _webGlUtils.useTexture(_gl, textureMapIndex, textureInfo);
@@ -451,6 +452,8 @@ createClass(WebGl, "Stage2D", WebGl.Container, function(_scope, _super) {
       _scope.parentMatrix = _matrixUtils.orthographic(0, _width, _height, 0, -1, 1);
 
       _gl.uniform2f(_locations["u_resolution"], _width / _height, 96 / _width);
+
+      _scope.shouldUpdateProps();
     }
   }
 
@@ -465,37 +468,40 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
 
   "in vec4 a_position;" +
   "in mat4 a_matrix;" +
-  "in mat4 a_textureMatrix;" +
-  "in vec4 a_textureCrop;" +
+  "in mat4 a_texMatrix;" +
+  "in vec4 a_texCrop;" +
   "in vec4 a_fillColor;" +
   "in vec4 a_tintColor;" +
-  "in int a_textureId;";
+  "in int a_texId;";
 
-  if (config.useMask) shader += "in int a_textureMaskId;";
+  if (config.useMask) shader += "in int a_maskTexId;";
 
   shader +=
   "in int a_tintType;" +
 
-  "out vec2 v_texcoord;" +
+  "out vec2 v_texCoord;" +
   "out vec4 v_coord;" +
-  "out vec4 v_textureCrop;" +
+  "out vec4 v_texCrop;" +
+  "out vec2 v_texCropSize;" +
   "out vec4 v_fillColor;" +
   "out vec4 v_tintColor;" +
-  "flat out int v_textureId;";
-  if (config.useMask) shader += "flat out int v_textureMaskId;";
+  "flat out int v_texId;";
+
+  if (config.useMask) shader += "flat out int v_maskTexId;";
 
   shader +=
   "flat out int v_tintType;" +
 
   "void main() {" +
     "gl_Position = a_matrix * a_position;" +
-    "v_texcoord = (a_textureMatrix * a_position).xy;" +
+    "v_texCoord = (a_texMatrix * a_position).xy;" +
     "v_coord = gl_Position;" +
-    "v_textureCrop = a_textureCrop;" +
+    "v_texCrop = a_texCrop;" +
+    "v_texCropSize = v_texCrop.zw - v_texCrop.xy;" +
     "v_fillColor = a_fillColor;" +
-    "v_textureId = a_textureId;";
+    "v_texId = a_texId;";
 
-    if (config.useMask) shader += "v_textureMaskId = a_textureMaskId;";
+    if (config.useMask) shader += "v_maskTexId = a_maskTexId;";
 
     shader +=
     "v_tintColor = a_tintColor;" +
@@ -512,18 +518,19 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
   "precision lowp float;" +
 
   "in vec4 v_coord;" +
-  "in vec2 v_texcoord;" +
-  "in vec4 v_textureCrop;" +
+  "in vec2 v_texCoord;" +
+  "in vec4 v_texCrop;" +
+  "in vec2 v_texCropSize;" +
   "in vec4 v_fillColor;" +
   "in vec4 v_tintColor;" +
-  "flat in int v_textureId;";
+  "flat in int v_texId;";
 
-  if (config.useMask) shader += "flat in int v_textureMaskId;";
+  if (config.useMask) shader += "flat in int v_maskTexId;";
 
   shader +=
   "flat in int v_tintType;" +
 
-  "uniform sampler2D u_textureIndices[" + maxTextureImageUnits + "];" +
+  "uniform sampler2D u_texIds[" + maxTextureImageUnits + "];" +
 
   "uniform vec2 u_resolution;" +
   "uniform int u_filters;" +
@@ -557,31 +564,38 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
 
   shader +=
   "void main() {" +
-    "vec2 textureCropSize = v_textureCrop.zw - v_textureCrop.xy;" +
-    "vec2 coord = coordLimit(v_texcoord, textureCropSize, v_textureCrop);";
+    "vec2 coord = coordLimit(v_texCoord, v_texCropSize, v_texCrop);";
 
-    shader += "if (v_textureId == 0) discard;";
+    shader +=
+    "if (v_texId == 0) discard;" +
+    "bool isTexFound = false;";
     for (var i = 0; i < maxTextureImageUnits; i++) {
       shader += (i > 0 ? " else " : "") +
-      "if (v_textureId == " + (i + 1) + ")" +
-        "fragColor = texture(u_textureIndices[" + i + "], coord);";
+      "if (" + (i > 0 ? "!isTexFound && " : "") + "v_texId == " + (i + 1) + ") {" +
+        "fragColor = texture(u_texIds[" + i + "], coord);" +
+        "isTexFound = true;" +
+      "}";
     }
 
     if (config.useMask) {
       shader +=
       "float maskAlpha = 1.0;" +
-      "if (v_textureMaskId > 0) {" +
-        "vec2 maskCoord = (v_coord.xy + vec2(1.0, -1.0)) / vec2(2.0, -2.0);";
+      "if (v_maskTexId > 0) {" +
+        "vec2 maskCoord = (v_coord.xy + vec2(1.0, -1.0)) / vec2(2.0, -2.0);" +
+        "bool isMaskTexFound = false;";
         for (var i = 0; i < maxTextureImageUnits; i++) {
           shader += (i > 0 ? " else " : "") +
-          "if (v_textureMaskId == " + (i + 1) + ")" +
-            "maskAlpha = texture(u_textureIndices[" + i + "], maskCoord).a;";
+          "if (" + (i > 0 ? "!isMaskTexFound && " : "") + "v_maskTexId == " + (i + 1) + ") {" +
+            "maskAlpha = texture(u_texIds[" + i + "], maskCoord).a;" +
+            "isMaskTexFound = true;" +
+          "}";
         }
-      shader += "}";
+      shader += "}" +
+      "if (maskAlpha == 0.0) discard;";
     }
 
     shader +=
-    "if (fragColor.a < 0.01) discard;" +
+    "if (fragColor.a == 0.0) discard;" +
     "if (v_tintType == 0) " +
       "fragColor *= v_tintColor;" +
     "else if (v_tintType == 1 && fragColor.r == fragColor.g && fragColor.r == fragColor.b) " +
@@ -598,7 +612,8 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
           "lightColor += lightValue(" +
             "u_lightPositions[" + i + "], " +
             "1.0 / abs(u_lightVolumes[" + i + "]), " +
-            "u_lightColors[" + i + "], u_lightEffects[" + i + "]" +
+            "u_lightColors[" + i + "], " +
+            "u_lightEffects[" + i + "]" +
           ");" +
         "}";
       }
@@ -610,7 +625,7 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
     "vec4 fogColor = vec4(u_fog.rgb * colorLightMultiply, 0.0);" +
     "vec4 finalColor = vec4(fragColor.rgb * colorMultiply, fragColor.a);" +
     "fragColor = (finalColor * (v_fillColor + lightColor)) + fogColor;" +
-    "if (fragColor.a < 0.01) discard;";
+    "if (fragColor.a == 0.0) discard;";
 
     if (config.filters && config.filters.length > 0) {
       shader += "if (u_filters > 0) {";

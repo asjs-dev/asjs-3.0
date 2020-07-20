@@ -87,20 +87,35 @@ createClass(WebGl, "Container", WebGl.Item, function(_scope, _super) {
   _scope.destruct = function() {
     if (_parent && _parent.removeChild) _parent.removeChild(_scope);
 
-    _children      =
-    _mouseChildren =
-    _parentColor   =
-    _parent        = null;
+    _children          =
+    _mouseChildren     =
+    _parentColor       =
+    _parent            = null;
 
     _super.destruct();
   }
 
-  _scope.updateColorCache = function() {
+  override(_scope, _super, "shouldUpdateProps");
+  _scope.shouldUpdateProps = function() {
+    notifyChildrenToUpdate("shouldUpdateProps");
+  }
+
+  override(_scope, _super, "shouldUpdateColorCache");
+  _scope.shouldUpdateColorCache = function() {
+    notifyChildrenToUpdate("shouldUpdateColorCache");
+  }
+
+  _super.protected.updateColorCache = function() {
     var color = _scope.color;
 
     _scope.colorCache[0] = _parentColor[0] * color.r;
     _scope.colorCache[1] = _parentColor[1] * color.g;
     _scope.colorCache[2] = _parentColor[2] * color.b;
     _scope.colorCache[3] = _parentColor[3] * color.a;
+  }
+
+  function notifyChildrenToUpdate(type) {
+    _super[type]();
+    for (var i = 0; i < _children.length; i++) _children[i][type]();
   }
 });

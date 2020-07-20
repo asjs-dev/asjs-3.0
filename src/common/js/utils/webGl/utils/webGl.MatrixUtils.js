@@ -34,9 +34,9 @@
   rof(WebGl.MatrixUtils, "transform2D", function(
     m,
     x, y, z,
-    rx, ry, rz,
-    ax, ay, az,
-    sx, sy, sz,
+    rz,
+    ax, ay,
+    sx, sy,
     dst
   ) {
     m4.translateDst(m, x, y, z, dst);
