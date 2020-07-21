@@ -1,25 +1,13 @@
 require("./webGl.Item.js");
 require("./webGl.BlendModes.js");
 require("../NameSpace.js");
+require("../data/props/webGl.TextureProps.js");
+require("../data/props/webGl.TextureCrop.js");
 
 createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
-  var _matrixUtils = WebGl.MatrixUtils;
+  var _prt = _super.protected;
 
-  _scope.textureProps = {
-    "x"         : 0,
-    "y"         : 0,
-    "rotationZ" : 0,
-    "width"     : 1,
-    "height"    : 1,
-    "anchorX"   : 0,
-    "anchorY"   : 0,
-    "crop"      : {
-      "x"      : 0,
-      "y"      : 0,
-      "width"  : 1,
-      "height" : 1
-    }
-  };
+  var _matrixUtils = WebGl.Matrix3;
 
   _scope.textureMatrixCache = _matrixUtils.identity();
   _scope.texture;
@@ -37,12 +25,15 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
 
     _scope.texture = texture;
 
-    _scope.shouldUpdateTextureProps();
-    _scope.shouldUpdateTextureCrop();
+    _scope.textureProps = new WebGl.TextureProps(_scope.updateTextureProps);
+    _scope.textureCrop = new WebGl.TextureCrop(_scope.updateTextureCrop);
   }
 
   override(_scope, _super, "destruct");
   _scope.destruct = function() {
+    _scope.textureProps.destruct();
+    _scope.textureCrop.destruct();
+    
     _scope.textureProps       =
     _scope.textureCrop        =
     _scope.textureMatrixCache =
@@ -53,22 +44,22 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
     _super.destruct();
   }
 
-  _scope.shouldUpdateTextureProps = function() {
-    _super.protected.updateList.addUnique(_super.protected.updateTextureProps);
+  _scope.updateTextureProps = function() {
+    _prt.updateList.push(_prt.updateTextureProps);
   }
 
-  _scope.shouldUpdateTextureCrop = function() {
-    _super.protected.updateList.addUnique(_super.protected.updateTextureCrop);
+  _scope.updateTextureCrop = function() {
+    _prt.updateList.push(_prt.updateTextureCrop);
   }
 
-  _super.protected.updateTextureProps = function() {
+  _prt.updateTextureProps = function() {
     var textureProps = _scope.textureProps;
 
-    _matrixUtils.transformTexture2D(
+    _matrixUtils.transformTexture(
       textureProps.x,
       textureProps.y,
 
-      textureProps.rotationZ,
+      textureProps.rotation,
 
       textureProps.anchorX,
       textureProps.anchorY,
@@ -80,8 +71,8 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
     );
   }
 
-  _super.protected.updateTextureCrop = function() {
-    var textureCrop = _scope.textureProps.crop;
+  _prt.updateTextureCrop = function() {
+    var textureCrop = _scope.textureCrop;
 
     _scope.textureCropCache[0] = textureCrop.x;
     _scope.textureCropCache[1] = textureCrop.y;

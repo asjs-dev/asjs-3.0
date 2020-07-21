@@ -14,6 +14,8 @@ console.clear();
 var _d = document;
 var _w = window;
 var _m = Math;
+var _tru = !0;
+var _fls = !1;
 
 var isDocumentComplete = function() {
   return document.readyState === "complete";

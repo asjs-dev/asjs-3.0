@@ -2,19 +2,14 @@ require("./webGl.Item.js");
 require("../NameSpace.js");
 
 createClass(WebGl, "Container", WebGl.Item, function(_scope, _super) {
-  var _children      = [];
-  var _mouseChildren = true;
+  var _prt = _super.protected;
 
-  var _parentColor;
+  _scope.shouldUpdateProps =
+  _scope.shouldUpdateColor = true;
 
-  prop(_scope, "mouseChildren", {
-    get: function() { return _mouseChildren; },
-    set: function(v) {
-      _mouseChildren = v;
-      var i = _scope.numChildren;
-      while (i--) _scope.getChildAt(i).enabled = _mouseChildren;
-    }
-  });
+  _scope.parentColor = null;
+
+  var _children = [];
 
   get(_scope, "numChildren", function() { return _children.length; });
 
@@ -37,7 +32,9 @@ createClass(WebGl, "Container", WebGl.Item, function(_scope, _super) {
     _children.push(child);
     _scope.setChildIndex(child, index);
     child.parent = _scope;
-    if (is(child, WebGl.Container)) child.setParentColor(_scope.colorCache);
+    if (is(child, WebGl.Container)) {
+      child.parentColor  = _scope.colorCache;
+    }
     child.parentMatrix = _scope.matrixCache;
     return child;
   }
@@ -45,7 +42,7 @@ createClass(WebGl, "Container", WebGl.Item, function(_scope, _super) {
   _scope.removeChild = function(child) {
     if (!child || !_scope.contains(child)) return null;
     _children.remove(child);
-    if (is(child, WebGl.Container)) child.setParentColor(null);
+    if (is(child, WebGl.Container)) child.parentColor = null;
     child.parentMatrix = null;
     child.parent = null;
     return child;
@@ -79,43 +76,47 @@ createClass(WebGl, "Container", WebGl.Item, function(_scope, _super) {
     return true;
   }
 
-  _scope.setParentColor = function(v) {
-    _parentColor = v;
-  }
-
   override(_scope, _super, "destruct");
   _scope.destruct = function() {
-    if (_parent && _parent.removeChild) _parent.removeChild(_scope);
-
-    _children          =
-    _mouseChildren     =
-    _parentColor       =
-    _parent            = null;
+    _children                =
+    _mouseChildren           =
+    _parent                  =
+    _scope.parentMatrix      =
+    _scope.parentColor       =
+    _scope.shouldUpdateProps =
+    _scope.shouldUpdateColor = null;
 
     _super.destruct();
   }
 
-  override(_scope, _super, "shouldUpdateProps");
-  _scope.shouldUpdateProps = function() {
-    notifyChildrenToUpdate("shouldUpdateProps");
+  _scope.postRender = function() {
+    _scope.shouldUpdateProps =
+    _scope.shouldUpdateColor = false;
   }
 
-  override(_scope, _super, "shouldUpdateColorCache");
-  _scope.shouldUpdateColorCache = function() {
-    notifyChildrenToUpdate("shouldUpdateColorCache");
+  _scope.updateProps = function() {
+    _prt.updateList.push(_prt.updateProps);
+    _scope.shouldUpdateProps = true;
   }
 
-  _super.protected.updateColorCache = function() {
-    var color = _scope.color;
-
-    _scope.colorCache[0] = _parentColor[0] * color.r;
-    _scope.colorCache[1] = _parentColor[1] * color.g;
-    _scope.colorCache[2] = _parentColor[2] * color.b;
-    _scope.colorCache[3] = _parentColor[3] * color.a;
+  _scope.updateColor = function() {
+    _prt.updateList.push(_prt.updateColor);
+    _scope.shouldUpdateColor = true;
   }
 
-  function notifyChildrenToUpdate(type) {
-    _super[type]();
-    for (var i = 0; i < _children.length; i++) _children[i][type]();
+  override(_scope, _super, "update");
+  _scope.update = function(transformFunction) {
+    _prt.parent.shouldUpdateColor && _scope.updateColor();
+    _super.update(transformFunction);
+  }
+
+  _prt.updateColor = function() {
+    var color       = _scope.color;
+    var parentColor = _scope.parentColor;
+
+    _scope.colorCache[0] = parentColor[0] * color.r;
+    _scope.colorCache[1] = parentColor[1] * color.g;
+    _scope.colorCache[2] = parentColor[2] * color.b;
+    _scope.colorCache[3] = parentColor[3] * color.a;
   }
 });

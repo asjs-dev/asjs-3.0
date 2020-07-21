@@ -130,7 +130,7 @@ var sourcePath = ASJS.Importer.instance.sourcePath;
 var require    = ASJS.Importer.instance.require;
 
 c0(ASJS, "BaseClass", Object, function(_scope, _super) {
-  _scope.new       = function() {};
+  _scope.new       = emptyFunction;
   _scope.protected = {};
   _scope.prot      = _scope.protected;
   _scope.destruct  = function() {

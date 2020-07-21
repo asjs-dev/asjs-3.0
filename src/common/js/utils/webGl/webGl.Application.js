@@ -2,8 +2,13 @@ require("./NameSpace.js");
 require("./webGl.Bitmap.js");
 
 require("./data/webGl.Config.js");
+require("./data/props/webGl.ColorProps.js");
+require("./data/props/webGl.ItemProps.js");
+require("./data/props/webGl.LightEffectProps.js");
+require("./data/props/webGl.TextureCrop.js");
+require("./data/props/webGl.TextureProps.js");
 
-require("./utils/webGl.MatrixUtils.js");
+require("./utils/webGl.Matrix3.js");
 require("./utils/webGl.Utils.js");
 
 require("./display/webGl.BlendModes.js");

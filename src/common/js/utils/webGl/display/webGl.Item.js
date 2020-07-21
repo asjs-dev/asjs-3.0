@@ -1,47 +1,33 @@
 require("../NameSpace.js");
+require("../data/props/webGl.ItemProps.js");
+require("../data/props/webGl.ColorProps.js");
 
 createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
-  _scope.props = {
-    "x"         : 0,
-    "y"         : 0,
-    "z"         : 0,
-    "rotationZ" : 0,
-    "scaleX"    : 1,
-    "scaleY"    : 1,
-    "width"     : 1,
-    "height"    : 1,
-    "anchorX"   : 0,
-    "anchorY"   : 0,
-  };
+  var _matrixUtils = WebGl.Matrix3;
 
-  _scope.color = {
-    "r" : 1,
-    "g" : 1,
-    "b" : 1,
-    "a" : 1
-  };
+  var _prt = _super.protected;
 
   _scope.renderable  = true;
   _scope.interactive = false;
 
-  _scope.matrixCache = WebGl.MatrixUtils.identity();
+  _scope.matrixCache = _matrixUtils.identity();
   _scope.colorCache  = new Float32Array(4);
 
-  _scope.parentMatrix = null;
+  _scope.parentMatrix = _matrixUtils.identity();
 
-  _super.protected.updateList = [];
+  _prt.updateList = [];
 
-  var _parent = null;
+  _prt.parent = null;
 
   _scope.new = function() {
-    _scope.shouldUpdateProps();
-    _scope.shouldUpdateColorCache();
+    _scope.props = new WebGl.ItemProps(_scope.updateProps);
+    _scope.color = new WebGl.ColorProps(_scope.updateColor);
   }
 
   prop(_scope, "parent", {
-    get: function() { return _parent; },
+    get: function() { return _prt.parent; },
     set: function(v) {
-      if (empty(v) || v.getChildIndex(_scope) > -1) _parent = v;
+      if (empty(v) || v.getChildIndex(_scope) > -1) _prt.parent = v;
     }
   });
 
@@ -49,34 +35,42 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
 
   override(_scope, _super, "destruct");
   _scope.destruct = function() {
-    _scope.props        =
-    _scope.color        =
-    _scope.renderable   =
-    _scope.colorCache   =
-    _scope.matrixCache  =
-    _scope.parentMatrix =
-    _scope.parent       = null;
+    _prt.parent && _prt.parent.removeChild && _prt.parent.removeChild(_scope);
+
+    _scope.props.destruct();
+    _scope.color.destruct();
+
+    _scope.props             =
+    _scope.color             =
+    _scope.renderable        =
+    _scope.colorCache        =
+    _scope.matrixCache       =
+    _scope.parentMatrix      =
+    _scope.parent            = null;
 
     _super.destruct();
   }
 
-  _scope.preRender  = function() {}
-  _scope.postRender = function() {}
+  _scope.void       = emptyFunction;
+  _scope.preRender  = emptyFunction;
+  _scope.postRender = emptyFunction;
 
-  _scope.shouldUpdateProps = function() {
-    _super.protected.updateList.addUnique(_super.protected.updateProps);
+  _scope.updateProps = function() {
+    _prt.updateList.push(_prt.updateProps);
   }
 
-  _scope.shouldUpdateColorCache = function() {
-    _super.protected.updateList.addUnique(_super.protected.updateColorCache);
+  _scope.updateColor = function() {
+    _prt.updateList.push(_prt.updateColor);
   }
 
   _scope.update = function(transformFunction) {
+    _prt.parent.shouldUpdateProps && _scope.updateProps();
+
     var fv;
-    while (fv = _super.protected.updateList.shift()) fv(transformFunction);
+    while (fv = _prt.updateList.shift()) fv(transformFunction);
   }
 
-  _super.protected.updateProps = function(transformFunction) {
+  _prt.updateProps = function(transformFunction) {
     var props = _scope.props;
 
     var sx = props.scaleX;
@@ -87,9 +81,8 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
 
       props.x,
       props.y,
-      props.z,
 
-      props.rotationZ,
+      props.rotation,
 
       props.anchorX * sx,
       props.anchorY * sy,
@@ -101,7 +94,7 @@ createClass(WebGl, "Item", ASJS.BaseClass, function(_scope, _super) {
     );
   }
 
-  _super.protected.updateColorCache = function() {
+  _prt.updateColor = function() {
     var color = _scope.color;
 
     _scope.colorCache[0] = color.r;

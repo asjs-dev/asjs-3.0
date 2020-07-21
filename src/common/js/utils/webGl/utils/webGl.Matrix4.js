@@ -1,8 +1,8 @@
 (function() {
-  createUtility(WebGl, "MatrixUtils");
-  var m4 = WebGl.MatrixUtils;
+  createUtility(WebGl, "Matrix4");
+  var m4 = WebGl.Matrix4;
 
-  rof(WebGl.MatrixUtils, "isPointInMatrix", function(
+  rof(m4, "isPointInMatrix", function(
     vec,
     m,
     invDst, vecDst
@@ -13,7 +13,7 @@
     return vecDst[0] >= 0 && vecDst[1] >= 0 && vecDst[0] <= 1 && vecDst[1] <= 1;
   });
 
-  rof(WebGl.MatrixUtils, "transformTexture2D", function(
+  rof(m4, "transformTexture2D", function(
     x, y,
     rz,
     ax, ay,
@@ -31,7 +31,7 @@
     dst[13] = (dst[ 1] * -ax + dst[ 5] * -ay) + y;
   });
 
-  rof(WebGl.MatrixUtils, "transform2D", function(
+  rof(m4, "transform2D", function(
     m,
     x, y, z,
     rz,
@@ -45,7 +45,7 @@
     m4.scale(dst, sx, sy, 1);
   });
 
-  rof(WebGl.MatrixUtils, "transform", function(
+  rof(m4, "transform", function(
     m,
     x, y, z,
     rx, ry, rz,
@@ -61,7 +61,7 @@
     m4.scale(dst, sx, sy, sz);
   });
 
-  rof(WebGl.MatrixUtils, "multiply", function(a, b, dst) {
+  rof(m4, "multiply", function(a, b, dst) {
     dst[ 0] = b[ 0] * a[ 0] + b[ 1] * a[ 4] + b[ 2] * a[ 8] + b[ 3] * a[12];
     dst[ 1] = b[ 0] * a[ 1] + b[ 1] * a[ 5] + b[ 2] * a[ 9] + b[ 3] * a[13];
     dst[ 2] = b[ 0] * a[ 2] + b[ 1] * a[ 6] + b[ 2] * a[10] + b[ 3] * a[14];
@@ -80,18 +80,18 @@
     dst[15] = b[12] * a[ 3] + b[13] * a[ 7] + b[14] * a[11] + b[15] * a[15];
   });
 
-  rof(WebGl.MatrixUtils, "multiplyVector", function(a, b, dst) {
+  rof(m4, "multiplyVector", function(a, b, dst) {
     dst[ 0] = b[ 0] * a[ 0] + b[ 1] * a[ 4] + b[ 2] * a[ 8] + b[ 3] * a[12];
     dst[ 1] = b[ 0] * a[ 1] + b[ 1] * a[ 5] + b[ 2] * a[ 9] + b[ 3] * a[13];
     dst[ 2] = b[ 0] * a[ 2] + b[ 1] * a[ 6] + b[ 2] * a[10] + b[ 3] * a[14];
     dst[ 3] = b[ 0] * a[ 3] + b[ 1] * a[ 7] + b[ 2] * a[11] + b[ 3] * a[15];
   });
 
-  rof(WebGl.MatrixUtils, "length", function(v) {
+  rof(m4, "length", function(v) {
     return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
   });
 
-  rof(WebGl.MatrixUtils, "identity", function() {
+  rof(m4, "identity", function() {
     return new Float32Array([
       1, 0, 0, 0,
       0, 1, 0, 0,
@@ -100,7 +100,7 @@
     ]);
   });
 
-  rof(WebGl.MatrixUtils, "perspective", function(fieldOfViewInRadians, aspect, near, far) {
+  rof(m4, "perspective", function(fieldOfViewInRadians, aspect, near, far) {
     var f = Math.tan(Math.PI * 0.5 - fieldOfViewInRadians * 0.5);
     var rangeInv = 1.0 / (near - far);
 
@@ -124,7 +124,7 @@
     ]);
   });
 
-  rof(WebGl.MatrixUtils, "orthographic", function(left, right, bottom, top, near, far) {
+  rof(m4, "orthographic", function(left, right, bottom, top, near, far) {
     return new Float32Array([
       2 / (right - left),
       0,
@@ -145,7 +145,7 @@
     ]);
   });
 
-  rof(WebGl.MatrixUtils, "translate", function(m, tx, ty, tz) {
+  rof(m4, "translate", function(m, tx, ty, tz) {
     var m30 = m[12];
     var m31 = m[13];
     var m32 = m[14];
@@ -157,7 +157,7 @@
     m[15] = m[ 3] * tx + m[ 7] * ty + m[11] * tz + m33;
   });
 
-  rof(WebGl.MatrixUtils, "translateDst", function(m, tx, ty, tz, dst) {
+  rof(m4, "translateDst", function(m, tx, ty, tz, dst) {
     dst[ 0] = m[ 0];
     dst[ 1] = m[ 1];
     dst[ 2] = m[ 2];
@@ -176,9 +176,9 @@
     dst[15] = m[ 3] * tx + m[ 7] * ty + m[11] * tz + m[15];
   });
 
-  rof(WebGl.MatrixUtils, "xRotation", function(angleInRadians, dst) {
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+  rof(m4, "xRotation", function(r, dst) {
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     dst[ 0] = 1;
     dst[ 1] = 0;
@@ -198,7 +198,7 @@
     dst[15] = 1;
   });
 
-  rof(WebGl.MatrixUtils, "xRotate", function(m, angleInRadians) {
+  rof(m4, "xRotate", function(m, r) {
     var m10 = m[ 4];
     var m11 = m[ 5];
     var m12 = m[ 6];
@@ -207,8 +207,8 @@
     var m21 = m[ 9];
     var m22 = m[10];
     var m23 = m[11];
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     m[ 4] = c * m10 + s * m20;
     m[ 5] = c * m11 + s * m21;
@@ -220,7 +220,7 @@
     m[11] = c * m23 - s * m13;
   });
 
-  rof(WebGl.MatrixUtils, "xRotateDst", function(m, angleInRadians, dst) {
+  rof(m4, "xRotateDst", function(m, r, dst) {
     var m10 = m[ 4];
     var m11 = m[ 5];
     var m12 = m[ 6];
@@ -229,8 +229,8 @@
     var m21 = m[ 9];
     var m22 = m[10];
     var m23 = m[11];
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     dst[ 4] = c * m10 + s * m20;
     dst[ 5] = c * m11 + s * m21;
@@ -251,9 +251,9 @@
     dst[15] = m[15];
   });
 
-  rof(WebGl.MatrixUtils, "yRotation", function(angleInRadians, dst) {
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+  rof(m4, "yRotation", function(r, dst) {
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     dst[ 0] = c;
     dst[ 1] = 0;
@@ -273,7 +273,7 @@
     dst[15] = 1;
   });
 
-  rof(WebGl.MatrixUtils, "yRotate", function(m, angleInRadians) {
+  rof(m4, "yRotate", function(m, r) {
     var m00 = m[ 0];
     var m01 = m[ 1];
     var m02 = m[ 2];
@@ -282,8 +282,8 @@
     var m21 = m[ 9];
     var m22 = m[10];
     var m23 = m[11];
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     m[ 0] = c * m00 - s * m20;
     m[ 1] = c * m01 - s * m21;
@@ -295,7 +295,7 @@
     m[11] = c * m23 + s * m03;
   });
 
-  rof(WebGl.MatrixUtils, "yRotateDst", function(m, angleInRadians, dst) {
+  rof(m4, "yRotateDst", function(m, r, dst) {
     var m00 = m[ 0];
     var m01 = m[ 1];
     var m02 = m[ 2];
@@ -304,8 +304,8 @@
     var m21 = m[ 9];
     var m22 = m[10];
     var m23 = m[11];
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     dst[ 0] = c * m00 - s * m20;
     dst[ 1] = c * m01 - s * m21;
@@ -326,9 +326,9 @@
     dst[15] = m[15];
   });
 
-  rof(WebGl.MatrixUtils, "zRotation", function(angleInRadians, dst) {
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+  rof(m4, "zRotation", function(r, dst) {
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     dst[ 0] = c;
     dst[ 1] = s;
@@ -348,7 +348,7 @@
     dst[15] = 1;
   });
 
-  rof(WebGl.MatrixUtils, "zRotate", function(m, angleInRadians) {
+  rof(m4, "zRotate", function(m, r) {
     var m00 = m[ 0];
     var m01 = m[ 1];
     var m02 = m[ 2];
@@ -357,8 +357,8 @@
     var m11 = m[ 5];
     var m12 = m[ 6];
     var m13 = m[ 7];
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     m[ 0] = c * m00 + s * m10;
     m[ 1] = c * m01 + s * m11;
@@ -370,7 +370,7 @@
     m[ 7] = c * m13 - s * m03;
   });
 
-  rof(WebGl.MatrixUtils, "zRotateDst", function(m, angleInRadians, dst) {
+  rof(m4, "zRotateDst", function(m, r, dst) {
     var m00 = m[ 0];
     var m01 = m[ 1];
     var m02 = m[ 2];
@@ -379,8 +379,8 @@
     var m11 = m[ 5];
     var m12 = m[ 6];
     var m13 = m[ 7];
-    var c = Math.cos(angleInRadians);
-    var s = Math.sin(angleInRadians);
+    var c = Math.cos(r);
+    var s = Math.sin(r);
 
     dst[ 0] = c * m00 + s * m10;
     dst[ 1] = c * m01 + s * m11;
@@ -401,7 +401,7 @@
     dst[15] = m[15];
   });
 
-  rof(WebGl.MatrixUtils, "scaling", function(sx, sy, sz, dst) {
+  rof(m4, "scaling", function(sx, sy, sz, dst) {
     dst[ 0] = sx;
     dst[ 1] = 0;
     dst[ 2] = 0;
@@ -420,7 +420,7 @@
     dst[15] = 1;
   });
 
-  rof(WebGl.MatrixUtils, "scale", function(m, sx, sy, sz) {
+  rof(m4, "scale", function(m, sx, sy, sz) {
     m[ 0] = sx * m[ 0];
     m[ 1] = sx * m[ 1];
     m[ 2] = sx * m[ 2];
@@ -435,7 +435,7 @@
     m[11] = sz * m[11];
   });
 
-  rof(WebGl.MatrixUtils, "scaleDst", function(m, sx, sy, sz, dst) {
+  rof(m4, "scaleDst", function(m, sx, sy, sz, dst) {
     dst[ 0] = sx * m[ 0];
     dst[ 1] = sx * m[ 1];
     dst[ 2] = sx * m[ 2];
@@ -454,7 +454,7 @@
     dst[15] = m[15];
   });
 
-  rof(WebGl.MatrixUtils, "inverse", function(m, dst) {
+  rof(m4, "inverse", function(m, dst) {
     var m00 = m[ 0];
     var m01 = m[ 1];
     var m02 = m[ 2];

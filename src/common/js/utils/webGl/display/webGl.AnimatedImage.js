@@ -34,7 +34,7 @@ createClass(WebGl, "AnimatedImage", WebGl.Image, function(_scope, _super) {
         _scope.frame += Math.floor(ellapsedTime / _scope.frameLength);
         _scope.frame >= _scope.frames.length && (_scope.frame = 0);
 
-        updateTextureCrop();
+        _scope.updateTextureCrop();
       }
     }
   }
@@ -51,12 +51,12 @@ createClass(WebGl, "AnimatedImage", WebGl.Image, function(_scope, _super) {
     _super.destruct();
   }
 
-  function updateTextureCrop() {
-      var textureCrop = _scope.frames[_scope.frame];
+  _super.protected.updateTextureCrop = function() {
+    var textureCrop = _scope.frames[_scope.frame];
 
-      _scope.textureCropCache[0] = textureCrop.x;
-      _scope.textureCropCache[1] = textureCrop.y;
-      _scope.textureCropCache[2] = textureCrop.width;
-      _scope.textureCropCache[3] = textureCrop.height;
+    _scope.textureCropCache[0] = textureCrop.x;
+    _scope.textureCropCache[1] = textureCrop.y;
+    _scope.textureCropCache[2] = textureCrop.width;
+    _scope.textureCropCache[3] = textureCrop.height;
   }
 });

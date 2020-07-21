@@ -1,4 +1,4 @@
-require("./utils/webGl.MatrixUtils.js");
+require("./utils/webGl.Matrix3.js");
 require("./utils/webGl.Utils.js");
 require("./NameSpace.js");
 
@@ -17,7 +17,6 @@ createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     contextAttributes.premultipliedAlpha = true;
     contextAttributes.preserveDrawingBuffer = true;
     contextAttributes.stencil = true;
-    contextAttributes.depth = true;
 
     _super.protected.contextAttributes = contextAttributes;
     _super.protected.contextType = "webgl2";
@@ -61,7 +60,7 @@ createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   }
 
   _scope.updateScissor = function() {
-    if (_gl) _gl.scissor(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
+    _gl && _gl.scissor(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
     _scope.dispatchEvent(WebGl.Bitmap.RESIZE);
   };
 

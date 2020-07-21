@@ -319,7 +319,7 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
 
   function checkArray() {
     Array.prototype.addUnique = function(item) {
-      !this.has(item) && this.push(item);
+      this.indexOf(item) == -1 && this.push(item);
     }
     Array.prototype.has = function(item) {
       return this.indexOf(item) > -1;
