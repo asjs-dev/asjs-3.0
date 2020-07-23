@@ -21,7 +21,7 @@ createClass(WebGl, "Light", WebGl.Item, function(_scope, _super) {
   override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.effect.destruct();
-    
+
     _scope.effect        =
     _scope.positionCache =
     _scope.volumeCache   =

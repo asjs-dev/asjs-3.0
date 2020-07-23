@@ -98,13 +98,13 @@
     dst[3] = c * m[3] - s * m[0];
     dst[4] = c * m[4] - s * m[1];
 
-    dst[6] = dst[0] * -ax + dst[3] * -ay + m[0] * x + m[3] * y + m[6];
-    dst[7] = dst[1] * -ax + dst[4] * -ay + m[1] * x + m[4] * y + m[7];
+    dst[6] = -ax * dst[0] - ay * dst[3] + x * m[0] + y * m[3] + m[6];
+    dst[7] = -ax * dst[1] - ay * dst[4] + x * m[1] + y * m[4] + m[7];
 
-    dst[0] = sx * dst[0];
-    dst[1] = sx * dst[1];
-    dst[3] = sy * dst[3];
-    dst[4] = sy * dst[4];
+    dst[0] *= sx;
+    dst[1] *= sx;
+    dst[3] *= sy;
+    dst[4] *= sy;
   });
   /*
   rof(m3, "translateDst", function(m, tx, ty, dst) {

@@ -33,7 +33,7 @@ createClass(WebGl, "Image", WebGl.Item, function(_scope, _super) {
   _scope.destruct = function() {
     _scope.textureProps.destruct();
     _scope.textureCrop.destruct();
-    
+
     _scope.textureProps       =
     _scope.textureCrop        =
     _scope.textureMatrixCache =
