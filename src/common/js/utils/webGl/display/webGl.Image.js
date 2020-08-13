@@ -11,11 +11,7 @@ WebGl.Image = createPrototypeClass(
 
     cnst(this, "type", WebGl.Image.TYPE);
 
-    var matrixUtils = WebGl.Matrix3;
-
-    this._transformLocal = matrixUtils.transformLocal;
-
-    this.textureMatrixCache = matrixUtils.identity();
+    this.textureMatrixCache = WebGl.Matrix3.identity();
 
     this.mask = null;
 
@@ -53,7 +49,7 @@ WebGl.Image = createPrototypeClass(
     }
 
     this._transformItem = function(props, cache) {
-      this._transformLocal(
+      WebGl.Matrix3.transformLocal(
         props.x,
         props.y,
 

@@ -7,13 +7,10 @@ WebGl.Item = createPrototypeClass(
   function Item() {
     cnst(this, "type", WebGl.Item.TYPE);
 
-    this._matrixUtils = WebGl.Matrix3;
-    this._transform = this._matrixUtils.transform;
-
     this.renderable  = true;
     this.interactive = false;
 
-    this.matrixCache = this._matrixUtils.identity();
+    this.matrixCache = WebGl.Matrix3.identity();
 
     this.props = new WebGl.ItemProps();
     this.color = new WebGl.ColorProps();
@@ -44,7 +41,7 @@ WebGl.Item = createPrototypeClass(
     }
 
     this._transformItem = function(props, parent) {
-      this._transform(
+      WebGl.Matrix3.transform(
         parent.matrixCache,
 
         props.x,
