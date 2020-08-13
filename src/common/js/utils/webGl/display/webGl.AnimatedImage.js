@@ -1,62 +1,63 @@
 require("./webGl.Image.js");
 require("../NameSpace.js");
 
-createClass(WebGl, "AnimatedImage", WebGl.Image, function(_scope, _super) {
-  _scope.frameLength = 120;
-  _scope.frame       = 0;
-  _scope.frames      = [];
-  _scope.isPlaying   = false;
+WebGl.AnimatedImage = createPrototypeClass(
+  WebGl.Image,
+  function(texture) {
+    WebGl.Image.call(this, texture);
 
-  var _latestUpdate = -1;
+    this.frameLength = 120;
+    this.frame       = 0;
+    this.frames      = [];
+    this.isPlaying   = false;
 
-  _scope.gotoAndStop = function(frame) {
-    _scope.frame = frame;
-  }
+    this._latestUpdate = -1;
+  },
+  function(_super) {
+    this.gotoAndStop = function(frame) {
+      this.frame = frame;
+    }
 
-  _scope.gotoAndPlay = function(frame) {
-    _scope.frame = frame;
-    _scope.play();
-  }
+    this.gotoAndPlay = function(frame) {
+      this.frame = frame;
+      this.play();
+    }
 
-  _scope.stop = function() {
-    _scope.isPlaying = false;
-  }
+    this.stop = function() {
+      this.isPlaying = false;
+    }
 
-  _scope.play = function() {
-    _scope.isPlaying = true;
-  }
+    this.play = function() {
+      this.isPlaying = true;
+    }
 
-  _scope.postRender = function(now) {
-    if (_scope.isPlaying) {
-      var ellapsedTime = now - _latestUpdate;
-      if (ellapsedTime >= _scope.frameLength) {
-        _latestUpdate = now;
-        _scope.frame += Math.floor(ellapsedTime / _scope.frameLength);
-        _scope.frame >= _scope.frames.length && (_scope.frame = 0);
+    this.update = function(renderTime) {
+      this.updateAnimation(renderTime);
+      _super.update.call(this);
+    }
 
-        _scope.updateTextureCrop();
+    this.updateAnimation = function(renderTime) {
+      if (this.isPlaying) {
+        var ellapsedTime = renderTime - this._latestUpdate;
+        if (ellapsedTime >= this.frameLength) {
+          this._latestUpdate = renderTime;
+          this.frame += Math.floor(ellapsedTime / this.frameLength);
+          this.frame >= this.frames.length && (this.frame = 0);
+
+          var textureFrameCrop = this.frames[this.frame];
+          var textureCrop      = this.textureCrop;
+
+          textureCrop.x      = textureFrameCrop.x;
+          textureCrop.y      = textureFrameCrop.y;
+          textureCrop.width  = textureFrameCrop.width;
+          textureCrop.height = textureFrameCrop.height;
+        }
       }
     }
+
+    this.destruct = function() {
+      this.stop();
+      _super.destruct();
+    }
   }
-
-  override(_scope, _super, "destruct");
-  _scope.destruct = function() {
-    _scope.stop();
-
-    _scope.frameLength =
-    _scope.frame       =
-    _scope.frames      =
-    _scope.isPlaying   = null;
-
-    _super.destruct();
-  }
-
-  _super.protected.updateTextureCrop = function() {
-    var textureCrop = _scope.frames[_scope.frame];
-
-    _scope.textureCropCache[0] = textureCrop.x;
-    _scope.textureCropCache[1] = textureCrop.y;
-    _scope.textureCropCache[2] = textureCrop.width;
-    _scope.textureCropCache[3] = textureCrop.height;
-  }
-});
+);

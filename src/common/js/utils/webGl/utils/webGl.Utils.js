@@ -1,56 +1,70 @@
 require("../NameSpace.js");
 
 createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
-  var _webGlInfo = {};
+  _scope.webGlInfo = {};
 
   _scope.new = parseWebglInfo;
 
-  get(_scope, "webGlInfo", function() { return _webGlInfo; });
-
   function parseWebglInfo() {
-    _webGlInfo.isWebGl2Supported = false;
+    _scope.webGlInfo.isWebGl2Supported = false;
     map(["webgl2"], function(id, item) {
       var canvas = document.createElement("canvas");
-      var context;
-      if (context = canvas.getContext(item)) {
-        _webGlInfo.isWebGl2Supported            = true;
-        _webGlInfo.maxTextureImageUnits         = context.getParameter(context.MAX_TEXTURE_IMAGE_UNITS);
-        _webGlInfo.maxTextureSize               = context.getParameter(context.MAX_TEXTURE_SIZE);
-        _webGlInfo.maxVertexAttributes          = context.getParameter(context.MAX_VERTEX_ATTRIBS);
-        _webGlInfo.maxVaryingVectors            = context.getParameter(context.MAX_VARYING_VECTORS);
-        _webGlInfo.maxVertexUniformVectors      = context.getParameter(context.MAX_VERTEX_UNIFORM_VECTORS);
-        _webGlInfo.maxFragmentUniformComponents = context.getParameter(context.MAX_FRAGMENT_UNIFORM_COMPONENTS);
-        _webGlInfo.maxFragmentUniformVectors    = context.getParameter(context.MAX_FRAGMENT_UNIFORM_VECTORS);
-        _webGlInfo.maxVaryingComponents         = context.getParameter(context.MAX_VARYING_COMPONENTS);
-        _webGlInfo.canShaderRun =
-          _webGlInfo.maxVertexAttributes >= 8 &&
-          _webGlInfo.maxVaryingVectors >= 5 &&
-          _webGlInfo.maxVaryingComponents >= 20 &&
-          _webGlInfo.maxFragmentUniformComponents >= 199 &&
-          _webGlInfo.maxFragmentUniformVectors >= 6;
+      var gl;
+      if (gl = canvas.getContext(item)) {
+        _scope.webGlInfo.isWebGl2Supported            = true;
+        _scope.webGlInfo.maxTextureImageUnits         = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+        _scope.webGlInfo.maxTextureSize               = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+        _scope.webGlInfo.maxVertexAttributes          = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+        _scope.webGlInfo.maxVaryingVectors            = gl.getParameter(gl.MAX_VARYING_VECTORS);
+        _scope.webGlInfo.maxVertexUniformVectors      = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
+        _scope.webGlInfo.maxFragmentUniformComponents = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_COMPONENTS);
+        _scope.webGlInfo.maxFragmentUniformVectors    = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+        _scope.webGlInfo.maxVaryingComponents         = gl.getParameter(gl.MAX_VARYING_COMPONENTS);
       }
     });
-  }
-
-  _scope.bindTexture2DSource = function(gl, textureInfo) {
-    gl.activeTexture(gl.TEXTURE0 + _webGlInfo.maxTextureImageUnits + 1);
-    gl.bindTexture(textureInfo.target, textureInfo.texture);
-    if (textureInfo.source.tagName.toLowerCase() !== "video") {
-      gl.texImage2D(textureInfo.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureInfo.source);
-    }
-    gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_S, textureInfo.wrapS);
-    gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_T, textureInfo.wrapT);
-    gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
-    gl.texParameteri(textureInfo.target, gl.TEXTURE_MAG_FILTER, textureInfo.magFilter);
-    gl.generateMipmap(textureInfo.target);
   }
 
   _scope.useTexture = function(gl, index, textureInfo) {
     gl.activeTexture(gl.TEXTURE0 + index);
     gl.bindTexture(textureInfo.target, textureInfo.texture);
-    if (textureInfo.shouldUpdate) {
-      gl.texImage2D(textureInfo.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureInfo.source);
+    
+    gl.texImage2D(
+      textureInfo.target,
+      0,
+      gl.RGBA,
+      textureInfo.width,
+      textureInfo.height,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      textureInfo.source
+    );
+    gl.texParameteri(textureInfo.target, gl.TEXTURE_MAX_LEVEL, textureInfo.maxLevel);
+
+    var generateMipmap = isPowerOf2(textureInfo.width) && isPowerOf2(textureInfo.height);
+
+    if (generateMipmap) {
+      gl.generateMipmap(textureInfo.target);
+      gl.flush();
     }
+
+    gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_S, textureInfo.wrapS);
+    gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_T, textureInfo.wrapT);
+
+    /*if (generateMipmap) {
+      gl.texParameteri(
+        textureInfo.target,
+        gl.TEXTURE_MIN_FILTER,
+        textureInfo.minFilter === gl.LINEAR
+          ? gl.LINEAR_MIPMAP_LINEAR
+          : gl.NEAREST_MIPMAP_NEAREST
+      );
+    } else {
+      gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
+    }*/
+
+    gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
+    gl.texParameteri(textureInfo.target, gl.TEXTURE_MAG_FILTER, textureInfo.magFilter);
   }
 
   _scope.loadShader = function(gl, shaderType, shaderSource) {
@@ -96,6 +110,8 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
         return null;
     }
 
+    gl.flush();
+
     return program;
   }
 
@@ -111,8 +127,12 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
     gl.bindTexture(texture.target, null);
     gl.deleteTexture(texture.texture);
   }
+
+  function isPowerOf2(value) {
+    return (value & (value - 1)) == 0;
+  }
 });
-cnst(WebGl.Utils, "ShaderType", {
+WebGl.Utils.ShaderType = {
   "VERTEX_SHADER"   : "VERTEX_SHADER",
   "FRAGMENT_SHADER" : "FRAGMENT_SHADER"
-});
+};

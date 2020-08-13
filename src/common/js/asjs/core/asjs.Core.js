@@ -143,3 +143,16 @@ c0(ASJS, "BaseClass", Object, function(_scope, _super) {
     return JSON.parse(JSON.stringify(_scope));
   }
 });
+
+ASJS.BasePrototypeClass = c4(
+  Object,
+  function BasePrototypeClass() {},
+  function() {
+    this.destruct = function() {
+      destObj(this);
+    }
+    this.toObject  = function() {
+      return JSON.parse(JSON.stringify(this));
+    }
+  }
+);

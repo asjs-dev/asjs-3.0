@@ -3,7 +3,7 @@ require("./utils/webGl.Utils.js");
 require("./NameSpace.js");
 
 createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
-  _scope.clearColor = ASJS.Color.toFloat(ASJS.Color.create());
+  _scope.clearColor = new WebGl.ColorProps();
 
   var _gl;
 
@@ -14,9 +14,6 @@ createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     _super.new("canvas");
 
     if (!contextAttributes) contextAttributes = {};
-    contextAttributes.premultipliedAlpha = true;
-    contextAttributes.preserveDrawingBuffer = true;
-    contextAttributes.stencil = true;
 
     _super.protected.contextAttributes = contextAttributes;
     _super.protected.contextType = "webgl2";
@@ -25,24 +22,15 @@ createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
     _gl = _scope.getContext();
 
-    _gl.enable(_gl.BLEND);
-
-    _gl.depthMask(true);
-    _gl.enable(_gl.DEPTH_TEST);
-    _gl.depthFunc(_gl.ALWAYS);
-
     _gl.pixelStorei(_gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
-    _gl.enable(_gl.SCISSOR_TEST);
-
-    _scope.updateScissor();
+    _gl.enable(_gl.BLEND);
   };
 
-  _scope.clearRect = function(x, y, w, h) {
-    _scope.setDrawArea(x, y, w, h);
+  _scope.clearRect = function() {
     var clearColor = _scope.clearColor;
-    _gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    _gl.clear(_gl.COLOR_BUFFER_BIT | _gl.DEPTH_BUFFER_BIT | _gl.STENCIL_BUFFER_BIT);
+    clearColor.isUpdated() && _gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+    _gl.clear(_gl.COLOR_BUFFER_BIT);
   }
 
   override(_scope, _super, "destruct");
@@ -54,16 +42,9 @@ createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     _super.destruct();
   }
 
-  _scope.setDrawArea = function(x, y, w, h) {
-    _gl.scissor(x, _scope.bitmapHeight - y - h, w, h);
-    _gl.viewport(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
-  }
-
-  _scope.updateScissor = function() {
-    _gl && _gl.scissor(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
+  _scope.update = function() {
+    _gl && _gl.viewport(0, 0, _gl.drawingBufferWidth, _gl.drawingBufferHeight);
     _scope.dispatchEvent(WebGl.Bitmap.RESIZE);
   };
-
-  _scope.update = _scope.updateScissor;
 });
 msg(WebGl.Bitmap, "RESIZE");

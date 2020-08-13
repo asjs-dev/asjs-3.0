@@ -1,35 +1,51 @@
 require("../../NameSpace.js");
+require("./webGl.AbstractProps.js");
 
-createClass(WebGl, "TextureCrop", ASJS.BaseClass, function(_scope) {
-  var _callback;
+WebGl.TextureCrop = createPrototypeClass(
+  WebGl.AbstractProps,
+  function TextureCrop() {
+    WebGl.AbstractProps.call(this);
+    this.items = [0, 0, 1, 1];
+  },
+  function() {
+    prop(this, "x", {
+      get: function() { return this.items[0]; },
+      set: function(v) {
+        if (this.items[0] !== v) {
+          this.items[0] = v;
+          ++this.id;
+        }
+      }
+    });
 
-  var _x      = 0;
-  var _y      = 0;
-  var _width  = 1;
-  var _height = 1;
+    prop(this, "y", {
+      get: function() { return this.items[1]; },
+      set: function(v) {
+        if (this.items[1] !== v) {
+          this.items[1] = v;
+          ++this.id;
+        }
+      }
+    });
 
-  _scope.new = function(callback) {
-    _callback = callback;
-    _callback();
+    prop(this, "width", {
+      get: function() { return this.items[2]; },
+      set: function(v) {
+        if (this.items[2] !== v) {
+          this.items[2] = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "height", {
+      get: function() { return this.items[3]; },
+      set: function(v) {
+        if (this.items[3] !== v) {
+          this.items[3] = v;
+          ++this.id;
+        }
+      }
+    });
   }
-
-  prop(_scope, "x", {
-    get: function() { return _x; },
-    set: function(v) { _x = v; _callback(); }
-  });
-
-  prop(_scope, "y", {
-    get: function() { return _y; },
-    set: function(v) { _y = v; _callback(); }
-  });
-
-  prop(_scope, "width", {
-    get: function() { return _width; },
-    set: function(v) { _width = v; _callback(); }
-  });
-
-  prop(_scope, "height", {
-    get: function() { return _height; },
-    set: function(v) { _height = v; _callback(); }
-  });
-});
+);

@@ -1,122 +1,114 @@
 require("./webGl.Item.js");
 require("../NameSpace.js");
 
-createClass(WebGl, "Container", WebGl.Item, function(_scope, _super) {
-  var _prt = _super.protected;
+WebGl.Container = createPrototypeClass(
+  WebGl.Item,
+  function() {
+    WebGl.Item.call(this);
 
-  _scope.shouldUpdateProps =
-  _scope.shouldUpdateColor = true;
+    cnst(this, "type", WebGl.Container.TYPE);
 
-  _scope.parentColor = null;
+    this._currentWorldPropsUpdateId = -1;
+    this._currentWorldColorUpdateId = -1;
 
-  var _children = [];
+    this._children = [];
 
-  get(_scope, "numChildren", function() { return _children.length; });
+    this.worldPropsUpdateId =
+    this.worldColorUpdateId = 0;
 
-  _scope.clear = function() {
-    while (_scope.numChildren) _scope.removeChildAt(0);
-  }
+    this.colorCache = [1, 1, 1, 1];
+  },
+  function() {
+    get(this, "children",    function() { return this._children; });
+    get(this, "numChildren", function() { return this._children.length; });
 
-  _scope.contains = function(child) {
-    return _scope.getChildIndex(child) > -1;
-  }
-
-  _scope.addChild = function(child) {
-    return _scope.addChildAt(child, _scope.numChildren);
-  }
-
-  _scope.addChildAt = function(child, index) {
-    if (!child) return null;
-    if (child.parent) child.parent.removeChild(child);
-    child.enabled = child.enabled ? _mouseChildren : child.enabled;
-    _children.push(child);
-    _scope.setChildIndex(child, index);
-    child.parent = _scope;
-    if (is(child, WebGl.Container)) {
-      child.parentColor  = _scope.colorCache;
+    this.clear = function() {
+      while (this.numChildren) this.removeChildAt(0);
     }
-    child.parentMatrix = _scope.matrixCache;
-    return child;
+
+    this.contains = function(child) {
+      return this.getChildIndex(child) > -1;
+    }
+
+    this.addChild = function(child) {
+      return this.addChildAt(child, this.numChildren);
+    }
+
+    this.addChildAt = function(child, index) {
+      if (!child) return null;
+      if (child.parent) child.parent.removeChild(child);
+      this._children.push(child);
+      this.setChildIndex(child, index);
+      child.parent = this;
+      return child;
+    }
+
+    this.removeChild = function(child) {
+      if (!child || !this.contains(child)) return null;
+      _children.remove(child);
+      child.parent = null;
+      return child;
+    }
+
+    this.removeChildAt = function(index) {
+      return this.removeChild(this.getChildAt(index));
+    }
+
+    this.getChildAt = function(index) {
+      return this._children[index];
+    }
+
+    this.setChildIndex = function(child, index) {
+      if (!child || index < 0) return null;
+      this._children.remove(child);
+      this._children.splice(index, 0, child);
+      return child;
+    }
+
+    this.getChildIndex = function(child) {
+      return this._children.indexOf(child);
+    }
+
+    this.swapChildren = function(childA, childB) {
+      var childAIndex = this.getChildIndex(childA);
+      var childBIndex = this.getChildIndex(childB);
+      if (childAIndex === -1 || childBIndex === -1) return false;
+      this.setChildIndex(childA, childBIndex);
+      this.setChildIndex(childB, childAIndex);
+      return true;
+    }
+
+    this.update = function(renderTime, parent) {
+      this._updateProps(parent);
+      this._updateColor(parent);
+    }
+
+    this._updateProps = function(parent) {
+      var props = this.props;
+
+      if (this._currentWorldPropsUpdateId !== parent.worldPropsUpdateId || props.isUpdated()) {
+        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
+        this.worldPropsUpdateId++;
+
+        this._transformItem(props, parent);
+      }
+    }
+
+    this._updateColor = function(parent) {
+      var color = this.color;
+
+      if (this._currentWorldColorUpdateId !== parent.worldColorUpdateId || color.isUpdated()) {
+        this._currentWorldColorUpdateId = parent.worldColorUpdateId;
+        this.worldColorUpdateId++;
+
+        var parentColor = parent.colorCache;
+
+        this.colorCache[0] = parentColor[0] * color.r;
+        this.colorCache[1] = parentColor[1] * color.g;
+        this.colorCache[2] = parentColor[2] * color.b;
+        this.colorCache[3] = parentColor[3] * color.a;
+      }
+    }
   }
-
-  _scope.removeChild = function(child) {
-    if (!child || !_scope.contains(child)) return null;
-    _children.remove(child);
-    if (is(child, WebGl.Container)) child.parentColor = null;
-    child.parentMatrix = null;
-    child.parent = null;
-    return child;
-  }
-
-  _scope.removeChildAt = function(index) {
-    return _scope.removeChild(_scope.getChildAt(index));
-  }
-
-  _scope.getChildAt = function(index) {
-    return _children[index];
-  }
-
-  _scope.setChildIndex = function(child, index) {
-    if (!child || index < 0) return null;
-    _children.remove(child);
-    _children.splice(index, 0, child);
-    return child;
-  }
-
-  _scope.getChildIndex = function(child) {
-    return _children.indexOf(child);
-  }
-
-  _scope.swapChildren = function(childA, childB) {
-    var childAIndex = _scope.getChildIndex(childA);
-    var childBIndex = _scope.getChildIndex(childB);
-    if (childAIndex === -1 || childBIndex === -1) return false;
-    _scope.setChildIndex(childA, childBIndex);
-    _scope.setChildIndex(childB, childAIndex);
-    return true;
-  }
-
-  override(_scope, _super, "destruct");
-  _scope.destruct = function() {
-    _children                =
-    _mouseChildren           =
-    _parent                  =
-    _scope.parentMatrix      =
-    _scope.parentColor       =
-    _scope.shouldUpdateProps =
-    _scope.shouldUpdateColor = null;
-
-    _super.destruct();
-  }
-
-  _scope.postRender = function() {
-    _scope.shouldUpdateProps =
-    _scope.shouldUpdateColor = false;
-  }
-
-  _scope.updateProps = function() {
-    _prt.updateList.push(_prt.updateProps);
-    _scope.shouldUpdateProps = true;
-  }
-
-  _scope.updateColor = function() {
-    _prt.updateList.push(_prt.updateColor);
-    _scope.shouldUpdateColor = true;
-  }
-
-  override(_scope, _super, "update");
-  _scope.update = function(transformFunction) {
-    _prt.parent.shouldUpdateColor && _scope.updateColor();
-    _super.update(transformFunction);
-  }
-
-  _prt.updateColor = function() {
-    var color       = _scope.color;
-    var parentColor = _scope.parentColor;
-
-    _scope.colorCache[0] = parentColor[0] * color.r;
-    _scope.colorCache[1] = parentColor[1] * color.g;
-    _scope.colorCache[2] = parentColor[2] * color.b;
-    _scope.colorCache[3] = parentColor[3] * color.a;
-  }
-});
+);
+cnst(WebGl.Container, "TYPE", "container");

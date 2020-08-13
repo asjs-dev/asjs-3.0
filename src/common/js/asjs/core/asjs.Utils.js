@@ -133,6 +133,15 @@ var throttleFunction = function(callback) {
 }
 var tf = throttleFunction;
 
+var arraySet = function(target, source, from) {
+  var i = 0;
+  var l = source.length;
+  while (i < l) {
+    target[from + i] = source[i];
+    ++i;
+  }
+}
+
 var map = function(o, cb) {
   for (var k in o) {
     if (!o.hasOwnProperty(k)) continue;
@@ -241,14 +250,12 @@ var dm = dataMapper;
 
 var createClass = function(nameSpace, name, base, body, singleton) {
   function setup(name, base, body, args) {
-    if (!this.$n) this.$n = [];
-    this.$n.push(name);
     base.apply(this, args);
     var s = {};
     s.protected = s.prot = this.protected;
-    if (body) body.apply(this, [this, s]);
-    if (this.$n[0] === name) {
-      del(this, "$n");
+    body && body.apply(this, [this, s]);
+
+    if (this.constructor.name === name) {
       if (this.new) {
         this.new.apply(this, args);
         del(this, "new");
@@ -258,7 +265,15 @@ var createClass = function(nameSpace, name, base, body, singleton) {
     }
   }
 
-  var x = Function("var a=arguments;var name=a[0];var base=a[1];var body=a[2];var setup=a[3];var "+name+"=function(){setup.apply(this,[name,base,body,arguments]);};"+name+".prototype=Object.create(base.prototype);"+name+".prototype.constructor="+name+";return "+name+";")(name, base, body, setup);
+  var x = Function(
+    "var a=arguments;" +
+    "return function "+name+"(){" +
+      "a[3].apply(this,[a[0],a[1],a[2],arguments]);" +
+    "};"
+  )(name, base, body, setup);
+  x.prototype = Object.create(base.prototype);
+  x.prototype.constructor = x;
+
   var proto = x;
   if (singleton) {
     var y = {};
@@ -291,6 +306,17 @@ var createUtility = function(nameSpace, name) {
   cnst(nameSpace, name, {});
 }
 var c3 = createUtility;
+
+var createPrototypeClass = function(parent, construct, body) {
+  var _super = parent.prototype;
+  var _scope = construct.prototype;
+  Object.setPrototypeOf(construct, parent);
+  Object.setPrototypeOf(_scope, _super);
+  _scope.constructor = construct;
+  body.call(_scope, _super);
+  return construct;
+}
+var c4 = createPrototypeClass;
 
 var resolvePath = function(basePath, path) {
   var basePathArray = basePath.split("/");

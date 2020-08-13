@@ -1,10 +1,6 @@
 createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   var _vendors = ['ms', 'moz', 'webkit', 'o'];
 
-  var _workerCallbacksNum = 0;
-  var _workerCallbacks = {};
-  var _worker;
-
   var _isLittleEndian = false;
 
   var _visibilityPolyfill = {
@@ -19,12 +15,8 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   var _scrollBarSize = 0;
 
   _scope.new = function() {
-    checkWorker();
-    checkSetTimeout();
     checkVisibility();
     checkCustomEvent();
-    checkAnimationFrame();
-    checkNavigator();
     checkAudioContext();
     checkUserMedia();
     checkURL();
@@ -44,77 +36,6 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   get(_scope, "stylePrefixJS",    function() { return _stylePrefixJS; });
   get(_scope, "stylePrefixCSS",   function() { return _stylePrefixCSS; });
   get(_scope, "scrollBarSize",    function() { return _scrollBarSize; });
-
-  function addWorkerCallback(callback) {
-    var newId = ++_workerCallbacksNum;
-    if (!_workerCallbacks[newId]) {
-      _workerCallbacks[newId] = callback;
-      return newId;
-    }
-    return -1;
-  }
-
-  function removeWorkerCallback(callback) {
-    removeWorkerCallbackById(getWorkerCallbackId(callback));
-  }
-
-  function removeWorkerCallbackById(id) {
-    del(_workerCallbacks, id);
-  }
-
-  function getWorkerCallbackId(callback) {
-    var id = -1;
-    map(_workerCallbacks, function(key, item) {
-      if (item === callback) id = key;
-    });
-    return id;
-  }
-
-  function checkWorker() {
-    if (typeof Worker !== "undefined") {
-      try {
-        _worker = new Worker("data:text/javascript;charset=US-ASCII,setInterval(function(){postMessage(\"tick\");},1);");
-        _worker.onmessage = function() {
-          map(_workerCallbacks, function(key, item) {
-            item();
-          });
-        };
-      } catch (e) {
-        _worker = null;
-      }
-    }
-  }
-
-  function checkSetTimeout() {
-    if (_worker) {
-      window.setTimeout = function(callback, timeInterval) {
-        var t = Date.now();
-        var timerCallback = function() {
-          if (Date.now() - t >= timeInterval) {
-            removeWorkerCallback(timerCallback);
-            callback();
-          }
-        };
-        return addWorkerCallback(timerCallback);
-      };
-
-      window.clearTimeout = removeWorkerCallbackById;
-
-      window.setInterval = function(callback, timeInterval) {
-        var t = Date.now();
-        var timerCallback = function() {
-          var n = Date.now();
-          if (n - t >= timeInterval) {
-            t = n;
-            callback();
-          }
-        };
-        return addWorkerCallback(timerCallback);
-      }
-
-      window.clearInterval = removeWorkerCallbackById;
-    }
-  }
 
   function checkVisibility() {
     if (typeof document.hidden !== "undefined") {
@@ -146,46 +67,9 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     window.CustomEvent = CustomEvent;
   };
 
-  function checkAnimationFrame() {
-    var lastTime = 0;
-    for (var x = 0; x < _vendors.length && !window.requestAnimationFrame; ++x) {
-      window.requestAnimationFrame = window[_vendors[x] + 'RequestAnimationFrame'];
-      window.cancelAnimationFrame = window[_vendors[x] + 'CancelAnimationFrame'] || window[_vendors[x] + 'CancelRequestAnimationFrame'];
-    }
-
-    if (!window.requestAnimationFrame) {
-      trace("window.requestAnimationFrame is not supported, but replaceable");
-      window.requestAnimationFrame = function(callback, element) {
-        var currTime = new Date().getTime();
-        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        var id = window.setTimeout(function() {
-          callback(currTime + timeToCall);
-        }, timeToCall);
-        lastTime = currTime + timeToCall;
-        return id;
-      };
-    }
-
-    var raf = window.requestAnimationFrame;
-    window.requestAnimationFrame = function(callback) {
-      if (_scope.documentHidden) return window.setTimeout(callback, 1);
-      return raf(callback);
-    }
-
-    if (!window.cancelAnimationFrame) {
-      trace("window.cancelAnimationFrame is not supported, but replaceable");
-      window.cancelAnimationFrame = window.clearTimeout;
-    }
-  };
-
-  function checkNavigator() {
-    if (!window.navigator) window.navigator = navigator;
-    if (!window.navigator) trace("window.navigator is not supported!");
-  };
-
   function checkAudioContext() {
-    if (!window.AudioContext) window.AudioContext = window.webkitAudioContext;
-    if (!window.AudioContext) trace("window.AudioContext is not supported!");
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    !window.AudioContext && trace("window.AudioContext is not supported!");
   };
 
   function checkUserMedia() {
@@ -196,8 +80,8 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   };
 
   function checkURL() {
-    if (!window.URL) window.URL = window.webkitURL;
-    if (!window.URL) trace("window.URL is not supported!");
+    window.URL = window.URL || window.webkitURL;
+    !window.URL && trace("window.URL is not supported!");
   };
 
   function checkFullscreenEnabled() {
@@ -280,8 +164,8 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
   }
 
   function checkMediaSource() {
-    if (!window.MediaSource) window.MediaSource = window.WebKitMediaSource;
-    if (!window.MediaSource) trace("window.MediaSource is not supported!");
+    window.MediaSource = window.MediaSource || window.WebKitMediaSource;
+    !window.MediaSource && trace("window.MediaSource is not supported!");
   }
 
   function checkCSSPrefix() {

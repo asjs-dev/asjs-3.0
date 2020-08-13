@@ -2,6 +2,7 @@ require("./NameSpace.js");
 require("./webGl.Bitmap.js");
 
 require("./data/webGl.Config.js");
+require("./data/props/webGl.AbstractProps.js");
 require("./data/props/webGl.ColorProps.js");
 require("./data/props/webGl.ItemProps.js");
 require("./data/props/webGl.LightEffectProps.js");

@@ -1,35 +1,51 @@
 require("../../NameSpace.js");
+require("./webGl.AbstractProps.js");
 
-createClass(WebGl, "ColorProps", ASJS.BaseClass, function(_scope) {
-  var _callback;
+WebGl.ColorProps = createPrototypeClass(
+  WebGl.AbstractProps,
+  function ColorProps() {
+    WebGl.AbstractProps.call(this);
+    this.items = [1, 1, 1, 1];
+  },
+  function() {
+    prop(this, "r", {
+      get: function() { return this.items[0]; },
+      set: function(v) {
+        if (this.items[0] !== v) {
+          this.items[0] = v;
+          ++this.id;
+        }
+      }
+    });
 
-  var _r = 1;
-  var _g = 1;
-  var _b = 1;
-  var _a = 1;
+    prop(this, "g", {
+      get: function() { return this.items[1]; },
+      set: function(v) {
+        if (this.items[1] !== v) {
+          this.items[1] = v;
+          ++this.id;
+        }
+      }
+    });
 
-  _scope.new = function(callback) {
-    _callback = callback;
-    _callback();
+    prop(this, "b", {
+      get: function() { return this.items[2]; },
+      set: function(v) {
+        if (this.items[2] !== v) {
+          this.items[2] = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "a", {
+      get: function() { return this.items[3]; },
+      set: function(v) {
+        if (this.items[3] !== v) {
+          this.items[3] = v;
+          ++this.id;
+        }
+      }
+    });
   }
-
-  prop(_scope, "r", {
-    get: function() { return _r; },
-    set: function(v) { _r = v; _callback(); }
-  });
-
-  prop(_scope, "g", {
-    get: function() { return _g; },
-    set: function(v) { _g = v; _callback(); }
-  });
-
-  prop(_scope, "b", {
-    get: function() { return _b; },
-    set: function(v) { _b = v; _callback(); }
-  });
-
-  prop(_scope, "a", {
-    get: function() { return _a; },
-    set: function(v) { _a = v; _callback(); }
-  });
-});
+);

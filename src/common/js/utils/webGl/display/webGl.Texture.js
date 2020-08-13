@@ -1,86 +1,87 @@
 require("../NameSpace.js");
 
-createClass(WebGl, "Texture", ASJS.EventDispatcher, function(_scope, _super) {
-  var _wglUtils = WebGl.Utils.instance;
+WebGl.Texture = createPrototypeClass(
+  ASJS.BasePrototypeClass,
+  function Texture(gl, source) {
+    this._wglUtils = WebGl.Utils.instance;
+    this._source;
+    this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
 
-  _scope.shouldUpdate = false;
+    this.asjsEl;
 
-  var _gl;
-  var _target;
-  var _textureLoader;
-  var _source;
-  var _texture;
+    this.loaded = false;
+    this.isVideo = false;
 
-  var _loaded = false;
-  var _isVideo = false;
+    this.width  = 1;
+    this.height = 1;
 
-  _scope.new = function(gl, source, shouldUpdate) {
-    _gl = gl;
+    this.texture = gl.createTexture();
 
-    _target = _gl.TEXTURE_2D;
-    _texture = _gl.createTexture();
+    this.maxLevel  = 10;
+    this.target    = gl.TEXTURE_2D;
+    this.wrapS     = gl.CLAMP_TO_EDGE;
+    this.wrapT     = gl.CLAMP_TO_EDGE;
+    this.minFilter = gl.NEAREST;
+    this.magFilter = gl.NEAREST;
 
-    _scope.wrapS = gl.CLAMP_TO_EDGE;
-    _scope.wrapT = gl.CLAMP_TO_EDGE;
-    _scope.minFilter = gl.NEAREST;
-    _scope.magFilter = gl.NEAREST;
+    this.source = source;
+  },
+  function(_super) {
+    get(this, "autoUpdate", function() { return this.isVideo && !this.asjsEl.paused; });
 
-    _scope.source = source;
-    _scope.shouldUpdate = shouldUpdate;
-  }
+    prop(this, "source", {
+      get: function() { return this._source; },
+      set: function(v) {
+        this.asjsEl && this.asjsEl.removeEventListener(
+          this.isVideo
+            ? ASJS.MediaEvent.CAN_PLAY
+            : ASJS.LoaderEvent.LOAD,
+          this._onTextureLoadedBind
+        );
 
-  get(_scope, "loaded",  function() { return _loaded; });
-  get(_scope, "target",  function() { return _target; });
-  get(_scope, "texture", function() { return _texture; });
+        this.asjsEl = v;
+        this._source = this.asjsEl.el;
 
-  prop(_scope, "source", {
-    get: function() { return _source; },
-    set: function(v) {
-      _source = v;
-      tis(_source, "string")
-        ? loadTexture()
-        : bindTexture();
+        this.isVideo = this._source.tagName.toLowerCase() === "video";
+
+        this._parseTextureSize();
+        this.asjsEl.addEventListener(
+          this.isVideo
+            ? ASJS.MediaEvent.CAN_PLAY
+            : ASJS.LoaderEvent.LOAD,
+          this._onTextureLoadedBind
+        );
+      }
+    });
+
+    this.destruct = function() {
+      this.asjsEl.removeEventListener(ASJS.LoaderEvent.LOAD, this._onTextureLoadedBind);
+      this.asjsEl.removeEventListener(
+        this.isVideo
+          ? ASJS.MediaEvent.CAN_PLAY
+          : ASJS.LoaderEvent.LOAD,
+        this._onTextureLoadedBind
+      );
+
+      _super.destruct();
     }
-  });
 
-  override(_scope, _super, "destruct");
-  _scope.destruct = function() {
-    _textureLoader.removeEventListener(ASJS.LoaderEvent.LOAD, onTextureLoaded);
-    _textureLoader.destruct();
+    this._parseTextureSize = function() {
+      this.width  = this._source.naturalWidth  || this._source.videoWidth  || this._source.width;
+      this.height = this._source.naturalHeight || this._source.videoHeight || this._source.height;
+      this.loaded = this.width > 0 && this.height > 0;
+    }
 
-    _gl            =
-    _target        =
-    _texture       =
-    _loaded        =
-    _textureLoader =
-    _source        = null;
-
-    _super.destruct();
+    this._onTextureLoaded = this._parseTextureSize;
   }
-
-  function bindTexture() {
-    _wglUtils.bindTexture2DSource(_gl, _scope);
-  }
-
-  function loadTexture() {
-    _textureLoader = _textureLoader || new ASJS.Image();
-    _loaded = false;
-
-    _textureLoader.removeEventListener(ASJS.LoaderEvent.LOAD, onTextureLoaded);
-    _textureLoader.addEventListener(ASJS.LoaderEvent.LOAD, onTextureLoaded);
-
-    _textureLoader.src = _source;
-  }
-
-  function onTextureLoaded() {
-    _textureLoader.removeEventListener(ASJS.LoaderEvent.LOAD, onTextureLoaded);
-
-    _source = _textureLoader.el;
-
-    bindTexture();
-
-    _loaded = true;
-
-    _scope.dispatchEvent(ASJS.LoaderEvent.LOAD);
-  }
+);
+rof(WebGl.Texture, "loadImage", function(gl, src) {
+  var img = new ASJS.Image();
+      img.src = src;
+  return new WebGl.Texture(gl, img);
+});
+rof(WebGl.Texture, "loadVideo", function(gl, src) {
+  var video = new ASJS.VideoPlayer();
+      video.src = src;
+  return new WebGl.Texture(gl, video);
 });

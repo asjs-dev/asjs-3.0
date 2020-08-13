@@ -1,53 +1,96 @@
 require("../../NameSpace.js");
+require("./webGl.AbstractProps.js");
 
-createClass(WebGl, "TextureProps", ASJS.BaseClass, function(_scope) {
-  var _callback;
+WebGl.TextureProps = createPrototypeClass(
+  WebGl.AbstractProps,
+  function TextureProps() {
+    WebGl.AbstractProps.call(this);
+    
+    this._sr = 0;
+    this._cr = 1;
 
-  var _x        = 0;
-  var _y        = 0;
-  var _rotation = 0;
-  var _width    = 1;
-  var _height   = 1;
-  var _anchorX  = 0;
-  var _anchorY  = 0;
+    this._x        = 0;
+    this._y        = 0;
+    this._rotation = 0;
+    this._width    = 1;
+    this._height   = 1;
+    this._anchorX  = 0;
+    this._anchorY  = 0;
+  },
+  function() {
+    get(this, "sr", function() { return this._sr; });
+    get(this, "cr", function() { return this._cr; });
 
-  _scope.new = function(callback) {
-    _callback = callback;
-    _callback();
+    prop(this, "x", {
+      get: function() { return this._x; },
+      set: function(v) {
+        if (this._x !== v) {
+          this._x = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "y", {
+      get: function() { return this._y; },
+      set: function(v) {
+        if (this._y !== v) {
+          this._y = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "rotation", {
+      get: function() { return this._rotation; },
+      set: function(v) {
+        if (this._rotation !== v) {
+          this._rotation = v;
+          this._sr = Math.sin(this._rotation);
+          this._cr = Math.cos(this._rotation);
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "width", {
+      get: function() { return this._width; },
+      set: function(v) {
+        if (this._width !== v) {
+          this._width = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "height", {
+      get: function() { return this._height; },
+      set: function(v) {
+        if (this._height !== v) {
+          this._height = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "anchorX", {
+      get: function() { return this._anchorX; },
+      set: function(v) {
+        if (this._anchorX !== v) {
+          this._anchorX = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "anchorY", {
+      get: function() { return this._anchorY; },
+      set: function(v) {
+        if (this._anchorY !== v) {
+          this._anchorY = v;
+          ++this.id;
+        }
+      }
+    });
   }
-
-  prop(_scope, "x", {
-    get: function() { return _x; },
-    set: function(v) { _x = v; _callback(); }
-  });
-
-  prop(_scope, "y", {
-    get: function() { return _y; },
-    set: function(v) { _y = v; _callback(); }
-  });
-
-  prop(_scope, "rotation", {
-    get: function() { return _rotation; },
-    set: function(v) { _rotation = v; _callback(); }
-  });
-
-  prop(_scope, "width", {
-    get: function() { return _width; },
-    set: function(v) { _width = v; _callback(); }
-  });
-
-  prop(_scope, "height", {
-    get: function() { return _height; },
-    set: function(v) { _height = v; _callback(); }
-  });
-
-  prop(_scope, "anchorX", {
-    get: function() { return _anchorX; },
-    set: function(v) { _anchorX = v; _callback(); }
-  });
-
-  prop(_scope, "anchorY", {
-    get: function() { return _anchorY; },
-    set: function(v) { _anchorY = v; _callback(); }
-  });
-});
+);

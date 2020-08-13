@@ -1,35 +1,51 @@
 require("../../NameSpace.js");
+require("./webGl.AbstractProps.js");
 
-createClass(WebGl, "LightEffectProps", ASJS.BaseClass, function(_scope) {
-  var _callback;
+WebGl.LightEffectProps = createPrototypeClass(
+  WebGl.AbstractProps,
+  function LightEffectProps() {
+    WebGl.AbstractProps.call(this);
+    this.items = [0, 0, 2, 2];
+  },
+  function() {
+    prop(this, "anchorX", {
+      get: function() { return this.items[0]; },
+      set: function(v) {
+        if (this.items[0] !== v) {
+          this.items[0] = v;
+          ++this.id;
+        }
+      }
+    });
 
-  var _anchorX = 0;
-  var _anchorY = 0;
-  var _quadX   = 1;
-  var _quadY   = 1;
+    prop(this, "anchorY", {
+      get: function() { return this.items[1]; },
+      set: function(v) {
+        if (this.items[1] !== v) {
+          this.items[1] = v;
+          ++this.id;
+        }
+      }
+    });
 
-  _scope.new = function(callback) {
-    _callback = callback;
-    _callback();
+    prop(this, "quadX", {
+      get: function() { return this.items[2]; },
+      set: function(v) {
+        if (this.items[2] !== v) {
+          this.items[2] = v;
+          ++this.id;
+        }
+      }
+    });
+
+    prop(this, "quadY", {
+      get: function() { return this.items[3]; },
+      set: function(v) {
+        if (this.items[3] !== v) {
+          this.items[3] = v;
+          ++this.id;
+        }
+      }
+    });
   }
-
-  prop(_scope, "anchorX", {
-    get: function() { return _anchorX; },
-    set: function(v) { _anchorX = v; _callback(); }
-  });
-
-  prop(_scope, "anchorY", {
-    get: function() { return _anchorY; },
-    set: function(v) { _anchorY = v; _callback(); }
-  });
-
-  prop(_scope, "quadX", {
-    get: function() { return _quadX; },
-    set: function(v) { _quadX = v; _callback(); }
-  });
-
-  prop(_scope, "quadY", {
-    get: function() { return _quadY; },
-    set: function(v) { _quadY = v; _callback(); }
-  });
-});
+);
