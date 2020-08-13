@@ -96,10 +96,10 @@ WebGl.Stage2D = createPrototypeClass(
     );
 
     if (this._config.showLights) {
-      this._lightPositions = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 2);
-      this._lightVolumes   = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 2);
-      this._lightColors    = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 4);
-      this._lightEffects   = new Float32Array(WebGl.Stage2D.MAX_LIGHT_SOURCES * 4);
+      this._lightPositions = new Float32Array(this._config.lightsNum * 2);
+      this._lightVolumes   = new Float32Array(this._config.lightsNum * 2);
+      this._lightColors    = new Float32Array(this._config.lightsNum * 4);
+      this._lightEffects   = new Float32Array(this._config.lightsNum * 4);
     }
     this._collectLightsFunc = this._config.showLights
       ? this._collectLights.bind(this)
@@ -170,7 +170,7 @@ WebGl.Stage2D = createPrototypeClass(
 
     this.attachLight = function(light) {
       !this.isLightAttached(light) &&
-      this._attachedLights.length < WebGl.Stage2D.MAX_LIGHT_SOURCES &&
+      this._attachedLights.length < this._config.lightsNum &&
       this._attachedLights.push(light);
     }
 
@@ -200,7 +200,7 @@ WebGl.Stage2D = createPrototypeClass(
       var light;
       var douId;
       var quadId;
-      for (var i = 0, l = WebGl.Stage2D.MAX_LIGHT_SOURCES; i < l; ++i) {
+      for (var i = 0, l = this._config.lightsNum; i < l; ++i) {
         duoId  = i * 2;
         quadId = i * 4;
         if (i >= this._attachedLights.length || !this._attachedLights[i].renderable) {
