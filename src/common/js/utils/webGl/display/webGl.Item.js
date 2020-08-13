@@ -4,7 +4,7 @@ require("../data/props/webGl.ColorProps.js");
 
 WebGl.Item = createPrototypeClass(
   ASJS.BasePrototypeClass,
-  function() {
+  function Item() {
     cnst(this, "type", WebGl.Item.TYPE);
 
     this._matrixUtils = WebGl.Matrix3;

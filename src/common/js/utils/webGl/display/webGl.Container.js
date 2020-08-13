@@ -3,7 +3,7 @@ require("../NameSpace.js");
 
 WebGl.Container = createPrototypeClass(
   WebGl.Item,
-  function() {
+  function Container() {
     WebGl.Item.call(this);
 
     cnst(this, "type", WebGl.Container.TYPE);

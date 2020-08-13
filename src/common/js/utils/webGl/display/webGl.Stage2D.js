@@ -4,7 +4,7 @@ require("./webGl.BlendModes.js");
 
 WebGl.Stage2D = createPrototypeClass(
   WebGl.Container,
-  function(webGlBitmap, vertexShader, fragmentShader, config) {
+  function Stage2D(webGlBitmap, vertexShader, fragmentShader, config) {
     WebGl.Container.call(this);
 
     this._webGlUtils  = WebGl.Utils.instance;

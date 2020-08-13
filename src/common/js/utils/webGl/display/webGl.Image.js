@@ -6,7 +6,7 @@ require("../data/props/webGl.TextureCrop.js");
 
 WebGl.Image = createPrototypeClass(
   WebGl.Item,
-  function(texture) {
+  function Image(texture) {
     WebGl.Item.call(this);
 
     cnst(this, "type", WebGl.Image.TYPE);

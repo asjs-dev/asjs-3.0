@@ -3,7 +3,7 @@ require("../NameSpace.js");
 
 WebGl.AnimatedImage = createPrototypeClass(
   WebGl.Image,
-  function(texture) {
+  function AnimatedImage(texture) {
     WebGl.Image.call(this, texture);
 
     this.frameLength = 120;

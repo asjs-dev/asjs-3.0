@@ -4,7 +4,7 @@ require("../data/props/webGl.LightEffectProps.js");
 
 WebGl.Light = createPrototypeClass(
   WebGl.Item,
-  function() {
+  function Light() {
     WebGl.Item.call(this);
 
     this._currentWorldPropsUpdateId = -1;
