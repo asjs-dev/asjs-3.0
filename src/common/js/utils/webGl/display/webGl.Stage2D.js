@@ -200,7 +200,9 @@ WebGl.Stage2D = createPrototypeClass(
       var light;
       var douId;
       var quadId;
-      for (var i = 0, l = this._config.lightsNum; i < l; ++i) {
+      var i;
+      var l;
+      for (i = 0, l = this._config.lightsNum; i < l; ++i) {
         duoId  = i * 2;
         quadId = i * 4;
         if (i >= this._attachedLights.length || !this._attachedLights[i].renderable) {
@@ -233,7 +235,9 @@ WebGl.Stage2D = createPrototypeClass(
 
     this._drawContainer = function(container) {
       var children = container.children;
-      for (var i = 0, l = children.length; i < l; ++i) {
+      var i;
+      var l;
+      for (i = 0, l = children.length; i < l; ++i) {
         this._drawItem(children[i], container);
       }
     }
