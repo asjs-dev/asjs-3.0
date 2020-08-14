@@ -57,7 +57,7 @@ WebGl.AnimatedImage = createPrototypeClass(
 
     this.destruct = function() {
       this.stop();
-      _super.destruct();
+      _super.destruct.call(this);
     }
   }
 );

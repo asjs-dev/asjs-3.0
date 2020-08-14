@@ -18,13 +18,7 @@ WebGl.Light = createPrototypeClass(
 
     this.color.a = 0;
   },
-  function(_super) {
-    this.destruct = function() {
-      this.effect.destruct();
-
-      _super.destruct();
-    }
-
+  function() {
     this._updateProps = function(parent) {
       var props = this.props;
 

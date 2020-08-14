@@ -25,14 +25,7 @@ WebGl.Image = createPrototypeClass(
 
     this.texture = texture;
   },
-  function(_super) {
-    this.destruct = function() {
-      this.textureProps.destruct();
-      this.textureCrop.destruct();
-
-      _super.destruct();
-    }
-
+  function() {
     this.update = function() {
       this._updateProps();
       this._updateTextureProps();

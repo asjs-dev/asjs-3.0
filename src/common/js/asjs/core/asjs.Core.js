@@ -149,7 +149,7 @@ ASJS.BasePrototypeClass = c4(
   function BasePrototypeClass() {},
   function() {
     this.destruct = function() {
-      destObj(this);
+      destObjFlat(this);
     }
     this.toObject  = function() {
       return JSON.parse(JSON.stringify(this));

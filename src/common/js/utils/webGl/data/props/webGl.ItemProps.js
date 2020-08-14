@@ -5,12 +5,13 @@ WebGl.ItemProps = createPrototypeClass(
   WebGl.AbstractProps,
   function ItemProps() {
     WebGl.AbstractProps.call(this);
-    
+
     this._sr = 0;
     this._cr = 1;
 
     this._x        = 0;
     this._y        = 0;
+    this._zIndex   = 0;
     this._rotation = 0;
     this._scaleX   = 1;
     this._scaleY   = 1;
@@ -47,6 +48,11 @@ WebGl.ItemProps = createPrototypeClass(
           ++this.id;
         }
       }
+    });
+
+    prop(this, "zIndex", {
+      get: function() { return this._zIndex; },
+      set: function(v) { this._zIndex !== v && (this._zIndex = v); }
     });
 
     prop(this, "rotation", {

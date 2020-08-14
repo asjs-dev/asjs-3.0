@@ -218,6 +218,16 @@ var destructObject = function(t, stack) {
 };
 var destObj = destructObject;
 
+var destructObjectFlat = function(t, stack) {
+  ito(t, function(key, item, next) {
+    destCls(item);
+    del(t, key);
+    next();
+  });
+  t = null;
+};
+var destObjFlat = destructObjectFlat;
+
 var destructClass = function(t) {
   t && t.destruct && t.destruct();
 }

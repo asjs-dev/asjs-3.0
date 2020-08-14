@@ -30,6 +30,7 @@ WebGl.Stage2D = createPrototypeClass(
       "u_lightVolumes"   : "getUniformLocation",
       "u_lightColors"    : "getUniformLocation",
       "u_lightEffects"   : "getUniformLocation",
+      "u_lightZIndices"  : "getUniformLocation",
       "u_fog"            : "getUniformLocation",
       "u_filters"        : "getUniformLocation",
     });
@@ -100,6 +101,7 @@ WebGl.Stage2D = createPrototypeClass(
       this._lightVolumes   = new Float32Array(this._config.lightsNum * 2);
       this._lightColors    = new Float32Array(this._config.lightsNum * 4);
       this._lightEffects   = new Float32Array(this._config.lightsNum * 4);
+      this._lightZIndices  = new Int32Array(this._config.lightsNum);
     }
     this._collectLightsFunc = this._config.showLights
       ? this._collectLights.bind(this)
@@ -118,7 +120,7 @@ WebGl.Stage2D = createPrototypeClass(
     this._tintColorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
     this._tintColorBuffer     = this._createArrayBuffer(this._tintColorData,     "a_tintColor",   4, 1, 4, this._gl.FLOAT, 4);
 
-    this._effectLength = (this._config.useMask ? 3 : 2);
+    this._effectLength = (this._config.useMask ? 4 : 3);
     this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
     this._effectBuffer = this._createArrayBuffer(this._effectData, "a_effects", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
 
@@ -138,6 +140,8 @@ WebGl.Stage2D = createPrototypeClass(
 
     this._update      =
     this._updateProps = emptyFunction;
+
+    this._zIndexCounter = 0;
   },
   function(_super) {
     set(this, "filters", function(f) {
@@ -152,6 +156,7 @@ WebGl.Stage2D = createPrototypeClass(
       this._renderTimer = Date.now();
 
       this._pickedElements.length = 0;
+      this._zIndexCounter = 0;
 
       this._resize();
       this._updateColor();
@@ -188,12 +193,11 @@ WebGl.Stage2D = createPrototypeClass(
     this.destruct = function() {
       this._webGlBitmap.removeEventListener(WebGl.Bitmap.RESIZE, this._onResizeBind);
 
-      _super.destruct();
+      _super.destruct.call(this);
     }
 
     this._updateFog = function() {
-      var fog = this.fog;
-      fog.isUpdated() && this._gl.uniform4fv(this._locations["u_fog"], fog.items);
+      this.fog.isUpdated() && this._gl.uniform4fv(this._locations["u_fog"], this.fog.items);
     }
 
     this._collectLights = function() {
@@ -210,12 +214,14 @@ WebGl.Stage2D = createPrototypeClass(
           arraySet(this._lightVolumes,   this._DEFAULT_DUO,  duoId);
           arraySet(this._lightColors,    this._DEFAULT_QUAD, quadId);
           arraySet(this._lightEffects,   this._DEFAULT_QUAD, quadId);
+          this._lightZIndices[i] = -1;
         } else {
           light = this._attachedLights[i];
           arraySet(this._lightPositions, light.positionCache, duoId);
           arraySet(this._lightVolumes,   light.volumeCache,   duoId);
           arraySet(this._lightColors,    light.colorCache,    quadId);
           arraySet(this._lightEffects,   light.effectCache,   quadId);
+          this._lightZIndices[i] = light.props.zIndex;
         }
       }
 
@@ -225,10 +231,12 @@ WebGl.Stage2D = createPrototypeClass(
       this._gl.uniform2fv(this._locations["u_lightVolumes"],   this._lightVolumes);
       this._gl.uniform4fv(this._locations["u_lightColors"],    this._lightColors);
       this._gl.uniform4fv(this._locations["u_lightEffects"],   this._lightEffects);
+      this._gl.uniform1fv(this._locations["u_lightZIndices"],  this._lightZIndices);
     }
 
     this._drawItem = function(item, parent) {
       if (!item.renderable) return;
+      item.props.zIndex = ++this._zIndexCounter;
       item.update(this._renderTimer, parent);
       item.type !== WebGl.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
@@ -243,7 +251,7 @@ WebGl.Stage2D = createPrototypeClass(
     }
 
     this._setMaskData = function(item) {
-      item.mask && (this._effectData[this._batchItems * this._effectLength + 2] = this._drawTexture(item.mask));
+      item.mask && (this._effectData[this._batchItems * this._effectLength + 3] = this._drawTexture(item.mask));
     }
 
     this._drawImage = function(item, parent) {
@@ -275,6 +283,7 @@ WebGl.Stage2D = createPrototypeClass(
       arraySet(this._tintColorData, item.colorCache, quadId);
       this._effectData[effectId] = textureMapIndex;
       this._effectData[effectId + 1] = item.tintType;
+      this._effectData[effectId + 2] = item.props.zIndex;
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
@@ -338,7 +347,7 @@ WebGl.Stage2D = createPrototypeClass(
       var textureMapIndex = this._textureMap.indexOf(textureInfo);
       if (textureMapIndex === -1 || textureInfo.autoUpdate) {
         if (textureMapIndex === -1) {
-          if (this._textureMap.length === this._webGlUtils.webGlInfo.maxTextureImageUnits) {
+          if (this._textureMap.length === this._config.textureNum) {
             this._batchDraw();
             this._textureIds.length =
             this._textureMap.length = 0;
@@ -397,7 +406,16 @@ WebGl.Stage2D = createPrototypeClass(
 );
 cnst(WebGl.Stage2D, "MAX_LIGHT_SOURCES", 16);
 rof(WebGl.Stage2D, "createVertexShader", function(config) {
-  var shader = "#version 300 es\n" +
+  var maxLightSources = config.lightsNum;
+
+  var shader = "#version 300 es\n";
+
+  if (config.showLights) {
+    shader +=
+    "#define MAX_LIGHT_SOURCES " + maxLightSources + "\n";
+  }
+
+  shader +=
   "in vec2 a_position;" +
   "in mat3 a_matrix;" +
   "in mat3 a_worldMatrix;" +
@@ -405,7 +423,20 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
   "in vec4 a_texCrop;" +
   "in vec4 a_fillColor;" +
   "in vec4 a_tintColor;" +
-  "in vec" + (config.useMask ? "3" : "2") + " a_effects;";
+  "in vec" + (config.useMask ? "4" : "3") + " a_effects;";
+
+  shader +=
+  "uniform vec2 u_resolution;" +
+  "uniform vec4 u_fog;";
+
+  if (config.showLights) {
+    shader +=
+    "uniform vec2 u_lightPositions[MAX_LIGHT_SOURCES];" +
+    "uniform vec2 u_lightVolumes[MAX_LIGHT_SOURCES];" +
+    "uniform vec4 u_lightColors[MAX_LIGHT_SOURCES];" +
+    "uniform vec4 u_lightEffects[MAX_LIGHT_SOURCES];" +
+    "uniform float u_lightZIndices[MAX_LIGHT_SOURCES];";
+  }
 
   shader +=
   "out vec2 v_texCoord;" +
@@ -415,9 +446,22 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
   "out vec4 v_fillColor;" +
   "out vec4 v_tintColor;" +
   "out float v_texId;" +
-  "out float v_tintType;";
+  "out float v_tintType;" +
+  "out float v_colorMultiply;" +
+  "out vec4 v_fogColor;";
 
   if (config.useMask) shader += "out float v_maskTexId;";
+
+  if (config.showLights) {
+    shader +=
+    "vec4 lightValue(vec4 pos, vec2 lightPosition, vec2 lightVolume, vec4 lightColor, vec4 lightEffect) {" +
+      "vec2 dist = pos.xy - lightPosition;" +
+      "return lightColor * lightColor.a * max(0.0, min(1.0, 1.0 - sqrt(" +
+        "pow(abs(dist.x + (abs(dist.x) * lightEffect.x)), lightEffect.z) * (lightVolume.x / u_resolution.y) + " +
+        "pow(abs(dist.y + (abs(dist.y) * lightEffect.y)), lightEffect.w) * (lightVolume.y / u_resolution.x / u_resolution.y)" +
+      ")));" +
+    "}";
+  }
 
   shader +=
   "void main(void) {" +
@@ -433,19 +477,43 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
     "v_texId = a_effects.x;" +
     "v_tintType = a_effects.y;";
 
-    if (config.useMask) shader += "v_maskTexId = a_effects.z;";
+    shader +=
+    "vec4 lightColor = vec4(0.0);";
+
+    if (config.showLights) {
+      for (var i = 0; i < maxLightSources; i++) {
+        shader +=
+        "if (u_lightColors[" + i + "].a > 0.0 && u_lightZIndices[" + i + "] > a_effects.z) {" +
+          "lightColor += lightValue(" +
+            "v_coord," +
+            "u_lightPositions[" + i + "]," +
+            "u_lightVolumes[" + i + "]," +
+            "u_lightColors[" + i + "]," +
+            "u_lightEffects[" + i + "]" +
+          ");" +
+        "}";
+      }
+    }
+
+    shader +=
+    "float colorLightMultiply = max(0.0, u_fog.a - lightColor.a);" +
+    "v_colorMultiply = max(0.0, 1.0 - colorLightMultiply);" +
+    "v_fogColor = vec4(u_fog.rgb * colorLightMultiply, 0.0);" +
+    "v_fillColor += lightColor;";
+
+    if (config.useMask) shader += "v_maskTexId = a_effects.w;";
 
     shader += "}";
 
   return shader;
 });
 rof(WebGl.Stage2D, "createFragmentShader", function(config) {
-  var maxTextureImageUnits = WebGl.Utils.instance.webGlInfo.maxTextureImageUnits;
-  var maxLightSources = config.lightsNum;
+  var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
-  "#define MAX_TEXTURES " + maxTextureImageUnits + "\n"+
-  "#define MAX_LIGHT_SOURCES " + maxLightSources + "\n"+
+  "#define MAX_TEXTURES " + maxTextureImageUnits + "\n";
+
+  shader +=
   "precision lowp float;" +
 
   "in vec4 v_coord;" +
@@ -455,38 +523,19 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
   "in vec4 v_fillColor;" +
   "in vec4 v_tintColor;" +
   "in float v_texId;" +
-  "in float v_tintType;";
+  "in float v_tintType;" +
+  "in float v_colorMultiply;" +
+  "in vec4 v_fogColor;";
 
   if (config.useMask) shader += "in float v_maskTexId;";
 
   shader +=
-  "uniform sampler2D u_tex[MAX_TEXTURES];" +
+  "uniform sampler2D u_tex[MAX_TEXTURES];";
 
-  "uniform vec2 u_resolution;" +
-  "uniform vec4 u_fog;";
-
-  if (config.filters && config.filters.length > 0) shader += "uniform int u_filters;";
-
-  if (config.showLights) {
-    shader +=
-    "uniform vec2 u_lightPositions[MAX_LIGHT_SOURCES];" +
-    "uniform vec2 u_lightVolumes[MAX_LIGHT_SOURCES];" +
-    "uniform vec4 u_lightColors[MAX_LIGHT_SOURCES];" +
-    "uniform vec4 u_lightEffects[MAX_LIGHT_SOURCES];";
-  }
+  if (config.useFilters)
+  shader += "uniform int u_filters;";
 
   shader += "out vec4 fragColor;";
-
-  if (config.showLights) {
-    shader +=
-    "vec4 lightValue(vec2 lightPosition, vec2 lightVolume, vec4 lightColor, vec4 lightEffect) {" +
-      "vec2 dist = v_coord.xy - lightPosition;" +
-      "return lightColor * lightColor.a * max(0.0, min(1.0, 1.0 - sqrt(" +
-        "pow(abs(dist.x + (abs(dist.x) * lightEffect.x)), lightEffect.z) * (lightVolume.x / u_resolution.y) + " +
-        "pow(abs(dist.y + (abs(dist.y) * lightEffect.y)), lightEffect.w) * (lightVolume.y / u_resolution.x / u_resolution.y)" +
-      ")));" +
-    "}";
-  }
 
   shader +=
   "void main(void) {";
@@ -508,7 +557,7 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
       shader += (i > -1 ? " else " : "") +
       "if (v_texId < " + (i + 1) + ".5) {";
         shader += i < 0
-          ? "fragColor = vec4(1.0, 0.0, 1.0, 1.0);"
+          ? "fragColor = vec4(0.0, 0.0, 0.0, 0.0);"
           : "fragColor = texture(u_tex[" + i + "], v_texCrop + v_texCropSize * fract(v_texCoord));";
       shader +=
       "}";
@@ -521,31 +570,13 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
       "else if (v_tintType < 1.5 && fragColor.r == fragColor.g && fragColor.r == fragColor.b) " +
         "fragColor *= v_tintColor;" +
       "else if (v_tintType < 2.5) " +
-        "fragColor = vec4((fragColor.rgb * (1.0 - v_tintColor.a)) + (v_tintColor.rgb * v_tintColor.a), fragColor.a);" +
-      "vec4 lightColor = vec4(0.0);";
-
-      if (config.showLights) {
-        for (var i = 0; i < maxLightSources; i++) {
-          shader +=
-          "if (u_lightColors[" + i + "].a > 0.0) {" +
-            "lightColor += lightValue(" +
-              "u_lightPositions[" + i + "], " +
-              "u_lightVolumes[" + i + "], " +
-              "u_lightColors[" + i + "], " +
-              "u_lightEffects[" + i + "]" +
-            ");" +
-          "}";
-        }
-      }
+        "fragColor = vec4((fragColor.rgb * (1.0 - v_tintColor.a)) + (v_tintColor.rgb * v_tintColor.a), fragColor.a);";
 
       shader +=
-      "float colorLightMultiply = max(0.0, u_fog.a - lightColor.a);" +
-      "float colorMultiply = max(0.0, 1.0 - colorLightMultiply);" +
-      "vec4 fogColor = vec4(u_fog.rgb * colorLightMultiply, 0.0);" +
-      "vec4 finalColor = vec4(fragColor.rgb * colorMultiply, fragColor.a);" +
-      "fragColor = (finalColor * (v_fillColor + lightColor)) + fogColor;";
+      "vec4 finalColor = vec4(fragColor.rgb * v_colorMultiply, fragColor.a);" +
+      "fragColor = (finalColor * v_fillColor) + v_fogColor;";
 
-      if (config.filters && config.filters.length > 0) {
+      if (config.useFilters) {
         shader += "if (u_filters > 0) {";
         for (var i = 0; i < config.filters.length; i++) {
           shader += "if ((" + config.filters[i] + " & u_filters) > 0) {";

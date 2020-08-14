@@ -63,7 +63,7 @@ WebGl.Texture = createPrototypeClass(
         this._onTextureLoadedBind
       );
 
-      _super.destruct();
+      _super.destruct.call(this);
     }
 
     this._parseTextureSize = function() {

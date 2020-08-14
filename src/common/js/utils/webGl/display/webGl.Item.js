@@ -25,10 +25,7 @@ WebGl.Item = createPrototypeClass(
     this.destruct = function() {
       this.parent && this.parent.removeChild && this.parent.removeChild(this);
 
-      this.props.destruct();
-      this.color.destruct();
-
-      _super.destruct();
+      _super.destruct.call(this);
     }
 
     this.update = function(renderTime, parent) {
