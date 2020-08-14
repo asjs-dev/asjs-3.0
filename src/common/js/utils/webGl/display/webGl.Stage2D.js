@@ -577,7 +577,7 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
       "fragColor = (finalColor * v_fillColor) + v_fogColor;";
 
       if (config.useFilters) {
-        shader += "if (u_filters > 0) {";
+        shader += "if (u_filters > 0 && fragColor.a > 0.0) {";
         for (var i = 0; i < config.filters.length; i++) {
           shader += "if ((" + config.filters[i] + " & u_filters) > 0) {";
             switch (config.filters[i]) {
@@ -596,7 +596,8 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
                 ");";
               break;
               case WebGl.Stage2D.Filters.INVERT:
-                shader += "fragColor = abs(vec4(fragColor.rgb - 1.0, fragColor.a));";
+                shader +=
+                "fragColor = abs(vec4(fragColor.rgb - 1.0, fragColor.a));";
               break;
               case WebGl.Stage2D.Filters.COLORLIMIT:
                 shader +=
@@ -607,17 +608,12 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
               break;
               case WebGl.Stage2D.Filters.VIGNETTE:
                 shader +=
-                "fragColor = vec4(" +
-                  "fragColor.rgb * (1.0 - sqrt(pow(v_coord.x, 4.0) + pow(v_coord.y, 4.0))), " +
-                  "fragColor.a" +
-                ");";
+                "float vignetteValue = (1.0 - sqrt(pow(v_coord.x, 4.0) + pow(v_coord.y, 4.0)));" +
+                "fragColor *= vec4(vignetteValue, vignetteValue, vignetteValue, 1.0);";
               break;
               case WebGl.Stage2D.Filters.RAINBOW:
                 shader +=
-                "fragColor = vec4(" +
-                  "fragColor.rgb + vec3(v_coord.x * 0.15, v_coord.y * 0.15, (v_coord.x - v_coord.y) * 0.15), " +
-                  "fragColor.a" +
-                ");";
+                "fragColor += vec4(v_coord.x * 0.15, v_coord.y * 0.15, (v_coord.x - v_coord.y) * 0.15, 0);";
               break;
               case WebGl.Stage2D.Filters.LINES:
                 shader += "fragColor += vec4(sin(v_coord.y * 500.0) * 0.2);";
