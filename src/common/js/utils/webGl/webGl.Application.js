@@ -20,6 +20,7 @@ require("./display/webGl.AnimatedImage.js");
 require("./display/webGl.Container.js");
 require("./display/webGl.Image.js");
 
+require("./renderer/webGl.AbstractRenderer.js");
 require("./renderer/webGl.BaseRenderer.js");
 require("./renderer/webGl.Stage2D.js");
 require("./renderer/webGl.MaskRenderer.js");

@@ -1,59 +1,16 @@
 require("../NameSpace.js");
+require("./webGl.AbstractRenderer.js");
+require("../display/webGl.BlendModes.js");
+require("../display/webGl.Item.js");
 require("../display/webGl.Container.js");
+require("../display/webGl.Image.js");
+require("../utils/webGl.Utils.js");
+require("../utils/webGl.Matrix3.js");
 
 WebGl.Stage2D = createPrototypeClass(
-  WebGl.Container,
+  WebGl.AbstractRenderer,
   function Stage2D(webGlBitmap, vertexShader, fragmentShader, config) {
-    WebGl.Container.call(this);
-
-    this.fog = new WebGl.ColorProps();
-    this.fog.a = 0;
-
-    this.colorCache = this.color.items;
-
-    this._webGlUtils  = WebGl.Utils.instance;
-
-    this._MAX_BATCH_ITEMS = 10000;
-
-    this._DEFAULT_DUO  = [0, 0];
-    this._DEFAULT_QUAD = [0, 0, 0, 0];
-
-    this._renderId = 0;
-
-    this._latestBlendMode = WebGl.BlendModes.NORMAL;
-
-    this._batchItems = 0;
-
-    this._textureMap = [];
-    this._textureIds = [];
-
-    this._attachedLights = [];
-
-    this._textureIdBufferUpdated = false;
-
-    this._shouldResize = true;
-
-    this._pickedElements = [];
-    this._isPickerSet = false;
-
-    this._tempPickerVector  = new Float32Array([0, 0, 1]);
-    this._tempMatrix        = new Float32Array(6);
-    this._tempInverseMatrix = new Float32Array(6);
-
-    this._config = config;
-
-    this._onResizeBind = this._onResize.bind(this);
-
-    this._webGlBitmap = webGlBitmap;
-    this._webGlBitmap.addEventListener(WebGl.Bitmap.RESIZE, this._onResizeBind);
-
-    this._gl = this._webGlBitmap.getContext();
-
-    this._program = this._webGlUtils.createProgram(this._gl, [
-      this._webGlUtils.loadShader(this._gl, WebGl.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
-      this._webGlUtils.loadShader(this._gl, WebGl.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(this._config))
-    ]);
-    this._locations = this._webGlUtils.getLocationsFor(this._gl, this._program, {
+    WebGl.AbstractRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, {
       "a_position"       : "getAttribLocation",
       "a_matrix"         : "getAttribLocation",
       "a_worldMatrix"    : "getAttribLocation",
@@ -71,29 +28,24 @@ WebGl.Stage2D = createPrototypeClass(
       "u_lightZIndices"  : "getUniformLocation",
       "u_fog"            : "getUniformLocation",
       "u_filters"        : "getUniformLocation",
-    });
+    }, config);
 
-    this._gl.useProgram(this._program);
+    this.fog = new WebGl.ColorProps();
+    this.fog.a = 0;
 
-    this._setBlendMode();
+    this.colorCache = this.color.items;
 
-    var positionBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuffer);
-    this._gl.bufferData(
-      this._gl.ARRAY_BUFFER,
-      new Float32Array([0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
-      this._gl.STATIC_DRAW
-    );
-    this._gl.vertexAttribPointer(this._locations["a_position"], 2, this._gl.FLOAT, false, 0, 0);
-    this._gl.enableVertexAttribArray(this._locations["a_position"]);
+    this._DEFAULT_DUO  = [0, 0];
+    this._DEFAULT_QUAD = [0, 0, 0, 0];
 
-    var indexBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    this._gl.bufferData(
-      this._gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array([0, 1, 2, 0, 2, 3]),
-      this._gl.STATIC_DRAW
-    );
+    this._attachedLights = [];
+
+    this._pickedElements = [];
+    this._isPickerSet = false;
+
+    this._tempPickerVector  = new Float32Array([0, 0, 1]);
+    this._tempMatrix        = new Float32Array(6);
+    this._tempInverseMatrix = new Float32Array(6);
 
     if (this._config.isLightEnabled) {
       this._lightPositions = new Float32Array(this._config.lightsNum * 2);
@@ -106,18 +58,10 @@ WebGl.Stage2D = createPrototypeClass(
       ? this._collectLights.bind(this)
       : emptyFunction;
 
-    this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "a_matrix",      9, 3, 3, this._gl.FLOAT, 4);
-    this._worldMatrixData     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._worldMatrixBuffer   = this._createArrayBuffer(this._matrixData,        "a_worldMatrix", 9, 3, 3, this._gl.FLOAT, 4);
-    this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-    this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "a_texMatrix",   9, 3, 3, this._gl.FLOAT, 4);
-    this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "a_texCrop",     4, 1, 4, this._gl.FLOAT, 4);
-    this._colorData           = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._colorBuffer         = this._createArrayBuffer(this._colorData,         "a_fillColor",   4, 1, 4, this._gl.FLOAT, 4);
-    this._tintColorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._tintColorBuffer     = this._createArrayBuffer(this._tintColorData,     "a_tintColor",   4, 1, 4, this._gl.FLOAT, 4);
+    this._colorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._colorBuffer     = this._createArrayBuffer(this._colorData,     "a_fillColor", 4, 1, 4, this._gl.FLOAT, 4);
+    this._tintColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._tintColorBuffer = this._createArrayBuffer(this._tintColorData, "a_tintColor", 4, 1, 4, this._gl.FLOAT, 4);
 
     this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
     this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
@@ -127,46 +71,30 @@ WebGl.Stage2D = createPrototypeClass(
       ? this._setMaskData.bind(this)
       : emptyFunction;
 
-    this._resize();
-
-    this._drawFunctionMap = {};
-    this._drawFunctionMap[WebGl.Item.TYPE] = emptyFunction;
-    this._drawFunctionMap[WebGl.Image.TYPE] = this._drawImage.bind(this);
-    this._drawFunctionMap[WebGl.Container.TYPE] = this._drawContainer.bind(this);
-
-    this._update      =
-    this._updateProps = emptyFunction;
-
     this._zIndexCounter = 0;
+
+    this._resize();
   },
   function(_super) {
     set(this, "filters", function(f) {
       this._config.filters && this._config.filters.length > 0 && this._gl.uniform1i(this._locations["u_filters"], f);
     });
 
-    get(this, "bitmap",         function() { return this._webGlBitmap; });
-    get(this, "stage",          function() { return this; });
     get(this, "pickedElements", function() { return this._pickedElements.clone(); });
 
     this.render = function() {
-      this._webGlBitmap.clearRect();
-
-      this._renderTimer = Date.now();
+      this._resize();
 
       this._pickedElements.length = 0;
       this._zIndexCounter = 0;
 
-      this._resize();
       this._updateColor();
       this._updateFog();
       this._collectLightsFunc();
-      this._drawContainer(this);
 
-      this._batchItems > 0 && this._batchDraw();
+      this._render();
 
       this._isPickerSet = false;
-
-      ++this._renderId;
     }
 
     this.isLightAttached = function(light) {
@@ -188,12 +116,6 @@ WebGl.Stage2D = createPrototypeClass(
 
       this._tempPickerVector[0] = (x - this._widthHalf) * this.matrixCache[0];
       this._tempPickerVector[1] = (y - this._heightHalf) * this.matrixCache[4];
-    }
-
-    this.destruct = function() {
-      this._webGlBitmap.removeEventListener(WebGl.Bitmap.RESIZE, this._onResizeBind);
-
-      _super.destruct.call(this);
     }
 
     this._updateFog = function() {
@@ -241,25 +163,23 @@ WebGl.Stage2D = createPrototypeClass(
       item.type !== WebGl.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
-    this._drawContainer = function(container) {
-      var children = container.children;
-      var i;
-      var l;
-      for (i = 0, l = children.length; i < l; ++i) {
-        this._drawItem(children[i], container);
-      }
-    }
-
     this._setMaskData = function(item) {
       item.mask && (this._effectData[this._batchItems * this._effectLength + 3] = this._drawTexture(item.mask));
     }
 
+    this._setBufferData = function(item, parent, textureMapIndex, matId, quadId, effectId) {
+      _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
+
+      arraySet(this._colorData,     parent.colorCache, quadId);
+      arraySet(this._tintColorData, item.colorCache,   quadId);
+
+      this._effectData[effectId] = textureMapIndex;
+      this._effectData[effectId + 1] = item.tintType;
+      this._effectData[effectId + 2] = item.props.zIndex;
+    }
+
     this._drawImage = function(item, parent) {
-      if (this._latestBlendMode !== item.blendMode) {
-        this._batchDraw();
-        this._latestBlendMode = item.blendMode;
-        this._setBlendMode();
-      }
+      this._checkBlendMode(item);
 
       if (
         this._isPickerSet &&
@@ -271,131 +191,28 @@ WebGl.Stage2D = createPrototypeClass(
 
       var textureMapIndex = this._drawTexture(item.texture);
 
-      var quadId   = this._batchItems * 4;
-      var matId    = this._batchItems * 9;
-      var effectId = this._batchItems * this._effectLength;
-
-      arraySet(this._worldMatrixData, parent.matrixCache, matId);
-      arraySet(this._matrixData, item.matrixCache, matId);
-      arraySet(this._textureMatrixData, item.textureMatrixCache, matId);
-      arraySet(this._textureCropData, item.textureCropCache, quadId);
-      arraySet(this._colorData, parent.colorCache, quadId);
-      arraySet(this._tintColorData, item.colorCache, quadId);
-      this._effectData[effectId] = textureMapIndex;
-      this._effectData[effectId + 1] = item.tintType;
-      this._effectData[effectId + 2] = item.props.zIndex;
+      this._setBufferData(
+        item,
+        parent,
+        textureMapIndex,
+        this._batchItems * 9,
+        this._batchItems * 4,
+        this._batchItems * this._effectLength
+      );
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
 
-    this._createArrayBuffer = function(data, locationId, length, num, size, type, bytes) {
-      var buffer = this._gl.createBuffer();
-      this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
-  		this._gl.bufferData(this._gl.ARRAY_BUFFER, data.byteLength, this._gl.DYNAMIC_DRAW);
-
-      this._attachArrayBuffer(this._locations[locationId], buffer, data, length, num, size, type, bytes);
-
-      return buffer;
-    }
-
-    this._attachArrayBuffer = function(location, buffer, data, length, num, size, type, bytes) {
-      this._bindArrayBuffer(buffer, data);
-
-  		var stride = bytes * length;
-      var i = num + 1;
-      while (--i) {
-  			var loc = location + (num - i);
-  			this._gl.enableVertexAttribArray(loc);
-
-        this._gl[
-          type === this._gl.FLOAT
-          ? "vertexAttribPointer"
-          : "vertexAttribIPointer"
-        ](loc, size, type, false, stride, (num - i) * bytes * size);
-  			this._gl.vertexAttribDivisor(loc, 1);
-  		}
-  	}
-
-    this._bindArrayBuffer = function(buffer, data) {
-      this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
-  		this._gl.bufferSubData(this._gl.ARRAY_BUFFER, 0, data);
-    }
-
-    this._batchDraw = function() {
-      if (this._textureIdBufferUpdated) {
-        this._textureIdBufferUpdated = false;
-        var textureIdBuffer = new Uint16Array(this._textureIds);
-        this._gl.uniform1iv(this._locations["u_tex"], textureIdBuffer);
-      }
-
-      this._bindArrayBuffer(this._matrixBuffer,        this._matrixData);
-      this._bindArrayBuffer(this._worldMatrixBuffer,   this._worldMatrixData);
-      this._bindArrayBuffer(this._textureMatrixBuffer, this._textureMatrixData);
-      this._bindArrayBuffer(this._textureCropBuffer,   this._textureCropData);
-  		this._bindArrayBuffer(this._colorBuffer,         this._colorData);
-      this._bindArrayBuffer(this._tintColorBuffer,     this._tintColorData);
-      this._bindArrayBuffer(this._effectBuffer,        this._effectData);
-
-      this._gl.drawElementsInstanced(this._gl.TRIANGLE_FAN, 6, this._gl.UNSIGNED_SHORT, 0, this._batchItems);
-
-      this._batchItems = 0;
-    }
-
-    this._drawTexture = function(textureInfo) {
-      if (!textureInfo.loaded) return 0;
-      var textureMapIndex = this._textureMap.indexOf(textureInfo);
-      if (textureMapIndex === -1 || textureInfo.autoUpdate(this._renderId)) {
-        if (textureMapIndex === -1) {
-          if (this._textureMap.length === this._config.textureNum) {
-            this._batchDraw();
-            this._textureIds.length =
-            this._textureMap.length = 0;
-          }
-          this._textureMap.push(textureInfo);
-          textureMapIndex = this._textureMap.length - 1;
-          this._textureIds.push(textureMapIndex);
-          this._textureIdBufferUpdated = true;
-        }
-
-        this._webGlUtils.useTexture(this._gl, textureMapIndex, textureInfo);
-      }
-
-      return textureMapIndex + 1;
-    }
-
-    this._setBlendMode = function() {
-      this._latestBlendMode.length === 4
-        ? this._gl.blendFuncSeparate(
-            this._gl[this._latestBlendMode[0]],
-            this._gl[this._latestBlendMode[1]],
-            this._gl[this._latestBlendMode[2]],
-            this._gl[this._latestBlendMode[3]]
-          )
-        : this._gl.blendFunc(
-            this._gl[this._latestBlendMode[0]],
-            this._gl[this._latestBlendMode[1]]
-          );
+    this._bindBuffers = function() {
+      _super._bindBuffers.call(this);
+  		this._bindArrayBuffer(this._colorBuffer,     this._colorData);
+      this._bindArrayBuffer(this._tintColorBuffer, this._tintColorData);
+      this._bindArrayBuffer(this._effectBuffer,    this._effectData);
     }
 
     this._resize = function() {
-      if (!this._shouldResize) return;
-      this._shouldResize = false;
-
-      this._width  = this._webGlBitmap.bitmapWidth;
-      this._height = this._webGlBitmap.bitmapHeight;
-
-      this._widthHalf  = this._width * 0.5;
-      this._heightHalf = this._height * 0.5;
-
-      WebGl.Matrix3.projection(this._width, this._height, this.matrixCache);
-
-      this._gl.uniform2f(this._locations["u_resolution"], this._width / this._height, 100 / this._width);
-
-      this.worldPropsUpdateId++;
-    }
-
-    this._onResize = function() {
-      this._shouldResize = true;
+      var resized = _super._resize.call(this);
+      resized && this._gl.uniform2f(this._locations["u_resolution"], this._width / this._height, 100 / this._width);
     }
 
     this._updateColor = function() {
@@ -557,9 +374,11 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
           shader += (i > 0 ? " else " : "") +
           "if (v_maskTexId < " + (i + 1) + ".5) {" +
             "maskAlpha = texture(u_tex[" + i + "], (v_coord.xy + vec2(1.0, -1.0)) / vec2(2.0, -2.0)).r;" +
+            "if (maskAlpha == 0.0) discard;" +
           "}";
         }
-      shader += "}";
+      shader +=
+      "}";
     }
 
     for (var i = -1; i < maxTextureImageUnits; i++) {
@@ -569,6 +388,7 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
           ? "fragColor = vec4(0.0, 0.0, 0.0, 0.0);"
           : "fragColor = texture(u_tex[" + i + "], v_texCrop + v_texCropSize * fract(v_texCoord));";
       shader +=
+        "if (fragColor.a == 0.0) discard;" +
       "}";
     }
 

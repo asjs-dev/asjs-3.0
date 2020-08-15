@@ -4,7 +4,7 @@ require("./webGl.BaseRenderer.js");
 WebGl.MaskRenderer = createPrototypeClass(
   WebGl.BaseRenderer,
   function MaskRenderer(webGlBitmap, vertexShader, fragmentShader, config) {
-    WebGl.BaseRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, null, config);
+    WebGl.BaseRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, config);
 
     webGlBitmap.clearColor.r =
     webGlBitmap.clearColor.g =

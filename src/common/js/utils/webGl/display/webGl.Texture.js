@@ -13,9 +13,6 @@ WebGl.Texture = createPrototypeClass(
     this.isVideo = false;
     this.shouldUpdate = false;
 
-    this.width  = 1;
-    this.height = 1;
-
     this.texture = gl.createTexture();
 
     this.maxLevel  = 10;
@@ -27,9 +24,14 @@ WebGl.Texture = createPrototypeClass(
 
     this.source = source;
 
+    this._sourceWidthPropName = "width";
+    this._sourceHeightPropName = "height";
     this._currentRenderId = -1;
   },
   function(_super) {
+    get(this, "width",  function() { return this._source[this._sourceWidthPropName]; });
+    get(this, "height", function() { return this._source[this._sourceHeightPropName]; });
+
     prop(this, "source", {
       get: function() { return this._source; },
       set: function(v) {
@@ -74,8 +76,17 @@ WebGl.Texture = createPrototypeClass(
     }
 
     this._parseTextureSize = function() {
-      this.width  = this._source.naturalWidth  || this._source.videoWidth  || this._source.width;
-      this.height = this._source.naturalHeight || this._source.videoHeight || this._source.height;
+      this._sourceWidthPropName = "naturalWidth";
+      this._sourceHeightPropName = "naturalHeight";
+      if (!this._source[this._sourceWidthPropName]) {
+        this._sourceWidthPropName = "videoWidth";
+        this._sourceHeightPropName = "videoHeight";
+      }
+      if (!this._source[this._sourceWidthPropName]) {
+        this._sourceWidthPropName = "width";
+        this._sourceHeightPropName = "height";
+      }
+
       this.loaded = this.width > 0 && this.height > 0;
     }
 
