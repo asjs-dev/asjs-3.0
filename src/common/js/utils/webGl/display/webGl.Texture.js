@@ -11,6 +11,7 @@ WebGl.Texture = createPrototypeClass(
 
     this.loaded = false;
     this.isVideo = false;
+    this.shouldUpdate = false;
 
     this.width  = 1;
     this.height = 1;
@@ -25,10 +26,10 @@ WebGl.Texture = createPrototypeClass(
     this.magFilter = gl.NEAREST;
 
     this.source = source;
+
+    this._currentRenderId = -1;
   },
   function(_super) {
-    get(this, "autoUpdate", function() { return this.isVideo && !this.asjsEl.paused; });
-
     prop(this, "source", {
       get: function() { return this._source; },
       set: function(v) {
@@ -53,6 +54,12 @@ WebGl.Texture = createPrototypeClass(
         );
       }
     });
+
+    this.autoUpdate = function(renderId) {
+      var shouldUpdate = renderId !== this._currentRenderId;
+      this._currentRenderId = renderId;
+      return shouldUpdate && (this.shouldUpdate || (this.isVideo && !this.asjsEl.paused));
+    }
 
     this.destruct = function() {
       this.asjsEl.removeEventListener(ASJS.LoaderEvent.LOAD, this._onTextureLoadedBind);

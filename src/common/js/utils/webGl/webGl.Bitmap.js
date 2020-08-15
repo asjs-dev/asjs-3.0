@@ -10,10 +10,17 @@ createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   ASJS.CanvasApi.initBaseCanvas(_scope, _super);
 
   override(_scope, _super, "new");
-  _scope.new = function(bitmapWidth, bitmapHeight, contextAttributes) {
+  _scope.new = function(bitmapWidth, bitmapHeight, attributes) {
     _super.new("canvas");
 
-    if (!contextAttributes) contextAttributes = {};
+    var contextAttributes = {
+      alpha              : (attributes && attributes.alpha) || false,
+      antialias          : (attributes && attributes.antialias) || false,
+      depth              : (attributes && attributes.depth) || false,
+      stencil            : (attributes && attributes.stencil) || false,
+      premultipliedAlpha : (attributes && attributes.premultipliedAlpha) || false,
+      powerPreference    : (attributes && attributes.powerPreference) || 'high-performance'
+    };
 
     _super.protected.contextAttributes = contextAttributes;
     _super.protected.contextType = "webgl2";

@@ -1,43 +1,24 @@
 require("../NameSpace.js");
-require("./webGl.Container.js");
-require("./webGl.BlendModes.js");
+require("../display/webGl.Container.js");
 
 WebGl.Stage2D = createPrototypeClass(
   WebGl.Container,
   function Stage2D(webGlBitmap, vertexShader, fragmentShader, config) {
     WebGl.Container.call(this);
 
-    this._webGlUtils  = WebGl.Utils.instance;
-    this._matrixUtils = WebGl.Matrix3;
-
-    cnst(this, "_MAX_BATCH_ITEMS", 10000);
-
-    cnst(this, "_DEFAULT_DUO",  [0, 0]);
-    cnst(this, "_DEFAULT_QUAD", [0, 0, 0, 0]);
-
-    cnst(this, "_SHADER_LOCATIONS", {
-      "a_position"       : "getAttribLocation",
-      "a_matrix"         : "getAttribLocation",
-      "a_worldMatrix"    : "getAttribLocation",
-      "a_texMatrix"      : "getAttribLocation",
-      "a_texCrop"        : "getAttribLocation",
-      "a_fillColor"      : "getAttribLocation",
-      "a_tintColor"      : "getAttribLocation",
-      "a_effects"        : "getAttribLocation",
-      "u_resolution"     : "getUniformLocation",
-      "u_tex"            : "getUniformLocation",
-      "u_lightPositions" : "getUniformLocation",
-      "u_lightVolumes"   : "getUniformLocation",
-      "u_lightColors"    : "getUniformLocation",
-      "u_lightEffects"   : "getUniformLocation",
-      "u_lightZIndices"  : "getUniformLocation",
-      "u_fog"            : "getUniformLocation",
-      "u_filters"        : "getUniformLocation",
-    });
-
     this.fog = new WebGl.ColorProps();
+    this.fog.a = 0;
 
     this.colorCache = this.color.items;
+
+    this._webGlUtils  = WebGl.Utils.instance;
+
+    this._MAX_BATCH_ITEMS = 10000;
+
+    this._DEFAULT_DUO  = [0, 0];
+    this._DEFAULT_QUAD = [0, 0, 0, 0];
+
+    this._renderId = 0;
 
     this._latestBlendMode = WebGl.BlendModes.NORMAL;
 
@@ -72,7 +53,25 @@ WebGl.Stage2D = createPrototypeClass(
       this._webGlUtils.loadShader(this._gl, WebGl.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
       this._webGlUtils.loadShader(this._gl, WebGl.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(this._config))
     ]);
-    this._locations = this._webGlUtils.getLocationsFor(this._gl, this._program, this._SHADER_LOCATIONS);
+    this._locations = this._webGlUtils.getLocationsFor(this._gl, this._program, {
+      "a_position"       : "getAttribLocation",
+      "a_matrix"         : "getAttribLocation",
+      "a_worldMatrix"    : "getAttribLocation",
+      "a_texMatrix"      : "getAttribLocation",
+      "a_texCrop"        : "getAttribLocation",
+      "a_fillColor"      : "getAttribLocation",
+      "a_tintColor"      : "getAttribLocation",
+      "a_effects"        : "getAttribLocation",
+      "u_resolution"     : "getUniformLocation",
+      "u_tex"            : "getUniformLocation",
+      "u_lightPositions" : "getUniformLocation",
+      "u_lightVolumes"   : "getUniformLocation",
+      "u_lightColors"    : "getUniformLocation",
+      "u_lightEffects"   : "getUniformLocation",
+      "u_lightZIndices"  : "getUniformLocation",
+      "u_fog"            : "getUniformLocation",
+      "u_filters"        : "getUniformLocation",
+    });
 
     this._gl.useProgram(this._program);
 
@@ -96,14 +95,14 @@ WebGl.Stage2D = createPrototypeClass(
       this._gl.STATIC_DRAW
     );
 
-    if (this._config.showLights) {
+    if (this._config.isLightEnabled) {
       this._lightPositions = new Float32Array(this._config.lightsNum * 2);
       this._lightVolumes   = new Float32Array(this._config.lightsNum * 2);
       this._lightColors    = new Float32Array(this._config.lightsNum * 4);
       this._lightEffects   = new Float32Array(this._config.lightsNum * 4);
       this._lightZIndices  = new Int32Array(this._config.lightsNum);
     }
-    this._collectLightsFunc = this._config.showLights
+    this._collectLightsFunc = this._config.isLightEnabled
       ? this._collectLights.bind(this)
       : emptyFunction;
 
@@ -120,18 +119,15 @@ WebGl.Stage2D = createPrototypeClass(
     this._tintColorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
     this._tintColorBuffer     = this._createArrayBuffer(this._tintColorData,     "a_tintColor",   4, 1, 4, this._gl.FLOAT, 4);
 
-    this._effectLength = (this._config.useMask ? 4 : 3);
+    this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
     this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
     this._effectBuffer = this._createArrayBuffer(this._effectData, "a_effects", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
 
-    this._setMaskDataFunc = this._config.useMask
+    this._setMaskDataFunc = this._config.isMaskEnabled
       ? this._setMaskData.bind(this)
       : emptyFunction;
 
     this._resize();
-
-    this.fog.a = 0;
-    this.filters = WebGl.Stage2D.Filters.NONE;
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[WebGl.Item.TYPE] = emptyFunction;
@@ -153,6 +149,8 @@ WebGl.Stage2D = createPrototypeClass(
     get(this, "pickedElements", function() { return this._pickedElements.clone(); });
 
     this.render = function() {
+      this._webGlBitmap.clearRect();
+
       this._renderTimer = Date.now();
 
       this._pickedElements.length = 0;
@@ -167,6 +165,8 @@ WebGl.Stage2D = createPrototypeClass(
       this._batchItems > 0 && this._batchDraw();
 
       this._isPickerSet = false;
+
+      ++this._renderId;
     }
 
     this.isLightAttached = function(light) {
@@ -264,7 +264,7 @@ WebGl.Stage2D = createPrototypeClass(
       if (
         this._isPickerSet &&
         item.interactive &&
-        this._matrixUtils.isPointInMatrix(this._tempPickerVector, parent.matrixCache, item.matrixCache, this._tempMatrix, this._tempInverseMatrix)
+        WebGl.Matrix3.isPointInMatrix(this._tempPickerVector, parent.matrixCache, item.matrixCache, this._tempMatrix, this._tempInverseMatrix)
       ) this._pickedElements.push(item);
 
       this._setMaskDataFunc(item);
@@ -336,7 +336,6 @@ WebGl.Stage2D = createPrototypeClass(
       this._bindArrayBuffer(this._tintColorBuffer,     this._tintColorData);
       this._bindArrayBuffer(this._effectBuffer,        this._effectData);
 
-      //this._gl.drawArraysInstanced(this._gl.TRIANGLE_FAN, 0, 4, this._batchItems);
       this._gl.drawElementsInstanced(this._gl.TRIANGLE_FAN, 6, this._gl.UNSIGNED_SHORT, 0, this._batchItems);
 
       this._batchItems = 0;
@@ -345,7 +344,7 @@ WebGl.Stage2D = createPrototypeClass(
     this._drawTexture = function(textureInfo) {
       if (!textureInfo.loaded) return 0;
       var textureMapIndex = this._textureMap.indexOf(textureInfo);
-      if (textureMapIndex === -1 || textureInfo.autoUpdate) {
+      if (textureMapIndex === -1 || textureInfo.autoUpdate(this._renderId)) {
         if (textureMapIndex === -1) {
           if (this._textureMap.length === this._config.textureNum) {
             this._batchDraw();
@@ -388,7 +387,7 @@ WebGl.Stage2D = createPrototypeClass(
       this._widthHalf  = this._width * 0.5;
       this._heightHalf = this._height * 0.5;
 
-      this._matrixUtils.projection(this._width, this._height, this.matrixCache);
+      WebGl.Matrix3.projection(this._width, this._height, this.matrixCache);
 
       this._gl.uniform2f(this._locations["u_resolution"], this._width / this._height, 100 / this._width);
 
@@ -405,12 +404,22 @@ WebGl.Stage2D = createPrototypeClass(
   }
 );
 cnst(WebGl.Stage2D, "MAX_LIGHT_SOURCES", 16);
+cnst(WebGl.Stage2D, "Filters", {
+  "NONE"       : 0,
+  "GRAYSCALE"  : 1,
+  "SEPIA"      : 2,
+  "INVERT"     : 4,
+  "COLORLIMIT" : 8,
+  "VIGNETTE"   : 16,
+  "RAINBOW"    : 32,
+  "LINES"      : 64,
+});
 rof(WebGl.Stage2D, "createVertexShader", function(config) {
   var maxLightSources = config.lightsNum;
 
   var shader = "#version 300 es\n";
 
-  if (config.showLights) {
+  if (config.isLightEnabled) {
     shader +=
     "#define MAX_LIGHT_SOURCES " + maxLightSources + "\n";
   }
@@ -423,13 +432,13 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
   "in vec4 a_texCrop;" +
   "in vec4 a_fillColor;" +
   "in vec4 a_tintColor;" +
-  "in vec" + (config.useMask ? "4" : "3") + " a_effects;";
+  "in vec" + (config.isMaskEnabled ? "4" : "3") + " a_effects;";
 
   shader +=
   "uniform vec2 u_resolution;" +
   "uniform vec4 u_fog;";
 
-  if (config.showLights) {
+  if (config.isLightEnabled) {
     shader +=
     "uniform vec2 u_lightPositions[MAX_LIGHT_SOURCES];" +
     "uniform vec2 u_lightVolumes[MAX_LIGHT_SOURCES];" +
@@ -450,9 +459,9 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
   "out float v_colorMultiply;" +
   "out vec4 v_fogColor;";
 
-  if (config.useMask) shader += "out float v_maskTexId;";
+  if (config.isMaskEnabled) shader += "out float v_maskTexId;";
 
-  if (config.showLights) {
+  if (config.isLightEnabled) {
     shader +=
     "vec4 lightValue(vec4 pos, vec2 lightPosition, vec2 lightVolume, vec4 lightColor, vec4 lightEffect) {" +
       "vec2 dist = pos.xy - lightPosition;" +
@@ -480,7 +489,7 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
     shader +=
     "vec4 lightColor = vec4(0.0);";
 
-    if (config.showLights) {
+    if (config.isLightEnabled) {
       for (var i = 0; i < maxLightSources; i++) {
         shader +=
         "if (u_lightColors[" + i + "].a > 0.0 && u_lightZIndices[" + i + "] > a_effects.z) {" +
@@ -501,7 +510,7 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
     "v_fogColor = vec4(u_fog.rgb * colorLightMultiply, 0.0);" +
     "v_fillColor += lightColor;";
 
-    if (config.useMask) shader += "v_maskTexId = a_effects.w;";
+    if (config.isMaskEnabled) shader += "v_maskTexId = a_effects.w;";
 
     shader += "}";
 
@@ -527,12 +536,12 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
   "in float v_colorMultiply;" +
   "in vec4 v_fogColor;";
 
-  if (config.useMask) shader += "in float v_maskTexId;";
+  if (config.isMaskEnabled) shader += "in float v_maskTexId;";
 
   shader +=
   "uniform sampler2D u_tex[MAX_TEXTURES];";
 
-  if (config.useFilters)
+  if (config.isFilterEnabled)
   shader += "uniform int u_filters;";
 
   shader += "out vec4 fragColor;";
@@ -540,14 +549,14 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
   shader +=
   "void main(void) {";
 
-    if (config.useMask) {
+    if (config.isMaskEnabled) {
       shader +=
       "float maskAlpha = 1.0;" +
       "if (v_maskTexId > 0.0) {";
         for (var i = 0; i < maxTextureImageUnits; i++) {
           shader += (i > 0 ? " else " : "") +
           "if (v_maskTexId < " + (i + 1) + ".5) {" +
-            "maskAlpha = texture(u_tex[" + i + "], (v_coord.xy + vec2(1.0, -1.0)) / vec2(2.0, -2.0)).a;" +
+            "maskAlpha = texture(u_tex[" + i + "], (v_coord.xy + vec2(1.0, -1.0)) / vec2(2.0, -2.0)).r;" +
           "}";
         }
       shader += "}";
@@ -576,7 +585,7 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
       "vec4 finalColor = vec4(fragColor.rgb * v_colorMultiply, fragColor.a);" +
       "fragColor = (finalColor * v_fillColor) + v_fogColor;";
 
-      if (config.useFilters) {
+      if (config.isFilterEnabled) {
         shader += "if (u_filters > 0 && fragColor.a > 0.0) {";
         for (var i = 0; i < config.filters.length; i++) {
           shader += "if ((" + config.filters[i] + " & u_filters) > 0) {";
@@ -623,21 +632,11 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
         }
         shader += "}";
       }
-      if (config.useMask) shader += "fragColor.a *= maskAlpha;";
+      if (config.isMaskEnabled) shader += "fragColor.a *= maskAlpha;";
 
       shader +=
     "}" +
   "}";
 
   return shader;
-});
-cnst(WebGl.Stage2D, "Filters", {
-  "NONE"       : 0,
-  "GRAYSCALE"  : 1,
-  "SEPIA"      : 2,
-  "INVERT"     : 4,
-  "COLORLIMIT" : 8,
-  "VIGNETTE"   : 16,
-  "RAINBOW"    : 32,
-  "LINES"      : 64,
 });
