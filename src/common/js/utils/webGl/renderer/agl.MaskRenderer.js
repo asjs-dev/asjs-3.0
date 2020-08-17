@@ -39,7 +39,7 @@ rof(AGL.MaskRenderer, "createFragmentShader", function(config) {
       "if(v_texId<" + (i + 1) + ".5){";
         shader += i < 0
           ? "fragColor=vec4(0.0,0.0,0.0,0.0);"
-          : "vec4 color=vec4(texture(u_tex[" + i + "],v_texCrop+v_texCropSize*fract(v_texCoord)).a);" +
+          : "vec4 color=texture(u_tex[" + i + "],v_texCrop+v_texCropSize*fract(v_texCoord));" +
             "fragColor=vec4(" +
               "vec3(1.0)*((color.r+color.g+color.b)/3.0)," +
               "color.a" +
