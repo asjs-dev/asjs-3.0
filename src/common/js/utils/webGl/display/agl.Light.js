@@ -1,18 +1,18 @@
-require("./webGl.Item.js");
+require("./agl.Item.js");
 require("../NameSpace.js");
-require("../data/props/webGl.LightEffectProps.js");
+require("../data/props/agl.LightEffectProps.js");
 
-WebGl.Light = createPrototypeClass(
-  WebGl.Item,
+AGL.Light = createPrototypeClass(
+  AGL.Item,
   function Light() {
-    WebGl.Item.call(this);
+    AGL.Item.call(this);
 
     this._currentWorldPropsUpdateId = -1;
 
     this.positionCache = [];
     this.volumeCache   = [];
 
-    this.effect = new WebGl.LightEffectProps();
+    this.effect = new AGL.LightEffectProps();
 
     this.effectCache = this.effect.items;
 

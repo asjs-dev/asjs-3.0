@@ -1,10 +1,10 @@
 require("../../NameSpace.js");
-require("./webGl.AbstractProps.js");
+require("./agl.AbstractProps.js");
 
-WebGl.ItemProps = createPrototypeClass(
-  WebGl.AbstractProps,
+AGL.ItemProps = createPrototypeClass(
+  AGL.AbstractProps,
   function ItemProps() {
-    WebGl.AbstractProps.call(this);
+    AGL.AbstractProps.call(this);
 
     this._sr = 0;
     this._cr = 1;

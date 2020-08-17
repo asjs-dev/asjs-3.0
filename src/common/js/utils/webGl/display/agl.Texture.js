@@ -1,9 +1,9 @@
 require("../NameSpace.js");
 
-WebGl.Texture = createPrototypeClass(
+AGL.Texture = createPrototypeClass(
   ASJS.BasePrototypeClass,
   function Texture(gl, source) {
-    this._wglUtils = WebGl.Utils.instance;
+    this._wglUtils = AGL.Utils.instance;
     this._source;
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
 
@@ -93,13 +93,13 @@ WebGl.Texture = createPrototypeClass(
     this._onTextureLoaded = this._parseTextureSize;
   }
 );
-rof(WebGl.Texture, "loadImage", function(gl, src) {
+rof(AGL.Texture, "loadImage", function(gl, src) {
   var img = new ASJS.Image();
       img.src = src;
-  return new WebGl.Texture(gl, img);
+  return new AGL.Texture(gl, img);
 });
-rof(WebGl.Texture, "loadVideo", function(gl, src) {
+rof(AGL.Texture, "loadVideo", function(gl, src) {
   var video = new ASJS.VideoPlayer();
       video.src = src;
-  return new WebGl.Texture(gl, video);
+  return new AGL.Texture(gl, video);
 });

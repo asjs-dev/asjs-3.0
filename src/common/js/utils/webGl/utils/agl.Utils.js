@@ -1,25 +1,25 @@
 require("../NameSpace.js");
 
-createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
-  _scope.webGlInfo = {};
+createSingletonClass(AGL, "Utils", ASJS.BaseClass, function(_scope) {
+  _scope.info = {};
 
   _scope.new = parseWebglInfo;
 
   function parseWebglInfo() {
-    _scope.webGlInfo.isWebGl2Supported = false;
+    _scope.info.isWebGl2Supported = false;
     map(["webgl2"], function(id, item) {
       var canvas = document.createElement("canvas");
       var gl;
       if (gl = canvas.getContext(item)) {
-        _scope.webGlInfo.isWebGl2Supported            = true;
-        _scope.webGlInfo.maxTextureImageUnits         = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-        _scope.webGlInfo.maxTextureSize               = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-        _scope.webGlInfo.maxVertexAttributes          = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
-        _scope.webGlInfo.maxVaryingVectors            = gl.getParameter(gl.MAX_VARYING_VECTORS);
-        _scope.webGlInfo.maxVertexUniformVectors      = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
-        _scope.webGlInfo.maxFragmentUniformComponents = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_COMPONENTS);
-        _scope.webGlInfo.maxFragmentUniformVectors    = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
-        _scope.webGlInfo.maxVaryingComponents         = gl.getParameter(gl.MAX_VARYING_COMPONENTS);
+        _scope.info.isWebGl2Supported            = true;
+        _scope.info.maxTextureImageUnits         = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+        _scope.info.maxTextureSize               = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+        _scope.info.maxVertexAttributes          = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+        _scope.info.maxVaryingVectors            = gl.getParameter(gl.MAX_VARYING_VECTORS);
+        _scope.info.maxVertexUniformVectors      = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
+        _scope.info.maxFragmentUniformComponents = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_COMPONENTS);
+        _scope.info.maxFragmentUniformVectors    = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+        _scope.info.maxVaryingComponents         = gl.getParameter(gl.MAX_VARYING_COMPONENTS);
       }
     });
   }
@@ -27,7 +27,7 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
   _scope.useTexture = function(gl, index, textureInfo) {
     gl.activeTexture(gl.TEXTURE0 + index);
     gl.bindTexture(textureInfo.target, textureInfo.texture);
-    
+
     gl.texImage2D(
       textureInfo.target,
       0,
@@ -51,7 +51,7 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
     gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_S, textureInfo.wrapS);
     gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_T, textureInfo.wrapT);
 
-    /*if (generateMipmap) {
+    if (generateMipmap) {
       gl.texParameteri(
         textureInfo.target,
         gl.TEXTURE_MIN_FILTER,
@@ -61,7 +61,7 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
       );
     } else {
       gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
-    }*/
+    }
 
     gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
     gl.texParameteri(textureInfo.target, gl.TEXTURE_MAG_FILTER, textureInfo.magFilter);
@@ -132,7 +132,7 @@ createSingletonClass(WebGl, "Utils", ASJS.BaseClass, function(_scope) {
     return (value & (value - 1)) == 0;
   }
 });
-WebGl.Utils.ShaderType = {
+AGL.Utils.ShaderType = {
   "VERTEX_SHADER"   : "VERTEX_SHADER",
   "FRAGMENT_SHADER" : "FRAGMENT_SHADER"
 };

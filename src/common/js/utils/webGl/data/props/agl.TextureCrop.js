@@ -1,10 +1,10 @@
 require("../../NameSpace.js");
-require("./webGl.AbstractProps.js");
+require("./agl.AbstractProps.js");
 
-WebGl.TextureCrop = createPrototypeClass(
-  WebGl.AbstractProps,
+AGL.TextureCrop = createPrototypeClass(
+  AGL.AbstractProps,
   function TextureCrop() {
-    WebGl.AbstractProps.call(this);
+    AGL.AbstractProps.call(this);
     this.items = [0, 0, 1, 1];
   },
   function() {

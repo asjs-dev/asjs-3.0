@@ -1,12 +1,12 @@
-require("./webGl.Item.js");
+require("./agl.Item.js");
 require("../NameSpace.js");
 
-WebGl.Container = createPrototypeClass(
-  WebGl.Item,
+AGL.Container = createPrototypeClass(
+  AGL.Item,
   function Container() {
-    WebGl.Item.call(this);
+    AGL.Item.call(this);
 
-    cnst(this, "type", WebGl.Container.TYPE);
+    cnst(this, "type", AGL.Container.TYPE);
 
     this._currentWorldPropsUpdateId = -1;
     this._currentWorldColorUpdateId = -1;
@@ -111,4 +111,4 @@ WebGl.Container = createPrototypeClass(
     }
   }
 );
-cnst(WebGl.Container, "TYPE", "container");
+cnst(AGL.Container, "TYPE", "container");

@@ -1,6 +1,6 @@
 require("../../NameSpace.js");
 
-WebGl.AbstractProps = createPrototypeClass(
+AGL.AbstractProps = createPrototypeClass(
   ASJS.BasePrototypeClass,
   function AbstractProps() {
     this.id = -1;

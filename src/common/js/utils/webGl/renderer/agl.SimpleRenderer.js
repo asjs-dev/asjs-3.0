@@ -1,10 +1,10 @@
 require("../NameSpace.js");
-require("./webGl.AbstractRenderer.js");
+require("./agl.BaseRenderer.js");
 
-WebGl.BaseRenderer = createPrototypeClass(
-  WebGl.AbstractRenderer,
-  function BaseRenderer(webGlBitmap, vertexShader, fragmentShader, config) {
-    WebGl.AbstractRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, {
+AGL.SimpleRenderer = createPrototypeClass(
+  AGL.BaseRenderer,
+  function SimpleRenderer(webGlBitmap, vertexShader, fragmentShader, config) {
+    AGL.BaseRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, {
       "a_position"    : "getAttribLocation",
       "a_matrix"      : "getAttribLocation",
       "a_worldMatrix" : "getAttribLocation",
@@ -29,7 +29,7 @@ WebGl.BaseRenderer = createPrototypeClass(
     }
   }
 );
-rof(WebGl.BaseRenderer, "createVertexShader", function() {
+rof(AGL.SimpleRenderer, "createVertexShader", function() {
   var shader = "#version 300 es\n" +
 
   "in vec2 a_position;" +
@@ -44,18 +44,18 @@ rof(WebGl.BaseRenderer, "createVertexShader", function() {
   "out vec2 v_texCropSize;" +
   "out float v_texId;" +
 
-  "void main(void) {" +
-    "vec3 pos = vec3(a_position, 1.0);" +
-    "gl_Position = vec4((a_worldMatrix * a_matrix * pos).xy, 0.0, 1.0);" +
-    "v_texCoord = (a_texMatrix * pos).xy;" +
-    "v_texCrop = a_texCrop.xy;" +
-    "v_texCropSize = a_texCrop.zw - a_texCrop.xy;" +
-    "v_texId = a_texId;" +
+  "void main(void){" +
+    "vec3 pos=vec3(a_position,1.0);" +
+    "gl_Position=vec4((a_worldMatrix*a_matrix*pos).xy,0.0,1.0);" +
+    "v_texCoord=(a_texMatrix*pos).xy;" +
+    "v_texCrop=a_texCrop.xy;" +
+    "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
+    "v_texId=a_texId;" +
   "}";
 
   return shader;
 });
-rof(WebGl.BaseRenderer, "createFragmentShader", function(config) {
+rof(AGL.SimpleRenderer, "createFragmentShader", function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
@@ -73,14 +73,16 @@ rof(WebGl.BaseRenderer, "createFragmentShader", function(config) {
   "out vec4 fragColor;";
 
   shader +=
-  "void main(void) {";
+  "void main(void){";
 
     for (var i = -1; i < maxTextureImageUnits; i++) {
       shader += (i > -1 ? " else " : "") +
-      "if (v_texId < " + (i + 1) + ".5) {";
-        shader += i < 0
-          ? "fragColor = vec4(0.0, 0.0, 0.0, 0.0);"
-          : "fragColor = texture(u_tex[" + i + "], v_texCrop + v_texCropSize * fract(v_texCoord));";
+      "if(v_texId<" + (i + 1) + ".5){";
+        shader += "fragColor=" + (
+          i < 0
+            ? "vec4(0.0,0.0,0.0,0.0);"
+            : "texture(u_tex[" + i + "],v_texCrop+v_texCropSize*fract(v_texCoord));"
+        );
       shader +=
       "}";
     }

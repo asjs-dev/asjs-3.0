@@ -1,10 +1,10 @@
-require("./webGl.Image.js");
+require("./agl.Image.js");
 require("../NameSpace.js");
 
-WebGl.AnimatedImage = createPrototypeClass(
-  WebGl.Image,
+AGL.AnimatedImage = createPrototypeClass(
+  AGL.Image,
   function AnimatedImage(texture) {
-    WebGl.Image.call(this, texture);
+    AGL.Image.call(this, texture);
 
     this.frameLength = 120;
     this.frame       = 0;

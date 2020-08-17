@@ -1,9 +1,9 @@
-require("./utils/webGl.Matrix3.js");
-require("./utils/webGl.Utils.js");
+require("./utils/agl.Matrix3.js");
+require("./utils/agl.Utils.js");
 require("./NameSpace.js");
 
-createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
-  _scope.clearColor = new WebGl.ColorProps();
+createClass(AGL, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
+  _scope.clearColor = new AGL.ColorProps();
 
   var _gl;
 
@@ -51,7 +51,7 @@ createClass(WebGl, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.update = function() {
     _gl && _gl.viewport(0, 0, _gl.drawingBufferWidth, _gl.drawingBufferHeight);
-    _scope.dispatchEvent(WebGl.Bitmap.RESIZE);
+    _scope.dispatchEvent(AGL.Bitmap.RESIZE);
   };
 });
-msg(WebGl.Bitmap, "RESIZE");
+msg(AGL.Bitmap, "RESIZE");

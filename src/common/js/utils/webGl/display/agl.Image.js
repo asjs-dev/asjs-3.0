@@ -1,25 +1,25 @@
-require("./webGl.Item.js");
-require("./webGl.BlendModes.js");
+require("./agl.Item.js");
 require("../NameSpace.js");
-require("../data/props/webGl.TextureProps.js");
-require("../data/props/webGl.TextureCrop.js");
+require("../data/agl.BlendModes.js");
+require("../data/props/agl.TextureProps.js");
+require("../data/props/agl.TextureCrop.js");
 
-WebGl.Image = createPrototypeClass(
-  WebGl.Item,
+AGL.Image = createPrototypeClass(
+  AGL.Item,
   function Image(texture) {
-    WebGl.Item.call(this);
+    AGL.Item.call(this);
 
-    cnst(this, "type", WebGl.Image.TYPE);
+    cnst(this, "type", AGL.Image.TYPE);
 
-    this.textureMatrixCache = WebGl.Matrix3.identity();
+    this.textureMatrixCache = AGL.Matrix3.identity();
 
     this.mask = null;
 
-    this.tintType  = WebGl.Image.Tint.NORMAL;
-    this.blendMode = WebGl.BlendModes.NORMAL;
+    this.tintType  = AGL.Image.Tint.NORMAL;
+    this.blendMode = AGL.BlendModes.NORMAL;
 
-    this.textureProps = new WebGl.TextureProps();
-    this.textureCrop  = new WebGl.TextureCrop();
+    this.textureProps = new AGL.TextureProps();
+    this.textureCrop  = new AGL.TextureCrop();
 
     this.textureCropCache = this.textureCrop.items;
 
@@ -42,7 +42,7 @@ WebGl.Image = createPrototypeClass(
     }
 
     this._transformItem = function(props, cache) {
-      WebGl.Matrix3.transformLocal(
+      AGL.Matrix3.transformLocal(
         props.x,
         props.y,
 
@@ -60,8 +60,8 @@ WebGl.Image = createPrototypeClass(
     }
   }
 );
-cnst(WebGl.Image, "TYPE", "drawable");
-cnst(WebGl.Image, "Tint", {
+cnst(AGL.Image, "TYPE", "drawable");
+cnst(AGL.Image, "Tint", {
   "NORMAL"    : 0,
   "GRAYSCALE" : 1,
   "OVERRIDE"  : 2,

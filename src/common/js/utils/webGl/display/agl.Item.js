@@ -1,19 +1,19 @@
 require("../NameSpace.js");
-require("../data/props/webGl.ItemProps.js");
-require("../data/props/webGl.ColorProps.js");
+require("../data/props/agl.ItemProps.js");
+require("../data/props/agl.ColorProps.js");
 
-WebGl.Item = createPrototypeClass(
+AGL.Item = createPrototypeClass(
   ASJS.BasePrototypeClass,
   function Item() {
-    cnst(this, "type", WebGl.Item.TYPE);
+    cnst(this, "type", AGL.Item.TYPE);
 
     this.renderable  = true;
     this.interactive = false;
 
-    this.matrixCache = WebGl.Matrix3.identity();
+    this.matrixCache = AGL.Matrix3.identity();
 
-    this.props = new WebGl.ItemProps();
-    this.color = new WebGl.ColorProps();
+    this.props = new AGL.ItemProps();
+    this.color = new AGL.ColorProps();
 
     this.colorCache = this.color.items;
 
@@ -38,7 +38,7 @@ WebGl.Item = createPrototypeClass(
     }
 
     this._transformItem = function(props, parent) {
-      WebGl.Matrix3.transform(
+      AGL.Matrix3.transform(
         parent.matrixCache,
 
         props.x,
@@ -58,4 +58,4 @@ WebGl.Item = createPrototypeClass(
     }
   }
 );
-cnst(WebGl.Item, "TYPE", "item");
+cnst(AGL.Item, "TYPE", "item");

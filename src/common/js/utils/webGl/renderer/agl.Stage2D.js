@@ -1,16 +1,12 @@
 require("../NameSpace.js");
-require("./webGl.AbstractRenderer.js");
-require("../display/webGl.BlendModes.js");
-require("../display/webGl.Item.js");
-require("../display/webGl.Container.js");
-require("../display/webGl.Image.js");
-require("../utils/webGl.Utils.js");
-require("../utils/webGl.Matrix3.js");
+require("./agl.BaseRenderer.js");
+require("../display/agl.Item.js");
+require("../utils/agl.Matrix3.js");
 
-WebGl.Stage2D = createPrototypeClass(
-  WebGl.AbstractRenderer,
-  function Stage2D(webGlBitmap, vertexShader, fragmentShader, config) {
-    WebGl.AbstractRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, {
+AGL.Stage2D = createPrototypeClass(
+  AGL.BaseRenderer,
+  function Stage2DRenderer(webGlBitmap, vertexShader, fragmentShader, config) {
+    AGL.BaseRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, {
       "a_position"       : "getAttribLocation",
       "a_matrix"         : "getAttribLocation",
       "a_worldMatrix"    : "getAttribLocation",
@@ -30,7 +26,7 @@ WebGl.Stage2D = createPrototypeClass(
       "u_filters"        : "getUniformLocation",
     }, config);
 
-    this.fog = new WebGl.ColorProps();
+    this.fog = new AGL.ColorProps();
     this.fog.a = 0;
 
     this.colorCache = this.color.items;
@@ -160,7 +156,7 @@ WebGl.Stage2D = createPrototypeClass(
       if (!item.renderable) return;
       item.props.zIndex = ++this._zIndexCounter;
       item.update(this._renderTimer, parent);
-      item.type !== WebGl.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
+      item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
     this._setMaskData = function(item) {
@@ -184,7 +180,7 @@ WebGl.Stage2D = createPrototypeClass(
       if (
         this._isPickerSet &&
         item.interactive &&
-        WebGl.Matrix3.isPointInMatrix(this._tempPickerVector, parent.matrixCache, item.matrixCache, this._tempMatrix, this._tempInverseMatrix)
+        AGL.Matrix3.isPointInMatrix(this._tempPickerVector, parent.matrixCache, item.matrixCache, this._tempMatrix, this._tempInverseMatrix)
       ) this._pickedElements.push(item);
 
       this._setMaskDataFunc(item);
@@ -220,8 +216,8 @@ WebGl.Stage2D = createPrototypeClass(
     }
   }
 );
-cnst(WebGl.Stage2D, "MAX_LIGHT_SOURCES", 16);
-cnst(WebGl.Stage2D, "Filters", {
+cnst(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
+cnst(AGL.Stage2D, "Filters", {
   "NONE"       : 0,
   "GRAYSCALE"  : 1,
   "SEPIA"      : 2,
@@ -231,7 +227,7 @@ cnst(WebGl.Stage2D, "Filters", {
   "RAINBOW"    : 32,
   "LINES"      : 64,
 });
-rof(WebGl.Stage2D, "createVertexShader", function(config) {
+rof(AGL.Stage2D, "createVertexShader", function(config) {
   var maxLightSources = config.lightsNum;
 
   var shader = "#version 300 es\n";
@@ -280,37 +276,37 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
 
   if (config.isLightEnabled) {
     shader +=
-    "vec4 lightValue(vec4 pos, vec2 lightPosition, vec2 lightVolume, vec4 lightColor, vec4 lightEffect) {" +
-      "vec2 dist = pos.xy - lightPosition;" +
-      "return lightColor * lightColor.a * max(0.0, min(1.0, 1.0 - sqrt(" +
-        "pow(abs(dist.x + (abs(dist.x) * lightEffect.x)), lightEffect.z) * (lightVolume.x / u_resolution.y) + " +
-        "pow(abs(dist.y + (abs(dist.y) * lightEffect.y)), lightEffect.w) * (lightVolume.y / u_resolution.x / u_resolution.y)" +
+    "vec4 lightValue(vec4 pos,vec2 lightPosition,vec2 lightVolume,vec4 lightColor,vec4 lightEffect){" +
+      "vec2 dist=pos.xy-lightPosition;" +
+      "return lightColor*lightColor.a*max(0.0,min(1.0,1.0-sqrt(" +
+        "pow(abs(dist.x+(abs(dist.x)*lightEffect.x)),lightEffect.z)*(lightVolume.x/u_resolution.y)+" +
+        "pow(abs(dist.y+(abs(dist.y)*lightEffect.y)),lightEffect.w)*(lightVolume.y/u_resolution.x/u_resolution.y)" +
       ")));" +
     "}";
   }
 
   shader +=
-  "void main(void) {" +
-    "vec3 pos = vec3(a_position, 1.0);" +
-    "gl_Position = vec4((a_worldMatrix * a_matrix * pos).xy, 0.0, 1.0);" +
-    "v_texCoord = (a_texMatrix * pos).xy;" +
-    "v_coord = gl_Position;" +
-    "v_texCrop = a_texCrop.xy;" +
-    "v_texCropSize = a_texCrop.zw - a_texCrop.xy;" +
-    "v_fillColor = a_fillColor;" +
-    "v_tintColor = a_tintColor;" +
+  "void main(void){" +
+    "vec3 pos=vec3(a_position,1.0);" +
+    "gl_Position=vec4((a_worldMatrix*a_matrix*pos).xy,0.0,1.0);" +
+    "v_texCoord=(a_texMatrix*pos).xy;" +
+    "v_coord=gl_Position;" +
+    "v_texCrop=a_texCrop.xy;" +
+    "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
+    "v_fillColor=a_fillColor;" +
+    "v_tintColor=a_tintColor;" +
 
-    "v_texId = a_effects.x;" +
-    "v_tintType = a_effects.y;";
+    "v_texId=a_effects.x;" +
+    "v_tintType=a_effects.y;";
 
     shader +=
-    "vec4 lightColor = vec4(0.0);";
+    "vec4 lightColor=vec4(0.0);";
 
     if (config.isLightEnabled) {
       for (var i = 0; i < maxLightSources; i++) {
         shader +=
-        "if (u_lightColors[" + i + "].a > 0.0 && u_lightZIndices[" + i + "] > a_effects.z) {" +
-          "lightColor += lightValue(" +
+        "if(u_lightColors[" + i + "].a>0.0 && u_lightZIndices[" + i + "]>a_effects.z){" +
+          "lightColor+=lightValue(" +
             "v_coord," +
             "u_lightPositions[" + i + "]," +
             "u_lightVolumes[" + i + "]," +
@@ -322,18 +318,18 @@ rof(WebGl.Stage2D, "createVertexShader", function(config) {
     }
 
     shader +=
-    "float colorLightMultiply = max(0.0, u_fog.a - lightColor.a);" +
-    "v_colorMultiply = max(0.0, 1.0 - colorLightMultiply);" +
-    "v_fogColor = vec4(u_fog.rgb * colorLightMultiply, 0.0);" +
-    "v_fillColor += lightColor;";
+    "float colorLightMultiply=max(0.0,u_fog.a-lightColor.a);" +
+    "v_colorMultiply=max(0.0,1.0-colorLightMultiply);" +
+    "v_fogColor=vec4(u_fog.rgb*colorLightMultiply,0.0);" +
+    "v_fillColor+=lightColor;";
 
-    if (config.isMaskEnabled) shader += "v_maskTexId = a_effects.w;";
+    if (config.isMaskEnabled) shader += "v_maskTexId=a_effects.w;";
 
     shader += "}";
 
   return shader;
 });
-rof(WebGl.Stage2D, "createFragmentShader", function(config) {
+rof(AGL.Stage2D, "createFragmentShader", function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
@@ -364,17 +360,17 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
   shader += "out vec4 fragColor;";
 
   shader +=
-  "void main(void) {";
+  "void main(void){";
 
     if (config.isMaskEnabled) {
       shader +=
-      "float maskAlpha = 1.0;" +
-      "if (v_maskTexId > 0.0) {";
+      "float maskAlpha=1.0;" +
+      "if(v_maskTexId>0.0){";
         for (var i = 0; i < maxTextureImageUnits; i++) {
           shader += (i > 0 ? " else " : "") +
-          "if (v_maskTexId < " + (i + 1) + ".5) {" +
-            "maskAlpha = texture(u_tex[" + i + "], (v_coord.xy + vec2(1.0, -1.0)) / vec2(2.0, -2.0)).r;" +
-            "if (maskAlpha == 0.0) discard;" +
+          "if(v_maskTexId<" + (i + 1) + ".5){" +
+            "maskAlpha=texture(u_tex[" + i + "],(v_coord.xy+vec2(1.0,-1.0))/vec2(2.0,-2.0)).r;" +
+            "if(maskAlpha==0.0) discard;" +
           "}";
         }
       shader +=
@@ -383,76 +379,78 @@ rof(WebGl.Stage2D, "createFragmentShader", function(config) {
 
     for (var i = -1; i < maxTextureImageUnits; i++) {
       shader += (i > -1 ? " else " : "") +
-      "if (v_texId < " + (i + 1) + ".5) {";
-        shader += i < 0
-          ? "fragColor = vec4(0.0, 0.0, 0.0, 0.0);"
-          : "fragColor = texture(u_tex[" + i + "], v_texCrop + v_texCropSize * fract(v_texCoord));";
+      "if(v_texId<" + (i + 1) + ".5){";
+        shader += "fragColor=" + (
+          i < 0
+            ? "vec4(0.0,0.0,0.0,0.0);"
+            : "texture(u_tex[" + i + "],v_texCrop+v_texCropSize*fract(v_texCoord));"
+          );
       shader +=
-        "if (fragColor.a == 0.0) discard;" +
+        "if(fragColor.a==0.0) discard;" +
       "}";
     }
 
     shader +=
-    "if (fragColor.a > 0.0) {" +
-      "if (v_tintType < 0.5) " +
-        "fragColor *= v_tintColor;" +
-      "else if (v_tintType < 1.5 && fragColor.r == fragColor.g && fragColor.r == fragColor.b) " +
-        "fragColor *= v_tintColor;" +
-      "else if (v_tintType < 2.5) " +
-        "fragColor = vec4((fragColor.rgb * (1.0 - v_tintColor.a)) + (v_tintColor.rgb * v_tintColor.a), fragColor.a);";
+    "if(fragColor.a>0.0){" +
+      "if(v_tintType<0.5) " +
+        "fragColor*=v_tintColor;" +
+      "else if(v_tintType<1.5 && fragColor.r==fragColor.g && fragColor.r==fragColor.b) " +
+        "fragColor*=v_tintColor;" +
+      "else if(v_tintType<2.5) " +
+        "fragColor=vec4((fragColor.rgb*(1.0-v_tintColor.a))+(v_tintColor.rgb*v_tintColor.a),fragColor.a);";
 
       shader +=
-      "vec4 finalColor = vec4(fragColor.rgb * v_colorMultiply, fragColor.a);" +
-      "fragColor = (finalColor * v_fillColor) + v_fogColor;";
+      "vec4 finalColor=vec4(fragColor.rgb*v_colorMultiply,fragColor.a);" +
+      "fragColor=(finalColor*v_fillColor)+v_fogColor;";
 
       if (config.isFilterEnabled) {
-        shader += "if (u_filters > 0 && fragColor.a > 0.0) {";
+        shader += "if(u_filters>0 && fragColor.a>0.0){";
         for (var i = 0; i < config.filters.length; i++) {
-          shader += "if ((" + config.filters[i] + " & u_filters) > 0) {";
+          shader += "if((" + config.filters[i] + " & u_filters)>0){";
             switch (config.filters[i]) {
-              case WebGl.Stage2D.Filters.GRAYSCALE:
+              case AGL.Stage2D.Filters.GRAYSCALE:
                 shader +=
-                "fragColor = vec4(" +
-                  "vec3(1.0) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), " +
+                "fragColor=vec4(" +
+                  "vec3(1.0)*((fragColor.r+fragColor.g+fragColor.b)/3.0)," +
                   "fragColor.a" +
                 ");";
               break;
-              case WebGl.Stage2D.Filters.SEPIA:
+              case AGL.Stage2D.Filters.SEPIA:
                 shader +=
-                "fragColor = vec4(" +
-                  "vec3(0.874, 0.514, 0.156) * ((fragColor.r + (fragColor.g + fragColor.b)) / 3.0), " +
+                "fragColor=vec4(" +
+                  "vec3(0.874,0.514,0.156)*((fragColor.r+(fragColor.g+fragColor.b))/3.0)," +
                   "fragColor.a" +
                 ");";
               break;
-              case WebGl.Stage2D.Filters.INVERT:
+              case AGL.Stage2D.Filters.INVERT:
                 shader +=
-                "fragColor = abs(vec4(fragColor.rgb - 1.0, fragColor.a));";
+                "fragColor=abs(vec4(fragColor.rgb-1.0,fragColor.a));";
               break;
-              case WebGl.Stage2D.Filters.COLORLIMIT:
+              case AGL.Stage2D.Filters.COLORLIMIT:
                 shader +=
-                "fragColor = vec4(" +
-                  "(floor((fragColor.rgb * 256.0) / 32.0) / 256.0) * 32.0, " +
+                "fragColor=vec4(" +
+                  "(floor((fragColor.rgb*256.0)/32.0)/256.0)*32.0," +
                   "fragColor.a" +
                 ");";
               break;
-              case WebGl.Stage2D.Filters.VIGNETTE:
+              case AGL.Stage2D.Filters.VIGNETTE:
                 shader +=
-                "float vignetteValue = (1.0 - sqrt(pow(v_coord.x, 4.0) + pow(v_coord.y, 4.0)));" +
-                "fragColor *= vec4(vignetteValue, vignetteValue, vignetteValue, 1.0);";
+                "float vignetteValue=(1.0-sqrt(pow(v_coord.x,4.0)+pow(v_coord.y,4.0)));" +
+                "fragColor*=vec4(vec3(vignetteValue),1);";
               break;
-              case WebGl.Stage2D.Filters.RAINBOW:
+              case AGL.Stage2D.Filters.RAINBOW:
                 shader +=
-                "fragColor += vec4(v_coord.x * 0.15, v_coord.y * 0.15, (v_coord.x - v_coord.y) * 0.15, 0);";
+                "fragColor+=vec4(v_coord.x*0.15,v_coord.y*0.15,(v_coord.x-v_coord.y)*0.15,0);";
               break;
-              case WebGl.Stage2D.Filters.LINES:
-                shader += "fragColor += vec4(sin(v_coord.y * 500.0) * 0.2);";
+              case AGL.Stage2D.Filters.LINES:
+                shader += "fragColor+=vec4(sin(v_coord.y* 500.0)*0.2);";
               break;
             }
           shader += "}";
         }
         shader += "}";
       }
-      if (config.isMaskEnabled) shader += "fragColor.a *= maskAlpha;";
+      if (config.isMaskEnabled) shader += "fragColor.a*=maskAlpha;";
 
       shader +=
     "}" +

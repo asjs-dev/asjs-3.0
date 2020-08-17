@@ -1,24 +1,24 @@
 require("../NameSpace.js");
-require("../webGl.Bitmap.js");
-require("../display/webGl.BlendModes.js");
-require("../display/webGl.Item.js");
-require("../display/webGl.Container.js");
-require("../display/webGl.Image.js");
-require("../utils/webGl.Utils.js");
-require("../utils/webGl.Matrix3.js");
+require("../agl.Bitmap.js");
+require("../data/agl.BlendModes.js");
+require("../display/agl.Item.js");
+require("../display/agl.Container.js");
+require("../display/agl.Image.js");
+require("../utils/agl.Utils.js");
+require("../utils/agl.Matrix3.js");
 
-WebGl.AbstractRenderer = createPrototypeClass(
-  WebGl.Container,
-  function AbstractRenderer(webGlBitmap, vertexShader, fragmentShader, locations, config) {
-    WebGl.Container.call(this);
+AGL.BaseRenderer = createPrototypeClass(
+  AGL.Container,
+  function BaseRenderer(webGlBitmap, vertexShader, fragmentShader, locations, config) {
+    AGL.Container.call(this);
 
-    this._webGlUtils  = WebGl.Utils.instance;
+    this._webGlUtils  = AGL.Utils.instance;
 
     this._MAX_BATCH_ITEMS = 10000;
 
     this._renderId = 0;
 
-    this._latestBlendMode = WebGl.BlendModes.NORMAL;
+    this._latestBlendMode = AGL.BlendModes.NORMAL;
 
     this._batchItems = 0;
 
@@ -34,15 +34,15 @@ WebGl.AbstractRenderer = createPrototypeClass(
     this._onResizeBind = this._onResize.bind(this);
 
     this._webGlBitmap = webGlBitmap;
-    this._webGlBitmap.addEventListener(WebGl.Bitmap.RESIZE, this._onResizeBind);
+    this._webGlBitmap.addEventListener(AGL.Bitmap.RESIZE, this._onResizeBind);
 
     this._gl = this._webGlBitmap.getContext();
 
-    this._program = this._webGlUtils.createProgram(this._gl, [
-      this._webGlUtils.loadShader(this._gl, WebGl.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
-      this._webGlUtils.loadShader(this._gl, WebGl.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(this._config))
+    var program = this._webGlUtils.createProgram(this._gl, [
+      this._webGlUtils.loadShader(this._gl, AGL.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
+      this._webGlUtils.loadShader(this._gl, AGL.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(this._config))
     ]);
-    this._locations = this._webGlUtils.getLocationsFor(this._gl, this._program, locations || {
+    this._locations = this._webGlUtils.getLocationsFor(this._gl, program, locations || {
       "a_position"    : "getAttribLocation",
       "a_matrix"      : "getAttribLocation",
       "a_worldMatrix" : "getAttribLocation",
@@ -51,7 +51,7 @@ WebGl.AbstractRenderer = createPrototypeClass(
       "u_tex"         : "getUniformLocation",
     });
 
-    this._gl.useProgram(this._program);
+    this._gl.useProgram(program);
 
     this._setBlendMode();
 
@@ -83,9 +83,9 @@ WebGl.AbstractRenderer = createPrototypeClass(
     this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "a_texCrop",     4, 1, 4, this._gl.FLOAT, 4);
 
     this._drawFunctionMap = {};
-    this._drawFunctionMap[WebGl.Item.TYPE] = emptyFunction;
-    this._drawFunctionMap[WebGl.Image.TYPE] = this._drawImage.bind(this);
-    this._drawFunctionMap[WebGl.Container.TYPE] = this._drawContainer.bind(this);
+    this._drawFunctionMap[AGL.Item.TYPE] = emptyFunction;
+    this._drawFunctionMap[AGL.Image.TYPE] = this._drawImage.bind(this);
+    this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
     this._update      =
     this._updateProps = emptyFunction;
@@ -102,7 +102,7 @@ WebGl.AbstractRenderer = createPrototypeClass(
     }
 
     this.destruct = function() {
-      this._webGlBitmap.removeEventListener(WebGl.Bitmap.RESIZE, this._onResizeBind);
+      this._webGlBitmap.removeEventListener(AGL.Bitmap.RESIZE, this._onResizeBind);
 
       _super.destruct.call(this);
     }
@@ -118,7 +118,7 @@ WebGl.AbstractRenderer = createPrototypeClass(
     this._drawItem = function(item, parent) {
       if (!item.renderable) return;
       item.update(this._renderTimer, parent);
-      item.type !== WebGl.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
+      item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
     this._drawContainer = function(container) {
@@ -261,7 +261,7 @@ WebGl.AbstractRenderer = createPrototypeClass(
       this._widthHalf  = this._width * 0.5;
       this._heightHalf = this._height * 0.5;
 
-      WebGl.Matrix3.projection(this._width, this._height, this.matrixCache);
+      AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
 
       this.worldPropsUpdateId++;
 
@@ -273,7 +273,7 @@ WebGl.AbstractRenderer = createPrototypeClass(
     }
   }
 );
-rof(WebGl.AbstractRenderer, "createVertexShader", function() {
+rof(AGL.BaseRenderer, "createVertexShader", function() {
   return "#version 300 es\n" +
   "in vec2 a_position;" +
   "in mat3 a_matrix;" +
@@ -285,15 +285,15 @@ rof(WebGl.AbstractRenderer, "createVertexShader", function() {
   "out vec2 v_texCrop;" +
   "out vec2 v_texCropSize;" +
 
-  "void main(void) {" +
-    "vec3 pos = vec3(a_position, 1.0);" +
-    "gl_Position = vec4((a_worldMatrix * a_matrix * pos).xy, 0.0, 1.0);" +
-    "v_texCoord = (a_texMatrix * pos).xy;" +
-    "v_texCrop = a_texCrop.xy;" +
-    "v_texCropSize = a_texCrop.zw - a_texCrop.xy;" +
+  "void main(void){" +
+    "vec3 pos=vec3(a_position,1.0);" +
+    "gl_Position=vec4((a_worldMatrix*a_matrix*pos).xy,0.0,1.0);" +
+    "v_texCoord=(a_texMatrix*pos).xy;" +
+    "v_texCrop=a_texCrop.xy;" +
+    "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
   "}";
 });
-rof(WebGl.AbstractRenderer, "createFragmentShader", function() {
+rof(AGL.BaseRenderer, "createFragmentShader", function() {
   return "#version 300 es\n" +
   "precision lowp float;" +
 
@@ -302,7 +302,7 @@ rof(WebGl.AbstractRenderer, "createFragmentShader", function() {
   "in vec2 v_texCropSize;" +
 
   "out vec4 fragColor;" +
-  "void main(void) {" +
-    "fragColor = vec4(1.0, 0.0, 1.0, 1.0);" +
+  "void main(void){" +
+    "fragColor=vec4(1.0,0.0,1.0,1.0);" +
   "}";
 });

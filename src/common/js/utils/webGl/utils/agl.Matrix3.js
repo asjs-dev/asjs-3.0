@@ -1,5 +1,7 @@
-createUtility(WebGl, "Matrix3");
-WebGl.Matrix3.isPointInMatrix = function(
+require("../NameSpace.js");
+
+createUtility(AGL, "Matrix3");
+AGL.Matrix3.isPointInMatrix = function(
   vec,
   pm,
   cm,
@@ -28,7 +30,7 @@ WebGl.Matrix3.isPointInMatrix = function(
   return x >= 0 && y >= 0 && x <= 1 && y <= 1;
 };
 
-WebGl.Matrix3.identity = function() {
+AGL.Matrix3.identity = function() {
   return new Float32Array([
     1, 0, 0,
     0, 1, 0,
@@ -36,7 +38,7 @@ WebGl.Matrix3.identity = function() {
   ]);
 };
 
-WebGl.Matrix3.projection = function(width, height, dst) {
+AGL.Matrix3.projection = function(width, height, dst) {
   dst[0] = 2 / width;
   dst[1] = 0;
   dst[2] = 0;
@@ -48,7 +50,7 @@ WebGl.Matrix3.projection = function(width, height, dst) {
   dst[8] = 1;
 };
 
-WebGl.Matrix3.transformLocal = function(
+AGL.Matrix3.transformLocal = function(
   x, y,
   sr, cr,
   ax, ay,
@@ -63,7 +65,7 @@ WebGl.Matrix3.transformLocal = function(
   dst[7] =  y - (ax * dst[1]) - (ay * dst[4]);
 };
 
-WebGl.Matrix3.transform = function(
+AGL.Matrix3.transform = function(
   m,
   x, y,
   sr, cr,
@@ -85,4 +87,4 @@ WebGl.Matrix3.transform = function(
   dst[4] *= sy;
 };
 
-cnst(WebGl.Matrix3, "IDENTITY", WebGl.Matrix3.identity());
+cnst(AGL.Matrix3, "IDENTITY", AGL.Matrix3.identity());

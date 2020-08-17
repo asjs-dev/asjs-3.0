@@ -1,14 +1,14 @@
 require("../../NameSpace.js");
-require("./webGl.AbstractProps.js");
+require("./agl.AbstractProps.js");
 
-WebGl.LightEffectProps = createPrototypeClass(
-  WebGl.AbstractProps,
-  function LightEffectProps() {
-    WebGl.AbstractProps.call(this);
-    this.items = [0, 0, 2, 2];
+AGL.ColorProps = createPrototypeClass(
+  AGL.AbstractProps,
+  function ColorProps() {
+    AGL.AbstractProps.call(this);
+    this.items = [1, 1, 1, 1];
   },
   function() {
-    prop(this, "anchorX", {
+    prop(this, "r", {
       get: function() { return this.items[0]; },
       set: function(v) {
         if (this.items[0] !== v) {
@@ -18,7 +18,7 @@ WebGl.LightEffectProps = createPrototypeClass(
       }
     });
 
-    prop(this, "anchorY", {
+    prop(this, "g", {
       get: function() { return this.items[1]; },
       set: function(v) {
         if (this.items[1] !== v) {
@@ -28,7 +28,7 @@ WebGl.LightEffectProps = createPrototypeClass(
       }
     });
 
-    prop(this, "quadX", {
+    prop(this, "b", {
       get: function() { return this.items[2]; },
       set: function(v) {
         if (this.items[2] !== v) {
@@ -38,7 +38,7 @@ WebGl.LightEffectProps = createPrototypeClass(
       }
     });
 
-    prop(this, "quadY", {
+    prop(this, "a", {
       get: function() { return this.items[3]; },
       set: function(v) {
         if (this.items[3] !== v) {
