@@ -3,8 +3,8 @@ require("./agl.BaseRenderer.js");
 
 AGL.SimpleRenderer = createPrototypeClass(
   AGL.BaseRenderer,
-  function SimpleRenderer(webGlBitmap, vertexShader, fragmentShader, config) {
-    AGL.BaseRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, {
+  function SimpleRenderer(canvas, vertexShader, fragmentShader, config) {
+    AGL.BaseRenderer.call(this, canvas, vertexShader, fragmentShader, {
       "a_texId" : "getAttribLocation",
     }, config);
 

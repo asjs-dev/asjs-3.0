@@ -1,6 +1,6 @@
 require("../../NameSpace.js");
 
-createClass(ASJSUtils, "Oscillator", ASJS.BaseClass, function(_scope) {
+createClass(ASJSUtils, "Oscillator", BaseClass, function(_scope) {
   var _isPlaying = false;
 
   var _audioContext;

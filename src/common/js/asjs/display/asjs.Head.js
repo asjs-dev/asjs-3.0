@@ -1,4 +1,4 @@
-createSingletonClass(ASJS, "Head", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJS, "Head", BaseClass, function(_scope) {
   var _children = [];
   var _el       = document.head;
 

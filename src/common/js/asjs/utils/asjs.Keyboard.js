@@ -2,7 +2,7 @@ require("../event/asjs.KeyboardEvent.js");
 require("../event/asjs.FocusEvent.js");
 require("../display/asjs.Window.js");
 
-createClass(ASJS, "Keyboard", ASJS.BaseClass, function(_scope, _super) {
+createClass(ASJS, "Keyboard", BaseClass, function(_scope, _super) {
   var _window = ASJS.Window.instance;
 
   var _pressedKeys = {};

@@ -1,6 +1,6 @@
 require("../core/asjs.Polyfill.js");
 
-createClass(ASJS, "EventDispatcher", ASJS.BaseClass, function(_scope, _super) {
+createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
   var _polyfill = ASJS.Polyfill.instance;
 
   var _handlers = {};

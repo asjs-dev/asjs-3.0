@@ -1,15 +1,13 @@
 require("../NameSpace.js");
 
 AGL.Texture = createPrototypeClass(
-  ASJS.BasePrototypeClass,
+  BasePrototypeClass,
   function Texture(gl, source) {
     this._source;
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
     this._generateMipmap = false;
+    this._loaded = false;
 
-    this.asjsEl;
-
-    this.loaded = false;
     this.isVideo = false;
     this.shouldUpdate = false;
 
@@ -26,34 +24,35 @@ AGL.Texture = createPrototypeClass(
 
     this._srcWProp = "width";
     this._srcHProp = "height";
+    this._eventType;
     this._curRenderId = -1;
   },
   function(_super) {
     get(this, "generateMipmap", function() { return this._generateMipmap; });
 
+    get(this, "loaded", function() { return this._loaded; });
     get(this, "width",  function() { return this._source[this._srcWProp]; });
     get(this, "height", function() { return this._source[this._srcHProp]; });
 
     prop(this, "source", {
       get: function() { return this._source; },
       set: function(v) {
-        this.asjsEl && this.asjsEl.removeEventListener(
-          this.isVideo
-            ? ASJS.MediaEvent.CAN_PLAY
-            : ASJS.LoaderEvent.LOAD,
+        this._source && this._source.removeEventListener(
+          this._eventType,
           this._onTextureLoadedBind
         );
 
-        this.asjsEl  = v;
-        this._source = this.asjsEl.el;
+        this._source = v;
 
-        this.isVideo = this._source.tagName.toLowerCase() === "video";
+        this.isVideo = this._getSourceType() === "video";
+        this._eventType = this.isVideo
+          ? "canplay"
+          : "load";
 
         this._parseTextureSize();
-        this.asjsEl.addEventListener(
-          this.isVideo
-            ? ASJS.MediaEvent.CAN_PLAY
-            : ASJS.LoaderEvent.LOAD,
+
+        this._source.addEventListener(
+          this._eventType,
           this._onTextureLoadedBind
         );
       }
@@ -62,14 +61,12 @@ AGL.Texture = createPrototypeClass(
     this.autoUpdate = function(renderId) {
       var shouldUpdate = renderId !== this._curRenderId;
       this._curRenderId = renderId;
-      return shouldUpdate && (this.shouldUpdate || (this.isVideo && !this.asjsEl.paused));
+      return shouldUpdate && (this.shouldUpdate || (this.isVideo && !this._source.paused));
     }
 
     this.destruct = function() {
-      this.asjsEl && this.asjsEl.removeEventListener(
-        this.isVideo
-          ? ASJS.MediaEvent.CAN_PLAY
-          : ASJS.LoaderEvent.LOAD,
+      this._source && this._source.removeEventListener(
+        this._eventType,
         this._onTextureLoadedBind
       );
 
@@ -90,19 +87,25 @@ AGL.Texture = createPrototypeClass(
 
       this._generateMipmap = AGL.Utils.isPowerOf2(this.width) && AGL.Utils.isPowerOf2(this.height);
 
-      this.loaded = this.width > 0 && this.height > 0;
+      this._loaded = this._getSourceType() === "canvas" || this.width > 0 && this.height > 0;
+    }
+
+    this._getSourceType = function() {
+      return this._source.tagName.toLowerCase();
     }
 
     this._onTextureLoaded = this._parseTextureSize;
   }
 );
 rof(AGL.Texture, "loadImage", function(gl, src) {
-  var img = new ASJS.Image();
-      img.src = src;
-  return new AGL.Texture(gl, img);
+  var image = document.createElement("img");
+  var texture = new AGL.Texture(gl, image);
+  image.src = src;
+  return texture;
 });
 rof(AGL.Texture, "loadVideo", function(gl, src) {
-  var video = new ASJS.VideoPlayer();
-      video.src = src;
-  return new AGL.Texture(gl, video);
+  var video = document.createElement("video");
+  var texture = new AGL.Texture(gl, video);
+  video.src = src;
+  return texture;
 });

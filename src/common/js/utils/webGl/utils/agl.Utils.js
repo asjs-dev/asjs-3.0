@@ -1,7 +1,8 @@
 require("../NameSpace.js");
+
 (function() {
   var Utils = createPrototypeClass(
-    ASJS.BasePrototypeClass,
+    BasePrototypeClass,
     function Utils() {
       this.info = {
         "isWebGl2Supported": false

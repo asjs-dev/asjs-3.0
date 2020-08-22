@@ -1,4 +1,4 @@
-createSingletonClass(ASJS, "Cycler", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJS, "Cycler", BaseClass, function(_scope) {
   var _isPlaying = false;
   var _fps       = 24;
   var _interval  = getIntervalByFps();

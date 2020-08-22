@@ -1,4 +1,4 @@
-createClass(ASJS, "Promise", ASJS.BaseClass, function(_scope, _super) {
+createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
   var _resolveFunction = [];
   var _rejectFunction  = [];
   var _finallyFunction = [];

@@ -1,5 +1,4 @@
 require("../NameSpace.js");
-require("../agl.Bitmap.js");
 require("../data/agl.BlendModes.js");
 require("../display/agl.Item.js");
 require("../display/agl.Container.js");
@@ -9,13 +8,18 @@ require("../utils/agl.Matrix3.js");
 
 AGL.BaseRenderer = createPrototypeClass(
   AGL.Container,
-  function BaseRenderer(webGlBitmap, vertexShader, fragmentShader, locations, config) {
+  function BaseRenderer(canvas, vertexShader, fragmentShader, locations, config) {
     AGL.Container.call(this);
+
+    this.clearColor = new AGL.ColorProps();
 
     this._MAX_BATCH_ITEMS = 10000;
 
     this._width  = 0;
     this._height = 0;
+
+    this._resUpdId = 0;
+    this._curResUpdId = -1;
 
     this._renderId = 0;
 
@@ -28,16 +32,17 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this._textureIdBufferUpdated = false;
 
-    this._shouldResize = true;
-
     this._config = config;
 
-    this._onResizeBind = this._onResize.bind(this);
+    this._canvas = canvas;
 
-    this._webGlBitmap = webGlBitmap;
-    this._webGlBitmap.addEventListener(AGL.Bitmap.RESIZE, this._onResizeBind);
+    this._context = null;
 
-    this._gl = this._webGlBitmap.getContext();
+    this._gl = this.context;
+
+    this._gl.pixelStorei(this._gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+
+    this._gl.enable(this._gl.BLEND);
 
     var program = AGL.Utils.createProgram(this._gl, [
       AGL.Utils.loadShader(this._gl, AGL.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
@@ -93,27 +98,62 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this._resize();
   },
-  function(_super) {
-    get(this, "bitmap", function() { return this._webGlBitmap; });
+  function() {
+    get(this, "canvas", function() { return this._canvas; });
     get(this, "stage",  function() { return this; });
+
+    get(this, "context", function() {
+      if (!this._context || (this._context.isContextLost && this._context.isContextLost())) {
+        this._context = this._canvas.getContext(
+          "webgl2",
+          this._config.contextAttributes
+        );
+      }
+      return this._context;
+    });
+
+    prop(this, "width", {
+      get: function() { return this._width; },
+      set: function(v) {
+        if (this._width !== v) {
+          this._width = v;
+          this._resUpdId++;
+        }
+      }
+    });
+
+    prop(this, "height", {
+      get: function() { return this._height; },
+      set: function(v) {
+        if (this._height !== v) {
+          this._height = v;
+          this._resUpdId++;
+        }
+      }
+    });
+
+    this.setSize = function(width, height) {
+      this.width  = width;
+      this.height = height;
+    }
 
     this.render = function() {
       this._resize();
       this._render();
     }
 
-    this.destruct = function() {
-      this._webGlBitmap.removeEventListener(AGL.Bitmap.RESIZE, this._onResizeBind);
-
-      _super.destruct.call(this);
-    }
-
     this._render = function() {
-      this._webGlBitmap.clearRect();
+      this.clear();
       this._renderTimer = Date.now();
       this._drawContainer(this);
       this._batchItems > 0 && this._batchDraw();
       ++this._renderId;
+    }
+
+    this.clear = function() {
+      var clearColor = this.clearColor;
+      clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+      this._gl.clear(this._gl.COLOR_BUFFER_BIT);
     }
 
     this._drawItem = function(item, parent) {
@@ -248,21 +288,19 @@ AGL.BaseRenderer = createPrototypeClass(
     }
 
     this._resize = function() {
-      if (!this._shouldResize) return false;
-      this._shouldResize = false;
+      if (this._resUpdId === this._curResUpdId) return false;
+      this._curResUpdId = this._resUpdId;
 
-      this._width  = this._webGlBitmap.bitmapWidth;
-      this._height = this._webGlBitmap.bitmapHeight;
+      this._canvas.width  = this._width;
+      this._canvas.height = this._height;
+
+      this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
 
       AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
 
       this.worldPropsUpdateId++;
 
       return true;
-    }
-
-    this._onResize = function() {
-      this._shouldResize = true;
     }
   }
 );

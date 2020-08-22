@@ -117,36 +117,26 @@ c1(ASJS, "Importer", Object, function(_scope) {
     return dfd;
   }
 
+  function resolvePath(basePath, path) {
+    var basePathArray = basePath.split("/");
+    emp(basePathArray[basePathArray.length - 1]) && basePathArray.pop();
+    var pathArray = path.split("/");
+    emp(pathArray[pathArray.length - 1]) && pathArray.pop();
+
+    if ([".", ".."].indexOf(pathArray[0]) === -1) return path;
+
+    var i = -1;
+    var l = pathArray.length;
+    while (++i < l) {
+      if (pathArray[i] === "..") basePathArray.pop();
+      else if (pathArray[i] !== ".") basePathArray.push(pathArray[i]);
+    }
+
+    return basePathArray.join("/");
+  }
+
   return _scope;
 });
 
 var sourcePath = ASJS.Importer.instance.sourcePath;
 var require    = ASJS.Importer.instance.require;
-
-c0(ASJS, "BaseClass", Object, function(_scope, _super) {
-  _scope.new       = emptyFunction;
-  _scope.protected = {};
-  _scope.prot      = _scope.protected;
-  _scope.destruct  = function() {
-    destObj(_scope);
-    destObj(_super);
-    _scope =
-    _super = null;
-  }
-  _scope.toObject  = function() {
-    return JSON.parse(JSON.stringify(_scope));
-  }
-});
-
-ASJS.BasePrototypeClass = c4(
-  Object,
-  function BasePrototypeClass() {},
-  function() {
-    this.destruct = function() {
-      destObjFlat(this);
-    }
-    this.toObject  = function() {
-      return JSON.parse(JSON.stringify(this));
-    }
-  }
-);

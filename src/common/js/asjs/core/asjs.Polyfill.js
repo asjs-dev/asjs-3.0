@@ -1,4 +1,4 @@
-createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJS, "Polyfill", BaseClass, function(_scope) {
   var _vendors = ['ms', 'moz', 'webkit', 'o'];
 
   var _isLittleEndian = false;
@@ -25,7 +25,6 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     checkMediaSource();
     checkCSSPrefix();
     checkEndian();
-    checkArray();
     checkScrollbarSize();
     checkMath();
   }
@@ -199,31 +198,6 @@ createSingletonClass(ASJS, "Polyfill", ASJS.BaseClass, function(_scope) {
     var c = new Uint8Array(b);
     a[0] = 0xdeadbeef;
     _isLittleEndian = c[0] == 0xef;
-  }
-
-  function checkArray() {
-    Array.prototype.addUnique = function(item) {
-      this.indexOf(item) == -1 && this.push(item);
-    }
-    Array.prototype.has = function(item) {
-      return this.indexOf(item) > -1;
-    }
-    Array.prototype.remove = function(item) {
-      var index = this.indexOf(item);
-      index > -1 && this.splice(index, 1);
-    }
-    Array.prototype.clone = function() {
-      return this.slice(0);
-    }
-    Array.prototype.equal = function(arr) {
-      if (!arr || arr.length !== this.length) return false;
-
-      for (var i = 0; i < this.length; i++) {
-        if (this[i] !== arr[i]) return false;
-      }
-
-      return true;
-    }
   }
 
   function checkScrollbarSize() {

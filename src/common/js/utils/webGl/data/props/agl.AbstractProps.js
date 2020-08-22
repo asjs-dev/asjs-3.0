@@ -1,7 +1,7 @@
 require("../../NameSpace.js");
 
 AGL.AbstractProps = createPrototypeClass(
-  ASJS.BasePrototypeClass,
+  BasePrototypeClass,
   function AbstractProps() {
     this.id = -1;
     this._curId = -1;

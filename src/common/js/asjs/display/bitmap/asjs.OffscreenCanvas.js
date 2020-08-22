@@ -1,6 +1,6 @@
 require("./asjs.CanvasApi.js");
 
-createClass(ASJS, "OffscreenCanvas", ASJS.BaseClass, function(_scope, _super) {
+createClass(ASJS, "OffscreenCanvas", BaseClass, function(_scope, _super) {
   ASJS.CanvasApi.initCanvas(_scope, _super);
 
   var _el;

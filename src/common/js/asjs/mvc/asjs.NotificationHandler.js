@@ -1,4 +1,4 @@
-createSingletonClass(ASJS, "NotificationHandler", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJS, "NotificationHandler", BaseClass, function(_scope) {
   var _handlers = {};
 
   _scope.add = function(type, callback) {

@@ -1,6 +1,6 @@
 require("./asjs.NotificationHandler.js");
 
-createClass(ASJS, "NotificationDispatcher", ASJS.BaseClass, function(_scope, _super) {
+createClass(ASJS, "NotificationDispatcher", BaseClass, function(_scope, _super) {
   var _nHandler = ASJS.NotificationHandler.instance;
 
   _super.protected.sendNotification = _nHandler.sendNotification;

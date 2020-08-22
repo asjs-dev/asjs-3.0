@@ -3,13 +3,13 @@ require("./agl.SimpleRenderer.js");
 
 AGL.MaskRenderer = createPrototypeClass(
   AGL.SimpleRenderer,
-  function MaskRenderer(webGlBitmap, vertexShader, fragmentShader, config) {
-    AGL.SimpleRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, config);
+  function MaskRenderer(canvas, vertexShader, fragmentShader, config) {
+    AGL.SimpleRenderer.call(this, canvas, vertexShader, fragmentShader, config);
 
-    webGlBitmap.clearColor.r =
-    webGlBitmap.clearColor.g =
-    webGlBitmap.clearColor.b =
-    webGlBitmap.clearColor.a = 0;
+    this.clearColor.r =
+    this.clearColor.g =
+    this.clearColor.b =
+    this.clearColor.a = 0;
   }
 );
 rof(AGL.MaskRenderer, "createVertexShader", AGL.SimpleRenderer.createVertexShader);

@@ -1,6 +1,6 @@
 require("../../NameSpace.js");
 
-createSingletonClass(ASJSUtils, "AnimationParser", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJSUtils, "AnimationParser", BaseClass, function(_scope) {
   var priv = {};
   cnst(priv, "DEFAULT_FPS", 1000 / 24);
 

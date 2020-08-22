@@ -151,7 +151,7 @@ createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
 ASJS.start(SampleApp.Application);
 ```
 
-* Create your own class extended from other class ( Particle from ASJS.BaseClass, Application from ASJS.Sprite )
+* Create your own class extended from other class ( Particle from BaseClass, Application from ASJS.Sprite )
 
 ```javascript
 var SampleApp = {};
@@ -160,7 +160,7 @@ rof(SampleApp.Utils, "getRand", function(v) {
   return Math.floor(Math.random() * v);
 });
 
-createClass(SampleApp, "Particle", ASJS.BaseClass, function(_scope) {
+createClass(SampleApp, "Particle", BaseClass, function(_scope) {
   _scope.new = function() {
     _scope.color = ASJS.Color.create(
       SampleApp.Utils.getRand(255),

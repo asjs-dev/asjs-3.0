@@ -1,7 +1,7 @@
 require("./NameSpace.js");
 require("./controller/StartupCommand.js");
 
-createClass(NS, "Application", ASJS.BaseClass, function(_scope) {
+createClass(NS, "Application", BaseClass, function(_scope) {
   _scope.new = function() {
     stage.clear();
 

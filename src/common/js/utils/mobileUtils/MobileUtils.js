@@ -1,6 +1,6 @@
 require("../../NameSpace.js");
 
-createSingletonClass(ASJSUtils, "MobileUtils", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJSUtils, "MobileUtils", BaseClass, function(_scope) {
   var _dpi;
   var _isDesktop;
 

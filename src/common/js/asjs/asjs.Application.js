@@ -1,5 +1,22 @@
-require("core/asjs.Utils.js");
+"use strict";
+
+require("../common/array.js");
+require("../common/mathHelper.js");
+require("../common/trace.js");
+require("../common/minify.js");
+require("../common/documentComplete.js");
+require("../common/property.js");
+require("../common/map.js");
+require("../common/message.js");
+require("../common/typeIs.js");
+require("../common/is.js");
+require("../common/valueOrDefault.js");
+require("../common/throttleFunction.js");
+require("../common/deleteProperty.js");
+require("../common/BaseClass.js");
+
 require("core/asjs.Core.js");
+
 require("core/asjs.Polyfill.js");
 
 require("event/asjs.AnimationEvent.js");

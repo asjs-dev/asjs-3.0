@@ -1,6 +1,6 @@
 require("../../NameSpace.js");
 
-createSingletonClass(ASJSUtils, "Media", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJSUtils, "Media", BaseClass, function(_scope) {
   _scope.getUserMedia = function(constraints, callback, errorCallback) {
     navigator.getUserMedia(constraints, callback, errorCallback);
   }

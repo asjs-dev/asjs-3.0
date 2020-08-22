@@ -1,6 +1,6 @@
 require("../../NameSpace.js");
 
-createSingletonClass(ASJSUtils, "URLParser", ASJS.BaseClass, function(_scope) {
+createSingletonClass(ASJSUtils, "URLParser", BaseClass, function(_scope) {
   var _urlParams = {};
 
   _scope.getQueryParams = function() {

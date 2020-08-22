@@ -1,6 +1,6 @@
 require("../../NameSpace.js");
 
-createClass(ASJSUtils, "Iterator", ASJS.BaseClass, function(_scope) {
+createClass(ASJSUtils, "Iterator", BaseClass, function(_scope) {
   var _steps = [];
   var _response;
   var _step = -1;

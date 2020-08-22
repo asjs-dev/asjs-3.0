@@ -5,8 +5,8 @@ require("../utils/agl.Matrix3.js");
 
 AGL.Stage2D = createPrototypeClass(
   AGL.BaseRenderer,
-  function Stage2DRenderer(webGlBitmap, vertexShader, fragmentShader, config) {
-    AGL.BaseRenderer.call(this, webGlBitmap, vertexShader, fragmentShader, {
+  function Stage2DRenderer(canvas, vertexShader, fragmentShader, config) {
+    AGL.BaseRenderer.call(this, canvas, vertexShader, fragmentShader, {
       "a_fillCol"       : "getAttribLocation",
       "a_tintCol"       : "getAttribLocation",
       "a_fx"            : "getAttribLocation",

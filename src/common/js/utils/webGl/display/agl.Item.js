@@ -3,7 +3,7 @@ require("../data/props/agl.ItemProps.js");
 require("../data/props/agl.ColorProps.js");
 
 AGL.Item = createPrototypeClass(
-  ASJS.BasePrototypeClass,
+  BasePrototypeClass,
   function Item() {
     cnst(this, "type", AGL.Item.TYPE);
 

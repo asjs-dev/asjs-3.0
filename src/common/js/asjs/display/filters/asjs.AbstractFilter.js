@@ -1,4 +1,4 @@
-createClass(ASJS, "AbstractFilter", ASJS.BaseClass, function(_scope) {
+createClass(ASJS, "AbstractFilter", BaseClass, function(_scope) {
   _scope.new = function(value) {
     _scope.value = value;
   }

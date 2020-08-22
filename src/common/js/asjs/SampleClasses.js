@@ -1,6 +1,6 @@
 var NameSpace = {};
 
-[createClass|createSingletonClass]([this|NameSpace], "SampleClass", [ASJS.BaseClass|parentClass], function(_scope[, _super]) {
+[createClass|createSingletonClass]([this|NameSpace], "SampleClass", [BaseClass|parentClass], function(_scope[, _super]) {
   var priv = {};
 
   cnst(priv, "PRIVATE_CONST", 0);
@@ -51,7 +51,7 @@ var NameSpace = {};
 
   function privateFunction() {};
 
-  createClass(priv, "InternalClass", [ASJS.BaseClass|parentClass], function(_scope, _super) {
+  createClass(priv, "InternalClass", [BaseClass|parentClass], function(_scope, _super) {
     ...
   });
 });

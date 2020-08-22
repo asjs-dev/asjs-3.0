@@ -1,4 +1,4 @@
-createClass(ASJS, "Timer", ASJS.BaseClass, function(_scope, _super) {
+createClass(ASJS, "Timer", BaseClass, function(_scope, _super) {
   var _then;
 
   _scope.start = function() {

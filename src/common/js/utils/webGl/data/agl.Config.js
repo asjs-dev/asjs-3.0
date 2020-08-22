@@ -12,16 +12,27 @@ AGL.CreateConfig = function(options) {
     options.lightsNum = AGL.Stage2D.MAX_LIGHT_SOURCES;
   }
 
+  var attributes = options.contextAttributes || {};
+
   var config = {
-    "textureNum"      : options.textureNum,
+    "textureNum"        : options.textureNum,
 
-    "lightsNum"       : options.lightsNum,
-    "isLightEnabled"  : options.lightsNum > 0,
+    "lightsNum"         : options.lightsNum,
+    "isLightEnabled"    : options.lightsNum > 0,
 
-    "isMaskEnabled"   : options.isMaskEnabled,
+    "isMaskEnabled"     : options.isMaskEnabled,
 
-    "filters"         : options.filters,
-    "isFilterEnabled" : options.filters && options.filters.length > 0
+    "filters"           : options.filters,
+    "isFilterEnabled"   : options.filters && options.filters.length > 0,
+
+    "contextAttributes" : {
+      "alpha"              : attributes.alpha || false,
+      "antialias"          : attributes.antialias || false,
+      "depth"              : attributes.depth || false,
+      "stencil"            : attributes.stencil || false,
+      "premultipliedAlpha" : attributes.premultipliedAlpha || false,
+      "powerPreference"    : attributes.powerPreference || "high-performance"
+    }
   };
   Object.freeze(config);
   return config;
