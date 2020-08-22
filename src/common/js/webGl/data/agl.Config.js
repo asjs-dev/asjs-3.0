@@ -1,15 +1,16 @@
 require("../NameSpace.js");
 
 AGL.CreateConfig = function(options) {
+  var warnMessage = "Maximum of ";
   if (options.textureNum === undefined || options.textureNum > AGL.Utils.info.maxTextureImageUnits) {
-    console.warn("Maximum of texture units is " + AGL.Stage2D.MAX_LIGHT_SOURCES);
+    console.warn(warnMessage + "texture units is " + AGL.Stage2D.MAX_LIGHT_SOURCES);
     options.textureNum = AGL.Utils.info.maxTextureImageUnits;
   }
 
-  if (options.lightsNum === undefined) options.lightsNum = 0;
-  else if (options.lightsNum > AGL.Stage2D.MAX_LIGHT_SOURCES) {
-    console.warn("Maximum of lights is " + AGL.Stage2D.MAX_LIGHT_SOURCES);
-    options.lightsNum = AGL.Stage2D.MAX_LIGHT_SOURCES;
+  if (options.lightNum === undefined) options.lightNum = 0;
+  else if (options.lightNum > AGL.Stage2D.MAX_LIGHT_SOURCES) {
+    console.warn(warnMessage + "lights is " + AGL.Stage2D.MAX_LIGHT_SOURCES);
+    options.lightNum = AGL.Stage2D.MAX_LIGHT_SOURCES;
   }
 
   var attributes = options.contextAttributes || {};
@@ -17,8 +18,8 @@ AGL.CreateConfig = function(options) {
   var config = {
     "textureNum"        : options.textureNum,
 
-    "lightsNum"         : options.lightsNum,
-    "isLightEnabled"    : options.lightsNum > 0,
+    "lightNum"          : options.lightNum,
+    "isLightEnabled"    : options.lightNum > 0,
 
     "isMaskEnabled"     : options.isMaskEnabled,
 

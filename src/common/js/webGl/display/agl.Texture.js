@@ -3,6 +3,8 @@ require("../NameSpace.js");
 AGL.Texture = createPrototypeClass(
   BasePrototypeClass,
   function Texture(gl, source) {
+    BasePrototypeClass.call(this);
+
     this._source;
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
     this._generateMipmap = false;
@@ -97,15 +99,15 @@ AGL.Texture = createPrototypeClass(
     this._onTextureLoaded = this._parseTextureSize;
   }
 );
-rof(AGL.Texture, "loadImage", function(gl, src) {
+AGL.Texture.loadImage = function(gl, src) {
   var image = document.createElement("img");
   var texture = new AGL.Texture(gl, image);
   image.src = src;
   return texture;
-});
-rof(AGL.Texture, "loadVideo", function(gl, src) {
+};
+AGL.Texture.loadVideo = function(gl, src) {
   var video = document.createElement("video");
   var texture = new AGL.Texture(gl, video);
   video.src = src;
   return texture;
-});
+};

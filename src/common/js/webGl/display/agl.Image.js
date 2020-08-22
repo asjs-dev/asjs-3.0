@@ -48,8 +48,7 @@ AGL.Image = createPrototypeClass(
         props.x,
         props.y,
 
-        props.sr,
-        props.cr,
+        props.rotation,
 
         props.anchorX,
         props.anchorY,

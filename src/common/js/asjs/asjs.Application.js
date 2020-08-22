@@ -1,11 +1,12 @@
-"use strict";
+require("../common/useStrict.js");
 
 require("../common/array.js");
 require("../common/mathHelper.js");
 require("../common/trace.js");
-require("../common/minify.js");
+require("../common/minifyGlobal.js");
+require("../common/minifyListeners.js");
 require("../common/documentComplete.js");
-require("../common/property.js");
+require("../common/readOnlyFunction.js");
 require("../common/map.js");
 require("../common/message.js");
 require("../common/typeIs.js");

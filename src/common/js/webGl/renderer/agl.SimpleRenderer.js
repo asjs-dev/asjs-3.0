@@ -23,7 +23,7 @@ AGL.SimpleRenderer = createPrototypeClass(
     }
   }
 );
-rof(AGL.SimpleRenderer, "createVertexShader", function() {
+AGL.SimpleRenderer.createVertexShader = function() {
   var shader = "#version 300 es\n" +
 
   "in vec2 a_pos;" +
@@ -48,8 +48,8 @@ rof(AGL.SimpleRenderer, "createVertexShader", function() {
   "}";
 
   return shader;
-});
-rof(AGL.SimpleRenderer, "createFragmentShader", function(config) {
+};
+AGL.SimpleRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
@@ -85,4 +85,4 @@ rof(AGL.SimpleRenderer, "createFragmentShader", function(config) {
   "}";
 
   return shader;
-});
+};

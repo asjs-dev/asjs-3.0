@@ -12,8 +12,8 @@ AGL.MaskRenderer = createPrototypeClass(
     this.clearColor.a = 0;
   }
 );
-rof(AGL.MaskRenderer, "createVertexShader", AGL.SimpleRenderer.createVertexShader);
-rof(AGL.MaskRenderer, "createFragmentShader", function(config) {
+AGL.MaskRenderer.createVertexShader = AGL.SimpleRenderer.createVertexShader;
+AGL.MaskRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
@@ -51,4 +51,4 @@ rof(AGL.MaskRenderer, "createFragmentShader", function(config) {
   "}";
 
   return shader;
-});
+};

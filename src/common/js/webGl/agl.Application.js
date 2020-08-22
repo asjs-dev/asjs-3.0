@@ -1,12 +1,12 @@
-"use strict";
-
-require("../../common/array.js");
-require("../../common/trace.js");
-require("../../common/minify.js");
-require("../../common/property.js");
-require("../../common/map.js");
-require("../../common/emptyFunction.js");
-require("../../common/BasePrototypeClass.js");
+require("../common/useStrict.js");
+require("../common/array.js");
+require("../common/trace.js");
+require("../common/minifyGlobal.js");
+require("../common/minifyListeners.js");
+require("../common/property.js");
+require("../common/map.js");
+require("../common/emptyFunction.js");
+require("../common/BasePrototypeClass.js");
 
 require("./NameSpace.js");
 

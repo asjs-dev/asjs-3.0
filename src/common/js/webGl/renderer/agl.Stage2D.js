@@ -41,11 +41,11 @@ AGL.Stage2D = createPrototypeClass(
     this._tmpInverseMatrix = new Float32Array(6);
 
     if (this._config.isLightEnabled) {
-      this._lightPositions = new Float32Array(this._config.lightsNum * 2);
-      this._lightVolumes   = new Float32Array(this._config.lightsNum * 2);
-      this._lightColors    = new Float32Array(this._config.lightsNum * 4);
-      this._lightEffects   = new Float32Array(this._config.lightsNum * 4);
-      this._lightZIndices  = new Int32Array(this._config.lightsNum);
+      this._lightPositions = new Float32Array(this._config.lightNum * 2);
+      this._lightVolumes   = new Float32Array(this._config.lightNum * 2);
+      this._lightColors    = new Float32Array(this._config.lightNum * 4);
+      this._lightEffects   = new Float32Array(this._config.lightNum * 4);
+      this._lightZIndices  = new Int32Array(this._config.lightNum);
     }
     this._collectLightsFunc = this._config.isLightEnabled
       ? this._collectLights.bind(this)
@@ -96,7 +96,7 @@ AGL.Stage2D = createPrototypeClass(
 
     this.attachLight = function(light) {
       !this.isLightAttached(light) &&
-      this._attachedLights.length < this._config.lightsNum &&
+      this._attachedLights.length < this._config.lightNum &&
       this._attachedLights.push(light);
     }
 
@@ -121,7 +121,7 @@ AGL.Stage2D = createPrototypeClass(
       var quadId;
       var i;
       var l;
-      for (i = 0, l = this._config.lightsNum; i < l; ++i) {
+      for (i = 0, l = this._config.lightNum; i < l; ++i) {
         duoId  = i * 2;
         quadId = i * 4;
         if (i >= this._attachedLights.length || !this._attachedLights[i].renderable) {
@@ -222,8 +222,8 @@ AGL.Stage2D = createPrototypeClass(
     }
   }
 );
-cnst(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
-cnst(AGL.Stage2D, "Filters", {
+AGL.Stage2D.MAX_LIGHT_SOURCES = 16;
+AGL.Stage2D.Filters = {
   "NONE"       : 0,
   "GRAYSCALE"  : 1,
   "SEPIA"      : 2,
@@ -232,9 +232,9 @@ cnst(AGL.Stage2D, "Filters", {
   "VIGNETTE"   : 16,
   "RAINBOW"    : 32,
   "LINES"      : 64,
-});
-rof(AGL.Stage2D, "createVertexShader", function(config) {
-  var maxLightSources = config.lightsNum;
+};
+AGL.Stage2D.createVertexShader = function(config) {
+  var maxLightSources = config.lightNum;
 
   var shader = "#version 300 es\n";
 
@@ -334,8 +334,8 @@ rof(AGL.Stage2D, "createVertexShader", function(config) {
     shader += "}";
 
   return shader;
-});
-rof(AGL.Stage2D, "createFragmentShader", function(config) {
+};
+AGL.Stage2D.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
@@ -449,7 +449,7 @@ rof(AGL.Stage2D, "createFragmentShader", function(config) {
                 "fgCol+=vec4(v_coord.x*0.15,v_coord.y*0.15,(v_coord.x-v_coord.y)*0.15,0);";
               break;
               case AGL.Stage2D.Filters.LINES:
-                shader += "fgCol+=vec4(sin(v_coord.y* 500.0)*0.2);";
+                shader += "fgCol+=vec4(sin(v_coord.y*500.0)*0.2);";
               break;
             }
           shader += "}";
@@ -463,4 +463,4 @@ rof(AGL.Stage2D, "createFragmentShader", function(config) {
   "}";
 
   return shader;
-});
+};

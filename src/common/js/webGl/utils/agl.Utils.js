@@ -4,6 +4,8 @@ require("../NameSpace.js");
   var Utils = createPrototypeClass(
     BasePrototypeClass,
     function Utils() {
+      BasePrototypeClass.call(this);
+
       this.info = {
         "isWebGl2Supported": false
       };
@@ -64,7 +66,7 @@ require("../NameSpace.js");
         gl.texParameteri(textureInfo.target, gl.TEXTURE_MAG_FILTER, textureInfo.magFilter);
       }
 
-      this.loadShader = function(gl, shaderType, shaderSource) {
+      this.loadShader = function(shaderType, gl, shaderSource) {
         var shader = gl.createShader(gl[shaderType]);
 
         gl.shaderSource(shader, shaderSource);
@@ -80,6 +82,9 @@ require("../NameSpace.js");
 
         return shader;
       }
+
+      this.loadVertexShader = this.loadShader.bind(this, "VERTEX_SHADER");
+      this.loadFragmentShader = this.loadShader.bind(this, "FRAGMENT_SHADER");
 
       this.createProgram = function(gl, shaders, opt_attribs, opt_locations) {
         var program = gl.createProgram();
@@ -131,10 +136,6 @@ require("../NameSpace.js");
     }
   );
   AGL.Utils = new Utils();
-  AGL.Utils.ShaderType = {
-    "VERTEX_SHADER"   : "VERTEX_SHADER",
-    "FRAGMENT_SHADER" : "FRAGMENT_SHADER"
-  };
 
   Object.freeze(AGL.Utils);
 })();

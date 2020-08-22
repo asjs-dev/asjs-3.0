@@ -12,11 +12,3 @@ var get = function(t, n, v) {
 var set = function(t, n, v) {
   prop(t, n, {set: v});
 };
-
-var constant = function(t, n, v) {
-  prop(t, n, {value: v});
-}
-var cnst = constant;
-
-var readOnlyFunction = cnst;
-var rof = readOnlyFunction;

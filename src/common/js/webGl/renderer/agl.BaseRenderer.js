@@ -45,8 +45,8 @@ AGL.BaseRenderer = createPrototypeClass(
     this._gl.enable(this._gl.BLEND);
 
     var program = AGL.Utils.createProgram(this._gl, [
-      AGL.Utils.loadShader(this._gl, AGL.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
-      AGL.Utils.loadShader(this._gl, AGL.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(this._config))
+      AGL.Utils.loadVertexShader(this._gl,   vertexShader(this._config)),
+      AGL.Utils.loadFragmentShader(this._gl, fragmentShader(this._config))
     ]);
     this._locations = AGL.Utils.getLocationsFor(this._gl, program, Object.assign(locations || {}, {
       "a_pos"      : "getAttribLocation",
@@ -304,7 +304,7 @@ AGL.BaseRenderer = createPrototypeClass(
     }
   }
 );
-rof(AGL.BaseRenderer, "createVertexShader", function() {
+AGL.BaseRenderer.createVertexShader = function() {
   return "#version 300 es\n" +
   "in vec2 a_pos;" +
   "in mat3 a_mat;" +
@@ -323,8 +323,8 @@ rof(AGL.BaseRenderer, "createVertexShader", function() {
     "v_texCrop=a_texCrop.xy;" +
     "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
   "}";
-});
-rof(AGL.BaseRenderer, "createFragmentShader", function() {
+};
+AGL.BaseRenderer.createFragmentShader = function() {
   return "#version 300 es\n" +
   "precision lowp float;" +
 
@@ -336,4 +336,4 @@ rof(AGL.BaseRenderer, "createFragmentShader", function() {
   "void main(void){" +
     "fgCol=vec4(1.0,0.0,1.0,1.0);" +
   "}";
-});
+};

@@ -1,4 +1,4 @@
-require("./minify.js");
+require("./minifyGlobal.js");
 
 var isDocumentComplete = function() {
   return _d.readyState === "complete";

@@ -49,11 +49,14 @@ AGL.Matrix3 = {
   },
   transformLocal: function(
     x, y,
-    sr, cr,
+    r,
     ax, ay,
     sx, sy,
     dst
   ) {
+    var sr = Math.sin(r);
+    var cr = Math.cos(r);
+
     dst[0] =  cr * sx;
     dst[1] =  sr * sx;
     dst[3] = -sr * sy;
@@ -64,11 +67,14 @@ AGL.Matrix3 = {
   transform: function(
     m,
     x, y,
-    sr, cr,
+    r,
     ax, ay,
     sx, sy,
     dst
   ) {
+    var sr = Math.sin(r);
+    var cr = Math.cos(r);
+
     dst[0] = (cr * m[0]) + (sr * m[3]);
     dst[1] = (cr * m[1]) + (sr * m[4]);
     dst[3] = (cr * m[3]) - (sr * m[0]);

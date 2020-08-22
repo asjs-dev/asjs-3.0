@@ -5,6 +5,8 @@ require("../data/props/agl.ColorProps.js");
 AGL.Item = createPrototypeClass(
   BasePrototypeClass,
   function Item() {
+    BasePrototypeClass.call(this);
+
     cnst(this, "type", AGL.Item.TYPE);
 
     this.renderable  = true;
@@ -44,8 +46,7 @@ AGL.Item = createPrototypeClass(
         props.x,
         props.y,
 
-        props.sr,
-        props.cr,
+        props.rotation,
 
         props.anchorX,
         props.anchorY,

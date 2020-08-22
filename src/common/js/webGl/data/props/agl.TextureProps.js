@@ -1,35 +1,20 @@
 require("../../NameSpace.js");
 require("./agl.AbstractProps.js");
 
-AGL.ItemProps = createPrototypeClass(
+AGL.TextureProps = createPrototypeClass(
   AGL.AbstractProps,
-  function ItemProps() {
+  function TextureProps() {
     AGL.AbstractProps.call(this);
-
-    this._sr = 0;
-    this._cr = 1;
 
     this._x        = 0;
     this._y        = 0;
-    this._zIndex   = 0;
     this._rotation = 0;
-    this._scaleX   = 1;
-    this._scaleY   = 1;
     this._width    = 1;
     this._height   = 1;
     this._anchorX  = 0;
     this._anchorY  = 0;
-
-    this._scaledWidth  = 1;
-    this._scaledHeight = 1;
   },
   function() {
-    get(this, "sr", function() { return this._sr; });
-    get(this, "cr", function() { return this._cr; });
-
-    get(this, "scaledWidth", function() { return this._scaledWidth; });
-    get(this, "scaledHeight", function() { return this._scaledHeight; });
-
     prop(this, "x", {
       get: function() { return this._x; },
       set: function(v) {
@@ -50,40 +35,11 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "zIndex", {
-      get: function() { return this._zIndex; },
-      set: function(v) { this._zIndex !== v && (this._zIndex = v); }
-    });
-
     prop(this, "rotation", {
       get: function() { return this._rotation; },
       set: function(v) {
         if (this._rotation !== v) {
           this._rotation = v;
-          this._sr = Math.sin(this._rotation);
-          this._cr = Math.cos(this._rotation);
-          ++this.id;
-        }
-      }
-    });
-
-    prop(this, "scaleX", {
-      get: function() { return this._scaleX; },
-      set: function(v) {
-        if (this._scaleX !== v) {
-          this._scaleX = v;
-          this._updateScaledWidth();
-          ++this.id;
-        }
-      }
-    });
-
-    prop(this, "scaleY", {
-      get: function() { return this._scaleY; },
-      set: function(v) {
-        if (this._scaleY !== v) {
-          this._scaleY = v;
-          this._updateScaledHeight();
           ++this.id;
         }
       }
@@ -94,7 +50,6 @@ AGL.ItemProps = createPrototypeClass(
       set: function(v) {
         if (this._width !== v) {
           this._width = v;
-          this._updateScaledWidth();
           ++this.id;
         }
       }
@@ -105,7 +60,6 @@ AGL.ItemProps = createPrototypeClass(
       set: function(v) {
         if (this._height !== v) {
           this._height = v;
-          this._updateScaledHeight();
           ++this.id;
         }
       }
@@ -130,13 +84,5 @@ AGL.ItemProps = createPrototypeClass(
         }
       }
     });
-
-    this._updateScaledWidth = function() {
-      this._scaledWidth = this._width * this._scaleX;
-    }
-
-    this._updateScaledHeight = function() {
-      this._scaledHeight = this._height * this._scaleY;
-    }
   }
 );
