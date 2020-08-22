@@ -7,7 +7,7 @@ AGL.Light = createPrototypeClass(
   function Light() {
     AGL.Item.call(this);
 
-    this._currentWorldPropsUpdateId = -1;
+    this._curWorldPropsId = -1;
 
     this.positionCache = [];
     this.volumeCache   = [];
@@ -22,8 +22,8 @@ AGL.Light = createPrototypeClass(
     this._updateProps = function(parent) {
       var props = this.props;
 
-      if (this._currentWorldPropsUpdateId !== parent.worldPropsUpdateId || props.isUpdated()) {
-        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
+      if (this._curWorldPropsId !== parent.worldPropsUpdateId || props.isUpdated()) {
+        this._curWorldPropsId = parent.worldPropsUpdateId;
 
         this._transformItem(props, parent);
 

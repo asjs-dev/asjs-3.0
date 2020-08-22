@@ -26,6 +26,8 @@ AGL.Image = createPrototypeClass(
     this.texture = texture;
   },
   function() {
+    this.mouseOver = function() {}
+
     this.update = function() {
       this._updateProps();
       this._updateTextureProps();

@@ -12,9 +12,10 @@ AGL.BaseRenderer = createPrototypeClass(
   function BaseRenderer(webGlBitmap, vertexShader, fragmentShader, locations, config) {
     AGL.Container.call(this);
 
-    this._webGlUtils  = AGL.Utils.instance;
-
     this._MAX_BATCH_ITEMS = 10000;
+
+    this._width  = 0;
+    this._height = 0;
 
     this._renderId = 0;
 
@@ -38,18 +39,18 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this._gl = this._webGlBitmap.getContext();
 
-    var program = this._webGlUtils.createProgram(this._gl, [
-      this._webGlUtils.loadShader(this._gl, AGL.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
-      this._webGlUtils.loadShader(this._gl, AGL.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(this._config))
+    var program = AGL.Utils.createProgram(this._gl, [
+      AGL.Utils.loadShader(this._gl, AGL.Utils.ShaderType.VERTEX_SHADER,   vertexShader(this._config)),
+      AGL.Utils.loadShader(this._gl, AGL.Utils.ShaderType.FRAGMENT_SHADER, fragmentShader(this._config))
     ]);
-    this._locations = this._webGlUtils.getLocationsFor(this._gl, program, locations || {
-      "a_position"    : "getAttribLocation",
-      "a_matrix"      : "getAttribLocation",
-      "a_worldMatrix" : "getAttribLocation",
-      "a_texMatrix"   : "getAttribLocation",
-      "a_texCrop"     : "getAttribLocation",
-      "u_tex"         : "getUniformLocation",
-    });
+    this._locations = AGL.Utils.getLocationsFor(this._gl, program, Object.assign(locations || {}, {
+      "a_pos"      : "getAttribLocation",
+      "a_mat"      : "getAttribLocation",
+      "a_worldMat" : "getAttribLocation",
+      "a_texMat"   : "getAttribLocation",
+      "a_texCrop"  : "getAttribLocation",
+      "u_tex"      : "getUniformLocation",
+    }));
 
     this._gl.useProgram(program);
 
@@ -62,8 +63,8 @@ AGL.BaseRenderer = createPrototypeClass(
       new Float32Array([0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
       this._gl.STATIC_DRAW
     );
-    this._gl.vertexAttribPointer(this._locations["a_position"], 2, this._gl.FLOAT, false, 0, 0);
-    this._gl.enableVertexAttribArray(this._locations["a_position"]);
+    this._gl.vertexAttribPointer(this._locations["a_pos"], 2, this._gl.FLOAT, false, 0, 0);
+    this._gl.enableVertexAttribArray(this._locations["a_pos"]);
 
     var indexBuffer = this._gl.createBuffer();
     this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -74,13 +75,13 @@ AGL.BaseRenderer = createPrototypeClass(
     );
 
     this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "a_matrix",      9, 3, 3, this._gl.FLOAT, 4);
+		this._matrixBuffer        = this._createArBuf(this._matrixData,        "a_mat",      9, 3, 3, this._gl.FLOAT, 4);
     this._worldMatrixData     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._worldMatrixBuffer   = this._createArrayBuffer(this._matrixData,        "a_worldMatrix", 9, 3, 3, this._gl.FLOAT, 4);
+		this._worldMatrixBuffer   = this._createArBuf(this._matrixData,        "a_worldMat", 9, 3, 3, this._gl.FLOAT, 4);
     this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-    this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "a_texMatrix",   9, 3, 3, this._gl.FLOAT, 4);
+    this._textureMatrixBuffer = this._createArBuf(this._textureMatrixData, "a_texMat",   9, 3, 3, this._gl.FLOAT, 4);
     this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "a_texCrop",     4, 1, 4, this._gl.FLOAT, 4);
+    this._textureCropBuffer   = this._createArBuf(this._textureCropData,   "a_texCrop",  4, 1, 4, this._gl.FLOAT, 4);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE] = emptyFunction;
@@ -125,9 +126,7 @@ AGL.BaseRenderer = createPrototypeClass(
       var children = container.children;
       var i;
       var l;
-      for (i = 0, l = children.length; i < l; ++i) {
-        this._drawItem(children[i], container);
-      }
+      for (i = 0, l = children.length; i < l; ++i) this._drawItem(children[i], container);
     }
 
     this._checkBlendMode = function(item) {
@@ -138,7 +137,7 @@ AGL.BaseRenderer = createPrototypeClass(
       }
     }
 
-    this._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
+    this._setBufDat = function(item, parent, textureMapIndex, matId, quadId) {
       arraySet(this._worldMatrixData,   parent.matrixCache,      matId);
       arraySet(this._matrixData,        item.matrixCache,        matId);
       arraySet(this._textureMatrixData, item.textureMatrixCache, matId);
@@ -148,9 +147,9 @@ AGL.BaseRenderer = createPrototypeClass(
     this._drawImage = function(item, parent) {
       this._checkBlendMode(item);
 
-      var textureMapIndex = this._drawTexture(item.texture);
+      var textureMapIndex = this._drawTex(item.texture);
 
-      this._setBufferData(
+      this._setBufDat(
         item,
         parent,
         textureMapIndex,
@@ -161,18 +160,18 @@ AGL.BaseRenderer = createPrototypeClass(
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
 
-    this._createArrayBuffer = function(data, locationId, length, num, size, type, bytes) {
+    this._createArBuf = function(data, locationId, length, num, size, type, bytes) {
       var buffer = this._gl.createBuffer();
       this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
   		this._gl.bufferData(this._gl.ARRAY_BUFFER, data.byteLength, this._gl.DYNAMIC_DRAW);
 
-      this._attachArrayBuffer(this._locations[locationId], buffer, data, length, num, size, type, bytes);
+      this._attachArBuf(this._locations[locationId], buffer, data, length, num, size, type, bytes);
 
       return buffer;
     }
 
-    this._attachArrayBuffer = function(location, buffer, data, length, num, size, type, bytes) {
-      this._bindArrayBuffer(buffer, data);
+    this._attachArBuf = function(location, buffer, data, length, num, size, type, bytes) {
+      this._bindArBuf(buffer, data);
 
   		var stride = bytes * length;
       var i = num + 1;
@@ -181,24 +180,26 @@ AGL.BaseRenderer = createPrototypeClass(
   			this._gl.enableVertexAttribArray(loc);
 
         this._gl[
-          type === this._gl.FLOAT
-          ? "vertexAttribPointer"
-          : "vertexAttribIPointer"
+          "vertexAttrib" + (
+            type === this._gl.FLOAT
+            ? ""
+            : "I"
+          ) + "Pointer"
         ](loc, size, type, false, stride, (num - i) * bytes * size);
   			this._gl.vertexAttribDivisor(loc, 1);
   		}
   	}
 
-    this._bindArrayBuffer = function(buffer, data) {
+    this._bindArBuf = function(buffer, data) {
       this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
   		this._gl.bufferSubData(this._gl.ARRAY_BUFFER, 0, data);
     }
 
-    this._bindBuffers = function() {
-      this._bindArrayBuffer(this._matrixBuffer,        this._matrixData);
-      this._bindArrayBuffer(this._worldMatrixBuffer,   this._worldMatrixData);
-      this._bindArrayBuffer(this._textureMatrixBuffer, this._textureMatrixData);
-      this._bindArrayBuffer(this._textureCropBuffer,   this._textureCropData);
+    this._bindBufs = function() {
+      this._bindArBuf(this._matrixBuffer,        this._matrixData);
+      this._bindArBuf(this._worldMatrixBuffer,   this._worldMatrixData);
+      this._bindArBuf(this._textureMatrixBuffer, this._textureMatrixData);
+      this._bindArBuf(this._textureCropBuffer,   this._textureCropData);
     }
 
     this._batchDraw = function() {
@@ -208,14 +209,14 @@ AGL.BaseRenderer = createPrototypeClass(
         this._gl.uniform1iv(this._locations["u_tex"], textureIdBuffer);
       }
 
-      this._bindBuffers();
+      this._bindBufs();
 
       this._gl.drawElementsInstanced(this._gl.TRIANGLE_FAN, 6, this._gl.UNSIGNED_SHORT, 0, this._batchItems);
 
       this._batchItems = 0;
     }
 
-    this._drawTexture = function(textureInfo) {
+    this._drawTex = function(textureInfo) {
       if (!textureInfo.loaded) return 0;
       var textureMapIndex = this._textureMap.indexOf(textureInfo);
       if (textureMapIndex === -1 || textureInfo.autoUpdate(this._renderId)) {
@@ -231,24 +232,19 @@ AGL.BaseRenderer = createPrototypeClass(
           this._textureIdBufferUpdated = true;
         }
 
-        this._webGlUtils.useTexture(this._gl, textureMapIndex, textureInfo);
+        AGL.Utils.useTexture(this._gl, textureMapIndex, textureInfo);
       }
 
       return textureMapIndex + 1;
     }
 
     this._setBlendMode = function() {
-      this._latestBlendMode.length === 4
-        ? this._gl.blendFuncSeparate(
-            this._gl[this._latestBlendMode[0]],
-            this._gl[this._latestBlendMode[1]],
-            this._gl[this._latestBlendMode[2]],
-            this._gl[this._latestBlendMode[3]]
-          )
-        : this._gl.blendFunc(
-            this._gl[this._latestBlendMode[0]],
-            this._gl[this._latestBlendMode[1]]
-          );
+      this._gl[this._latestBlendMode.funcName](
+        this._gl[this._latestBlendMode.funcs[0]],
+        this._gl[this._latestBlendMode.funcs[1]],
+        this._gl[this._latestBlendMode.funcs[2]],
+        this._gl[this._latestBlendMode.funcs[3]]
+      );
     }
 
     this._resize = function() {
@@ -257,9 +253,6 @@ AGL.BaseRenderer = createPrototypeClass(
 
       this._width  = this._webGlBitmap.bitmapWidth;
       this._height = this._webGlBitmap.bitmapHeight;
-
-      this._widthHalf  = this._width * 0.5;
-      this._heightHalf = this._height * 0.5;
 
       AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
 
@@ -275,10 +268,10 @@ AGL.BaseRenderer = createPrototypeClass(
 );
 rof(AGL.BaseRenderer, "createVertexShader", function() {
   return "#version 300 es\n" +
-  "in vec2 a_position;" +
-  "in mat3 a_matrix;" +
-  "in mat3 a_worldMatrix;" +
-  "in mat3 a_texMatrix;" +
+  "in vec2 a_pos;" +
+  "in mat3 a_mat;" +
+  "in mat3 a_worldMat;" +
+  "in mat3 a_texMat;" +
   "in vec4 a_texCrop;" +
 
   "out vec2 v_texCoord;" +
@@ -286,9 +279,9 @@ rof(AGL.BaseRenderer, "createVertexShader", function() {
   "out vec2 v_texCropSize;" +
 
   "void main(void){" +
-    "vec3 pos=vec3(a_position,1.0);" +
-    "gl_Position=vec4((a_worldMatrix*a_matrix*pos).xy,0.0,1.0);" +
-    "v_texCoord=(a_texMatrix*pos).xy;" +
+    "vec3 pos=vec3(a_pos,1.0);" +
+    "gl_Position=vec4((a_worldMat*a_mat*pos).xy,0.0,1.0);" +
+    "v_texCoord=(a_texMat*pos).xy;" +
     "v_texCrop=a_texCrop.xy;" +
     "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
   "}";
@@ -301,8 +294,8 @@ rof(AGL.BaseRenderer, "createFragmentShader", function() {
   "in vec2 v_texCrop;" +
   "in vec2 v_texCropSize;" +
 
-  "out vec4 fragColor;" +
+  "out vec4 fgCol;" +
   "void main(void){" +
-    "fragColor=vec4(1.0,0.0,1.0,1.0);" +
+    "fgCol=vec4(1.0,0.0,1.0,1.0);" +
   "}";
 });

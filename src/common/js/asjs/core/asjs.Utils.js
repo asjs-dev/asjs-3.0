@@ -14,11 +14,9 @@ console.clear();
 var _d = document;
 var _w = window;
 var _m = Math;
-var _tru = !0;
-var _fls = !1;
 
 var isDocumentComplete = function() {
-  return document.readyState === "complete";
+  return _d.readyState === "complete";
 }
 var idc = isDocumentComplete;
 
@@ -258,6 +256,12 @@ var dataMapper = function(data, objectType) {
 }
 var dm = dataMapper;
 
+cnst(_w, "on",     "addEventListener");
+cnst(_w, "off",    "removeEventListener");
+cnst(_w, "offAll", "removeEventListeners");
+cnst(_w, "de",     "dispatchEvent");
+cnst(_w, "has",    "hasEventListener");
+
 var createClass = function(nameSpace, name, base, body, singleton) {
   function setup(name, base, body, args) {
     base.apply(this, args);
@@ -323,7 +327,7 @@ var createPrototypeClass = function(parent, construct, body) {
   Object.setPrototypeOf(construct, parent);
   Object.setPrototypeOf(_scope, _super);
   _scope.constructor = construct;
-  body.call(_scope, _super);
+  body && body.call(_scope, _super);
   return construct;
 }
 var c4 = createPrototypeClass;

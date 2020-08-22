@@ -8,8 +8,8 @@ AGL.Container = createPrototypeClass(
 
     cnst(this, "type", AGL.Container.TYPE);
 
-    this._currentWorldPropsUpdateId = -1;
-    this._currentWorldColorUpdateId = -1;
+    this._curWorldPropsId = -1;
+    this._curWorldColId = -1;
 
     this._children = [];
 
@@ -86,8 +86,8 @@ AGL.Container = createPrototypeClass(
     this._updateProps = function(parent) {
       var props = this.props;
 
-      if (this._currentWorldPropsUpdateId !== parent.worldPropsUpdateId || props.isUpdated()) {
-        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
+      if (this._curWorldPropsId !== parent.worldPropsUpdateId || props.isUpdated()) {
+        this._curWorldPropsId = parent.worldPropsUpdateId;
         this.worldPropsUpdateId++;
 
         this._transformItem(props, parent);
@@ -97,8 +97,8 @@ AGL.Container = createPrototypeClass(
     this._updateColor = function(parent) {
       var color = this.color;
 
-      if (this._currentWorldColorUpdateId !== parent.worldColorUpdateId || color.isUpdated()) {
-        this._currentWorldColorUpdateId = parent.worldColorUpdateId;
+      if (this._curWorldColId !== parent.worldColorUpdateId || color.isUpdated()) {
+        this._curWorldColId = parent.worldColorUpdateId;
         this.worldColorUpdateId++;
 
         var parentColor = parent.colorCache;

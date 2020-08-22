@@ -1,10 +1,9 @@
 require("../NameSpace.js");
 
-createUtility(AGL, "Config");
-rof(AGL.Config, "create", function(options) {
-  if (options.textureNum === undefined || options.textureNum > AGL.Utils.instance.info.maxTextureImageUnits) {
+AGL.CreateConfig = function(options) {
+  if (options.textureNum === undefined || options.textureNum > AGL.Utils.info.maxTextureImageUnits) {
     console.warn("Maximum of texture units is " + AGL.Stage2D.MAX_LIGHT_SOURCES);
-    options.textureNum = AGL.Utils.instance.info.maxTextureImageUnits;
+    options.textureNum = AGL.Utils.info.maxTextureImageUnits;
   }
 
   if (options.lightsNum === undefined) options.lightsNum = 0;
@@ -25,6 +24,5 @@ rof(AGL.Config, "create", function(options) {
     "isFilterEnabled" : options.filters && options.filters.length > 0
   };
   Object.freeze(config);
-
   return config;
-});
+};

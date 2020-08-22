@@ -14,12 +14,12 @@ createClass(AGL, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     _super.new("canvas");
 
     var contextAttributes = {
-      alpha              : (attributes && attributes.alpha) || false,
-      antialias          : (attributes && attributes.antialias) || false,
-      depth              : (attributes && attributes.depth) || false,
-      stencil            : (attributes && attributes.stencil) || false,
-      premultipliedAlpha : (attributes && attributes.premultipliedAlpha) || false,
-      powerPreference    : (attributes && attributes.powerPreference) || 'high-performance'
+      "alpha"              : (attributes && attributes.alpha) || false,
+      "antialias"          : (attributes && attributes.antialias) || false,
+      "depth"              : (attributes && attributes.depth) || false,
+      "stencil"            : (attributes && attributes.stencil) || false,
+      "premultipliedAlpha" : (attributes && attributes.premultipliedAlpha) || false,
+      "powerPreference"    : (attributes && attributes.powerPreference) || "high-performance"
     };
 
     _super.protected.contextAttributes = contextAttributes;
