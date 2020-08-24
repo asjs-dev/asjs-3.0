@@ -5,45 +5,46 @@ AGL.TextureCrop = createPrototypeClass(
   AGL.AbstractProps,
   function TextureCrop() {
     AGL.AbstractProps.call(this);
-    this.items = [0, 0, 1, 1];
+    this._v = [0, 0, 1, 1];
+    this.items = this._v;
   },
   function() {
     prop(this, "x", {
-      get: function() { return this.items[0]; },
+      get: function() { return this._v[0]; },
       set: function(v) {
-        if (this.items[0] !== v) {
-          this.items[0] = v;
-          ++this.id;
+        if (this._v[0] !== v) {
+          this._v[0] = v;
+          ++this._id;
         }
       }
     });
 
     prop(this, "y", {
-      get: function() { return this.items[1]; },
+      get: function() { return this._v[1]; },
       set: function(v) {
-        if (this.items[1] !== v) {
-          this.items[1] = v;
-          ++this.id;
+        if (this._v[1] !== v) {
+          this._v[1] = v;
+          ++this._id;
         }
       }
     });
 
     prop(this, "width", {
-      get: function() { return this.items[2]; },
+      get: function() { return this._v[2]; },
       set: function(v) {
-        if (this.items[2] !== v) {
-          this.items[2] = v;
-          ++this.id;
+        if (this._v[2] !== v) {
+          this._v[2] = v;
+          ++this._id;
         }
       }
     });
 
     prop(this, "height", {
-      get: function() { return this.items[3]; },
+      get: function() { return this._v[3]; },
       set: function(v) {
-        if (this.items[3] !== v) {
-          this.items[3] = v;
-          ++this.id;
+        if (this._v[3] !== v) {
+          this._v[3] = v;
+          ++this._id;
         }
       }
     });

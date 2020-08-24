@@ -13,7 +13,7 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this.clearColor = new AGL.ColorProps();
 
-    this._MAX_BATCH_ITEMS = 10000;
+    cnst(this, "_MAX_BATCH_ITEMS", 10000);
 
     this._width  = 0;
     this._height = 0;
@@ -30,7 +30,7 @@ AGL.BaseRenderer = createPrototypeClass(
     this._textureMap = [];
     this._textureIds = [];
 
-    this._textureIdBufferUpdated = false;
+    this._textureIdBufUpdated = false;
 
     this._config = config;
 
@@ -61,8 +61,8 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this._setBlendMode();
 
-    var positionBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuffer);
+    var positionBuf = this._gl.createBuffer();
+    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuf);
     this._gl.bufferData(
       this._gl.ARRAY_BUFFER,
       new Float32Array([0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
@@ -71,22 +71,22 @@ AGL.BaseRenderer = createPrototypeClass(
     this._gl.vertexAttribPointer(this._locations["a_pos"], 2, this._gl.FLOAT, false, 0, 0);
     this._gl.enableVertexAttribArray(this._locations["a_pos"]);
 
-    var indexBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    var indexBuf = this._gl.createBuffer();
+    this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuf);
     this._gl.bufferData(
       this._gl.ELEMENT_ARRAY_BUFFER,
       new Uint16Array([0, 1, 2, 0, 2, 3]),
       this._gl.STATIC_DRAW
     );
 
-    this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._matrixBuffer        = this._createArBuf(this._matrixData,        "a_mat",      9, 3, 3, this._gl.FLOAT, 4);
-    this._worldMatrixData     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._worldMatrixBuffer   = this._createArBuf(this._matrixData,        "a_worldMat", 9, 3, 3, this._gl.FLOAT, 4);
-    this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-    this._textureMatrixBuffer = this._createArBuf(this._textureMatrixData, "a_texMat",   9, 3, 3, this._gl.FLOAT, 4);
-    this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._textureCropBuffer   = this._createArBuf(this._textureCropData,   "a_texCrop",  4, 1, 4, this._gl.FLOAT, 4);
+    this._matrixDat          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+		this._matrixBuf        = this._createArBuf(this._matrixDat,        "a_mat",      9, 3, 3, this._gl.FLOAT, 4);
+    this._worldMatrixDat     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+		this._worldMatrixBuf   = this._createArBuf(this._matrixDat,        "a_worldMat", 9, 3, 3, this._gl.FLOAT, 4);
+    this._textureMatrixDat   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+    this._textureMatrixBuf = this._createArBuf(this._textureMatrixDat, "a_texMat",   9, 3, 3, this._gl.FLOAT, 4);
+    this._textureCropDat     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._textureCropBuf   = this._createArBuf(this._textureCropDat,   "a_texCrop",  4, 1, 4, this._gl.FLOAT, 4);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE] = emptyFunction;
@@ -178,10 +178,10 @@ AGL.BaseRenderer = createPrototypeClass(
     }
 
     this._setBufDat = function(item, parent, textureMapIndex, matId, quadId) {
-      arraySet(this._worldMatrixData,   parent.matrixCache,      matId);
-      arraySet(this._matrixData,        item.matrixCache,        matId);
-      arraySet(this._textureMatrixData, item.textureMatrixCache, matId);
-      arraySet(this._textureCropData,   item.textureCropCache,   quadId);
+      arraySet(this._worldMatrixDat,   parent.matrixCache,      matId);
+      arraySet(this._matrixDat,        item.matrixCache,        matId);
+      arraySet(this._textureMatrixDat, item.textureMatrixCache, matId);
+      arraySet(this._textureCropDat,   item.textureCropCache,   quadId);
     }
 
     this._drawImage = function(item, parent) {
@@ -236,15 +236,15 @@ AGL.BaseRenderer = createPrototypeClass(
     }
 
     this._bindBufs = function() {
-      this._bindArBuf(this._matrixBuffer,        this._matrixData);
-      this._bindArBuf(this._worldMatrixBuffer,   this._worldMatrixData);
-      this._bindArBuf(this._textureMatrixBuffer, this._textureMatrixData);
-      this._bindArBuf(this._textureCropBuffer,   this._textureCropData);
+      this._bindArBuf(this._matrixBuf,        this._matrixDat);
+      this._bindArBuf(this._worldMatrixBuf,   this._worldMatrixDat);
+      this._bindArBuf(this._textureMatrixBuf, this._textureMatrixDat);
+      this._bindArBuf(this._textureCropBuf,   this._textureCropDat);
     }
 
     this._batchDraw = function() {
-      if (this._textureIdBufferUpdated) {
-        this._textureIdBufferUpdated = false;
+      if (this._textureIdBufUpdated) {
+        this._textureIdBufUpdated = false;
         var textureIdBuffer = new Uint16Array(this._textureIds);
         this._gl.uniform1iv(this._locations["u_tex"], textureIdBuffer);
       }
@@ -269,7 +269,7 @@ AGL.BaseRenderer = createPrototypeClass(
           this._textureMap.push(textureInfo);
           textureMapIndex = this._textureMap.length - 1;
           this._textureIds.push(textureMapIndex);
-          this._textureIdBufferUpdated = true;
+          this._textureIdBufUpdated = true;
         }
 
         AGL.Utils.useTexture(this._gl, textureMapIndex, textureInfo);

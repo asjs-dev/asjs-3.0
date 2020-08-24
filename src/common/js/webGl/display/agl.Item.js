@@ -46,7 +46,8 @@ AGL.Item = createPrototypeClass(
         props.x,
         props.y,
 
-        props.rotation,
+        props.sinR,
+        props.cosR,
 
         props.anchorX,
         props.anchorY,

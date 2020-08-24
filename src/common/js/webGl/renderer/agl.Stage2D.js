@@ -51,17 +51,17 @@ AGL.Stage2D = createPrototypeClass(
       ? this._collectLights.bind(this)
       : emptyFunction;
 
-    this._colorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._colorBuffer     = this._createArBuf(this._colorData,     "a_fillCol", 4, 1, 4, this._gl.FLOAT, 4);
-    this._tintColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._tintColorBuffer = this._createArBuf(this._tintColorData, "a_tintCol", 4, 1, 4, this._gl.FLOAT, 4);
+    this._colorDat     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._colorbuf     = this._createArBuf(this._colorDat,     "a_fillCol", 4, 1, 4, this._gl.FLOAT, 4);
+    this._tintColorDat = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._tintColorbuf = this._createArBuf(this._tintColorDat, "a_tintCol", 4, 1, 4, this._gl.FLOAT, 4);
 
     this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
-    this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
-    this._effectBuffer = this._createArBuf(this._effectData, "a_fx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
+    this._effectDat  = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
+    this._effectbuf = this._createArBuf(this._effectDat, "a_fx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
 
-    this._setMaskDataFunc = this._config.isMaskEnabled
-      ? this._setMaskData.bind(this)
+    this._setMaskDatFunc = this._config.isMaskEnabled
+      ? this._setMaskDat.bind(this)
       : emptyFunction;
 
     this._zIndexCounter = 0;
@@ -156,19 +156,19 @@ AGL.Stage2D = createPrototypeClass(
       item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
-    this._setMaskData = function(item) {
-      item.mask && (this._effectData[this._batchItems * this._effectLength + 3] = this._drawTex(item.mask));
+    this._setMaskDat = function(item) {
+      item.mask && (this._effectDat[this._batchItems * this._effectLength + 3] = this._drawTex(item.mask));
     }
 
     this._setBufDat = function(item, parent, textureMapIndex, matId, quadId, effectId) {
       _super._setBufDat.call(this, item, parent, textureMapIndex, matId, quadId);
 
-      arraySet(this._colorData,     parent.colorCache, quadId);
-      arraySet(this._tintColorData, item.colorCache,   quadId);
+      arraySet(this._colorDat,     parent.colorCache, quadId);
+      arraySet(this._tintColorDat, item.colorCache,   quadId);
 
-      this._effectData[effectId] = textureMapIndex;
-      this._effectData[effectId + 1] = item.tintType;
-      this._effectData[effectId + 2] = item.props.zIndex;
+      this._effectDat[effectId] = textureMapIndex;
+      this._effectDat[effectId + 1] = item.tintType;
+      this._effectDat[effectId + 2] = item.props.zIndex;
     }
 
     this._drawImage = function(item, parent) {
@@ -186,7 +186,7 @@ AGL.Stage2D = createPrototypeClass(
         )
       ) this._picked = item;
 
-      this._setMaskDataFunc(item);
+      this._setMaskDatFunc(item);
 
       var textureMapIndex = this._drawTex(item.texture);
 
@@ -204,9 +204,9 @@ AGL.Stage2D = createPrototypeClass(
 
     this._bindBufs = function() {
       _super._bindBufs.call(this);
-  		this._bindArBuf(this._colorBuffer,     this._colorData);
-      this._bindArBuf(this._tintColorBuffer, this._tintColorData);
-      this._bindArBuf(this._effectBuffer,    this._effectData);
+  		this._bindArBuf(this._colorbuf,     this._colorDat);
+      this._bindArBuf(this._tintColorbuf, this._tintColorDat);
+      this._bindArBuf(this._effectbuf,    this._effectDat);
     }
 
     this._resize = function() {
@@ -222,17 +222,16 @@ AGL.Stage2D = createPrototypeClass(
     }
   }
 );
-AGL.Stage2D.MAX_LIGHT_SOURCES = 16;
-AGL.Stage2D.Filters = {
-  "NONE"       : 0,
-  "GRAYSCALE"  : 1,
-  "SEPIA"      : 2,
-  "INVERT"     : 4,
-  "COLORLIMIT" : 8,
-  "VIGNETTE"   : 16,
-  "RAINBOW"    : 32,
-  "LINES"      : 64,
-};
+cnst(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
+cnst(AGL.Stage2D, "Filters", {});
+cnst(AGL.Stage2D.Filters, "NONE",       0);
+cnst(AGL.Stage2D.Filters, "GRAYSCALE",  1);
+cnst(AGL.Stage2D.Filters, "SEPIA",      2);
+cnst(AGL.Stage2D.Filters, "INVERT",     4);
+cnst(AGL.Stage2D.Filters, "COLORLIMIT", 8);
+cnst(AGL.Stage2D.Filters, "VIGNETTE",   16);
+cnst(AGL.Stage2D.Filters, "RAINBOW",    32);
+cnst(AGL.Stage2D.Filters, "LINES",      64);
 AGL.Stage2D.createVertexShader = function(config) {
   var maxLightSources = config.lightNum;
 

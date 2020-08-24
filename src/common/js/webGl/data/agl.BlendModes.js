@@ -15,6 +15,7 @@ require("../NameSpace.js");
       "funcs": funcs
     };
   }
+
   AGL.BlendModes = {
     "NORMAL"  : createBlendMode([srcAlpha, oneMinusSrcAlpha, one, oneMinusSrcAlpha]),
     "ADD"     : createBlendMode([srcAlpha, dstAlpha, one, dstAlpha]),
@@ -22,5 +23,6 @@ require("../NameSpace.js");
     "SCREEN"  : createBlendMode([srcAlpha, oneMinusSrcColor, one, oneMinusSrcColor]),
     "OVERLAY" : createBlendMode([one, oneMinusSrcAlpha])
   };
+  
   Object.freeze(AGL.BlendModes);
 })();
