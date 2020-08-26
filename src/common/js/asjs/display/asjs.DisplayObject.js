@@ -112,11 +112,11 @@ createClass(ASJS, "DisplayObject", ASJS.Tag, function(_scope, _super) {
   });
 
   _scope.requestFullscreen = function() {
-    document.fullscreenEnabled && _scope.el.requestFullscreen();
+    document.isFullscreenEnabled() && _scope.el.requestFullscreen();
   };
 
   _scope.exitFullscreen = function() {
-    document.fullscreenEnabled && document.exitFullscreen();
+    document.isFullscreenEnabled() && document.exitFullscreen();
   };
 
   _scope.scale = function(scaleX, scaleY) {

@@ -1,62 +1,120 @@
-createSingletonClass(ASJS, "Polyfill", BaseClass, function(_scope) {
-  var _vendors = ['ms', 'moz', 'webkit', 'o'];
+(function() {
+  createUtility(ASJS, "Polyfill");
 
-  var _isLittleEndian = false;
+  var vendors = ["ms", "moz", "webkit", "o"];
 
-  var _visibilityPolyfill = {
-    "visibilitychange" : "",
-    "hidden"           : ""
+  /* Fullscreen */
+  document.isFullscreen = function() {
+    return document.fullScreen || document.fullscreen ||
+           document.webkitFullScreen || document.webkitFullscreen ||
+           document.mozFullScreen || document.mozFullscreen ||
+           document.msFullScreen || document.msFullscreen;
   };
 
-  var _stylePrefixJS   = "";
-  var _stylePrefixCSS  = "";
-  var _sid             = {};
-
-  var _scrollBarSize = 0;
-
-  _scope.new = function() {
-    checkVisibility();
-    checkCustomEvent();
-    checkAudioContext();
-    checkUserMedia();
-    checkURL();
-    checkFullscreenEnabled();
-    checkFunctionName();
-    checkMediaSource();
-    checkCSSPrefix();
-    checkEndian();
-    checkScrollbarSize();
-    checkMath();
+  document.isFullscreenEnabled = function() {
+    return document.fullScreenEnabled || document.fullscreenEnabled ||
+           document.webkitSupportsFullScreen || document.webkitSupportsFullscreen ||
+           document.mozFullScreenEnabled || document.mozFullscreenEnabled ||
+           document.msFullScreenEnabled || document.msFullscreenEnabled;
   }
 
-  get(_scope, "isLittleEndian",   function() { return _isLittleEndian; });
-  get(_scope, "visibilitychange", function() { return _visibilityPolyfill.visibilitychange; });
-  get(_scope, "documentHidden",   function() { return document[_visibilityPolyfill.hidden]; });
-  get(_scope, "stylePrefixJS",    function() { return _stylePrefixJS; });
-  get(_scope, "stylePrefixCSS",   function() { return _stylePrefixCSS; });
-  get(_scope, "scrollBarSize",    function() { return _scrollBarSize; });
+  document.getFullscreenElement = function() {
+    return document.fullScreenElement || document.fullscreenElement ||
+           document.webkitCurrentFullScreenElement || document.webkitCurrentFullscreenElement ||
+           document.mozFullScreenElement || document.mozFullscreenElement ||
+           document.msFullScreenElement || document.msFullscreenElement;
+  }
 
-  function checkVisibility() {
-    if (typeof document.hidden !== "undefined") {
-      _visibilityPolyfill.hidden = "hidden";
-      _visibilityPolyfill.visibilitychange = "visibilitychange";
-    } else if (typeof document.msHidden !== "undefined") {
-      _visibilityPolyfill.hidden = "msHidden";
-      _visibilityPolyfill.visibilitychange = "msvisibilitychange";
-    } else if (typeof document.webkitHidden !== "undefined") {
-      _visibilityPolyfill.hidden = "webkitHidden";
-      _visibilityPolyfill.visibilitychange = "webkitvisibilitychange";
+  document.exitFullscreen = document.exitFullScreen || document.exitFullscreen ||
+                            document.webkitExitFullScreen || document.webkitExitFullscreen ||
+                            document.mozCancelFullScreen || document.mozCancelFullscreen ||
+                            document.msExitFullScreen || document.msExitFullscreen;
+
+  var elementPrototype = Element.prototype;
+  elementPrototype.requestFullscreen = elementPrototype.requestFullScreen || elementPrototype.requestFullscreen ||
+                                       elementPrototype.webkitRequestFullScreen || elementPrototype.webkitRequestFullscreen ||
+                                       elementPrototype.webkitEnterFullScreen || elementPrototype.webkitEnterFullscreen ||
+                                       elementPrototype.mozRequestFullScreen || elementPrototype.mozRequestFullscreen ||
+                                       elementPrototype.msRequestFullScreen || elementPrototype.msRequestFullscreen;
+
+  /* CSS prefix */
+  var jsCssMap = {
+    "Webkit" : "-webkit-",
+    "Moz"    : "-moz-",
+    "ms"     : "-ms-",
+    "O"      : "-o-"
+  };
+
+  var style = document.createElement("p").style;
+  var testProp = "Transform";
+
+  var stylePrefixJS  = "";
+  var stylePrefixCSS = "";
+  for (var key in jsCssMap) {
+    if ((key + testProp) in style) {
+      stylePrefixJS = key;
+      stylePrefixCSS = jsCssMap[key];
+      break;
     }
   }
 
-  function checkCustomEvent() {
-    if (tis(window.CustomEvent, "function")) return false;
-    trace("window.CustomEvent is not supported, but replaceable");
+  if (stylePrefixJS === "Webkit" && "msHyphens" in style) {
+    stylePrefixJS  = "ms";
+    stylePrefixCSS = jsCssMap.ms;
+  }
 
+  cnst(ASJS.Polyfill, "stylePrefixJS",  stylePrefixJS);
+  cnst(ASJS.Polyfill, "stylePrefixCSS", stylePrefixCSS);
+
+  /* Endian */
+  var b = new ArrayBuffer(4);
+  var a = new Uint32Array(b);
+  var c = new Uint8Array(b);
+  a[0] = 0xdeadbeef;
+  cnst(ASJS.Polyfill, "isLittleEndian", c[0] == 0xef);
+
+  /* Function name */
+  function functionNameTest() {}
+
+  if (!functionNameTest.name || !tis(functionNameTest, "string")) {
+    prop(Function.prototype, "name", {
+      get: function() {
+        var matches = this.toString().match(/^function\s*([^\s(]+)/);
+        return matches
+          ? matches[1]
+          : null;
+      }
+    });
+  }
+
+  /* UserMedia */
+  for (var x = 0; x < vendors.length && !window.navigator.getUserMedia; ++x) {
+    window.navigator.getUserMedia = window.navigator[vendors[x] + "GetUserMedia"];
+  }
+  !window.navigator.getUserMedia && trace("window.navigator.getUserMedia is not supported!");
+
+  /* URL */
+  window.URL = window.URL || window.webkitURL;
+  !window.URL && trace("window.URL is not supported!");
+
+  /* AudioContext */
+  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+  !window.AudioContext && trace("window.AudioContext is not supported!");
+
+  /* MediaSource */
+  window.MediaSource = window.MediaSource || window.WebKitMediaSource;
+  !window.MediaSource && trace("window.MediaSource is not supported!");
+
+  /* CustomEvent */
+  if (!tis(window.CustomEvent, "function")) {
     function CustomEvent(evt, p) {
-      p = p || { bubbles: true, cancelable: true, detail: undefined };
+      p = p || {
+        "bubbles": true,
+        "cancelable": true,
+        "detail": undefined
+      };
       if (empty(p.bubbles)) p.bubbles = true;
-      var e = document.createEvent('CustomEvent');
+      var e = document.createEvent("CustomEvent");
       e.initCustomEvent(evt, p.bubbles, p.cancelable, p.detail);
       return e;
     }
@@ -64,186 +122,85 @@ createSingletonClass(ASJS, "Polyfill", BaseClass, function(_scope) {
     CustomEvent.prototype = window.Event.prototype;
 
     window.CustomEvent = CustomEvent;
-  };
-
-  function checkAudioContext() {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    !window.AudioContext && trace("window.AudioContext is not supported!");
-  };
-
-  function checkUserMedia() {
-    for (var x = 0; x < _vendors.length && !window.navigator.getUserMedia; ++x) {
-      window.navigator.getUserMedia = window.navigator[_vendors[x] + 'GetUserMedia'];
-    }
-    if (!window.navigator.getUserMedia) trace("window.navigator.getUserMedia is not supported!");
-  };
-
-  function checkURL() {
-    window.URL = window.URL || window.webkitURL;
-    !window.URL && trace("window.URL is not supported!");
-  };
-
-  function checkFullscreenEnabled() {
-    var api;
-    var vendor;
-    var apis = {
-      w3: {
-        fullscreen : "fullScreen",
-        enabled    : "fullscreenEnabled",
-        element    : "fullscreenElement",
-        request    : "requestFullscreen",
-        exit       : "exitFullscreen",
-        events: {
-          change : "fullscreenchange",
-          error  : "fullscreenerror"
-        }
-      },
-      webkit: {
-        fullscreen : "webkitFullScreen",
-        enabled    : "webkitFullscreenEnabled",
-        element    : "webkitCurrentFullScreenElement",
-        request    : "webkitRequestFullscreen",
-        exit       : "webkitExitFullscreen",
-        events: {
-          change : "webkitfullscreenchange",
-          error  : "webkitfullscreenerror"
-        }
-      },
-      moz: {
-        fullscreen : "mozFullScreen",
-        enabled    : "mozFullScreenEnabled",
-        element    : "mozFullScreenElement",
-        request    : "mozRequestFullScreen",
-        exit       : "mozCancelFullScreen",
-        events: {
-          change : "mozfullscreenchange",
-          error  : "mozfullscreenerror"
-        }
-      },
-      ms: {
-        fullscreen : "msFullScreen",
-        enabled    : "msFullscreenEnabled",
-        element    : "msFullscreenElement",
-        request    : "msRequestFullscreen",
-        exit       : "msExitFullscreen",
-        events: {
-          change : "MSFullscreenChange",
-          error  : "MSFullscreenError"
-        }
-      }
-    };
-    var w3 = apis.w3;
-
-    for (vendor in apis) {
-      if (apis[vendor].enabled in document) {
-        api = apis[vendor];
-        break;
-      }
-    }
-
-    if (!(w3.enabled in document) && api) {
-      document["fullscreenEnabled"] = document[api.enabled];
-      document["fullscreen"]        = document[api.fullscreen];
-      document["fullscreenElement"] = document[api.element];
-      document["exitFullscreen"]    = document[api.exit];
-
-      Element.prototype.requestFullscreen = Element.prototype[api.request];
-    }
-  };
-
-  function checkFunctionName() {
-    if (checkFunctionName.name && tis(checkFunctionName.name, "string")) return;
-    prop(Function.prototype, "name", {
-      get: function() {
-        var matches = _scope.toString().match(/^function\s*([^\s(]+)/);
-        if (matches) return matches[1];
-        return null;
-      }
-    });
   }
 
-  function checkMediaSource() {
-    window.MediaSource = window.MediaSource || window.WebKitMediaSource;
-    !window.MediaSource && trace("window.MediaSource is not supported!");
+  /* Visibility */
+  var polyfillVisibilitychange = "";
+  var polyfillHidden           = "";
+
+  var visibilitychangeText = "visibilitychange";
+  var hiddenText           = "Hidden";
+  var hiddenTextLower      = hiddenText.toLowerCase();
+
+  if (document[hiddenTextLower] !== undefined) {
+    polyfillHidden = hiddenTextLower;
+    polyfillVisibilitychange = visibilitychangeText;
+  } else if (document[vendors[0] + hiddenText] !== undefined) {
+    polyfillHidden = vendors[0] + hiddenText;
+    polyfillVisibilitychange = vendors[0] + visibilitychangeText;
+  } else if (document[vendors[2] + hiddenText] !== undefined) {
+    polyfillHidden = vendors[2] + hiddenText;
+    polyfillVisibilitychange = vendors[2] + visibilitychangeText;
   }
 
-  function checkCSSPrefix() {
-    var jsCssMap = {
-      Webkit : '-webkit-',
-      Moz    : '-moz-',
-      ms     : '-ms-',
-      O      : '-o-'
-    };
+  get(ASJS.Polyfill, visibilitychangeText, function() { return polyfillVisibilitychange; });
+  get(ASJS.Polyfill, "document" + hiddenText,   function() { return document[polyfillHidden]; });
 
-    var style = document.createElement('p').style;
-    var testProp = 'Transform';
+  /* Math.sign */
+  Math.sign = Math.sign || function(x) {
+    return ((x > 0) - (x < 0)) || +x;
+  };
 
-    for (var key in jsCssMap) {
-      if ((key + testProp) in style) {
-        _stylePrefixJS = key;
-        _stylePrefixCSS = jsCssMap[key];
-        break;
-      }
-    }
-
-    if (_stylePrefixJS === 'Webkit' && 'msHyphens' in style) {
-      _stylePrefixJS = 'ms';
-      _stylePrefixCSS = jsCssMap.ms;
-    }
-  }
-
-  function checkEndian() {
-    var b = new ArrayBuffer(4);
-    var a = new Uint32Array(b);
-    var c = new Uint8Array(b);
-    a[0] = 0xdeadbeef;
-    _isLittleEndian = c[0] == 0xef;
-  }
-
-  function checkScrollbarSize() {
-    var d = document;
+  function initDocument() {
+    /* Scrollbar size */
     var containerSize = 20;
 
-    var container = d.createElement("div");
+    var body = document.body;
+
+    var container = document.createElement("div");
         container.style.width =
         container.style.height = containerSize + "px";
         container.style.overflow = "auto";
 
-    var content = d.createElement("div");
-        content.style.width = "100%";
+    var content = document.createElement("div");
+        content.style.width  = "100%";
         content.style.height = (containerSize + 1) + "px";
 
     container.appendChild(content);
 
-    d.body.appendChild(container);
-    _scrollBarSize = containerSize - content.offsetWidth;
-    d.body.removeChild(container);
+    body.appendChild(container);
+    cnst(ASJS.Polyfill, "scrollBarSize", containerSize - content.offsetWidth);
+    body.removeChild(container);
 
     container.removeChild(content);
     container =
     content   = null;
   }
 
-  function checkMath() {
-    Math.sign = Math.sign || function(x) {
-      return ((x > 0) - (x < 0)) || +x;
-    };
-  }
-});
-cnst(ASJS.Polyfill, "SCROLL_SIZE", -20);
-cnst(ASJS.Polyfill, "SCROLL_DELTA", {
-  "X": {
-    "1": ASJS.Polyfill.SCROLL_SIZE,
-    "2": 0
-  },
-  "Y": {
-    "1": 0,
-    "2": ASJS.Polyfill.SCROLL_SIZE
-  }
-});
-rof(ASJS.Polyfill, "getScrollData", function(event) {
-  return ASJS.Point.create(
-    event.wheelDeltaX || event.deltaX || (event.detail * ASJS.Polyfill.SCROLL_DELTA.X[event.axis]),
-    event.wheelDeltaY || event.deltaY || (event.detail * ASJS.Polyfill.SCROLL_DELTA.Y[event.axis])
-  );
-});
+  isDocumentComplete()
+    ? initDocument()
+    : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function listener() {
+        isDocumentComplete() &&
+        initDocument() &&
+        document.removeEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, listener);
+      });
+
+  cnst(ASJS.Polyfill, "SCROLL_SIZE", -20);
+  cnst(ASJS.Polyfill, "SCROLL_DELTA", {
+    "X": {
+      "1": ASJS.Polyfill.SCROLL_SIZE,
+      "2": 0
+    },
+    "Y": {
+      "1": 0,
+      "2": ASJS.Polyfill.SCROLL_SIZE
+    }
+  });
+
+  rof(ASJS.Polyfill, "getScrollData", function(event) {
+    return ASJS.Point.create(
+      event.wheelDeltaX || event.deltaX || (event.detail * ASJS.Polyfill.SCROLL_DELTA.X[event.axis]),
+      event.wheelDeltaY || event.deltaY || (event.detail * ASJS.Polyfill.SCROLL_DELTA.Y[event.axis])
+    );
+  });
+})();

@@ -15,7 +15,6 @@ cnst(this, "ASJS", (function() {
   }
 
   function start(application, root) {
-    ASJS.Polyfill.instance;
     if (!stage) stage = ASJS.Stage.instance;
 
     var parent = stage;

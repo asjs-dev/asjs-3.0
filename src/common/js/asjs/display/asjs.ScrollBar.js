@@ -39,7 +39,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     get: function() { return _useNative; },
     set: function(v) {
       if (_useNative === v) return;
-      _useNative = ASJS.Polyfill.instance.scrollBarSize === 0 ? true : v;
+      _useNative = ASJS.Polyfill.scrollBarSize === 0 ? true : v;
       update();
     }
   });

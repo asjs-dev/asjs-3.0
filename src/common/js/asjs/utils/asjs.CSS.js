@@ -144,12 +144,12 @@ rof(ASJS.CSS, "replaceHyphen", function(s) {
 });
 
 rof(ASJS.CSS, "convertProperty", function(k) {
-  var nk = ASJS.Polyfill.instance.stylePrefixCSS + k;
+  var nk = ASJS.Polyfill.stylePrefixCSS + k;
   var i = -1;
   var l = ASJS.CSS.SELECTOR.length;
   while (++i < l) {
     if (nk.indexOf(":" + ASJS.CSS.SELECTOR[i]) > -1) {
-      nk = nk.replace(":" + ASJS.CSS.SELECTOR[i], ":" + ASJS.Polyfill.instance.stylePrefixCSS + ASJS.CSS.SELECTOR[i]);
+      nk = nk.replace(":" + ASJS.CSS.SELECTOR[i], ":" + ASJS.Polyfill.stylePrefixCSS + ASJS.CSS.SELECTOR[i]);
       i = l;
       break;
     }
@@ -162,7 +162,7 @@ rof(ASJS.CSS, "convertValue", function(v) {
   var i = -1;
   var l = ASJS.CSS.VALUE.length;
   while (++i < l) {
-    if (String(v).indexOf(ASJS.CSS.VALUE[i]) > -1) return ASJS.Polyfill.instance.stylePrefixCSS + v;
+    if (String(v).indexOf(ASJS.CSS.VALUE[i]) > -1) return ASJS.Polyfill.stylePrefixCSS + v;
   }
   return v;
 });

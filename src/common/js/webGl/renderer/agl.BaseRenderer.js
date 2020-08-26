@@ -15,6 +15,9 @@ AGL.BaseRenderer = createPrototypeClass(
 
     cnst(this, "_MAX_BATCH_ITEMS", 10000);
 
+    this._clearBeforeRender = true;
+    this._clearBeforeRenderFunc = this.clear.bind(this);
+
     this._width  = 0;
     this._height = 0;
 
@@ -99,6 +102,15 @@ AGL.BaseRenderer = createPrototypeClass(
     this._resize();
   },
   function() {
+    prop(this, "clearBeforeRender", {
+      get: function() { return this._clearBeforeRender; },
+      set: function(v) {
+        this._clearBeforeRender = v;
+        this._clearBeforeRenderFunc = v
+          ? this.clear.bind(this)
+          : emptyFunction;
+      }
+    });
     get(this, "canvas", function() { return this._canvas; });
     get(this, "stage",  function() { return this; });
 
@@ -143,7 +155,7 @@ AGL.BaseRenderer = createPrototypeClass(
     }
 
     this._render = function() {
-      this.clear();
+      this._clearBeforeRenderFunc();
       this._renderTimer = Date.now();
       this._drawContainer(this);
       this._batchItems > 0 && this._batchDraw();

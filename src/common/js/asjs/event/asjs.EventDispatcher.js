@@ -1,8 +1,4 @@
-require("../core/asjs.Polyfill.js");
-
 createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
-  var _polyfill = ASJS.Polyfill.instance;
-
   var _handlers = {};
 
   _scope.dispatchEvent = function(event, data, bubble) {
@@ -75,7 +71,6 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
   _scope.destruct = function() {
     _scope.removeEventListeners && _scope.removeEventListeners();
 
-    _polyfill =
     _handlers = null;
 
     _super.destruct();

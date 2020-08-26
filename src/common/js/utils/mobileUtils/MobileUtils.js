@@ -2,6 +2,8 @@ require("../../NameSpace.js");
 
 createSingletonClass(ASJSUtils, "MobileUtils", BaseClass, function(_scope) {
   var _dpi;
+  var _isIOS;
+  var _isSafari;
   var _isDesktop;
 
   _scope.baseSize;
@@ -17,16 +19,17 @@ createSingletonClass(ASJSUtils, "MobileUtils", BaseClass, function(_scope) {
     _scope.useDPI        = false;
     _scope.useScreenSize = false;
 
-    var isIOS = new RegExp("iPad", "i").test(navigator.userAgent) || new RegExp("iPhone", "i").test(navigator.userAgent);
-    _isDesktop = !isIOS && (empty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
+    _isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);;
+    _isIOS = /iPad/i.test(navigator.userAgent) || /iPhone/i.test(navigator.userAgent);
+    _isDesktop = !_isIOS && (empty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
 
     calcDPI();
   }
 
-  get(_scope, "isDesktop", function() { return _isDesktop;});
-
+  get(_scope, "isSafari", function() { return _isSafari; });
+  get(_scope, "isIOS", function() { return _isIOS; });
+  get(_scope, "isDesktop", function() { return _isDesktop; });
   get(_scope, "width", function() { return _scope.useScreenSize ? stage.screenWidth : stage.stageWidth; });
-
   get(_scope, "height", function() { return _scope.useScreenSize ? stage.screenHeight : stage.stageHeight; });
 
   _scope.getOrientation = function() {
