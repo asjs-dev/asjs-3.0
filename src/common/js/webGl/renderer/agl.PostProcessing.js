@@ -275,7 +275,8 @@ AGL.PostProcessing.createFragmentShader = function() {
 
   "void main(void){" +
     "float[] fvl=uFtrVal;" +
-    "vec2 oPx=vec2(1)/vec2(textureSize(uTex,0));" +
+    "vec2 oSz=vec2(textureSize(uTex,0));" +
+    "vec2 oPx=vec2(1)/oSz;" +
     "fgCol=texture(uTex,vTexCrd);" +
     // FILTERS
     "if(uFtrT>0){" +
@@ -332,15 +333,18 @@ AGL.PostProcessing.createFragmentShader = function() {
       // GlowFilter
       "else if(uFtrT<6)fgCol=glw(fgCol,fvl[0],fvl[1],vTexCrd,oPx);" +
       // DisplacementFilter
-      "else if(uFtrT<7)fgCol=texture(" +
-        "uTex," +
-        "vTexCrd+(" +
-          "texture(" +
-            "uDspTex," +
-            "fract(vCrd+uTm*vec2(fvl[1],fvl[2]))" +
-          ").r*oPx*fvl[0]-oPx*fvl[0]*.5" +
-        ")" +
-      ");" +
+      "else if(uFtrT<7){" +
+        "vec2 md=vec2(fvl[0],fvl[1]);" +
+        "fgCol=texture(" +
+          "uTex," +
+          "vTexCrd*((oSz-md)/oSz)+(" +
+            "texture(" +
+              "uDspTex," +
+              "fract(vec2(1,-1)*vCrd*.5+vec2(.5)+uTm*vec2(fvl[2],fvl[3]))" +
+            ").r*oPx*md" +
+          ")" +
+        ");" +
+      "}" +
     "}" +
   "}";
 
