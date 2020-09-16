@@ -61,7 +61,7 @@ AGL.Texture = createPrototypeClass(
     });
 
     this.autoUpdate = function(renderId) {
-      var shouldUpdate = renderId !== this._curRenderId;
+      var shouldUpdate = renderId < this._curRenderId;
       this._curRenderId = renderId;
       return shouldUpdate && (this.shouldUpdate || (this.isVideo && !this._source.paused));
     }

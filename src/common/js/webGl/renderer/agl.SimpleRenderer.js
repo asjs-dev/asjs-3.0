@@ -3,13 +3,17 @@ require("./agl.BaseRenderer.js");
 
 AGL.SimpleRenderer = createPrototypeClass(
   AGL.BaseRenderer,
-  function SimpleRenderer(canvas, vertexShader, fragmentShader, config) {
-    AGL.BaseRenderer.call(this, canvas, vertexShader, fragmentShader, {
-      "a_texId" : "getAttribLocation",
-    }, config);
+  function SimpleRenderer(config) {
+    config.vertexShader   = config.vertexShader   || AGL.SimpleRenderer.createVertexShader;
+    config.fragmentShader = config.fragmentShader || AGL.SimpleRenderer.createFragmentShader;
+    config.locations      = Object.assign(config.locations, {
+      "aTexId" : "getAttribLocation",
+    });
+
+    AGL.BaseRenderer.call(this, config);
 
     this._texIdDat = new Float32Array(this._MAX_BATCH_ITEMS);
-    this._texIdBuf = this._createArBuf(this._texIdDat, "a_texId", 1, 1, 1, this._gl.FLOAT, 4);
+    this._texIdBuf = this._createArBuf(this._texIdDat, "aTexId", 1, 1, 1, this._gl.FLOAT, 4);
   },
   function(_super) {
     this._setBufDat = function(item, parent, textureMapIndex, matId, quadId) {
@@ -26,25 +30,25 @@ AGL.SimpleRenderer = createPrototypeClass(
 AGL.SimpleRenderer.createVertexShader = function() {
   var shader = "#version 300 es\n" +
 
-  "in vec2 a_pos;" +
-  "in mat3 a_mat;" +
-  "in mat3 a_worldMat;" +
-  "in mat3 a_texMat;" +
-  "in vec4 a_texCrop;" +
-  "in float a_texId;" +
+  "in vec2 aPos;" +
+  "in mat3 aMat;" +
+  "in mat3 aWorldMat;" +
+  "in mat3 aTexMat;" +
+  "in vec4 aTexCrop;" +
+  "in float aTexId;" +
 
-  "out vec2 v_texCoord;" +
-  "out vec2 v_texCrop;" +
-  "out vec2 v_texCropSize;" +
-  "out float v_texId;" +
+  "out vec2 vTexCrd;" +
+  "out vec2 vTexCrop;" +
+  "out vec2 vTexCropSize;" +
+  "out float vTexId;" +
 
   "void main(void){" +
-    "vec3 pos=vec3(a_pos,1.0);" +
-    "gl_Position=vec4((a_worldMat*a_mat*pos).xy,0.0,1.0);" +
-    "v_texCoord=(a_texMat*pos).xy;" +
-    "v_texCrop=a_texCrop.xy;" +
-    "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
-    "v_texId=a_texId;" +
+    "vec3 pos=vec3(aPos,1);" +
+    "gl_Position=vec4((aWorldMat*aMat*pos).xy,0,1);" +
+    "vTexCrd=(aTexMat*pos).xy;" +
+    "vTexCrop=aTexCrop.xy;" +
+    "vTexCropSize=aTexCrop.zw;" +
+    "vTexId=aTexId;" +
   "}";
 
   return shader;
@@ -53,16 +57,14 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
-  "#define MAX_TEXTURES " + maxTextureImageUnits + "\n" +
-
   "precision lowp float;" +
 
-  "in vec2 v_texCoord;" +
-  "in vec2 v_texCrop;" +
-  "in vec2 v_texCropSize;" +
-  "in float v_texId;" +
+  "in vec2 vTexCrd;" +
+  "in vec2 vTexCrop;" +
+  "in vec2 vTexCropSize;" +
+  "in float vTexId;" +
 
-  "uniform sampler2D u_tex[MAX_TEXTURES];" +
+  "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
 
   "out vec4 fgCol;";
 
@@ -71,11 +73,11 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
 
     for (var i = -1; i < maxTextureImageUnits; i++) {
       shader += (i > -1 ? " else " : "") +
-      "if(v_texId<" + (i + 1) + ".5){";
+      "if(vTexId<" + (i + 1) + ".5){";
         shader += "fgCol=" + (
           i < 0
-            ? "vec4(0.0,0.0,0.0,0.0);"
-            : "texture(u_tex[" + i + "],v_texCrop+v_texCropSize*fract(v_texCoord));"
+            ? "vec4(0);"
+            : "texture(uTex[" + i + "],vTexCrop+vTexCropSize*fract(vTexCrd));"
         );
       shader +=
       "}";

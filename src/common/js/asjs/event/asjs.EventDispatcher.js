@@ -16,13 +16,13 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
     });
   }
 
-  _scope.addEventListener = function(type, handler) {
+  _scope.addEventListener = function(type, handler, options) {
     var types = parseTypes(type);
     map(types, function(typeIndex, typeItem) {
       if (typeItem !== "" && !_scope.hasEventListener(typeItem, handler)) {
         if (!_handlers[typeItem]) _handlers[typeItem] = [];
         _handlers[typeItem].push(handler);
-        _scope.el && _scope.el.addEventListener(typeItem, handler, true);
+        _scope.el && _scope.el.addEventListener(typeItem, handler, options);
       }
     });
   }
@@ -77,7 +77,17 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
   }
 
   function parseTypes(type) {
-    return tis(type, "object") ? type : type.split(" ");
+    var types;
+    if (tis(type, "object")) {
+      types = [];
+      map(type, function(id, item) {
+        types = types.concat(item.split(" "));
+      });
+    } else {
+      types = type.split(" ");
+    }
+
+    return types;
   }
 });
 rof(ASJS.EventDispatcher, "createEvent", function(event, data, bubble) {

@@ -9,7 +9,7 @@ AGL.AbstractProps = createPrototypeClass(
   },
   function() {
     this.isUpdated = function() {
-      var isUpdated = this._curId !== this._id;
+      var isUpdated = this._curId < this._id;
       this._curId = this._id;
       return isUpdated;
     }

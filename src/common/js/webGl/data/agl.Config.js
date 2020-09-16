@@ -2,20 +2,20 @@ require("../NameSpace.js");
 
 AGL.CreateConfig = function(options) {
   var warnMessage = "Maximum of ";
-  if (options.textureNum === undefined || options.textureNum > AGL.Utils.info.maxTextureImageUnits) {
-    console.warn(warnMessage + "texture units is " + AGL.Stage2D.MAX_LIGHT_SOURCES);
+  if (options.textureNum === undefined || options.textureNum > AGL.Utils.info.maxTextureImageUnits)
     options.textureNum = AGL.Utils.info.maxTextureImageUnits;
-  }
 
   if (options.lightNum === undefined) options.lightNum = 0;
-  else if (options.lightNum > AGL.Stage2D.MAX_LIGHT_SOURCES) {
-    console.warn(warnMessage + "lights is " + AGL.Stage2D.MAX_LIGHT_SOURCES);
+  else if (options.lightNum > AGL.Stage2D.MAX_LIGHT_SOURCES)
     options.lightNum = AGL.Stage2D.MAX_LIGHT_SOURCES;
-  }
 
   var attributes = options.contextAttributes || {};
 
-  var config = {
+  return {
+    "canvas"            : options.canvas,
+
+    "locations"         : options.locations || {},
+
     "textureNum"        : options.textureNum,
 
     "lightNum"          : options.lightNum,
@@ -23,8 +23,8 @@ AGL.CreateConfig = function(options) {
 
     "isMaskEnabled"     : options.isMaskEnabled,
 
-    "filters"           : options.filters,
-    "isFilterEnabled"   : options.filters && options.filters.length > 0,
+    "vertexShader"      : options.vertexShader,
+    "fragmentShader"    : options.fragmentShader,
 
     "contextAttributes" : {
       "alpha"              : attributes.alpha || false,
@@ -35,6 +35,4 @@ AGL.CreateConfig = function(options) {
       "powerPreference"    : attributes.powerPreference || "high-performance"
     }
   };
-  Object.freeze(config);
-  return config;
 };

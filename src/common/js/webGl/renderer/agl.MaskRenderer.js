@@ -3,8 +3,11 @@ require("./agl.SimpleRenderer.js");
 
 AGL.MaskRenderer = createPrototypeClass(
   AGL.SimpleRenderer,
-  function MaskRenderer(canvas, vertexShader, fragmentShader, config) {
-    AGL.SimpleRenderer.call(this, canvas, vertexShader, fragmentShader, config);
+  function MaskRenderer(config) {
+    config.vertexShader   = config.vertexShader   || AGL.MaskRenderer.createVertexShader;
+    config.fragmentShader = config.fragmentShader || AGL.MaskRenderer.createFragmentShader;
+
+    AGL.SimpleRenderer.call(this, config);
 
     this.clearColor.r =
     this.clearColor.g =
@@ -17,16 +20,14 @@ AGL.MaskRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
-  "#define MAX_TEXTURES " + maxTextureImageUnits + "\n" +
-
   "precision lowp float;" +
 
-  "in vec2 v_texCoord;" +
-  "in vec2 v_texCrop;" +
-  "in vec2 v_texCropSize;" +
-  "in float v_texId;" +
+  "in vec2 vTexCrd;" +
+  "in vec2 vTexCrop;" +
+  "in vec2 vTexCropSize;" +
+  "in float vTexId;" +
 
-  "uniform sampler2D u_tex[MAX_TEXTURES];" +
+  "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
 
   "out vec4 fgCol;";
 
@@ -35,14 +36,11 @@ AGL.MaskRenderer.createFragmentShader = function(config) {
 
     for (var i = -1; i < maxTextureImageUnits; i++) {
       shader += (i > -1 ? " else " : "") +
-      "if(v_texId<" + (i + 1) + ".5){";
+      "if(vTexId<" + (i + 1) + ".5){";
         shader += i < 0
-          ? "fgCol=vec4(0.0,0.0,0.0,0.0);"
-          : "vec4 col=texture(u_tex[" + i + "],v_texCrop+v_texCropSize*fract(v_texCoord));" +
-            "fgCol=vec4(" +
-              "vec3(1.0)*((col.r+col.g+col.b)/3.0)," +
-              "col.a" +
-            ");";
+          ? "fgCol=vec4(0);"
+          : "vec4 col=texture(uTex[" + i + "],vTexCrop+vTexCropSize*fract(vTexCrd));" +
+            "fgCol=vec4(1)*((col.r+col.g+col.b+col.a)/4.);";
       shader +=
       "}";
     }

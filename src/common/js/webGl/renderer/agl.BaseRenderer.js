@@ -8,7 +8,12 @@ require("../utils/agl.Matrix3.js");
 
 AGL.BaseRenderer = createPrototypeClass(
   AGL.Container,
-  function BaseRenderer(canvas, vertexShader, fragmentShader, locations, config) {
+  function BaseRenderer(config) {
+    config.vertexShader   = config.vertexShader   || AGL.BaseRenderer.createVertexShader;
+    config.fragmentShader = config.fragmentShader || AGL.BaseRenderer.createFragmentShader;
+
+    Object.freeze(config);
+
     AGL.Container.call(this);
 
     this.clearColor = new AGL.ColorProps();
@@ -18,8 +23,8 @@ AGL.BaseRenderer = createPrototypeClass(
     this._clearBeforeRender = true;
     this._clearBeforeRenderFunc = this.clear.bind(this);
 
-    this._width  = 0;
-    this._height = 0;
+    this._w  = 0;
+    this._h = 0;
 
     this._resUpdId = 0;
     this._curResUpdId = -1;
@@ -37,7 +42,7 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this._config = config;
 
-    this._canvas = canvas;
+    this._canvas = config.canvas;
 
     this._context = null;
 
@@ -48,16 +53,16 @@ AGL.BaseRenderer = createPrototypeClass(
     this._gl.enable(this._gl.BLEND);
 
     var program = AGL.Utils.createProgram(this._gl, [
-      AGL.Utils.loadVertexShader(this._gl,   vertexShader(this._config)),
-      AGL.Utils.loadFragmentShader(this._gl, fragmentShader(this._config))
+      AGL.Utils.loadVertexShader(this._gl,   config.vertexShader(config)),
+      AGL.Utils.loadFragmentShader(this._gl, config.fragmentShader(config))
     ]);
-    this._locations = AGL.Utils.getLocationsFor(this._gl, program, Object.assign(locations || {}, {
-      "a_pos"      : "getAttribLocation",
-      "a_mat"      : "getAttribLocation",
-      "a_worldMat" : "getAttribLocation",
-      "a_texMat"   : "getAttribLocation",
-      "a_texCrop"  : "getAttribLocation",
-      "u_tex"      : "getUniformLocation",
+    this._locations = AGL.Utils.getLocationsFor(this._gl, program, Object.assign(config.locations, {
+      "aPos"      : "getAttribLocation",
+      "aMat"      : "getAttribLocation",
+      "aWorldMat" : "getAttribLocation",
+      "aTexMat"   : "getAttribLocation",
+      "aTexCrop"  : "getAttribLocation",
+      "uTex"      : "getUniformLocation",
     }));
 
     this._gl.useProgram(program);
@@ -68,28 +73,36 @@ AGL.BaseRenderer = createPrototypeClass(
     this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuf);
     this._gl.bufferData(
       this._gl.ARRAY_BUFFER,
-      new Float32Array([0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
+      new Float32Array([
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 1
+      ]),
       this._gl.STATIC_DRAW
     );
-    this._gl.vertexAttribPointer(this._locations["a_pos"], 2, this._gl.FLOAT, false, 0, 0);
-    this._gl.enableVertexAttribArray(this._locations["a_pos"]);
+    this._gl.vertexAttribPointer(this._locations["aPos"], 2, this._gl.FLOAT, false, 0, 0);
+    this._gl.enableVertexAttribArray(this._locations["aPos"]);
 
     var indexBuf = this._gl.createBuffer();
     this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuf);
     this._gl.bufferData(
       this._gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array([0, 1, 2, 0, 2, 3]),
+      new Uint16Array([
+        0, 1, 2,
+        0, 2, 3
+      ]),
       this._gl.STATIC_DRAW
     );
 
-    this._matrixDat          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._matrixBuf        = this._createArBuf(this._matrixDat,        "a_mat",      9, 3, 3, this._gl.FLOAT, 4);
-    this._worldMatrixDat     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._worldMatrixBuf   = this._createArBuf(this._matrixDat,        "a_worldMat", 9, 3, 3, this._gl.FLOAT, 4);
-    this._textureMatrixDat   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-    this._textureMatrixBuf = this._createArBuf(this._textureMatrixDat, "a_texMat",   9, 3, 3, this._gl.FLOAT, 4);
-    this._textureCropDat     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._textureCropBuf   = this._createArBuf(this._textureCropDat,   "a_texCrop",  4, 1, 4, this._gl.FLOAT, 4);
+    this._matrixDat        = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+		this._matrixBuf        = this._createArBuf(this._matrixDat,        "aMat",      9, 3, 3, this._gl.FLOAT, 4);
+    this._worldMatrixDat   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+		this._worldMatrixBuf   = this._createArBuf(this._matrixDat,        "aWorldMat", 9, 3, 3, this._gl.FLOAT, 4);
+    this._textureMatrixDat = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+    this._textureMatrixBuf = this._createArBuf(this._textureMatrixDat, "aTexMat",   9, 3, 3, this._gl.FLOAT, 4);
+    this._textureCropDat   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._textureCropBuf   = this._createArBuf(this._textureCropDat,   "aTexCrop",  4, 1, 4, this._gl.FLOAT, 4);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE] = emptyFunction;
@@ -125,20 +138,20 @@ AGL.BaseRenderer = createPrototypeClass(
     });
 
     prop(this, "width", {
-      get: function() { return this._width; },
+      get: function() { return this._w; },
       set: function(v) {
-        if (this._width !== v) {
-          this._width = v;
+        if (this._w !== v) {
+          this._w = v;
           this._resUpdId++;
         }
       }
     });
 
     prop(this, "height", {
-      get: function() { return this._height; },
+      get: function() { return this._h; },
       set: function(v) {
-        if (this._height !== v) {
-          this._height = v;
+        if (this._h !== v) {
+          this._h = v;
           this._resUpdId++;
         }
       }
@@ -154,18 +167,18 @@ AGL.BaseRenderer = createPrototypeClass(
       this._render();
     }
 
+    this.clear = function() {
+      var clearColor = this.clearColor;
+      clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+      this._gl.clear(this._gl.COLOR_BUFFER_BIT);
+    }
+
     this._render = function() {
       this._clearBeforeRenderFunc();
       this._renderTimer = Date.now();
       this._drawContainer(this);
       this._batchItems > 0 && this._batchDraw();
       ++this._renderId;
-    }
-
-    this.clear = function() {
-      var clearColor = this.clearColor;
-      clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-      this._gl.clear(this._gl.COLOR_BUFFER_BIT);
     }
 
     this._drawItem = function(item, parent) {
@@ -258,7 +271,7 @@ AGL.BaseRenderer = createPrototypeClass(
       if (this._textureIdBufUpdated) {
         this._textureIdBufUpdated = false;
         var textureIdBuffer = new Uint16Array(this._textureIds);
-        this._gl.uniform1iv(this._locations["u_tex"], textureIdBuffer);
+        this._gl.uniform1iv(this._locations["uTex"], textureIdBuffer);
       }
 
       this._bindBufs();
@@ -303,12 +316,12 @@ AGL.BaseRenderer = createPrototypeClass(
       if (this._resUpdId === this._curResUpdId) return false;
       this._curResUpdId = this._resUpdId;
 
-      this._canvas.width  = this._width;
-      this._canvas.height = this._height;
+      this._canvas.width  = this._w;
+      this._canvas.height = this._h;
 
       this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
 
-      AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
+      AGL.Matrix3.projection(this._w, this._h, this.matrixCache);
 
       this.worldPropsUpdateId++;
 
@@ -318,34 +331,35 @@ AGL.BaseRenderer = createPrototypeClass(
 );
 AGL.BaseRenderer.createVertexShader = function() {
   return "#version 300 es\n" +
-  "in vec2 a_pos;" +
-  "in mat3 a_mat;" +
-  "in mat3 a_worldMat;" +
-  "in mat3 a_texMat;" +
-  "in vec4 a_texCrop;" +
+  "in vec2 aPos;" +
+  "in mat3 aMat;" +
+  "in mat3 aWorldMat;" +
+  "in mat3 aTexMat;" +
+  "in vec4 aTexCrop;" +
 
-  "out vec2 v_texCoord;" +
-  "out vec2 v_texCrop;" +
-  "out vec2 v_texCropSize;" +
+  "out vec2 vTexCrd;" +
+  "out vec2 vTexCrop;" +
+  "out vec2 vTexCropSize;" +
 
   "void main(void){" +
-    "vec3 pos=vec3(a_pos,1.0);" +
-    "gl_Position=vec4((a_worldMat*a_mat*pos).xy,0.0,1.0);" +
-    "v_texCoord=(a_texMat*pos).xy;" +
-    "v_texCrop=a_texCrop.xy;" +
-    "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
+    "vec3 pos=vec3(aPos,1);" +
+    "gl_Position=vec4((aWorldMat*aMat*pos).xy,0,1);" +
+    "vTexCrd=(aTexMat*pos).xy;" +
+    "vTexCrop=aTexCrop.xy;" +
+    "vTexCropSize=aTexCrop.zw;" +
   "}";
 };
 AGL.BaseRenderer.createFragmentShader = function() {
   return "#version 300 es\n" +
   "precision lowp float;" +
 
-  "in vec2 v_texCoord;" +
-  "in vec2 v_texCrop;" +
-  "in vec2 v_texCropSize;" +
+  "in vec2 vTexCrd;" +
+  "in vec2 vTexCrop;" +
+  "in vec2 vTexCropSize;" +
 
   "out vec4 fgCol;" +
+
   "void main(void){" +
-    "fgCol=vec4(1.0,0.0,1.0,1.0);" +
+    "fgCol=vec4(1);" +
   "}";
 };

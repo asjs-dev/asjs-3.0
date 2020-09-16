@@ -5,20 +5,23 @@ require("../utils/agl.Matrix3.js");
 
 AGL.Stage2D = createPrototypeClass(
   AGL.BaseRenderer,
-  function Stage2DRenderer(canvas, vertexShader, fragmentShader, config) {
-    AGL.BaseRenderer.call(this, canvas, vertexShader, fragmentShader, {
-      "a_fillCol"       : "getAttribLocation",
-      "a_tintCol"       : "getAttribLocation",
-      "a_fx"            : "getAttribLocation",
-      "u_res"           : "getUniformLocation",
-      "u_lightPos"      : "getUniformLocation",
-      "u_lightVol"      : "getUniformLocation",
-      "u_lightCol"      : "getUniformLocation",
-      "u_lightFX"       : "getUniformLocation",
-      "u_lightZIndices" : "getUniformLocation",
-      "u_fog"           : "getUniformLocation",
-      "u_filters"       : "getUniformLocation",
-    }, config);
+  function Stage2DRenderer(config) {
+    config.vertexShader   = config.vertexShader   || AGL.Stage2D.createVertexShader;
+    config.fragmentShader = config.fragmentShader || AGL.Stage2D.createFragmentShader;
+    config.locations      = Object.assign(config.locations, {
+      "aFillCol"      : "getAttribLocation",
+      "aTintCol"      : "getAttribLocation",
+      "aFx"           : "getAttribLocation",
+      "uRes"          : "getUniformLocation",
+      "uLghtPos"      : "getUniformLocation",
+      "uLghtVol"      : "getUniformLocation",
+      "uLghtCol"      : "getUniformLocation",
+      "uLghtFX"       : "getUniformLocation",
+      "uLghtZIndices" : "getUniformLocation",
+      "uFog"          : "getUniformLocation",
+    });
+
+    AGL.BaseRenderer.call(this, config);
 
     this.fog = new AGL.ColorProps();
     this.fog.a = 0;
@@ -28,10 +31,10 @@ AGL.Stage2D = createPrototypeClass(
     this._DEFAULT_DUO  = [0, 0];
     this._DEFAULT_QUAD = [0, 0, 0, 0];
 
-    this._widthHalf  = 0;
-    this._heightHalf = 0;
+    this._wHalf  = 0;
+    this._hHalf = 0;
 
-    this._attachedLights = [];
+    this._lights = [];
 
     this._picked;
     this._isPickerSet = false;
@@ -40,25 +43,36 @@ AGL.Stage2D = createPrototypeClass(
     this._tmpMatrix        = new Float32Array(6);
     this._tmpInverseMatrix = new Float32Array(6);
 
+    this._collectLightsFunc = emptyFunction;
     if (this._config.isLightEnabled) {
       this._lightPositions = new Float32Array(this._config.lightNum * 2);
       this._lightVolumes   = new Float32Array(this._config.lightNum * 2);
       this._lightColors    = new Float32Array(this._config.lightNum * 4);
       this._lightEffects   = new Float32Array(this._config.lightNum * 4);
       this._lightZIndices  = new Int32Array(this._config.lightNum);
+
+      for (var i = 0, l = this._config.lightNum; i < l; ++i) {
+        this._lights.push(new AGL.Light(
+          i,
+          this._lightPositions,
+          this._lightVolumes,
+          this._lightColors,
+          this._lightEffects,
+          this._lightZIndices
+        ));
+      }
+
+      this._collectLightsFunc = this._collectLights.bind(this);
     }
-    this._collectLightsFunc = this._config.isLightEnabled
-      ? this._collectLights.bind(this)
-      : emptyFunction;
 
     this._colorDat     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._colorbuf     = this._createArBuf(this._colorDat,     "a_fillCol", 4, 1, 4, this._gl.FLOAT, 4);
+    this._colorbuf     = this._createArBuf(this._colorDat,     "aFillCol", 4, 1, 4, this._gl.FLOAT, 4);
     this._tintColorDat = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._tintColorbuf = this._createArBuf(this._tintColorDat, "a_tintCol", 4, 1, 4, this._gl.FLOAT, 4);
+    this._tintColorbuf = this._createArBuf(this._tintColorDat, "aTintCol", 4, 1, 4, this._gl.FLOAT, 4);
 
     this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
     this._effectDat  = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
-    this._effectbuf = this._createArBuf(this._effectDat, "a_fx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
+    this._effectbuf = this._createArBuf(this._effectDat, "aFx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
 
     this._setMaskDatFunc = this._config.isMaskEnabled
       ? this._setMaskDat.bind(this)
@@ -69,10 +83,6 @@ AGL.Stage2D = createPrototypeClass(
     this._resize();
   },
   function(_super) {
-    set(this, "filters", function(f) {
-      this._config.filters && this._config.filters.length > 0 && this._gl.uniform1i(this._locations["u_filters"], f);
-    });
-
     get(this, "picked", function() { return this._picked; });
 
     this.render = function() {
@@ -90,63 +100,27 @@ AGL.Stage2D = createPrototypeClass(
       this._isPickerSet = false;
     }
 
-    this.isLightAttached = function(light) {
-      return this._attachedLights.has(light);
-    }
-
-    this.attachLight = function(light) {
-      !this.isLightAttached(light) &&
-      this._attachedLights.length < this._config.lightNum &&
-      this._attachedLights.push(light);
-    }
-
-    this.detachLight = function(light) {
-      this._attachedLights.remove(light);
+    this.getLight = function(id) {
+      return this._lights[id];
     }
 
     this.setPickerPoint = function(x, y) {
       this._isPickerSet = true;
 
-      this._tmpPickerVector[0] = (x - this._widthHalf) * this.matrixCache[0];
-      this._tmpPickerVector[1] = (y - this._heightHalf) * this.matrixCache[4];
+      this._tmpPickerVector[0] = (x - this._wHalf) * this.matrixCache[0];
+      this._tmpPickerVector[1] = (y - this._hHalf) * this.matrixCache[4];
     }
 
     this._updateFog = function() {
-      this.fog.isUpdated() && this._gl.uniform4fv(this._locations["u_fog"], this.fog.items);
+      this.fog.isUpdated() && this._gl.uniform4fv(this._locations["uFog"], this.fog.items);
     }
 
     this._collectLights = function() {
-      var light;
-      var duoId;
-      var quadId;
-      var i;
-      var l;
-      for (i = 0, l = this._config.lightNum; i < l; ++i) {
-        duoId  = i * 2;
-        quadId = i * 4;
-        if (i >= this._attachedLights.length || !this._attachedLights[i].renderable) {
-          arraySet(this._lightPositions, this._DEFAULT_DUO,  duoId);
-          arraySet(this._lightVolumes,   this._DEFAULT_DUO,  duoId);
-          arraySet(this._lightColors,    this._DEFAULT_QUAD, quadId);
-          arraySet(this._lightEffects,   this._DEFAULT_QUAD, quadId);
-          this._lightZIndices[i] = -1;
-        } else {
-          light = this._attachedLights[i];
-          arraySet(this._lightPositions, light.positionCache, duoId);
-          arraySet(this._lightVolumes,   light.volumeCache,   duoId);
-          arraySet(this._lightColors,    light.colorCache,    quadId);
-          arraySet(this._lightEffects,   light.effectCache,   quadId);
-          this._lightZIndices[i] = light.props.zIndex;
-        }
-      }
-
-      light = null;
-
-      this._gl.uniform2fv(this._locations["u_lightPos"], this._lightPositions);
-      this._gl.uniform2fv(this._locations["u_lightVol"],   this._lightVolumes);
-      this._gl.uniform4fv(this._locations["u_lightCol"],    this._lightColors);
-      this._gl.uniform4fv(this._locations["u_lightFX"],   this._lightEffects);
-      this._gl.uniform1fv(this._locations["u_lightZIndices"],  this._lightZIndices);
+      this._gl.uniform2fv(this._locations["uLghtPos"],      this._lightPositions);
+      this._gl.uniform2fv(this._locations["uLghtVol"],      this._lightVolumes);
+      this._gl.uniform4fv(this._locations["uLghtCol"],      this._lightColors);
+      this._gl.uniform4fv(this._locations["uLghtFX"],       this._lightEffects);
+      this._gl.uniform1fv(this._locations["uLghtZIndices"], this._lightZIndices);
     }
 
     this._drawItem = function(item, parent) {
@@ -211,9 +185,9 @@ AGL.Stage2D = createPrototypeClass(
 
     this._resize = function() {
       if (_super._resize.call(this)) {
-        this._widthHalf  = this._width * 0.5;
-        this._heightHalf = this._height * 0.5;
-        this._gl.uniform2f(this._locations["u_res"], this._width / this._height, 100 / this._width);
+        this._wHalf  = this._w * 0.5;
+        this._hHalf = this._h * 0.5;
+        this._gl.uniform2f(this._locations["uRes"], this._w / this._h, 100 / this._w);
       }
     }
 
@@ -223,112 +197,100 @@ AGL.Stage2D = createPrototypeClass(
   }
 );
 cnst(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
-cnst(AGL.Stage2D, "Filters", {});
-cnst(AGL.Stage2D.Filters, "NONE",       0);
-cnst(AGL.Stage2D.Filters, "GRAYSCALE",  1);
-cnst(AGL.Stage2D.Filters, "SEPIA",      2);
-cnst(AGL.Stage2D.Filters, "INVERT",     4);
-cnst(AGL.Stage2D.Filters, "COLORLIMIT", 8);
-cnst(AGL.Stage2D.Filters, "VIGNETTE",   16);
-cnst(AGL.Stage2D.Filters, "RAINBOW",    32);
-cnst(AGL.Stage2D.Filters, "LINES",      64);
 AGL.Stage2D.createVertexShader = function(config) {
   var maxLightSources = config.lightNum;
 
   var shader = "#version 300 es\n";
 
+  shader +=
+  "in vec2 aPos;" +
+  "in mat3 aMat;" +
+  "in mat3 aWorldMat;" +
+  "in mat3 aTexMat;" +
+  "in vec4 aTexCrop;" +
+  "in vec4 aFillCol;" +
+  "in vec4 aTintCol;" +
+  "in vec" + (config.isMaskEnabled ? "4" : "3") + " aFx;";
+
+  shader +=
+  "uniform vec2 uRes;" +
+  "uniform vec4 uFog;";
+
   if (config.isLightEnabled) {
     shader +=
-    "#define MAX_LIGHT_SOURCES " + maxLightSources + "\n";
+    "uniform vec2 uLghtPos[" + maxLightSources + "];" +
+    "uniform vec2 uLghtVol[" + maxLightSources + "];" +
+    "uniform vec4 uLghtCol[" + maxLightSources + "];" +
+    "uniform vec4 uLghtFX[" + maxLightSources + "];" +
+    "uniform float uLghtZIndices[" + maxLightSources + "];";
   }
 
   shader +=
-  "in vec2 a_pos;" +
-  "in mat3 a_mat;" +
-  "in mat3 a_worldMat;" +
-  "in mat3 a_texMat;" +
-  "in vec4 a_texCrop;" +
-  "in vec4 a_fillCol;" +
-  "in vec4 a_tintCol;" +
-  "in vec" + (config.isMaskEnabled ? "4" : "3") + " a_fx;";
+  "out vec2 vTexCrd;" +
+  "out vec4 vCrd;" +
+  "out vec2 vMskCrd;" +
+  "out vec2 vTexCrop;" +
+  "out vec2 vTexCropSize;" +
+  "out vec4 vFillCol;" +
+  "out vec4 vTintCol;" +
+  "out float vTexId;" +
+  "out float vTintType;" +
+  "out float vColMult;" +
+  "out vec4 vFogCol;";
 
-  shader +=
-  "uniform vec2 u_res;" +
-  "uniform vec4 u_fog;";
-
-  if (config.isLightEnabled) {
-    shader +=
-    "uniform vec2 u_lightPos[MAX_LIGHT_SOURCES];" +
-    "uniform vec2 u_lightVol[MAX_LIGHT_SOURCES];" +
-    "uniform vec4 u_lightCol[MAX_LIGHT_SOURCES];" +
-    "uniform vec4 u_lightFX[MAX_LIGHT_SOURCES];" +
-    "uniform float u_lightZIndices[MAX_LIGHT_SOURCES];";
-  }
-
-  shader +=
-  "out vec2 v_texCoord;" +
-  "out vec4 v_coord;" +
-  "out vec2 v_texCrop;" +
-  "out vec2 v_texCropSize;" +
-  "out vec4 v_fillCol;" +
-  "out vec4 v_tintCol;" +
-  "out float v_texId;" +
-  "out float v_tintType;" +
-  "out float v_colMult;" +
-  "out vec4 v_fogCol;";
-
-  if (config.isMaskEnabled) shader += "out float v_maskTexId;";
+  if (config.isMaskEnabled) shader += "out float vMskTexId;";
 
   if (config.isLightEnabled) {
     shader +=
-    "vec4 lightVal(vec4 pos,vec2 lightPos,vec2 lightVol,vec4 lightCol,vec4 lightFX){" +
-      "vec2 dist=pos.xy-lightPos;" +
-      "return lightCol*lightCol.a*max(0.0,min(1.0,1.0-sqrt(" +
-        "pow(abs(dist.x+(abs(dist.x)*lightFX.x)),lightFX.z)*(lightVol.x/u_res.y)+" +
-        "pow(abs(dist.y+(abs(dist.y)*lightFX.y)),lightFX.w)*(lightVol.y/u_res.x/u_res.y)" +
+    "vec4 lghtVal(vec4 pos,vec2 lghtPos,vec2 lghtVol,vec4 lghtCol,vec4 lghtFX){" +
+      "vec2 dist=pos.xy-lghtPos;" +
+      "return lghtCol*lghtCol.a*max(0.,min(1.,1.-sqrt(" +
+        "pow(abs(dist.x+(abs(dist.x)*lghtFX.x)),lghtFX.z)*(lghtVol.x/uRes.y)+" +
+        "pow(abs(dist.y+(abs(dist.y)*lghtFX.y)),lghtFX.w)*(lghtVol.y/uRes.x/uRes.y)" +
       ")));" +
     "}";
   }
 
   shader +=
   "void main(void){" +
-    "vec3 pos=vec3(a_pos,1.0);" +
-    "gl_Position=vec4((a_worldMat*a_mat*pos).xy,0.0,1.0);" +
-    "v_texCoord=(a_texMat*pos).xy;" +
-    "v_coord=gl_Position;" +
-    "v_texCrop=a_texCrop.xy;" +
-    "v_texCropSize=a_texCrop.zw-a_texCrop.xy;" +
-    "v_fillCol=a_fillCol;" +
-    "v_tintCol=a_tintCol;" +
+    "vec3 pos=vec3(aPos,1);" +
+    "gl_Position=vec4((aWorldMat*aMat*pos).xy,0,1);" +
+    "vTexCrd=(aTexMat*pos).xy;" +
+    "vCrd=gl_Position;" +
+    "vMskCrd=(vCrd.xy+vec2(1,-1))/vec2(2,-2);" +
+    "vTexCrop=aTexCrop.xy;" +
+    "vTexCropSize=aTexCrop.zw;" +
+    "vFillCol=aFillCol;" +
+    "vTintCol=aTintCol;" +
 
-    "v_texId=a_fx.x;" +
-    "v_tintType=a_fx.y;";
+    "vTexId=aFx.x;" +
+    "vTintType=aFx.y;";
 
     shader +=
-    "vec4 lightCol=vec4(0.0);";
+    "vec4 lghtCol=vec4(0);";
 
     if (config.isLightEnabled) {
       for (var i = 0; i < maxLightSources; i++) {
         shader +=
-        "if(u_lightCol[" + i + "].a>0.0 && u_lightZIndices[" + i + "]>a_fx.z){" +
-          "lightCol+=lightVal(" +
-            "v_coord," +
-            "u_lightPos[" + i + "]," +
-            "u_lightVol[" + i + "]," +
-            "u_lightCol[" + i + "]," +
-            "u_lightFX[" + i + "]" +
+        "if(uLghtCol[" + i + "].a>0. && uLghtZIndices[" + i + "]>aFx.z){" +
+          "lghtCol+=lghtVal(" +
+            "vCrd," +
+            "uLghtPos[" + i + "]," +
+            "uLghtVol[" + i + "]," +
+            "uLghtCol[" + i + "]," +
+            "uLghtFX[" + i + "]" +
           ");" +
         "}";
       }
     }
 
     shader +=
-    "float colLightMult=max(0.0,u_fog.a-lightCol.a);" +
-    "v_colMult=max(0.0,1.0-colLightMult);" +
-    "v_fogCol=vec4(u_fog.rgb*colLightMult,0.0);" +
-    "v_fillCol+=lightCol;";
+    "float colLghtMult=max(0.,uFog.a-lghtCol.a);" +
+    "vColMult=max(0.,1.-colLghtMult);" +
+    "vFogCol=vec4(uFog.rgb*colLghtMult,0);" +
+    "vFillCol+=lghtCol;";
 
-    if (config.isMaskEnabled) shader += "v_maskTexId=a_fx.w;";
+    if (config.isMaskEnabled) shader += "vMskTexId=aFx.w;";
 
     shader += "}";
 
@@ -338,29 +300,24 @@ AGL.Stage2D.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
-  "#define MAX_TEXTURES " + maxTextureImageUnits + "\n";
-
-  shader +=
   "precision lowp float;" +
 
-  "in vec4 v_coord;" +
-  "in vec2 v_texCoord;" +
-  "in vec2 v_texCrop;" +
-  "in vec2 v_texCropSize;" +
-  "in vec4 v_fillCol;" +
-  "in vec4 v_tintCol;" +
-  "in float v_texId;" +
-  "in float v_tintType;" +
-  "in float v_colMult;" +
-  "in vec4 v_fogCol;";
+  "in vec4 vCrd;" +
+  "in vec2 vMskCrd;" +
+  "in vec2 vTexCrd;" +
+  "in vec2 vTexCrop;" +
+  "in vec2 vTexCropSize;" +
+  "in vec4 vFillCol;" +
+  "in vec4 vTintCol;" +
+  "in float vTexId;" +
+  "in float vTintType;" +
+  "in float vColMult;" +
+  "in vec4 vFogCol;";
 
-  if (config.isMaskEnabled) shader += "in float v_maskTexId;";
+  if (config.isMaskEnabled) shader += "in float vMskTexId;";
 
   shader +=
-  "uniform sampler2D u_tex[MAX_TEXTURES];";
-
-  if (config.isFilterEnabled)
-  shader += "uniform int u_filters;";
+  "uniform sampler2D uTex[" + maxTextureImageUnits + "];";
 
   shader += "out vec4 fgCol;";
 
@@ -369,13 +326,13 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
     if (config.isMaskEnabled) {
       shader +=
-      "float maskAlpha=1.0;" +
-      "if(v_maskTexId>0.0){";
+      "float mskAlpha=1.;" +
+      "if(vMskTexId>0.){";
         for (var i = 0; i < maxTextureImageUnits; i++) {
           shader += (i > 0 ? " else " : "") +
-          "if(v_maskTexId<" + (i + 1) + ".5){" +
-            "maskAlpha=texture(u_tex[" + i + "],(v_coord.xy+vec2(1.0,-1.0))/vec2(2.0,-2.0)).r;" +
-            "if(maskAlpha==0.0) discard;" +
+          "if(vMskTexId<" + (i + 1) + ".5){" +
+            "mskAlpha=texture(uTex[" + i + "],vMskCrd).r;" +
+            "if(mskAlpha==0.) discard;" +
           "}";
         }
       shader +=
@@ -384,78 +341,31 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
     for (var i = -1; i < maxTextureImageUnits; i++) {
       shader += (i > -1 ? " else " : "") +
-      "if(v_texId<" + (i + 1) + ".5){";
+      "if(vTexId<" + (i + 1) + ".5){";
         shader += "fgCol=" + (
           i < 0
-            ? "vec4(0.0,0.0,0.0,0.0);"
-            : "texture(u_tex[" + i + "],v_texCrop+v_texCropSize*fract(v_texCoord));"
+            ? "vec4(0);"
+            : "texture(uTex[" + i + "],vTexCrop+vTexCropSize*fract(vTexCrd));"
           );
       shader +=
-        "if(fgCol.a==0.0) discard;" +
+        "if(fgCol.a==0.) discard;" +
       "}";
     }
 
     shader +=
-    "if(fgCol.a>0.0){" +
-      "if(v_tintType<0.5) " +
-        "fgCol*=v_tintCol;" +
-      "else if(v_tintType<1.5 && fgCol.r==fgCol.g && fgCol.r==fgCol.b) " +
-        "fgCol*=v_tintCol;" +
-      "else if(v_tintType<2.5) " +
-        "fgCol=vec4((fgCol.rgb*(1.0-v_tintCol.a))+(v_tintCol.rgb*v_tintCol.a),fgCol.a);";
+    "if(fgCol.a>.0){" +
+      "if(vTintType<.5) " +
+        "fgCol*=vTintCol;" +
+      "else if(vTintType<1.5 && fgCol.r==fgCol.g && fgCol.r==fgCol.b) " +
+        "fgCol*=vTintCol;" +
+      "else if(vTintType<2.5) " +
+        "fgCol=vec4((fgCol.rgb*(1.-vTintCol.a))+(vTintCol.rgb*vTintCol.a),fgCol.a);";
 
       shader +=
-      "vec4 finalCol=vec4(fgCol.rgb*v_colMult,fgCol.a);" +
-      "fgCol=(finalCol*v_fillCol)+v_fogCol;";
+      "vec4 finalCol=vec4(fgCol.rgb*vColMult,fgCol.a);" +
+      "fgCol=(finalCol*vFillCol)+vFogCol;";
 
-      if (config.isFilterEnabled) {
-        shader += "if(u_filters>0 && fgCol.a>0.0){";
-        for (var i = 0; i < config.filters.length; i++) {
-          shader += "if((" + config.filters[i] + " & u_filters)>0){";
-            switch (config.filters[i]) {
-              case AGL.Stage2D.Filters.GRAYSCALE:
-                shader +=
-                "fgCol=vec4(" +
-                  "vec3(1.0)*((fgCol.r+fgCol.g+fgCol.b)/3.0)," +
-                  "fgCol.a" +
-                ");";
-              break;
-              case AGL.Stage2D.Filters.SEPIA:
-                shader +=
-                "fgCol=vec4(" +
-                  "vec3(0.874,0.514,0.156)*((fgCol.r+(fgCol.g+fgCol.b))/3.0)," +
-                  "fgCol.a" +
-                ");";
-              break;
-              case AGL.Stage2D.Filters.INVERT:
-                shader +=
-                "fgCol=abs(vec4(fgCol.rgb-1.0,fgCol.a));";
-              break;
-              case AGL.Stage2D.Filters.COLORLIMIT:
-                shader +=
-                "fgCol=vec4(" +
-                  "(floor((fgCol.rgb*256.0)/32.0)/256.0)*32.0," +
-                  "fgCol.a" +
-                ");";
-              break;
-              case AGL.Stage2D.Filters.VIGNETTE:
-                shader +=
-                "float vignetteValue=(1.0-sqrt(pow(v_coord.x,4.0)+pow(v_coord.y,4.0)));" +
-                "fgCol*=vec4(vec3(vignetteValue),1);";
-              break;
-              case AGL.Stage2D.Filters.RAINBOW:
-                shader +=
-                "fgCol+=vec4(v_coord.x*0.15,v_coord.y*0.15,(v_coord.x-v_coord.y)*0.15,0);";
-              break;
-              case AGL.Stage2D.Filters.LINES:
-                shader += "fgCol+=vec4(sin(v_coord.y*500.0)*0.2);";
-              break;
-            }
-          shader += "}";
-        }
-        shader += "}";
-      }
-      if (config.isMaskEnabled) shader += "fgCol.a*=maskAlpha;";
+      if (config.isMaskEnabled) shader += "fgCol.a*=mskAlpha;";
 
       shader +=
     "}" +

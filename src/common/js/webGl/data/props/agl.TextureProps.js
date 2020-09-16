@@ -22,6 +22,9 @@ AGL.TextureProps = createPrototypeClass(
     this._aY = 0;
   },
   function() {
+    get(this, "scaledWidth", function() { return this._w; });
+    get(this, "scaledHeight", function() { return this._h; });
+
     get(this, "sinR", function() {
       if (this._curSRUId !== this._rUId) {
         this._curSRUId = this._rUId;

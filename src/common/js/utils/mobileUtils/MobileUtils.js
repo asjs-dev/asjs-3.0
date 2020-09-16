@@ -19,8 +19,8 @@ createSingletonClass(ASJSUtils, "MobileUtils", BaseClass, function(_scope) {
     _scope.useDPI        = false;
     _scope.useScreenSize = false;
 
-    _isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);;
-    _isIOS = /iPad/i.test(navigator.userAgent) || /iPhone/i.test(navigator.userAgent);
+    _isSafari  = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);;
+    _isIOS     = /iPad|iPhone|iPod/.test(navigator.userAgent);
     _isDesktop = !_isIOS && (empty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
 
     calcDPI();

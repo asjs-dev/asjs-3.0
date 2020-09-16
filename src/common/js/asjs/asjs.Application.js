@@ -14,6 +14,7 @@ require("../common/is.js");
 require("../common/valueOrDefault.js");
 require("../common/throttleFunction.js");
 require("../common/deleteProperty.js");
+require("../common/clone.js");
 require("../common/BaseClass.js");
 
 require("core/asjs.Core.js");
