@@ -3,7 +3,7 @@ require("../../NameSpace.js");
 createSingletonClass(ASJSUtils, "URLParser", BaseClass, function(_scope) {
   var _latestUrl = null;
   var _params    = null;
-  
+
   _scope.getUrlParams = function() {
     return parseUrl();
   }
@@ -17,11 +17,11 @@ createSingletonClass(ASJSUtils, "URLParser", BaseClass, function(_scope) {
   }
 
   _scope.getQueryParam = function(param) {
-    return _scope.getQueryParams[param];
+    return _scope.getQueryParams()[param];
   }
 
   _scope.getHashParam = function(param) {
-    return _scope.getHashParams[param];
+    return _scope.getHashParams()[param];
   }
 
   _scope.getParsedPath = function() {
