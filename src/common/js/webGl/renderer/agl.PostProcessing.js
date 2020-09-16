@@ -79,7 +79,7 @@ AGL.PostProcessing = createPrototypeClass(
     );
 
     this._gl.uniform1i(this._locations["uTex"],    0);
-    this._gl.uniform1i(this._locations["uDspTex"], 1);
+    this._gl.uniform1i(this._locations["uDspTex"], 2);
 
     this._resize();
   },
@@ -143,6 +143,11 @@ AGL.PostProcessing = createPrototypeClass(
       for (i = 0; i < l; ++i) {
         var filter = this.filters[i];
 
+        this._gl.uniform1i(this._locations["uTex"],    0);
+        this._gl.uniform1i(this._locations["uDspTex"], 2);
+
+        filter.texture && filter.texture.loaded && AGL.Utils.useTexture(this._gl, 2, filter.texture);
+
         filter.updateFramebuffer(this._gl, this._w, this._h);
 
         this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, filter.framebuffer);
@@ -152,13 +157,9 @@ AGL.PostProcessing = createPrototypeClass(
         this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
         this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
 
-        filter.texture && filter.texture.loaded && AGL.Utils.useTexture(this._gl, 1, filter.texture);
-
-        AGL.Utils.useTexture(this._gl, 0, this.texture);
-        
         this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
 
-        this._gl.bindTexture(this._gl.TEXTURE_2D, filter.framebufferTexture);
+        filter.bindTexture(this._gl, 0);
       }
 
       this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, null);

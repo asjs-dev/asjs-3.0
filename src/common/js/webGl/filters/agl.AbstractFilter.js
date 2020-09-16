@@ -36,7 +36,8 @@ AGL.AbstractFilter = createPrototypeClass(
         this._h = height;
         this._gl = gl;
 
-        this._tex = this._crtTex(gl);
+        this._tex = gl.createTexture();
+        this.bindTexture(gl, 0);
 
         gl.texImage2D(
           gl.TEXTURE_2D,
@@ -62,16 +63,14 @@ AGL.AbstractFilter = createPrototypeClass(
       }
     }
 
-    this._crtTex = function(gl) {
-      var texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-
+    this.bindTexture = function(gl, index) {
+      gl.activeTexture(gl.TEXTURE0 + index);
+      gl.bindTexture(gl.TEXTURE_2D, this._tex);
+      
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-      return texture;
     }
   }
 );
