@@ -29,6 +29,7 @@ require("./display/agl.AnimatedImage.js");
 require("./display/agl.Container.js");
 require("./display/agl.Image.js");
 
+require("./renderer/agl.RendererHelper.js");
 require("./renderer/agl.BaseRenderer.js");
 require("./renderer/agl.PostProcessing.js");
 require("./renderer/agl.SimpleRenderer.js");

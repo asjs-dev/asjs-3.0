@@ -1,7 +1,5 @@
 require("../NameSpace.js");
-require("./agl.BaseRenderer.js");
-require("../display/agl.Item.js");
-require("../utils/agl.Matrix3.js");
+require("./agl.RendererHelper.js");
 
 AGL.PostProcessing = createPrototypeClass(
   BasePrototypeClass,
@@ -16,25 +14,11 @@ AGL.PostProcessing = createPrototypeClass(
     this.texture = null;
     this.filters = [];
 
-    this._w  = 0;
-    this._h = 0;
-
-    this._resUpdId = 0;
-    this._curResUpdId = -1;
-
     this._rCount = 0;
 
     this._config = config;
 
-    this._canvas = config.canvas;
-
-    this._context = null;
-
-    this._gl = this.context;
-
-    this._gl.pixelStorei(this._gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-
-    this._gl.enable(this._gl.BLEND);
+    AGL.RendererHelper.init.call(this, config.canvas);
 
     var program = AGL.Utils.createProgram(this._gl, [
       AGL.Utils.loadVertexShader(this._gl,   config.vertexShader(config)),
@@ -81,52 +65,12 @@ AGL.PostProcessing = createPrototypeClass(
     this._gl.uniform1i(this._locations["uTex"],    0);
     this._gl.uniform1i(this._locations["uDspTex"], 2);
 
-    this._resize();
+    this._rsz();
   },
-  function(_super) {
-    get(this, "canvas", function() { return this._canvas; });
+  function() {
+    AGL.RendererHelper.createFunctionality.call(this);
 
-    get(this, "context", function() {
-      if (!this._context || (this._context.isContextLost && this._context.isContextLost())) {
-        this._context = this._canvas.getContext(
-          "webgl2",
-          this._config.contextAttributes
-        );
-      }
-      return this._context;
-    });
-
-    prop(this, "width", {
-      get: function() { return this._w; },
-      set: function(v) {
-        if (this._w !== v) {
-          this._w = v;
-          this._resUpdId++;
-        }
-      }
-    });
-
-    prop(this, "height", {
-      get: function() { return this._h; },
-      set: function(v) {
-        if (this._h !== v) {
-          this._h = v;
-          this._resUpdId++;
-        }
-      }
-    });
-
-    this.setSize = function(width, height) {
-      this.width  = width;
-      this.height = height;
-    }
-
-    this.render = function() {
-      this._resize();
-      this._render();
-    }
-
-    this._render = function() {
+    this._rndr = function() {
       if (!this.texture.loaded) return;
       this._gl.clear(this._gl.COLOR_BUFFER_BIT);
 
@@ -168,18 +112,6 @@ AGL.PostProcessing = createPrototypeClass(
       this._gl.uniform1i(this._locations["uFtrT"], 0);
 
       this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
-    }
-
-    this._resize = function() {
-      if (this._resUpdId === this._curResUpdId) return false;
-      this._curResUpdId = this._resUpdId;
-
-      this._canvas.width  = this._w;
-      this._canvas.height = this._h;
-
-      this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
-
-      return true;
     }
   }
 );
@@ -334,16 +266,12 @@ AGL.PostProcessing.createFragmentShader = function() {
       "else if(uFtrT<6)fgCol=glw(fgCol,fvl[0],fvl[1],vTexCrd,oPx);" +
       // DisplacementFilter
       "else if(uFtrT<7){" +
-        "vec2 md=vec2(fvl[0],fvl[1]);" +
-        "fgCol=texture(" +
-          "uTex," +
-          "vTexCrd*((oSz-md)/oSz)+(" +
-            "texture(" +
-              "uDspTex," +
-              "fract(vec2(1,-1)*vCrd*.5+vec2(.5)+uTm*vec2(fvl[2],fvl[3]))" +
-            ").r*oPx*md" +
-          ")" +
-        ");" +
+        "vec2 dspMd=vec2(1,-1)*(texture(" +
+          "uDspTex," +
+          "fract(vec2(1,-1)*vCrd*.5+vec2(.5)+uTm*vec2(fvl[1],fvl[2]))" +
+        ").rg-.5)*2.*oPx*fvl[0];" +
+        "vec2 mdPs=vTexCrd+dspMd;" +
+        "if(mdPs.x>=.0&&mdPs.y>=.0&&mdPs.x<=1.&&mdPs.y<=1.)fgCol=texture(uTex,mdPs);" +
       "}" +
     "}" +
   "}";

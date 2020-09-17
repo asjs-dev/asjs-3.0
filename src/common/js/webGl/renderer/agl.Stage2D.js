@@ -80,13 +80,13 @@ AGL.Stage2D = createPrototypeClass(
 
     this._zIndexCounter = 0;
 
-    this._resize();
+    this._rsz();
   },
   function(_super) {
     get(this, "picked", function() { return this._picked; });
 
     this.render = function() {
-      this._resize();
+      this._rsz();
 
       this._picked = null;
       this._zIndexCounter = 0;
@@ -95,7 +95,7 @@ AGL.Stage2D = createPrototypeClass(
       this._updateFog();
       this._collectLightsFunc();
 
-      this._render();
+      this._rndr();
 
       this._isPickerSet = false;
     }
@@ -126,7 +126,7 @@ AGL.Stage2D = createPrototypeClass(
     this._drawItem = function(item, parent) {
       if (!item.renderable) return;
       item.props.zIndex = ++this._zIndexCounter;
-      item.update(this._renderTimer, parent);
+      item.update(this._rndrTimer, parent);
       item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
@@ -183,12 +183,11 @@ AGL.Stage2D = createPrototypeClass(
       this._bindArBuf(this._effectbuf,    this._effectDat);
     }
 
-    this._resize = function() {
-      if (_super._resize.call(this)) {
-        this._wHalf  = this._w * 0.5;
-        this._hHalf = this._h * 0.5;
-        this._gl.uniform2f(this._locations["uRes"], this._w / this._h, 100 / this._w);
-      }
+    this._rsz = function() {
+      if (!_super._rsz.call(this)) return;
+      this._wHalf  = this._w * 0.5;
+      this._hHalf = this._h * 0.5;
+      this._gl.uniform2f(this._locations["uRes"], this._w / this._h, 100 / this._w);
     }
 
     this._updateColor = function() {
@@ -332,7 +331,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
           shader += (i > 0 ? " else " : "") +
           "if(vMskTexId<" + (i + 1) + ".5){" +
             "mskAlpha=texture(uTex[" + i + "],vMskCrd).r;" +
-            "if(mskAlpha==0.) discard;" +
+            "if(mskAlpha==0.)discard;" +
           "}";
         }
       shader +=

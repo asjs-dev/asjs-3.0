@@ -27,7 +27,7 @@ AGL.Texture = createPrototypeClass(
     this._srcWProp = "width";
     this._srcHProp = "height";
     this._eventType;
-    this._curRenderId = -1;
+    this._curRndrId = -1;
   },
   function(_super) {
     get(this, "generateMipmap", function() { return this._generateMipmap; });
@@ -61,8 +61,8 @@ AGL.Texture = createPrototypeClass(
     });
 
     this.autoUpdate = function(renderId) {
-      var shouldUpdate = renderId < this._curRenderId;
-      this._curRenderId = renderId;
+      var shouldUpdate = this._curRndrId < renderId;
+      this._curRndrId = renderId;
       return shouldUpdate && (this.shouldUpdate || (this.isVideo && !this._source.paused));
     }
 

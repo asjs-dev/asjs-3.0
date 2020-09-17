@@ -5,6 +5,7 @@ require("../display/agl.Container.js");
 require("../display/agl.Image.js");
 require("../utils/agl.Utils.js");
 require("../utils/agl.Matrix3.js");
+require("./agl.RendererHelper.js");
 
 AGL.BaseRenderer = createPrototypeClass(
   AGL.Container,
@@ -23,13 +24,7 @@ AGL.BaseRenderer = createPrototypeClass(
     this._clearBeforeRender = true;
     this._clearBeforeRenderFunc = this.clear.bind(this);
 
-    this._w  = 0;
-    this._h = 0;
-
-    this._resUpdId = 0;
-    this._curResUpdId = -1;
-
-    this._renderId = 0;
+    this._rndrId = 0;
 
     this._latestBlendMode = AGL.BlendModes.NORMAL;
 
@@ -42,15 +37,7 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this._config = config;
 
-    this._canvas = config.canvas;
-
-    this._context = null;
-
-    this._gl = this.context;
-
-    this._gl.pixelStorei(this._gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-
-    this._gl.enable(this._gl.BLEND);
+    AGL.RendererHelper.init.call(this, config.canvas);
 
     var program = AGL.Utils.createProgram(this._gl, [
       AGL.Utils.loadVertexShader(this._gl,   config.vertexShader(config)),
@@ -112,9 +99,11 @@ AGL.BaseRenderer = createPrototypeClass(
     this._update      =
     this._updateProps = emptyFunction;
 
-    this._resize();
+    this._rsz();
   },
   function() {
+    AGL.RendererHelper.createFunctionality.call(this);
+
     prop(this, "clearBeforeRender", {
       get: function() { return this._clearBeforeRender; },
       set: function(v) {
@@ -124,48 +113,8 @@ AGL.BaseRenderer = createPrototypeClass(
           : emptyFunction;
       }
     });
-    get(this, "canvas", function() { return this._canvas; });
+
     get(this, "stage",  function() { return this; });
-
-    get(this, "context", function() {
-      if (!this._context || (this._context.isContextLost && this._context.isContextLost())) {
-        this._context = this._canvas.getContext(
-          "webgl2",
-          this._config.contextAttributes
-        );
-      }
-      return this._context;
-    });
-
-    prop(this, "width", {
-      get: function() { return this._w; },
-      set: function(v) {
-        if (this._w !== v) {
-          this._w = v;
-          this._resUpdId++;
-        }
-      }
-    });
-
-    prop(this, "height", {
-      get: function() { return this._h; },
-      set: function(v) {
-        if (this._h !== v) {
-          this._h = v;
-          this._resUpdId++;
-        }
-      }
-    });
-
-    this.setSize = function(width, height) {
-      this.width  = width;
-      this.height = height;
-    }
-
-    this.render = function() {
-      this._resize();
-      this._render();
-    }
 
     this.clear = function() {
       var clearColor = this.clearColor;
@@ -173,17 +122,17 @@ AGL.BaseRenderer = createPrototypeClass(
       this._gl.clear(this._gl.COLOR_BUFFER_BIT);
     }
 
-    this._render = function() {
+    this._rndr = function() {
       this._clearBeforeRenderFunc();
-      this._renderTimer = Date.now();
+      this._rndrTimer = Date.now();
       this._drawContainer(this);
       this._batchItems > 0 && this._batchDraw();
-      ++this._renderId;
+      ++this._rndrId;
     }
 
     this._drawItem = function(item, parent) {
       if (!item.renderable) return;
-      item.update(this._renderTimer, parent);
+      item.update(this._rndrTimer, parent);
       item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
@@ -284,7 +233,7 @@ AGL.BaseRenderer = createPrototypeClass(
     this._drawTex = function(textureInfo) {
       if (!textureInfo.loaded) return 0;
       var textureMapIndex = this._textureMap.indexOf(textureInfo);
-      if (textureMapIndex === -1 || textureInfo.autoUpdate(this._renderId)) {
+      if (textureMapIndex === -1 || textureInfo.autoUpdate(this._rndrId)) {
         if (textureMapIndex === -1) {
           if (this._textureMap.length === this._config.textureNum) {
             this._batchDraw();
@@ -312,14 +261,8 @@ AGL.BaseRenderer = createPrototypeClass(
       );
     }
 
-    this._resize = function() {
-      if (this._resUpdId === this._curResUpdId) return false;
-      this._curResUpdId = this._resUpdId;
-
-      this._canvas.width  = this._w;
-      this._canvas.height = this._h;
-
-      this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
+    this._rsz = function() {
+      if (!this._rszCanvas()) return false;
 
       AGL.Matrix3.projection(this._w, this._h, this.matrixCache);
 
