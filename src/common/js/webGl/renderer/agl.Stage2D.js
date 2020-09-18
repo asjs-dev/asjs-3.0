@@ -31,17 +31,17 @@ AGL.Stage2D = createPrototypeClass(
     this._DEFAULT_DUO  = [0, 0];
     this._DEFAULT_QUAD = [0, 0, 0, 0];
 
-    this._wHalf  = 0;
-    this._hHalf = 0;
+    this._widthHalf  = 0;
+    this._heightHalf = 0;
 
     this._lights = [];
 
     this._picked;
     this._isPickerSet = false;
 
-    this._tmpPickerVector  = new Float32Array([0, 0, 1]);
-    this._tmpMatrix        = new Float32Array(6);
-    this._tmpInverseMatrix = new Float32Array(6);
+    this._tempPickerVector  = new Float32Array([0, 0, 1]);
+    this._tempMatrix        = new Float32Array(6);
+    this._tempInverseMatrix = new Float32Array(6);
 
     this._collectLightsFunc = emptyFunction;
     if (this._config.isLightEnabled) {
@@ -65,28 +65,28 @@ AGL.Stage2D = createPrototypeClass(
       this._collectLightsFunc = this._collectLights.bind(this);
     }
 
-    this._colorDat     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._colorbuf     = this._createArBuf(this._colorDat,     "aFillCol", 4, 1, 4, this._gl.FLOAT, 4);
-    this._tintColorDat = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._tintColorbuf = this._createArBuf(this._tintColorDat, "aTintCol", 4, 1, 4, this._gl.FLOAT, 4);
+    this._colorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._colorBuffer     = this._createArrayBuffer(this._colorData,     "aFillCol", 4, 1, 4, this._gl.FLOAT, 4);
+    this._tintColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+    this._tintColorBuffer = this._createArrayBuffer(this._tintColorData, "aTintCol", 4, 1, 4, this._gl.FLOAT, 4);
 
     this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
-    this._effectDat  = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
-    this._effectbuf = this._createArBuf(this._effectDat, "aFx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
+    this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
+    this._effectBuffer = this._createArrayBuffer(this._effectData, "aFx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
 
-    this._setMaskDatFunc = this._config.isMaskEnabled
-      ? this._setMaskDat.bind(this)
+    this._setMaskDataFunc = this._config.isMaskEnabled
+      ? this._setMaskData.bind(this)
       : emptyFunction;
 
     this._zIndexCounter = 0;
 
-    this._rsz();
+    this._resize();
   },
   function(_super) {
     get(this, "picked", function() { return this._picked; });
 
     this.render = function() {
-      this._rsz();
+      this._preRender();
 
       this._picked = null;
       this._zIndexCounter = 0;
@@ -95,7 +95,7 @@ AGL.Stage2D = createPrototypeClass(
       this._updateFog();
       this._collectLightsFunc();
 
-      this._rndr();
+      this._render();
 
       this._isPickerSet = false;
     }
@@ -107,8 +107,8 @@ AGL.Stage2D = createPrototypeClass(
     this.setPickerPoint = function(x, y) {
       this._isPickerSet = true;
 
-      this._tmpPickerVector[0] = (x - this._wHalf) * this.matrixCache[0];
-      this._tmpPickerVector[1] = (y - this._hHalf) * this.matrixCache[4];
+      this._tempPickerVector[0] = (x - this._widthHalf) * this.matrixCache[0];
+      this._tempPickerVector[1] = (y - this._heightHalf) * this.matrixCache[4];
     }
 
     this._updateFog = function() {
@@ -126,23 +126,23 @@ AGL.Stage2D = createPrototypeClass(
     this._drawItem = function(item, parent) {
       if (!item.renderable) return;
       item.props.zIndex = ++this._zIndexCounter;
-      item.update(this._rndrTimer, parent);
+      item.update(this._renderTime, parent);
       item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
-    this._setMaskDat = function(item) {
-      item.mask && (this._effectDat[this._batchItems * this._effectLength + 3] = this._drawTex(item.mask));
+    this._setMaskData = function(item) {
+      item.mask && (this._effectData[this._batchItems * this._effectLength + 3] = this._drawTexture(item.mask));
     }
 
-    this._setBufDat = function(item, parent, textureMapIndex, matId, quadId, effectId) {
-      _super._setBufDat.call(this, item, parent, textureMapIndex, matId, quadId);
+    this._setBufferData = function(item, parent, textureMapIndex, matId, quadId, effectId) {
+      _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
 
-      arraySet(this._colorDat,     parent.colorCache, quadId);
-      arraySet(this._tintColorDat, item.colorCache,   quadId);
+      arraySet(this._colorData,     parent.colorCache, quadId);
+      arraySet(this._tintColorData, item.colorCache,   quadId);
 
-      this._effectDat[effectId] = textureMapIndex;
-      this._effectDat[effectId + 1] = item.tintType;
-      this._effectDat[effectId + 2] = item.props.zIndex;
+      this._effectData[effectId] = textureMapIndex;
+      this._effectData[effectId + 1] = item.tintType;
+      this._effectData[effectId + 2] = item.props.zIndex;
     }
 
     this._drawImage = function(item, parent) {
@@ -152,19 +152,19 @@ AGL.Stage2D = createPrototypeClass(
         this._isPickerSet &&
         item.interactive &&
         AGL.Matrix3.isPointInMatrix(
-          this._tmpPickerVector,
+          this._tempPickerVector,
           parent.matrixCache,
           item.matrixCache,
-          this._tmpMatrix,
-          this._tmpInverseMatrix
+          this._tempMatrix,
+          this._tempInverseMatrix
         )
       ) this._picked = item;
 
-      this._setMaskDatFunc(item);
+      this._setMaskDataFunc(item);
 
-      var textureMapIndex = this._drawTex(item.texture);
+      var textureMapIndex = this._drawTexture(item.texture);
 
-      this._setBufDat(
+      this._setBufferData(
         item,
         parent,
         textureMapIndex,
@@ -176,18 +176,18 @@ AGL.Stage2D = createPrototypeClass(
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
 
-    this._bindBufs = function() {
-      _super._bindBufs.call(this);
-  		this._bindArBuf(this._colorbuf,     this._colorDat);
-      this._bindArBuf(this._tintColorbuf, this._tintColorDat);
-      this._bindArBuf(this._effectbuf,    this._effectDat);
+    this._bindBuffers = function() {
+      _super._bindBuffers.call(this);
+  		this._bindArrayBuffer(this._colorBuffer,     this._colorData);
+      this._bindArrayBuffer(this._tintColorBuffer, this._tintColorData);
+      this._bindArrayBuffer(this._effectBuffer,    this._effectData);
     }
 
-    this._rsz = function() {
-      if (!_super._rsz.call(this)) return;
-      this._wHalf  = this._w * 0.5;
-      this._hHalf = this._h * 0.5;
-      this._gl.uniform2f(this._locations["uRes"], this._w / this._h, 100 / this._w);
+    this._resize = function() {
+      if (!_super._resize.call(this)) return;
+      this._widthHalf  = this._width * 0.5;
+      this._heightHalf = this._height * 0.5;
+      this._gl.uniform2f(this._locations["uRes"], this._width / this._height, 100 / this._width);
     }
 
     this._updateColor = function() {

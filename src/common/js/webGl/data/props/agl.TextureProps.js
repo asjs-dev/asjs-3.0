@@ -6,39 +6,39 @@ AGL.TextureProps = createPrototypeClass(
   function TextureProps() {
     AGL.AbstractProps.call(this);
 
-    this._rUId     = 0;
-    this._curSRUId = -1;
-    this._curCRUId = -1;
+    this._rotationUpdateId           = 0;
+    this._currentSinRotationUpdateId = -1;
+    this._currentCosRotationUpdateId = -1;
 
-    this._sr = 0;
-    this._cr = 1;
+    this._sinRotation = 0;
+    this._cosRotation = 1;
 
-    this._x  = 0;
-    this._y  = 0;
-    this._r  = 0;
-    this._w  = 1;
-    this._h  = 1;
-    this._aX = 0;
-    this._aY = 0;
+    this._x        = 0;
+    this._y        = 0;
+    this._rotation = 0;
+    this._width    = 1;
+    this._height   = 1;
+    this._anchorX  = 0;
+    this._anchorY  = 0;
   },
   function() {
-    get(this, "scaledWidth", function() { return this._w; });
-    get(this, "scaledHeight", function() { return this._h; });
+    get(this, "scaledWidth", function() { return this._width; });
+    get(this, "scaledHeight", function() { return this._height; });
 
     get(this, "sinR", function() {
-      if (this._curSRUId !== this._rUId) {
-        this._curSRUId = this._rUId;
-        this._sr = Math.sin(this._r);
+      if (this._currentSinRotationUpdateId !== this._rotationUpdateId) {
+        this._currentSinRotationUpdateId = this._rotationUpdateId;
+        this._sinRotation = Math.sin(this._rotation);
       }
-      return this._sr;
+      return this._sinRotation;
     });
 
     get(this, "cosR", function() {
-      if (this._curCRUId !== this._rUId) {
-        this._curCRUId = this._rUId;
-        this._cr = Math.cos(this._r);
+      if (this._currentCosRotationUpdateId !== this._rotationUpdateId) {
+        this._currentCosRotationUpdateId = this._rotationUpdateId;
+        this._cosRotation = Math.cos(this._rotation);
       }
-      return this._cr;
+      return this._cosRotation;
     });
 
     prop(this, "x", {
@@ -62,51 +62,51 @@ AGL.TextureProps = createPrototypeClass(
     });
 
     prop(this, "rotation", {
-      get: function() { return this.this._r; },
+      get: function() { return this._rotation; },
       set: function(v) {
-        if (this.this._r !== v) {
-          this.this._r = v;
-          ++this._rUId;
+        if (this._rotation !== v) {
+          this._rotation = v;
+          ++this._rotationUpdateId;
           ++this._id;
         }
       }
     });
 
     prop(this, "width", {
-      get: function() { return this._w; },
+      get: function() { return this._width; },
       set: function(v) {
-        if (this._w !== v) {
-          this._w = v;
+        if (this._width !== v) {
+          this._width = v;
           ++this._id;
         }
       }
     });
 
     prop(this, "height", {
-      get: function() { return this._h; },
+      get: function() { return this._height; },
       set: function(v) {
-        if (this._h !== v) {
-          this._h = v;
+        if (this._height !== v) {
+          this._height = v;
           ++this._id;
         }
       }
     });
 
     prop(this, "anchorX", {
-      get: function() { return this._aX; },
+      get: function() { return this._anchorX; },
       set: function(v) {
-        if (this._aX !== v) {
-          this._aX = v;
+        if (this._anchorX !== v) {
+          this._anchorX = v;
           ++this._id;
         }
       }
     });
 
     prop(this, "anchorY", {
-      get: function() { return this._aY; },
+      get: function() { return this._anchorY; },
       set: function(v) {
-        if (this._aY !== v) {
-          this._aY = v;
+        if (this._anchorY !== v) {
+          this._anchorY = v;
           ++this._id;
         }
       }

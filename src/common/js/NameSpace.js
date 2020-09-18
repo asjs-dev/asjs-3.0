@@ -1,1 +1,1 @@
-var ASJSUtils = {};
+_w.ASJSUtils = _w.ASJSUtils || {};

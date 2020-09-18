@@ -12,18 +12,18 @@ AGL.SimpleRenderer = createPrototypeClass(
 
     AGL.BaseRenderer.call(this, config);
 
-    this._texIdDat = new Float32Array(this._MAX_BATCH_ITEMS);
-    this._texIdBuf = this._createArBuf(this._texIdDat, "aTexId", 1, 1, 1, this._gl.FLOAT, 4);
+    this._textureIdData   = new Float32Array(this._MAX_BATCH_ITEMS);
+    this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, this._gl.FLOAT, 4);
   },
   function(_super) {
-    this._setBufDat = function(item, parent, textureMapIndex, matId, quadId) {
-      _super._setBufDat.call(this, item, parent, textureMapIndex, matId, quadId);
-      this._texIdDat[this._batchItems] = textureMapIndex;
+    this._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
+      _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
+      this._textureIdData[this._batchItems] = textureMapIndex;
     }
 
-    this._bindBufs = function() {
-      _super._bindBufs.call(this);
-      this._bindArBuf(this._texIdBuf, this._texIdDat);
+    this._bindBuffers = function() {
+      _super._bindBuffers.call(this);
+      this._bindArrayBuffer(this._textureIdBuffer, this._textureIdData);
     }
   }
 );

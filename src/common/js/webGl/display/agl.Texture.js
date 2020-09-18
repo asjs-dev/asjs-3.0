@@ -24,17 +24,17 @@ AGL.Texture = createPrototypeClass(
 
     this.source = source;
 
-    this._srcWProp = "width";
-    this._srcHProp = "height";
+    this._sourceWidthProperty  = "width";
+    this._sourceHeightProperty = "height";
+    this._currentRenderTime    = -1;
     this._eventType;
-    this._curRndrId = -1;
   },
   function(_super) {
     get(this, "generateMipmap", function() { return this._generateMipmap; });
 
     get(this, "loaded", function() { return this._loaded; });
-    get(this, "width",  function() { return this._source[this._srcWProp]; });
-    get(this, "height", function() { return this._source[this._srcHProp]; });
+    get(this, "width",  function() { return this._source[this._sourceWidthProperty]; });
+    get(this, "height", function() { return this._source[this._sourceHeightProperty]; });
 
     prop(this, "source", {
       get: function() { return this._source; },
@@ -60,9 +60,9 @@ AGL.Texture = createPrototypeClass(
       }
     });
 
-    this.autoUpdate = function(renderId) {
-      var shouldUpdate = this._curRndrId < renderId;
-      this._curRndrId = renderId;
+    this.autoUpdate = function(renderTime) {
+      var shouldUpdate = this._currentRenderTime < renderTime;
+      this._currentRenderTime = renderTime;
       return shouldUpdate && (this.shouldUpdate || (this.isVideo && !this._source.paused));
     }
 
@@ -76,15 +76,15 @@ AGL.Texture = createPrototypeClass(
     }
 
     this._parseTextureSize = function() {
-      this._srcWProp = "naturalWidth";
-      this._srcHProp = "naturalHeight";
-      if (!this._source[this._srcWProp]) {
-        this._srcWProp = "videoWidth";
-        this._srcHProp = "videoHeight";
+      this._sourceWidthProperty = "naturalWidth";
+      this._sourceHeightProperty = "naturalHeight";
+      if (!this._source[this._sourceWidthProperty]) {
+        this._sourceWidthProperty = "videoWidth";
+        this._sourceHeightProperty = "videoHeight";
       }
-      if (!this._source[this._srcWProp]) {
-        this._srcWProp = "width";
-        this._srcHProp = "height";
+      if (!this._source[this._sourceWidthProperty]) {
+        this._sourceWidthProperty = "width";
+        this._sourceHeightProperty = "height";
       }
 
       this._generateMipmap = AGL.Utils.isPowerOf2(this.width) && AGL.Utils.isPowerOf2(this.height);

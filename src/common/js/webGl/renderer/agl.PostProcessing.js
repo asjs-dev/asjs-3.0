@@ -14,8 +14,6 @@ AGL.PostProcessing = createPrototypeClass(
     this.texture = null;
     this.filters = [];
 
-    this._rCount = 0;
-
     this._config = config;
 
     AGL.RendererHelper.init.call(this, config.canvas);
@@ -37,8 +35,8 @@ AGL.PostProcessing = createPrototypeClass(
 
     this._gl.useProgram(program);
 
-    var positionBuf = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuf);
+    var positionBuffer = this._gl.createBuffer();
+    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuffer);
     this._gl.bufferData(
       this._gl.ARRAY_BUFFER,
       new Float32Array([
@@ -65,12 +63,12 @@ AGL.PostProcessing = createPrototypeClass(
     this._gl.uniform1i(this._locations["uTex"],    0);
     this._gl.uniform1i(this._locations["uDspTex"], 2);
 
-    this._rsz();
+    this._resize();
   },
   function() {
     AGL.RendererHelper.createFunctionality.call(this);
 
-    this._rndr = function() {
+    this._render = function() {
       if (!this.texture.loaded) return;
       this._gl.clear(this._gl.COLOR_BUFFER_BIT);
 
@@ -78,7 +76,7 @@ AGL.PostProcessing = createPrototypeClass(
 
       this._gl.uniform1f(this._locations["uFlpY"], 1);
       this._gl.uniform1i(this._locations["uFtrT"], 0);
-      this._gl.uniform1f(this._locations["uTm"],   ++this._rCount);
+      this._gl.uniform1f(this._locations["uTm"],   (this._renderTime / 10000) % 10000);
 
       this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
 
@@ -92,7 +90,7 @@ AGL.PostProcessing = createPrototypeClass(
 
         filter.texture && filter.texture.loaded && AGL.Utils.useTexture(this._gl, 2, filter.texture);
 
-        filter.updateFramebuffer(this._gl, this._w, this._h);
+        filter.updateFramebuffer(this._gl, this._width, this._height);
 
         this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, filter.framebuffer);
 

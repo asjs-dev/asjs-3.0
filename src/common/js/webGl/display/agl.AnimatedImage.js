@@ -11,7 +11,7 @@ AGL.AnimatedImage = createPrototypeClass(
     this.frames      = [];
     this.isPlaying   = false;
 
-    this._ltsUpd = -1;
+    this._currentRenderTime = -1;
   },
   function(_super) {
     this.gotoAndStop = function(frame) {
@@ -38,9 +38,9 @@ AGL.AnimatedImage = createPrototypeClass(
 
     this.updateAnimation = function(renderTime) {
       if (this.isPlaying) {
-        var ellapsedTime = renderTime - this._ltsUpd;
+        var ellapsedTime = renderTime - this._currentRenderTime;
         if (ellapsedTime >= this.frameLength) {
-          this._ltsUpd = renderTime;
+          this._currentRenderTime = renderTime;
           this.frame += Math.floor(ellapsedTime / this.frameLength);
           this.frame >= this.frames.length && (this.frame = 0);
 

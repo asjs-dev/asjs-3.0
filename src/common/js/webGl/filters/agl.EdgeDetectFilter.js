@@ -7,7 +7,7 @@ AGL.EdgeDetectFilter = createPrototypeClass(
     AGL.AbstractFilter.call(this);
 
     this.type = AGL.AbstractFilter.CONVOLUTE_TYPE;
-    this._vals.set([
+    this._values.set([
       -1, -1, -1,
       -1,  8, -1,
       -1, -1, -1

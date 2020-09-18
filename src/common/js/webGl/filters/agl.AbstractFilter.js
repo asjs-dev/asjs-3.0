@@ -8,56 +8,56 @@ AGL.AbstractFilter = createPrototypeClass(
     this.type =
     this.subType = 0;
 
-    this._vals = new Float32Array(9);
+    this._values = new Float32Array(9);
 
-    this._w =
-    this._h = 0;
+    this._width =
+    this._height = 0;
 
     this._gl =
-    this._tex =
-    this._frmBuf = null;
+    this._framebufferTexture =
+    this._framebuffer = null;
   },
   function() {
-    get(this, "framebufferTexture", function() { return this._tex; });
-    get(this, "framebuffer",        function() { return this._frmBuf; });
-    get(this, "values",             function() { return this._vals; });
+    get(this, "framebufferTexture", function() { return this._framebufferTexture; });
+    get(this, "framebuffer",        function() { return this._framebuffer; });
+    get(this, "values",             function() { return this._values; });
 
     prop(this, "intensity", {
-      get: function() { return this._vals[0]; },
-      set: function(v) { this._vals[0] = v; },
+      get: function() { return this._values[0]; },
+      set: function(v) { this._values[0] = v; },
     });
 
     this.updateFramebuffer = function(gl, width, height) {
-      if (width > 0 && height > 0 && (!this._frmBuf || this._gl !== gl || this._w !== width || this._h !== height)) {
-        this._tex && this._gl.deleteTexture(this._tex);
-        this._frmBuf && this._gl.deleteFramebuffer(this._frmBuf);
+      if (width > 0 && height > 0 && (!this._framebuffer || this._gl !== gl || this._width !== width || this._height !== height)) {
+        this._framebufferTexture && this._gl.deleteTexture(this._framebufferTexture);
+        this._framebuffer && this._gl.deleteFramebuffer(this._framebuffer);
 
-        this._w = width;
-        this._h = height;
+        this._width = width;
+        this._height = height;
         this._gl = gl;
 
-        this._tex = gl.createTexture();
+        this._framebufferTexture = gl.createTexture();
         this.bindTexture(gl, 0);
 
         gl.texImage2D(
           gl.TEXTURE_2D,
           0,
           gl.RGBA,
-          this._w,
-          this._h,
+          this._width,
+          this._height,
           0,
           gl.RGBA,
           gl.UNSIGNED_BYTE,
           null
         );
 
-        this._frmBuf = gl.createFramebuffer();
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this._frmBuf);
+        this._framebuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebuffer);
         gl.framebufferTexture2D(
           gl.FRAMEBUFFER,
           gl.COLOR_ATTACHMENT0,
           gl.TEXTURE_2D,
-          this._tex,
+          this._framebufferTexture,
           0
         );
       }
@@ -65,8 +65,8 @@ AGL.AbstractFilter = createPrototypeClass(
 
     this.bindTexture = function(gl, index) {
       gl.activeTexture(gl.TEXTURE0 + index);
-      gl.bindTexture(gl.TEXTURE_2D, this._tex);
-      
+      gl.bindTexture(gl.TEXTURE_2D, this._framebufferTexture);
+
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);

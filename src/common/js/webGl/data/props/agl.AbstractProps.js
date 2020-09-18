@@ -5,12 +5,12 @@ AGL.AbstractProps = createPrototypeClass(
   function AbstractProps() {
     BasePrototypeClass.call(this);
     this._id = -1;
-    this._curId = -1;
+    this._currentUpdateId = -1;
   },
   function() {
     this.isUpdated = function() {
-      var isUpdated = this._curId < this._id;
-      this._curId = this._id;
+      var isUpdated = this._currentUpdateId < this._id;
+      this._currentUpdateId = this._id;
       return isUpdated;
     }
   }

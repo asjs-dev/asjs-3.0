@@ -16,7 +16,7 @@ AGL.Light = createPrototypeClass(
 
     this._on = false;
 
-    this._curWorldPropsId = -1;
+    this._currentWorldPropsUpdateId = -1;
 
     this._id     = id;
     this._duoId  = id * 2;
@@ -43,9 +43,9 @@ AGL.Light = createPrototypeClass(
     this._updateProps = function(parent) {
       var props = this.props;
 
-      if (this._curWorldPropsId < parent.worldPropsUpdateId || props.isUpdated()) {
+      if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || props.isUpdated()) {
         if (this.on) {
-          this._curWorldPropsId = parent.worldPropsUpdateId;
+          this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
 
           this._transformItem(props, parent);
 

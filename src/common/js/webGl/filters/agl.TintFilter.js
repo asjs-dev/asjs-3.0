@@ -12,18 +12,18 @@ AGL.TintFilter = createPrototypeClass(
   },
   function() {
     prop(this, "r", {
-      get: function() { return this._vals[0]; },
-      set: function(v) { this._vals[0] = v; }
+      get: function() { return this._values[0]; },
+      set: function(v) { this._values[0] = v; }
     });
 
     prop(this, "g", {
-      get: function() { return this._vals[1]; },
-      set: function(v) { this._vals[1] = v; }
+      get: function() { return this._values[1]; },
+      set: function(v) { this._values[1] = v; }
     });
 
     prop(this, "b", {
-      get: function() { return this._vals[2]; },
-      set: function(v) { this._vals[2] = v; }
+      get: function() { return this._values[2]; },
+      set: function(v) { this._values[2] = v; }
     });
   }
 );

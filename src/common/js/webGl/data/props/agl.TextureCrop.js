@@ -5,17 +5,16 @@ AGL.TextureCrop = createPrototypeClass(
   AGL.AbstractProps,
   function TextureCrop() {
     AGL.AbstractProps.call(this);
-    this._w = 1;
-    this._h = 1;
-    this._v = [0, 0, 1, 1];
-    this.items = this._v;
+    this._width = 1;
+    this._height = 1;
+    this.items = [0, 0, 1, 1];
   },
   function() {
     prop(this, "x", {
-      get: function() { return this._v[0]; },
+      get: function() { return this.items[0]; },
       set: function(v) {
-        if (this._v[0] !== v) {
-          this._v[0] = v;
+        if (this.items[0] !== v) {
+          this.items[0] = v;
           this._calcWidth();
           ++this._id;
         }
@@ -23,10 +22,10 @@ AGL.TextureCrop = createPrototypeClass(
     });
 
     prop(this, "y", {
-      get: function() { return this._v[1]; },
+      get: function() { return this.items[1]; },
       set: function(v) {
-        if (this._v[1] !== v) {
-          this._v[1] = v;
+        if (this.items[1] !== v) {
+          this.items[1] = v;
           this._calcHeight();
           ++this._id;
         }
@@ -34,10 +33,10 @@ AGL.TextureCrop = createPrototypeClass(
     });
 
     prop(this, "width", {
-      get: function() { return this._w; },
+      get: function() { return this._width; },
       set: function(v) {
-        if (this._w !== v) {
-          this._w = v;
+        if (this._width !== v) {
+          this._width = v;
           this._calcWidth();
           ++this._id;
         }
@@ -45,10 +44,10 @@ AGL.TextureCrop = createPrototypeClass(
     });
 
     prop(this, "height", {
-      get: function() { return this._h; },
+      get: function() { return this._height; },
       set: function(v) {
-        if (this._h !== v) {
-          this._h = v;
+        if (this._height !== v) {
+          this._height = v;
           this._calcHeight();
           ++this._id;
         }
@@ -56,11 +55,11 @@ AGL.TextureCrop = createPrototypeClass(
     });
 
     this._calcWidth = function() {
-      this._v[2] = this._w - this._v[0];
+      this.items[2] = this._width - this.items[0];
     }
 
     this._calcHeight = function() {
-      this._v[3] = this._h - this._v[1];
+      this.items[3] = this._height - this.items[1];
     }
   }
 );

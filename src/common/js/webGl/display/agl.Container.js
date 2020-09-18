@@ -8,10 +8,10 @@ AGL.Container = createPrototypeClass(
 
     cnst(this, "type", AGL.Container.TYPE);
 
-    this._curWrldPrpsId = -1;
-    this._curWrldColId  = -1;
+    this._currentWorldPropsUpdateId = -1;
+    this._currentWorldColorUpdateId = -1;
 
-    this._chldrn = [];
+    this._children = [];
 
     this.worldPropsUpdateId =
     this.worldColorUpdateId = 0;
@@ -19,8 +19,8 @@ AGL.Container = createPrototypeClass(
     this.colorCache = [1, 1, 1, 1];
   },
   function() {
-    get(this, "children",    function() { return this._chldrn; });
-    get(this, "numChildren", function() { return this._chldrn.length; });
+    get(this, "children",    function() { return this._children; });
+    get(this, "numChildren", function() { return this._children.length; });
 
     this.clear = function() {
       while (this.numChildren) this.removeChildAt(0);
@@ -37,7 +37,7 @@ AGL.Container = createPrototypeClass(
     this.addChildAt = function(child, index) {
       if (!child) return null;
       if (child.parent) child.parent.removeChild(child);
-      this._chldrn.push(child);
+      this._children.push(child);
       this.setChildIndex(child, index);
       child.parent = this;
       return child;
@@ -55,18 +55,18 @@ AGL.Container = createPrototypeClass(
     }
 
     this.getChildAt = function(index) {
-      return this._chldrn[index];
+      return this._children[index];
     }
 
     this.setChildIndex = function(child, index) {
       if (!child || index < 0) return null;
-      this._chldrn.remove(child);
-      this._chldrn.splice(index, 0, child);
+      this._children.remove(child);
+      this._children.splice(index, 0, child);
       return child;
     }
 
     this.getChildIndex = function(child) {
-      return this._chldrn.indexOf(child);
+      return this._children.indexOf(child);
     }
 
     this.swapChildren = function(childA, childB) {
@@ -86,8 +86,8 @@ AGL.Container = createPrototypeClass(
     this._updateProps = function(parent) {
       var props = this.props;
 
-      if (this._curWrldPrpsId < parent.worldPropsUpdateId || props.isUpdated()) {
-        this._curWrldPrpsId = parent.worldPropsUpdateId;
+      if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || props.isUpdated()) {
+        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
         this.worldPropsUpdateId++;
 
         this._transformItem(props, parent);
@@ -97,8 +97,8 @@ AGL.Container = createPrototypeClass(
     this._updateColor = function(parent) {
       var color = this.color;
 
-      if (this._curWrldColId < parent.worldColorUpdateId || color.isUpdated()) {
-        this._curWrldColId = parent.worldColorUpdateId;
+      if (this._currentWorldColorUpdateId < parent.worldColorUpdateId || color.isUpdated()) {
+        this._currentWorldColorUpdateId = parent.worldColorUpdateId;
         this.worldColorUpdateId++;
 
         var parentColor = parent.colorCache;

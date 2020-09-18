@@ -7,7 +7,7 @@ AGL.SharpenFilter = createPrototypeClass(
     AGL.AbstractFilter.call(this);
 
     this.type = AGL.AbstractFilter.CONVOLUTE_TYPE;
-    this._vals.set([
+    this._values.set([
       -1,  -1,  -1,
       -1,  16,  -1,
       -1,  -1,  -1

@@ -12,13 +12,13 @@ AGL.BlurFilter = createPrototypeClass(
   },
   function() {
     prop(this, "blurX", {
-      get: function() { return this._vals[0]; },
-      set: function(v) { this._vals[0] = v; },
+      get: function() { return this._values[0]; },
+      set: function(v) { this._values[0] = v; },
     });
 
     prop(this, "blurY", {
-      get: function() { return this._vals[1]; },
-      set: function(v) { this._vals[1] = v; },
+      get: function() { return this._values[1]; },
+      set: function(v) { this._values[1] = v; },
     });
   }
 );

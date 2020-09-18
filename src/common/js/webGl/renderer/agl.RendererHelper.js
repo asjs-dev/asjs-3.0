@@ -3,13 +3,15 @@ require("../utils/agl.Utils.js");
 
 AGL.RendererHelper = {
   "init": function(canvas) {
-    this._w  = 0;
-    this._h = 0;
+    this._width  =
+    this._height = 0;
 
-    this._resUpdId = 0;
-    this._curResUpdId = -1;
+    this._resizeUpdateId        = 0;
+    this._currentResizeUpdateId = -1;
 
-    this._cnvs = canvas;
+    this._canvas = canvas;
+
+    this._renderTime = 0;
 
     this._context = null;
 
@@ -20,15 +22,15 @@ AGL.RendererHelper = {
     this._gl.enable(this._gl.BLEND);
   },
   "createFunctionality": function(canvas) {
-    get(this, "canvas", function() { return this._cnvs; });
+    get(this, "canvas", function() { return this._canvas; });
 
     get(this, "context", function() {
       if (!this._context || (this._context.isContextLost && this._context.isContextLost())) {
-        this._cnvs.addEventListener("webglcontextlost", function(event) { console.log(event); });
-        this._cnvs.addEventListener("webglcontextrestored", function(event) { console.log(event); });
-        this._cnvs.addEventListener("webglcontextcreationerror", function(event) { console.log(event); });
+        this._canvas.addEventListener("webglcontextlost", function(event) { console.log(event); });
+        this._canvas.addEventListener("webglcontextrestored", function(event) { console.log(event); });
+        this._canvas.addEventListener("webglcontextcreationerror", function(event) { console.log(event); });
 
-        this._context = this._cnvs.getContext(
+        this._context = this._canvas.getContext(
           "webgl2",
           this._config.contextAttributes
         );
@@ -37,21 +39,21 @@ AGL.RendererHelper = {
     });
 
     prop(this, "width", {
-      get: function() { return this._w; },
+      get: function() { return this._width; },
       set: function(v) {
-        if (this._w !== v) {
-          this._w = v;
-          this._resUpdId++;
+        if (this._width !== v) {
+          this._width = v;
+          this._resizeUpdateId++;
         }
       }
     });
 
     prop(this, "height", {
-      get: function() { return this._h; },
+      get: function() { return this._height; },
       set: function(v) {
-        if (this._h !== v) {
-          this._h = v;
-          this._resUpdId++;
+        if (this._height !== v) {
+          this._height = v;
+          this._resizeUpdateId++;
         }
       }
     });
@@ -62,24 +64,29 @@ AGL.RendererHelper = {
     }
 
     this.render = function() {
-      this._rsz();
-      this._rndr();
+      this._preRender();
+      this._render();
     }
 
-    this._rndr = function() {}
+    this._preRender = function() {
+      this._renderTime = Date.now();
+      this._resize();
+    }
 
-    this._rszCanvas = function() {
-      if (this._resUpdId === this._curResUpdId) return false;
-      this._curResUpdId = this._resUpdId;
+    this._render = function() {}
 
-      this._cnvs.width  = this._w;
-      this._cnvs.height = this._h;
+    this._resizeCanvas = function() {
+      if (this._resizeUpdateId === this._currentResizeUpdateId) return false;
+      this._currentResizeUpdateId = this._resizeUpdateId;
+
+      this._canvas.width  = this._width;
+      this._canvas.height = this._height;
 
       this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
 
       return true;
     }
 
-    this._rsz = this._rszCanvas;
+    this._resize = this._resizeCanvas;
   }
 }
