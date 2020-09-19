@@ -5,9 +5,11 @@ AGL.TextureCrop = createPrototypeClass(
   AGL.AbstractProps,
   function TextureCrop() {
     AGL.AbstractProps.call(this);
-    this._width = 1;
-    this._height = 1;
+
     this.items = [0, 0, 1, 1];
+
+    this._width  =
+    this._height = 1;
   },
   function() {
     prop(this, "x", {

@@ -2,8 +2,8 @@ require("./createClass.js");
 require("./destructObject.js");
 require("./emptyFunction.js");
 
-c0(_w, "BaseClass", Object, function(_scope, _super) {
-  _scope.new       = ef;
+c0(this, "BaseClass", Object, function(_scope, _super) {
+  _scope.new       = empfu;
   _scope.protected = {};
   _scope.prot      = _scope.protected;
   _scope.destruct  = function() {

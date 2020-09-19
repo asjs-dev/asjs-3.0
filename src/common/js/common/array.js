@@ -1,21 +1,21 @@
-Array.prototype.addUnique = function(item) {
-  this.indexOf(item) == -1 && this.push(item);
+var addUniqueToArray = function(array, item) {
+  array.indexOf(item) == -1 && array.push(item);
 }
-Array.prototype.has = function(item) {
-  return this.indexOf(item) > -1;
+var inArray = function(array, item) {
+  return array.indexOf(item) > -1;
 }
-Array.prototype.remove = function(item) {
-  var index = this.indexOf(item);
-  index > -1 && this.splice(index, 1);
+var removeFromArray = function(array, item) {
+  var index = array.indexOf(item);
+  index > -1 && array.splice(index, 1);
 }
-Array.prototype.clone = function() {
-  return this.slice(0);
+var cloneArray = function(array) {
+  return array.slice(0);
 }
-Array.prototype.equal = function(arr) {
-  if (!arr || arr.length !== this.length) return false;
+var areArraysEqual = function(arrayA, arrayB) {
+  if (!arrayA || arrayA.length !== arrayB.length) return false;
 
-  for (var i = 0; i < this.length; i++) {
-    if (this[i] !== arr[i]) return false;
+  for (var i = 0; i < arrayB.length; i++) {
+    if (arrayB[i] !== arr[i]) return false;
   }
 
   return true;

@@ -7,7 +7,7 @@ AGL.BrightnessContrastFilter = createPrototypeClass(
     AGL.AbstractColorFilter.call(this, 9);
 
     this.brightness = brightness;
-    this.contrast = contrast;
+    this.contrast   = contrast;
   },
   function() {
     prop(this, "brightness", {

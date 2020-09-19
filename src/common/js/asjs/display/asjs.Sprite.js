@@ -79,7 +79,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.removeChild = function(child) {
     if (!child || !_scope.contains(child) || _locked) return null;
-    _children.remove(child);
+    removeFromArray(_children, child);
     _scope.el.removeChild(child.el);
     child.parent = null;
     return child;
@@ -95,7 +95,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.setChildIndex = function(child, index) {
     if (!child || index < 0 || _locked) return null;
-    _children.remove(child);
+    removeFromArray(_children, child);
     var afterChild = _scope.getChildAt(index);
     afterChild && _scope.el.insertBefore(child.el, afterChild.el);
     _children.splice(index, 0, child);

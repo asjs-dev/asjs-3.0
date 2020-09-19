@@ -26,7 +26,7 @@ createClass(ASJS, "Keyboard", BaseClass, function(_scope, _super) {
   };
 
   _scope.addKeyListener = function(target, downCallback, upCallback) {
-    if (!target || _targets.has(target)) return;
+    if (!target || inArray(_targets, target)) return;
     _targets.push(target);
 
     _downCallback = downCallback;
@@ -41,8 +41,8 @@ createClass(ASJS, "Keyboard", BaseClass, function(_scope, _super) {
   };
 
   _scope.removeKeyListener = function(target) {
-    if (!_targets.has(target)) return;
-    _targets.remove(target);
+    if (!inArray(_targets, target)) return;
+    removeFromArray(_targets, target);
 
     target.removeEventListener(ASJS.KeyboardEvent.KEY_DOWN, onKeyDown);
     target.removeEventListener(ASJS.KeyboardEvent.KEY_UP,   onKeyUp);

@@ -18,7 +18,7 @@ createSingletonClass(ASJS, "Head", BaseClass, function(_scope) {
   _scope.removeChild = function(child) {
     if (!child) return null;
     _el.removeChild(child.el);
-    _children.remove(child);
+    removeFromArray(_children, child);
     child.parent = null;
     return child;
   }

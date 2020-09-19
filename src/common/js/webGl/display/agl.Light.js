@@ -14,6 +14,12 @@ AGL.Light = createPrototypeClass(
   ) {
     AGL.Item.call(this);
 
+    this.effect = new AGL.LightEffectProps();
+
+    this.effectCache = this.effect.items;
+
+    this.color.a = 0;
+
     this._on = false;
 
     this._currentWorldPropsUpdateId = -1;
@@ -27,12 +33,6 @@ AGL.Light = createPrototypeClass(
     this._lightColors    = lightColors;
     this._lightEffects   = lightEffects;
     this._lightZIndices  = lightZIndices;
-
-    this.effect = new AGL.LightEffectProps();
-
-    this.effectCache = this.effect.items;
-
-    this.color.a = 0;
   },
   function() {
     prop(this, "on", {

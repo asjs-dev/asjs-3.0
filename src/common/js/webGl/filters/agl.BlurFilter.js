@@ -6,7 +6,7 @@ AGL.BlurFilter = createPrototypeClass(
   function BlurFilter(blurX, blurY) {
     AGL.AbstractFilter.call(this);
 
-    this.type = 3;
+    this.type  = 3;
     this.blurX = blurX;
     this.blurY = blurY;
   },

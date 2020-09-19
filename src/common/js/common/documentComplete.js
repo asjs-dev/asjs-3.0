@@ -1,6 +1,6 @@
 require("./minifyGlobal.js");
 
 var isDocumentComplete = function() {
-  return _d.readyState === "complete";
+  return document.readyState === "complete";
 }
 var idc = isDocumentComplete;

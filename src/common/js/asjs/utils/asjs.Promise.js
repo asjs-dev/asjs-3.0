@@ -28,7 +28,7 @@ createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
   }
 
   _scope.then = function(f) {
-    if (!_resolveFunction.has(f)) {
+    if (!inArray(_resolveFunction, f)) {
       _resolveFunction.push(f);
       callResolve();
     }
@@ -36,7 +36,7 @@ createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
   }
 
   _scope.catch = function(f) {
-    if (!_rejectFunction.has(f)) {
+    if (!inArray(_rejectFunction, f)) {
       _rejectFunction.push(f);
       callReject();
     }
@@ -44,7 +44,7 @@ createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
   }
 
   _scope.finally = function(f) {
-    if (!_finallyFunction.has(f)) {
+    if (!inArray(_finallyFunction, f)) {
       _finallyFunction.push(f);
       callFinally();
     }

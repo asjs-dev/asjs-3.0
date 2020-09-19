@@ -11,7 +11,7 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
 
     if (!_scope.hasEventListener(e.type)) return;
 
-    map(_handlers[e.type].clone(), function(handlerIndex, handlerItem) {
+    map(cloneArray(_handlers[e.type]), function(handlerIndex, handlerItem) {
       handlerItem(e);
     });
   }
@@ -43,7 +43,7 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
         while (i--) {
           var handlerItem = handlers[i];
           if (!handler || handlerItem === handler) {
-            _handlers[typeItem].remove(handlerItem);
+            removeFromArray(_handlers[typeItem], handlerItem);
             _scope.el && _scope.el.removeEventListener(typeItem, handlerItem, true);
           }
         }
@@ -61,7 +61,7 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
         t !== "" &&
         _handlers[t] &&
         _handlers[t].length > 0 &&
-        (!handler || _handlers[t].has(handler))
+        (!handler || inArray(_handlers[t], handler))
       ) return true;
     }
     return false;

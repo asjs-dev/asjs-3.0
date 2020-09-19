@@ -3,13 +3,13 @@ createSingletonClass(ASJS, "NotificationHandler", BaseClass, function(_scope) {
 
   _scope.add = function(type, callback) {
     if (!type || !callback) return;
-    if (_handlers[type] && _handlers[type].has(callback)) return;
+    if (_handlers[type] && inArray(_handlers[type], callback)) return;
     if (!_handlers[type]) _handlers[type] = [];
     _handlers[type].push(callback);
   }
 
   _scope.remove = function(type, callback) {
-    type && callback && _handlers[type] && _handlers[type].remove(callback);
+    type && callback && _handlers[type] && removeFromArray(_handlers[type], callback);
   }
 
   _scope.sendNotification = function(type, data) {

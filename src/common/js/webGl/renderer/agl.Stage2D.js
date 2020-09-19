@@ -31,7 +31,7 @@ AGL.Stage2D = createPrototypeClass(
     this._DEFAULT_DUO  = [0, 0];
     this._DEFAULT_QUAD = [0, 0, 0, 0];
 
-    this._widthHalf  = 0;
+    this._widthHalf  =
     this._heightHalf = 0;
 
     this._lights = [];

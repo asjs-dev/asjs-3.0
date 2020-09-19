@@ -6,32 +6,32 @@ AGL.ItemProps = createPrototypeClass(
   function ItemProps() {
     AGL.AbstractProps.call(this);
 
-    this._scaledWidthUpdateId        = 0;
-    this._currentScaledWidthUpdateId = -1;
+    this._scaledWidthUpdateId         =
+    this._currentScaledWidthUpdateId  =
 
-    this._scaledHeightUpdateId        = 0;
-    this._currentScaledHeightUpdateId = -1;
+    this._scaledHeightUpdateId        =
+    this._currentScaledHeightUpdateId =
 
-    this._rotationUpdateId           = 0;
-    this._currentSinRotationUpdateId = -1;
-    this._currentCosRotationUpdateId = -1;
+    this._rotationUpdateId            =
+    this._currentSinRotationUpdateId  =
+    this._currentCosRotationUpdateId  = 0;
 
-    this._scaledWidth  = 1;
+    this._scaledWidth  =
     this._scaledHeight = 1;
 
     this._sinRotation = 0;
     this._cosRotation = 1;
 
-    this._x        = 0;
-    this._y        = 0;
-    this._zIndex   = 0;
-    this._rotation = 0;
-    this._scaleX   = 1;
-    this._scaleY   = 1;
-    this._width   = 1;
-    this._height   = 1;
-    this._anchorX  = 0;
+    this._x        =
+    this._y        =
+    this._zIndex   =
+    this._rotation =
+    this._anchorX  =
     this._anchorY  = 0;
+    this._scaleX   =
+    this._scaleY   =
+    this._width    =
+    this._height   = 1;
   },
   function() {
     get(this, "scaledWidth", function() {

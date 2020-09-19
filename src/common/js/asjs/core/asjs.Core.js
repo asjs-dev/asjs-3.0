@@ -34,8 +34,6 @@ cnst(this, "ASJS", (function() {
   return _scope;
 })());
 
-var stage;
-
 c1(ASJS, "Importer", Object, function(_scope) {
   var priv = {};
 

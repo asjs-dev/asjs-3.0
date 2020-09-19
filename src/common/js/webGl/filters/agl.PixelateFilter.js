@@ -6,7 +6,7 @@ AGL.PixelateFilter = createPrototypeClass(
   function PixelateFilter(intensity) {
     AGL.AbstractFilter.call(this);
 
-    this.type = 4;
+    this.type      = 4;
     this.intensity = intensity;
   }
 );

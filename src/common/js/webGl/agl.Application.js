@@ -1,7 +1,6 @@
 require("../common/useStrict.js");
 require("../common/array.js");
-require("../common/minifyGlobal.js");
-require("../common/minifyListeners.js");
+require("../common/constant.js");
 require("../common/property.js");
 require("../common/map.js");
 require("../common/emptyFunction.js");

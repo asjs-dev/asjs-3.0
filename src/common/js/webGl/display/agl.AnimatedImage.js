@@ -11,7 +11,7 @@ AGL.AnimatedImage = createPrototypeClass(
     this.frames      = [];
     this.isPlaying   = false;
 
-    this._currentRenderTime = -1;
+    this._currentRenderTime = 0;
   },
   function(_super) {
     this.gotoAndStop = function(frame) {

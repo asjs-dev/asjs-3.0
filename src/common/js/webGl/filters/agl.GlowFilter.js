@@ -6,7 +6,7 @@ AGL.GlowFilter = createPrototypeClass(
   function GlowFilter(intensityX, intensityY) {
     AGL.AbstractFilter.call(this);
 
-    this.type = 5;
+    this.type       = 5;
     this.intensityX = intensityX;
     this.intensityY = intensityY;
   },

@@ -6,7 +6,7 @@ AGL.AbstractColorFilter = createPrototypeClass(
   function AbstractColorFilter(subType) {
     AGL.AbstractFilter.call(this);
 
-    this.type = 2;
+    this.type    = 2;
     this.subType = subType;
   }
 );

@@ -8,19 +8,18 @@ AGL.Container = createPrototypeClass(
 
     cnst(this, "type", AGL.Container.TYPE);
 
-    this._currentWorldPropsUpdateId = -1;
-    this._currentWorldColorUpdateId = -1;
-
-    this._children = [];
+    this.children = [];
 
     this.worldPropsUpdateId =
     this.worldColorUpdateId = 0;
 
     this.colorCache = [1, 1, 1, 1];
+
+    this._currentWorldPropsUpdateId =
+    this._currentWorldColorUpdateId = 0;
   },
   function() {
-    get(this, "children",    function() { return this._children; });
-    get(this, "numChildren", function() { return this._children.length; });
+    get(this, "numChildren", function() { return this.children.length; });
 
     this.clear = function() {
       while (this.numChildren) this.removeChildAt(0);
@@ -37,7 +36,7 @@ AGL.Container = createPrototypeClass(
     this.addChildAt = function(child, index) {
       if (!child) return null;
       if (child.parent) child.parent.removeChild(child);
-      this._children.push(child);
+      this.children.push(child);
       this.setChildIndex(child, index);
       child.parent = this;
       return child;
@@ -45,7 +44,7 @@ AGL.Container = createPrototypeClass(
 
     this.removeChild = function(child) {
       if (!child || !this.contains(child)) return null;
-      _chldrn.remove(child);
+      removeFromArray(this.children, child);
       child.parent = null;
       return child;
     }
@@ -55,18 +54,18 @@ AGL.Container = createPrototypeClass(
     }
 
     this.getChildAt = function(index) {
-      return this._children[index];
+      return this.children[index];
     }
 
     this.setChildIndex = function(child, index) {
       if (!child || index < 0) return null;
-      this._children.remove(child);
-      this._children.splice(index, 0, child);
+      removeFromArray(this.children, child);
+      this.children.splice(index, 0, child);
       return child;
     }
 
     this.getChildIndex = function(child) {
-      return this._children.indexOf(child);
+      return this.children.indexOf(child);
     }
 
     this.swapChildren = function(childA, childB) {

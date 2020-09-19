@@ -5,6 +5,7 @@ AGL.LightEffectProps = createPrototypeClass(
   AGL.AbstractProps,
   function LightEffectProps() {
     AGL.AbstractProps.call(this);
+    
     this.items = [0, 0, 2, 2];
   },
   function() {

@@ -6,8 +6,8 @@ AGL.RendererHelper = {
     this._width  =
     this._height = 0;
 
-    this._resizeUpdateId        = 0;
-    this._currentResizeUpdateId = -1;
+    this._resizeUpdateId        =
+    this._currentResizeUpdateId = 0;
 
     this._canvas = canvas;
 

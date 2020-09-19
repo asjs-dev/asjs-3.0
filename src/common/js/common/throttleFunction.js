@@ -6,4 +6,4 @@ var throttleFunction = function(callback) {
     timeout = setTimeout(callback.bind(this, args), 1);
   }
 }
-var tf = throttleFunction;
+var tfu = throttleFunction;

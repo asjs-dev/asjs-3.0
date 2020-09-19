@@ -5,7 +5,7 @@ AGL.AbstractFilter = createPrototypeClass(
   function AbstractFilter() {
     BasePrototypeClass.call(this);
 
-    this.type =
+    this.type    =
     this.subType = 0;
 
     this._values = new Float32Array(9);

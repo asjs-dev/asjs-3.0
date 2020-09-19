@@ -21,7 +21,7 @@ createSingletonClass(ASJS, "Cycler", BaseClass, function(_scope) {
   };
 
   _scope.removeCallback = function(callback) {
-    _callbacks.remove(callback);
+    removeFromArray(_callbacks, callback);
   };
 
   _scope.getCallbackId = function(callback) {
@@ -29,7 +29,7 @@ createSingletonClass(ASJS, "Cycler", BaseClass, function(_scope) {
   }
 
   _scope.callbackExists = function(callback) {
-    return _callbacks.has(callback);
+    return inArray(_callbacks, callback);
   };
 
   _scope.start = function() {

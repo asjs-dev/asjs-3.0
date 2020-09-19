@@ -5,6 +5,7 @@ AGL.ColorProps = createPrototypeClass(
   AGL.AbstractProps,
   function ColorProps() {
     AGL.AbstractProps.call(this);
+
     this.items = [1, 1, 1, 1];
   },
   function() {

@@ -1,28 +1,24 @@
 require("../NameSpace.js");
 
 (function() {
-  var oneMinusSrcAlpha = "ONE_MINUS_SRC_ALPHA";
-  var oneMinusSrcColor = "ONE_MINUS_SRC_COLOR";
-  var srcAlpha         = "SRC_ALPHA";
-  var dstAlpha         = "DST_ALPHA";
-  var one              = "ONE";
-
   function createBlendMode(funcs) {
     return {
-      "funcName": funcs.length === 2
-        ? "blendFunc"
-        : "blendFuncSeparate",
+      "funcName": "blendFunc" + (
+        funcs.length === 2
+        ? ""
+        : "Separate"
+      ),
       "funcs": funcs
     };
   }
 
   AGL.BlendModes = {
-    "NORMAL"  : createBlendMode([srcAlpha, oneMinusSrcAlpha, one, oneMinusSrcAlpha]),
-    "ADD"     : createBlendMode([srcAlpha, dstAlpha, one, dstAlpha]),
-    "MULTIPLY": createBlendMode(["DST_COLOR", oneMinusSrcAlpha]),
-    "SCREEN"  : createBlendMode([srcAlpha, oneMinusSrcColor, one, oneMinusSrcColor]),
-    "OVERLAY" : createBlendMode([one, oneMinusSrcAlpha])
+    "NORMAL"  : createBlendMode(["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA", "ONE", "ONE_MINUS_SRC_ALPHA"]),
+    "ADD"     : createBlendMode(["SRC_ALPHA", "DST_ALPHA",           "ONE", "DST_ALPHA"]),
+    "MULTIPLY": createBlendMode(["DST_COLOR", "ONE_MINUS_SRC_ALPHA"]),
+    "SCREEN"  : createBlendMode(["SRC_ALPHA", "ONE_MINUS_SRC_COLOR", "ONE", "ONE_MINUS_SRC_COLOR"]),
+    "OVERLAY" : createBlendMode(["ONE",       "ONE_MINUS_SRC_ALPHA"])
   };
-  
+
   Object.freeze(AGL.BlendModes);
 })();

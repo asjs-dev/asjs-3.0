@@ -1,2 +1,2 @@
 var emptyFunction = function() {}
-var ef = emptyFunction;
+var empfu = emptyFunction;
