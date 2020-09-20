@@ -2,11 +2,11 @@ require("../display/asjs.Head.js");
 require("../display/asjs.Tag.js");
 require("./asjs.Loader.js");
 
-createClass(ASJS, "StyleLoader", ASJS.Loader, function(_scope, _super) {
+helpers.createClass(ASJS, "StyleLoader", ASJS.Loader, function(_scope, _super) {
   var _head = ASJS.Head.instance;
   var _style;
 
-  override(_scope, _super, "content");
+  helpers.override(_scope, _super, "content");
   _scope.useStyle = function() {
     if (_style || _super.content === "") return;
     _style = new ASJS.Tag("style");
@@ -15,14 +15,14 @@ createClass(ASJS, "StyleLoader", ASJS.Loader, function(_scope, _super) {
     _head.addChild(_style);
   }
 
-  override(_scope, _super, "unload");
+  helpers.override(_scope, _super, "unload");
   _scope.unload = function() {
     _style && _head.contains(_style) && _head.removeChild(_style);
     _style = null;
     _super.unload();
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _head  =
     _style = null;

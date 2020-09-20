@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.AbstractFilter.js");
 
-AGL.AbstractColorFilter = createPrototypeClass(
+AGL.AbstractColorFilter = helpers.createPrototypeClass(
   AGL.AbstractFilter,
   function AbstractColorFilter(subType) {
     AGL.AbstractFilter.call(this);

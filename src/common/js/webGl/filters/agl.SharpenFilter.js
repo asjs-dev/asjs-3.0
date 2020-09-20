@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.AbstractFilter.js");
 
-AGL.SharpenFilter = createPrototypeClass(
+AGL.SharpenFilter = helpers.createPrototypeClass(
   AGL.AbstractFilter,
   function SharpenFilter() {
     AGL.AbstractFilter.call(this);

@@ -1,12 +1,12 @@
 require("./asjs.AbstractFilter.js");
 
-createClass(ASJS, "DropShadowFilter", ASJS.AbstractFilter, function(_scope) {
+helpers.createClass(ASJS, "DropShadowFilter", ASJS.AbstractFilter, function(_scope) {
   _scope.new = function(h, v, blur, spread, color) {
-    _scope.h      = valueOrDefault(h, 0);
-    _scope.v      = valueOrDefault(v, 0);
-    _scope.blur   = valueOrDefault(blur, 0);
-    _scope.spread = valueOrDefault(spread, 0);
-    _scope.color  = valueOrDefault(color, ASJS.Color.create());
+    _scope.h      = helpers.valueOrDefault(h, 0);
+    _scope.v      = helpers.valueOrDefault(v, 0);
+    _scope.blur   = helpers.valueOrDefault(blur, 0);
+    _scope.spread = helpers.valueOrDefault(spread, 0);
+    _scope.color  = helpers.valueOrDefault(color, ASJS.Color.create());
   }
 
   _scope.execute = function() {

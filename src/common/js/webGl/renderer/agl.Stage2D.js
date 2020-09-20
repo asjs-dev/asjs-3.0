@@ -3,7 +3,7 @@ require("./agl.BaseRenderer.js");
 require("../display/agl.Item.js");
 require("../utils/agl.Matrix3.js");
 
-AGL.Stage2D = createPrototypeClass(
+AGL.Stage2D = helpers.createPrototypeClass(
   AGL.BaseRenderer,
   function Stage2DRenderer(config) {
     config.vertexShader   = config.vertexShader   || AGL.Stage2D.createVertexShader;
@@ -43,7 +43,7 @@ AGL.Stage2D = createPrototypeClass(
     this._tempMatrix        = new Float32Array(6);
     this._tempInverseMatrix = new Float32Array(6);
 
-    this._collectLightsFunc = emptyFunction;
+    this._collectLightsFunc = helpers.emptyFunction;
     if (this._config.isLightEnabled) {
       this._lightPositions = new Float32Array(this._config.lightNum * 2);
       this._lightVolumes   = new Float32Array(this._config.lightNum * 2);
@@ -76,14 +76,14 @@ AGL.Stage2D = createPrototypeClass(
 
     this._setMaskDataFunc = this._config.isMaskEnabled
       ? this._setMaskData.bind(this)
-      : emptyFunction;
+      : helpers.emptyFunction;
 
     this._zIndexCounter = 0;
 
     this._resize();
   },
   function(_super) {
-    get(this, "picked", function() { return this._picked; });
+    helpers.get(this, "picked", function() { return this._picked; });
 
     this.render = function() {
       this._preRender();
@@ -137,8 +137,8 @@ AGL.Stage2D = createPrototypeClass(
     this._setBufferData = function(item, parent, textureMapIndex, matId, quadId, effectId) {
       _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
 
-      arraySet(this._colorData,     parent.colorCache, quadId);
-      arraySet(this._tintColorData, item.colorCache,   quadId);
+      helpers.arraySet(this._colorData,     parent.colorCache, quadId);
+      helpers.arraySet(this._tintColorData, item.colorCache,   quadId);
 
       this._effectData[effectId] = textureMapIndex;
       this._effectData[effectId + 1] = item.tintType;
@@ -195,7 +195,7 @@ AGL.Stage2D = createPrototypeClass(
     }
   }
 );
-cnst(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
+helpers.constant(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
 AGL.Stage2D.createVertexShader = function(config) {
   var maxLightSources = config.lightNum;
 

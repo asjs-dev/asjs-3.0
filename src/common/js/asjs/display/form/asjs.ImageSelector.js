@@ -1,9 +1,9 @@
 require("./asjs.FileSelector.js");
 
-createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
+helpers.createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
   var _reader = new FileReader();
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
     _reader.onload = readerOnLoad;
@@ -17,7 +17,7 @@ createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
     }
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _reader = null;
     _super.destruct();
@@ -28,4 +28,4 @@ createClass(ASJS, "ImageSelector", ASJS.FileSelector, function(_scope, _super) {
     _scope.dispatchEvent(ASJS.FileSelector.ON_CHANGE);
   }
 });
-msg(ASJS.ImageSelector, "ON_CHANGE_START");
+helpers.message(ASJS.ImageSelector, "ON_CHANGE_START");

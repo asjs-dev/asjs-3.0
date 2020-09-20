@@ -1,12 +1,12 @@
 require("../../../geom/asjs.Point.js");
 require("./asjs.AbstractBitmapFilter.js");
 
-createClass(ASJS, "MaskBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
+helpers.createClass(ASJS, "MaskBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   _scope.new = function(mask, pos, invert, cutout) {
     _scope.mask   = mask;
     _scope.pos    = pos;
     _scope.invert = invert;
-    _scope.cutout = empty(cutout) ? true : cutout;
+    _scope.cutout = helpers.isEmpty(cutout) ? true : cutout;
   }
 
   _scope.execute = function(pixels) {

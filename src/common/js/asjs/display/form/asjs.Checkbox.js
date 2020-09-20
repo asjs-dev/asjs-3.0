@@ -2,11 +2,11 @@ require("../../event/asjs.Event.js");
 require("../asjs.DisplayObject.js");
 require("./asjs.FormElement.js");
 
-createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
+helpers.createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
   var _checkbox = new ASJS.DisplayObject("input");
   var _label    = new ASJS.DisplayObject();
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new("label");
 
@@ -19,19 +19,19 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
     _scope.addChild(_label);
   }
 
-  get(_scope, "label", function() { return _label; });
+  helpers.get(_scope, "label", function() { return _label; });
 
-  get(_scope, "checkbox", function() { return _checkbox; });
+  helpers.get(_scope, "checkbox", function() { return _checkbox; });
 
-  override(_scope, _super, "enabled");
-  set(_scope, "enabled", function(v) { _super.enabled = _checkbox.enabled = v; });
+  helpers.override(_scope, _super, "enabled");
+  helpers.set(_scope, "enabled", function(v) { _super.enabled = _checkbox.enabled = v; });
 
-  prop(_scope, "name", {
+  helpers.property(_scope, "name", {
     get: _checkbox.getAttr.bind(_checkbox, "name"),
     set: _checkbox.setAttr.bind(_checkbox, "name")
   });
 
-  prop(_scope, "checked", {
+  helpers.property(_scope, "checked", {
     get: function() { return _checkbox.el.checked; },
     set: function(v) {
       _checkbox.el.checked = v;
@@ -39,7 +39,7 @@ createClass(ASJS, "Checkbox", ASJS.FormElement, function(_scope, _super) {
     }
   });
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _checkbox.destruct();
     _label.destruct();

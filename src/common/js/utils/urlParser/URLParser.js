@@ -1,6 +1,10 @@
-require("../../NameSpace.js");
+require("../../helpers/createClass.js");
+require("../../helpers/BaseClass.js");
+require("../../helpers/clone.js");
 
-createSingletonClass(ASJSUtils, "URLParser", BaseClass, function(_scope) {
+require("../NameSpace.js");
+
+helpers.createSingletonClass(ASJSUtils, "URLParser", helpers.BaseClass, function(_scope) {
   var _latestUrl = null;
   var _params    = null;
 
@@ -91,6 +95,6 @@ createSingletonClass(ASJSUtils, "URLParser", BaseClass, function(_scope) {
       }
     }
 
-    return clone(_params);
+    return helpers.clone(_params);
   }
 });

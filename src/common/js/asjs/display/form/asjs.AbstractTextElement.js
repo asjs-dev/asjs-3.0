@@ -3,19 +3,19 @@ require("../../event/asjs.Event.js");
 require("../../utils/asjs.Keyboard.js");
 require("./asjs.FormElement.js");
 
-createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _super) {
+helpers.createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _super) {
   var _helperElement = new ASJS.Tag();
 
   _scope.restrict;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function(tag) {
     _super.new(tag);
     _scope.addEventListener(ASJS.Event.CHANGE, onChange);
     _scope.addEventListener(ASJS.Event.INPUT,  onChange);
   }
 
-  prop(_scope, "readonly", {
+  helpers.property(_scope, "readonly", {
     get: _scope.getAttr.bind(_scope, "readonly"),
     set: function(v) {
       v
@@ -24,7 +24,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
     }
   });
 
-  prop(_scope, "placeholder", {
+  helpers.property(_scope, "placeholder", {
     get: _scope.getAttr.bind(_scope, "placeholder"),
     set: function(v) {
       _helperElement.html = v;
@@ -32,14 +32,14 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
     }
   });
 
-  prop(_scope, "val", {
+  helpers.property(_scope, "val", {
     get: function() { return _scope.el.value; },
     set: function(v) { _scope.el.value = v; }
   });
 
   ASJS.Tag.attrProp(_scope, "maxChar", "maxLength");
 
-  prop(_scope, "autofocus", {
+  helpers.property(_scope, "autofocus", {
     get: _scope.getAttr.bind(_scope, "autofocus"),
     set: function(v) {
       v
@@ -48,7 +48,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
     }
   });
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _helperElement.destruct();
 
@@ -61,7 +61,7 @@ createClass(ASJS, "AbstractTextElement", ASJS.FormElement, function(_scope, _sup
   var onChange = checkRestrict;
 
   function checkRestrict() {
-    if (empty(_scope.restrict)) return;
+    if (helpers.isEmpty(_scope.restrict)) return;
 
     var caretPos = 0;
 

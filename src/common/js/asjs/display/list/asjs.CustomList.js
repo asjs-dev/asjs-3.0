@@ -1,7 +1,7 @@
 require("../asjs.Sprite.js");
 require("./asjs.Cell.js");
 
-createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
+helpers.createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
   var _cell           = ASJS.Cell;
   var _lastCellIndex  = 0;
   var _itemsContainer = new ASJS.Sprite("ul");
@@ -9,7 +9,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
 
   _scope.multiselect    = false;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -19,11 +19,11 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     _super.protected.lock();
   }
 
-  get(_scope, "length", function() { return _itemsContainer.numChildren; });
+  helpers.get(_scope, "length", function() { return _itemsContainer.numChildren; });
 
-  set(_scope, "cell", function(v) { _cell = v; });
+  helpers.set(_scope, "cell", function(v) { _cell = v; });
 
-  prop(_scope, "selected", {
+  helpers.property(_scope, "selected", {
     get: function() {
       var v = [];
       var i = _scope.length;
@@ -48,7 +48,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     }
   });
 
-  prop(_scope, "name", {
+  helpers.property(_scope, "name", {
     get: function() { return _name; },
     set: function(v) {
       _name = v;
@@ -131,7 +131,7 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     }
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.unlock();
 
@@ -167,4 +167,4 @@ createClass(ASJS, "CustomList", ASJS.Sprite, function(_scope, _super) {
     _scope.dispatchEvent(ASJS.CustomList.CHANGE);
   }
 });
-msg(ASJS.CustomList, "CHANGE");
+helpers.message(ASJS.CustomList, "CHANGE");

@@ -1,10 +1,10 @@
 require("../NameSpace.js");
 
 (function() {
-  var Utils = createPrototypeClass(
-    BasePrototypeClass,
+  var Utils = helpers.createPrototypeClass(
+    helpers.BasePrototypeClass,
     function Utils() {
-      BasePrototypeClass.call(this);
+      helpers.BasePrototypeClass.call(this);
 
       this.info = {
         "isWebGl2Supported": false
@@ -89,12 +89,12 @@ require("../NameSpace.js");
       this.createProgram = function(gl, shaders, opt_attribs, opt_locations) {
         var program = gl.createProgram();
 
-        map(shaders, function(key, shader) {
+        helpers.map(shaders, function(key, shader) {
           gl.attachShader(program, shader);
         });
 
         if (opt_attribs) {
-          map(opt_attribs, function(key, attrib) {
+          helpers.map(opt_attribs, function(key, attrib) {
             gl.bindAttribLocation(
               program,
               opt_locations ? opt_locations[key] : key,
@@ -119,7 +119,7 @@ require("../NameSpace.js");
 
       this.getLocationsFor = function(gl, program, locationsDescriptor) {
         var locations = {};
-        map(locationsDescriptor, function(key, shaderLocationType) {
+        helpers.map(locationsDescriptor, function(key, shaderLocationType) {
           locations[key] = gl[shaderLocationType](program, key);
         });
         return locations;

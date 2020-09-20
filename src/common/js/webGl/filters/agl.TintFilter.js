@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.AbstractColorFilter.js");
 
-AGL.TintFilter = createPrototypeClass(
+AGL.TintFilter = helpers.createPrototypeClass(
   AGL.AbstractColorFilter,
   function TintFilter(r, g, b) {
     AGL.AbstractColorFilter.call(this, 4);
@@ -11,17 +11,17 @@ AGL.TintFilter = createPrototypeClass(
     this.b = b;
   },
   function() {
-    prop(this, "r", {
+    helpers.property(this, "r", {
       get: function() { return this._values[0]; },
       set: function(v) { this._values[0] = v; }
     });
 
-    prop(this, "g", {
+    helpers.property(this, "g", {
       get: function() { return this._values[1]; },
       set: function(v) { this._values[1] = v; }
     });
 
-    prop(this, "b", {
+    helpers.property(this, "b", {
       get: function() { return this._values[2]; },
       set: function(v) { this._values[2] = v; }
     });

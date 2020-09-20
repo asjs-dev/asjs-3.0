@@ -1,25 +1,25 @@
-createUtility(ASJS, "MouseEvent");
+ASJS.MouseEvent = {};
 
-cnst(ASJS.MouseEvent, "SCROLL",        "DOMMouseScroll scroll");
-cnst(ASJS.MouseEvent, "WHEEL",         "DOMMouseScroll mousewheel");
+helpers.constant(ASJS.MouseEvent, "SCROLL",        "DOMMouseScroll scroll");
+helpers.constant(ASJS.MouseEvent, "WHEEL",         "DOMMouseScroll mousewheel");
 
-cnst(ASJS.MouseEvent, "CLICK",         "click");
-cnst(ASJS.MouseEvent, "DOUBLE_CLICK",  "dblclick");
+helpers.constant(ASJS.MouseEvent, "CLICK",         "click");
+helpers.constant(ASJS.MouseEvent, "DOUBLE_CLICK",  "dblclick");
 
-cnst(ASJS.MouseEvent, "MOUSE_DOWN",    "mousedown");
-cnst(ASJS.MouseEvent, "MOUSE_UP",      "mouseup");
-cnst(ASJS.MouseEvent, "MOUSE_LEAVE",   "mouseleave");
-cnst(ASJS.MouseEvent, "MOUSE_ENTER",   "mouseenter");
-cnst(ASJS.MouseEvent, "MOUSE_MOVE",    "mousemove");
-cnst(ASJS.MouseEvent, "MOUSE_OVER",    "mouseover");
-cnst(ASJS.MouseEvent, "MOUSE_OUT",     "mouseout");
+helpers.constant(ASJS.MouseEvent, "MOUSE_DOWN",    "mousedown");
+helpers.constant(ASJS.MouseEvent, "MOUSE_UP",      "mouseup");
+helpers.constant(ASJS.MouseEvent, "MOUSE_LEAVE",   "mouseleave");
+helpers.constant(ASJS.MouseEvent, "MOUSE_ENTER",   "mouseenter");
+helpers.constant(ASJS.MouseEvent, "MOUSE_MOVE",    "mousemove");
+helpers.constant(ASJS.MouseEvent, "MOUSE_OVER",    "mouseover");
+helpers.constant(ASJS.MouseEvent, "MOUSE_OUT",     "mouseout");
 
-cnst(ASJS.MouseEvent, "GESTURE_START", "gesturestart");
+helpers.constant(ASJS.MouseEvent, "GESTURE_START", "gesturestart");
 
-cnst(ASJS.MouseEvent, "TOUCH_START",   "touchstart");
-cnst(ASJS.MouseEvent, "TOUCH_END",     "touchend");
-cnst(ASJS.MouseEvent, "TOUCH_MOVE",    "touchmove");
-cnst(ASJS.MouseEvent, "TOUCH_CANCEL",  "touchcancel");
+helpers.constant(ASJS.MouseEvent, "TOUCH_START",   "touchstart");
+helpers.constant(ASJS.MouseEvent, "TOUCH_END",     "touchend");
+helpers.constant(ASJS.MouseEvent, "TOUCH_MOVE",    "touchmove");
+helpers.constant(ASJS.MouseEvent, "TOUCH_CANCEL",  "touchcancel");
 
-cnst(ASJS.MouseEvent, "CONTEXT_MENU",  "contextmenu");
-cnst(ASJS.MouseEvent, "SELECT_START",  "onselectstart");
+helpers.constant(ASJS.MouseEvent, "CONTEXT_MENU",  "contextmenu");
+helpers.constant(ASJS.MouseEvent, "SELECT_START",  "onselectstart");

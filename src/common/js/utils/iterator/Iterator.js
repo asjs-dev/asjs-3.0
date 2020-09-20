@@ -1,6 +1,11 @@
-require("../../NameSpace.js");
+require("../../helpers/createClass.js");
+require("../../helpers/BaseClass.js");
+require("../../helpers/typeIs.js");
+require("../../helpers/inArray.js");
 
-createClass(ASJSUtils, "Iterator", BaseClass, function(_scope) {
+require("../NameSpace.js");
+
+helpers.createClass(ASJSUtils, "Iterator", helpers.BaseClass, function(_scope) {
   var _steps = [];
   var _response;
   var _step = -1;
@@ -13,7 +18,7 @@ createClass(ASJSUtils, "Iterator", BaseClass, function(_scope) {
   }
 
   _scope.add = function(fv) {
-    fv && tis(fv, "function") && !inArray(_steps, fv) && _steps.push(fv);
+    fv && helpers.typeIs(fv, "function") && !helpers.inArray(_steps, fv) && _steps.push(fv);
     return _scope;
   }
 

@@ -2,7 +2,7 @@ require("./agl.Item.js");
 require("../NameSpace.js");
 require("../data/props/agl.LightEffectProps.js");
 
-AGL.Light = createPrototypeClass(
+AGL.Light = helpers.createPrototypeClass(
   AGL.Item,
   function Light(
     id,
@@ -35,7 +35,7 @@ AGL.Light = createPrototypeClass(
     this._lightZIndices  = lightZIndices;
   },
   function() {
-    prop(this, "on", {
+    helpers.property(this, "on", {
       get: function() { return this._on && this.stage; },
       set: function(v) { this._on = v; }
     });
@@ -55,8 +55,8 @@ AGL.Light = createPrototypeClass(
           this._lightVolumes[this._duoId + 1]   = 1 / Math.abs(this.matrixCache[4]);
           this._lightZIndices[this._id]         = this.props.zIndex;
 
-          arraySet(this._lightColors,  this.colorCache,  this._quadId);
-          arraySet(this._lightEffects, this.effectCache, this._quadId);
+          helpers.arraySet(this._lightColors,  this.colorCache,  this._quadId);
+          helpers.arraySet(this._lightEffects, this.effectCache, this._quadId);
         } else this._lightColors[this._quadId + 3] = 0;
       }
     }

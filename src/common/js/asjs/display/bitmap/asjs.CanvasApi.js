@@ -3,19 +3,19 @@ require("../bitmap/utils/asjs.Color.js");
 require("../asjs.DisplayObject.js");
 require("../asjs.Image.js");
 
-createUtility(ASJS, "CanvasApi");
-rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
+ASJS.CanvasApi = {};
+helpers.constant(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
   var _context;
   var _contextAttributes;
   var _contextType;
 
-  get(_scope, "contextAttributes", function() { return _contextAttributes; });
-  set(_super.protected, "contextAttributes", function(v) { _contextAttributes = v; });
+  helpers.get(_scope, "contextAttributes", function() { return _contextAttributes; });
+  helpers.set(_super.protected, "contextAttributes", function(v) { _contextAttributes = v; });
 
-  get(_scope, "contextType", function() { return _contextType; });
-  set(_super.protected, "contextType", function(v) { _contextType = v; });
+  helpers.get(_scope, "contextType", function() { return _contextType; });
+  helpers.set(_super.protected, "contextType", function(v) { _contextType = v; });
 
-  prop(_scope, "bitmapWidth", {
+  helpers.property(_scope, "bitmapWidth", {
     get: function() { return _scope.el.width; },
     set: function(v) {
       _scope.el.width = Math.max(1, v || 1);
@@ -23,7 +23,7 @@ rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
     }
   });
 
-  prop(_scope, "bitmapHeight", {
+  helpers.property(_scope, "bitmapHeight", {
     get: function() { return _scope.el.height; },
     set: function(v) {
       _scope.el.height = Math.max(1, v || 1);
@@ -58,7 +58,7 @@ rof(ASJS.CanvasApi, "initBaseCanvas", function(_scope, _super) {
 
   _scope.update = function() {}
 });
-rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
+helpers.constant(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
   ASJS.CanvasApi.initBaseCanvas(_scope, _super);
 
   var _filtersReady = true;
@@ -69,9 +69,9 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
 
   _scope.keepOriginal = false;
 
-  get(_scope, "original", function() { return _original; });
+  helpers.get(_scope, "original", function() { return _original; });
 
-  prop(_scope, "bitmapFilters", {
+  helpers.property(_scope, "bitmapFilters", {
     get: function() { return _bitmapFilters; },
     set: function(v) {
       _bitmapFilters = v;
@@ -79,12 +79,12 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
     }
   });
 
-  prop(_scope, "blendMode", {
+  helpers.property(_scope, "blendMode", {
     get: function() { return _scope.getContext().globalCompositeOperation; },
     set: function(v) { _scope.getContext().globalCompositeOperation = v; }
   });
 
-  prop(_scope, "globalAlpha", {
+  helpers.property(_scope, "globalAlpha", {
     get: function() { return _scope.getContext().globalAlpha; },
     set: function(v) { _scope.getContext().globalAlpha = v; }
   });
@@ -377,26 +377,26 @@ rof(ASJS.CanvasApi, "initCanvas", function(_scope, _super) {
     _filtersReady = true;
   }
 });
-cnst(ASJS.CanvasApi, "TARGET_FILL",       "targetFill");
-cnst(ASJS.CanvasApi, "TARGET_STROKE",     "targetStroke");
-cnst(ASJS.CanvasApi, "GRADIENT_LINEAR",   "gradientLinear");
-cnst(ASJS.CanvasApi, "GRADIENT_RADIAL",   "gradientRadial");
-cnst(ASJS.CanvasApi, "PATTERN_REPEAT",    "repeat");
-cnst(ASJS.CanvasApi, "PATTERN_NO_REPEAT", "no-repeat");
-cnst(ASJS.CanvasApi, "PATTERN_REPEAT_X",  "repeat-x");
-cnst(ASJS.CanvasApi, "PATTERN_REPEAT_Y",  "repeat-y");
-cnst(ASJS.CanvasApi, "LINE_CAP_BUTT",     "butt");
-cnst(ASJS.CanvasApi, "LINE_CAP_ROUND",    "round");
-cnst(ASJS.CanvasApi, "LINE_CAP_SQUARE",   "square");
-cnst(ASJS.CanvasApi, "LINE_JOIN_BEVEL",   "bevel");
-cnst(ASJS.CanvasApi, "LINE_JOIN_ROUND",   "round");
-cnst(ASJS.CanvasApi, "LINE_JOIN_MITER",   "miter");
+helpers.constant(ASJS.CanvasApi, "TARGET_FILL",       "targetFill");
+helpers.constant(ASJS.CanvasApi, "TARGET_STROKE",     "targetStroke");
+helpers.constant(ASJS.CanvasApi, "GRADIENT_LINEAR",   "gradientLinear");
+helpers.constant(ASJS.CanvasApi, "GRADIENT_RADIAL",   "gradientRadial");
+helpers.constant(ASJS.CanvasApi, "PATTERN_REPEAT",    "repeat");
+helpers.constant(ASJS.CanvasApi, "PATTERN_NO_REPEAT", "no-repeat");
+helpers.constant(ASJS.CanvasApi, "PATTERN_REPEAT_X",  "repeat-x");
+helpers.constant(ASJS.CanvasApi, "PATTERN_REPEAT_Y",  "repeat-y");
+helpers.constant(ASJS.CanvasApi, "LINE_CAP_BUTT",     "butt");
+helpers.constant(ASJS.CanvasApi, "LINE_CAP_ROUND",    "round");
+helpers.constant(ASJS.CanvasApi, "LINE_CAP_SQUARE",   "square");
+helpers.constant(ASJS.CanvasApi, "LINE_JOIN_BEVEL",   "bevel");
+helpers.constant(ASJS.CanvasApi, "LINE_JOIN_ROUND",   "round");
+helpers.constant(ASJS.CanvasApi, "LINE_JOIN_MITER",   "miter");
 
 /*
-rof(ASJS.CanvasApi, "drawTriangle", function(ctx, im, x0, y0, x1, y1, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2) {
+helpers.constant(ASJS.CanvasApi, "drawTriangle", function(ctx, im, x0, y0, x1, y1, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2) {
   drawQuad(ctx, im, x0, y0, x1, y1, x2, y2, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2);
 });
-rof(ASJS.CanvasApi, "drawQuad", function(ctx, im, x0, y0, x1, y1, x2, y2, x3, y3, sx0, sy0, sx1, sy1, sx2, sy2) {
+helpers.constant(ASJS.CanvasApi, "drawQuad", function(ctx, im, x0, y0, x1, y1, x2, y2, x3, y3, sx0, sy0, sx1, sy1, sx2, sy2) {
   ctx.save();
 
   ctx.beginPath();

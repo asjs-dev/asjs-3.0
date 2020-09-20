@@ -1,5 +1,5 @@
-createUtility(ASJS, "FileDragAndDropUtil");
-rof(ASJS.FileDragAndDropUtil, "getFilesByEvent", function(e) {
+ASJS.FileDragAndDropUtil = {};
+helpers.constant(ASJS.FileDragAndDropUtil, "getFilesByEvent", function(e) {
   var files = [];
 
   var dt = e.dataTransfer;

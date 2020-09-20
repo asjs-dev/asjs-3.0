@@ -1,7 +1,7 @@
 require("./agl.Image.js");
 require("../NameSpace.js");
 
-AGL.AnimatedImage = createPrototypeClass(
+AGL.AnimatedImage = helpers.createPrototypeClass(
   AGL.Image,
   function AnimatedImage(texture) {
     AGL.Image.call(this, texture);

@@ -1,15 +1,15 @@
 require("../../NameSpace.js");
 require("./agl.AbstractProps.js");
 
-AGL.LightEffectProps = createPrototypeClass(
+AGL.LightEffectProps = helpers.createPrototypeClass(
   AGL.AbstractProps,
   function LightEffectProps() {
     AGL.AbstractProps.call(this);
-    
+
     this.items = [0, 0, 2, 2];
   },
   function() {
-    prop(this, "anchorX", {
+    helpers.property(this, "anchorX", {
       get: function() { return this.items[0]; },
       set: function(v) {
         if (this.items[0] !== v) {
@@ -19,7 +19,7 @@ AGL.LightEffectProps = createPrototypeClass(
       }
     });
 
-    prop(this, "anchorY", {
+    helpers.property(this, "anchorY", {
       get: function() { return this.items[1]; },
       set: function(v) {
         if (this.items[1] !== v) {
@@ -29,7 +29,7 @@ AGL.LightEffectProps = createPrototypeClass(
       }
     });
 
-    prop(this, "quadX", {
+    helpers.property(this, "quadX", {
       get: function() { return this.items[2]; },
       set: function(v) {
         if (this.items[2] !== v) {
@@ -39,7 +39,7 @@ AGL.LightEffectProps = createPrototypeClass(
       }
     });
 
-    prop(this, "quadY", {
+    helpers.property(this, "quadY", {
       get: function() { return this.items[3]; },
       set: function(v) {
         if (this.items[3] !== v) {

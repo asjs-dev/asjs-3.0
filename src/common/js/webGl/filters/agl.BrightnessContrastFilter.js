@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.AbstractColorFilter.js");
 
-AGL.BrightnessContrastFilter = createPrototypeClass(
+AGL.BrightnessContrastFilter = helpers.createPrototypeClass(
   AGL.AbstractColorFilter,
   function BrightnessContrastFilter(brightness, contrast) {
     AGL.AbstractColorFilter.call(this, 9);
@@ -10,12 +10,12 @@ AGL.BrightnessContrastFilter = createPrototypeClass(
     this.contrast   = contrast;
   },
   function() {
-    prop(this, "brightness", {
+    helpers.property(this, "brightness", {
       get: function() { return this._values[0]; },
       set: function(v) { this._values[0] = v; }
     });
 
-    prop(this, "contrast", {
+    helpers.property(this, "contrast", {
       get: function() { return this._values[1]; },
       set: function(v) { this._values[1] = v; }
     });

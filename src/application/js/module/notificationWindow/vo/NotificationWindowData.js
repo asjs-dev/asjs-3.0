@@ -1,5 +1,9 @@
-createUtility(NS, "NotificationWindowData");
-rof(NS.NotificationWindowData, "create", function() {
+require("../../../../../common/js/helpers/constant.js");
+
+require("../../../NameSpace.js");
+
+NS.NotificationWindowData = {};
+helpers.constant(NS.NotificationWindowData, "create", function() {
   return {
     "title"          : "",
     "content"        : "",

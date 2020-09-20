@@ -1,7 +1,12 @@
-require("../media/Media.js");
-require("../../NameSpace.js");
+require("../../helpers/createClass.js");
+require("../../helpers/property.js");
+require("../../helpers/constant.js");
+require("../../helpers/message.js");
 
-createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
+require("../NameSpace.js");
+require("../media/Media.js");
+
+helpers.createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
   var _media  = ASJSUtils.Media.instance;
 
   var _isPlaying = false;
@@ -23,7 +28,7 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
     _audioContext = new AudioContext();
   }
 
-  prop(_scope, "bufferLength", {
+  helpers.property(_scope, "bufferLength", {
     get: function() { return _bufferLength; },
     set: function(v) {
       _bufferLength = v;
@@ -54,10 +59,10 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
         updatePitch();
       },
       function() {
-        trace('Stream generation failed.');
+        console.log('Stream generation failed.');
       });
     } catch (e) {
-      trace('getUserMedia threw exception :' + e);
+      console.log('getUserMedia threw exception :' + e);
     }
   }
 
@@ -114,13 +119,13 @@ createClass(ASJSUtils, "PitchDetect", ASJS.EventDispatcher, function(_scope) {
     _rafID = setTimeout(updatePitch, _scope.samplingInterval);
   }
 });
-msg(ASJSUtils.PitchDetect, "DETECTED");
-cnst(ASJSUtils.PitchDetect, "A", 440);
-rof(ASJSUtils.PitchDetect, "noteFromPitch", function(frequency) {
+helpers.message(ASJSUtils.PitchDetect, "DETECTED");
+helpers.constant(ASJSUtils.PitchDetect, "A", 440);
+helpers.constant(ASJSUtils.PitchDetect, "noteFromPitch", function(frequency) {
   var noteNum = 12 * (Math.log(frequency / ASJSUtils.PitchDetect.A) / Math.log(2));
   return Math.round(noteNum) + 69;
 });
-rof(ASJSUtils.PitchDetect, "centsOffFromPitch", function(frequency, note) {
+helpers.constant(ASJSUtils.PitchDetect, "centsOffFromPitch", function(frequency, note) {
   var freqFromNoteNum = ASJSUtils.PitchDetect.A * Math.pow(2, (note - 69) / 12);
   return Math.floor(1200 * Math.log(frequency / freqFromNoteNum) / Math.log(2));
 });

@@ -4,13 +4,13 @@ require("./bitmap/asjs.Bitmap.js");
 require("./asjs.Sprite.js");
 require("./asjs.Image.js");
 
-createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
+helpers.createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
   var _helperImage  = new ASJS.Image();
   var _helperBitmap = new ASJS.Bitmap();
 
   var _blocks    = [];
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -109,7 +109,7 @@ createClass(ASJS, "Scale9Grid", ASJS.Sprite, function(_scope, _super) {
     _helperBitmap.destroy();
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.unlock();
 

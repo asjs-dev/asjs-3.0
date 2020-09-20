@@ -7,7 +7,7 @@ require("../utils/agl.Utils.js");
 require("../utils/agl.Matrix3.js");
 require("./agl.RendererHelper.js");
 
-AGL.BaseRenderer = createPrototypeClass(
+AGL.BaseRenderer = helpers.createPrototypeClass(
   AGL.Container,
   function BaseRenderer(config) {
     config.vertexShader   = config.vertexShader   || AGL.BaseRenderer.createVertexShader;
@@ -19,7 +19,7 @@ AGL.BaseRenderer = createPrototypeClass(
 
     this.clearColor = new AGL.ColorProps();
 
-    cnst(this, "_MAX_BATCH_ITEMS", 10000);
+    helpers.constant(this, "_MAX_BATCH_ITEMS", 10000);
 
     this._clearBeforeRender     = true;
     this._clearBeforeRenderFunc = this.clear.bind(this);
@@ -90,29 +90,29 @@ AGL.BaseRenderer = createPrototypeClass(
     this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "aTexCrop",  4, 1, 4, this._gl.FLOAT, 4);
 
     this._drawFunctionMap = {};
-    this._drawFunctionMap[AGL.Item.TYPE]      = emptyFunction;
+    this._drawFunctionMap[AGL.Item.TYPE]      = helpers.emptyFunction;
     this._drawFunctionMap[AGL.Image.TYPE]     = this._drawImage.bind(this);
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
     this._update      =
-    this._updateProps = emptyFunction;
+    this._updateProps = helpers.emptyFunction;
 
     this._resize();
   },
   function() {
     AGL.RendererHelper.createFunctionality.call(this);
 
-    prop(this, "clearBeforeRender", {
+    helpers.property(this, "clearBeforeRender", {
       get: function() { return this._clearBeforeRender; },
       set: function(v) {
         this._clearBeforeRender     = v;
         this._clearBeforeRenderFunc = v
           ? this.clear.bind(this)
-          : emptyFunction;
+          : helpers.emptyFunction;
       }
     });
 
-    get(this, "stage",  function() { return this; });
+    helpers.get(this, "stage",  function() { return this; });
 
     this.clear = function() {
       var clearColor = this.clearColor;
@@ -148,10 +148,10 @@ AGL.BaseRenderer = createPrototypeClass(
     }
 
     this._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
-      arraySet(this._worldMatrixData,   parent.matrixCache,      matId);
-      arraySet(this._matrixData,        item.matrixCache,        matId);
-      arraySet(this._textureMatrixData, item.textureMatrixCache, matId);
-      arraySet(this._textureCropData,   item.textureCropCache,   quadId);
+      helpers.arraySet(this._worldMatrixData,   parent.matrixCache,      matId);
+      helpers.arraySet(this._matrixData,        item.matrixCache,        matId);
+      helpers.arraySet(this._textureMatrixData, item.textureMatrixCache, matId);
+      helpers.arraySet(this._textureCropData,   item.textureCropCache,   quadId);
     }
 
     this._drawImage = function(item, parent) {
@@ -225,7 +225,7 @@ AGL.BaseRenderer = createPrototypeClass(
 
       this._batchItems = 0;
     }
-    
+
     this._drawTexture = function(textureInfo) {
       if (!textureInfo.loaded) return 0;
       var textureMapIndex = this._textureMap.indexOf(textureInfo);

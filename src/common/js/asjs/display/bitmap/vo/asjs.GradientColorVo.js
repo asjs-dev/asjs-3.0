@@ -1,7 +1,7 @@
-createUtility(ASJS, "GradientColorVo");
-rof(ASJS.GradientColorVo, "create", function(stop, color) {
+ASJS.GradientColorVo = {};
+helpers.constant(ASJS.GradientColorVo, "create", function(stop, color) {
   return {
-    "stop"  : valueOrDefault(stop, 0),
-    "color" : valueOrDefault(color, ASJS.Color.create())
+    "stop"  : helpers.valueOrDefault(stop, 0),
+    "color" : helpers.valueOrDefault(color, ASJS.Color.create())
   };
 });

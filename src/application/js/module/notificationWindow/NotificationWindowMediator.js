@@ -1,7 +1,12 @@
+require("../../../../common/js/helpers/createClass.js");
+require("../../../../common/js/helpers/isEmpty.js");
+require("../../../../common/js/helpers/message.js");
 require("../../../../common/js/utils/dataUtils/Language.js");
+
+require("../../NameSpace.js");
 require("./view/NotificationWindowView.js");
 
-createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
+helpers.createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
   var _view = _super.protected.view = new NS.NotificationWindowView();
 
   var _language = ASJSUtils.Language.instance;
@@ -11,7 +16,7 @@ createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, functio
   var _defaultOkLabel     = "";
   var _defaultCancelLabel = "";
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function(root) {
     _super.new(root);
 
@@ -24,7 +29,7 @@ createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, functio
   }
 
   function onShow(data) {
-    if (empty(data)) data = new NS.NotificationDataVo();
+    if (helpers.isEmpty(data)) data = new NS.NotificationDataVo();
 
     if (!data.okLabel) data.okLabel = _defaultOkLabel;
     if (!data.cancelLabel) data.cancelLabel = _defaultCancelLabel;
@@ -53,5 +58,5 @@ createClass(NS, "NotificationWindowMediator", ASJS.AbstractViewMediator, functio
     _super.protected.show();
   }
 });
-msg(NS.NotificationWindowMediator, "SHOW");
-msg(NS.NotificationWindowMediator, "HIDE");
+helpers.message(NS.NotificationWindowMediator, "SHOW");
+helpers.message(NS.NotificationWindowMediator, "HIDE");

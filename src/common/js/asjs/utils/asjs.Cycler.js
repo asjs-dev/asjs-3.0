@@ -1,13 +1,13 @@
-createSingletonClass(ASJS, "Cycler", BaseClass, function(_scope) {
+helpers.createSingletonClass(ASJS, "Cycler", helpers.BaseClass, function(_scope) {
   var _isPlaying = false;
   var _fps       = 24;
   var _interval  = getIntervalByFps();
   var _callbacks = [];
   var _timeoutId;
 
-  get(_scope, "isPlaying", function() { return _isPlaying; });
+  helpers.get(_scope, "isPlaying", function() { return _isPlaying; });
 
-  prop(_scope, "fps", {
+  helpers.property(_scope, "fps", {
     get: function() { return _fps; },
     set: function(v) {
       _fps = v;
@@ -21,7 +21,7 @@ createSingletonClass(ASJS, "Cycler", BaseClass, function(_scope) {
   };
 
   _scope.removeCallback = function(callback) {
-    removeFromArray(_callbacks, callback);
+    helpers.removeFromArray(_callbacks, callback);
   };
 
   _scope.getCallbackId = function(callback) {
@@ -29,7 +29,7 @@ createSingletonClass(ASJS, "Cycler", BaseClass, function(_scope) {
   }
 
   _scope.callbackExists = function(callback) {
-    return inArray(_callbacks, callback);
+    return helpers.inArray(_callbacks, callback);
   };
 
   _scope.start = function() {

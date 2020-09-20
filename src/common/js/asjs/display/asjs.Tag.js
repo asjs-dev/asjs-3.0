@@ -2,10 +2,10 @@ require("../event/asjs.EventDispatcher.js");
 require("../geom/asjs.Rectangle.js");
 require("../utils/asjs.CSS.js");
 
-createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
+helpers.createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   var priv = {};
 
-  cnst(priv, "CREATED", "created");
+  helpers.constant(priv, "CREATED", "created");
 
   var _el;
   var _parent = null;
@@ -14,17 +14,17 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   var _bounds = ASJS.Rectangle.create();
 
   _scope.new = function(tag) {
-    _el = !tag || tis(tag, "string") ? document.createElement(tag || "div") : tag;
+    _el = !tag || helpers.typeIs(tag, "string") ? document.createElement(tag || "div") : tag;
     _scope.setData("asjs-id", "instance_" + (++ASJS.Tag.instanceId));
     if (_el.parentElement) _parent = new ASJS.Sprite(_el.parentElement);
   }
 
-  prop(_scope, "id", {
+  helpers.property(_scope, "id", {
     get: function() { return _scope.getAttr("id"); },
     set: function(v) { _scope.setAttr("id", v); }
   });
 
-  prop(_scope, "enabled", {
+  helpers.property(_scope, "enabled", {
     get: function() { return _scope.getAttr("disabled") != "disabled"; },
     set: function(v) {
       if (v) {
@@ -37,40 +37,40 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     }
   });
 
-  prop(_scope, "text", {
+  helpers.property(_scope, "text", {
     get: function() { return _el.textContent || _el.innerText; },
     set: function(v) {
       _el.textContent = _el.innerText = v;
     }
   });
 
-  prop(_scope, "html", {
+  helpers.property(_scope, "html", {
     get: function() { return _el.innerHTML; },
     set: function(v) { _el.innerHTML = v; }
   });
 
-  get(_scope, "asjsId", function() { return _scope.getData("asjs-id"); });
+  helpers.get(_scope, "asjsId", function() { return _scope.getData("asjs-id"); });
 
-  get(_scope, "el", function() { return _el; });
+  helpers.get(_scope, "el", function() { return _el; });
 
-  get(_scope, "attributes", function() { return _el.attributes; });
+  helpers.get(_scope, "attributes", function() { return _el.attributes; });
 
-  get(_scope, "bounds", function() { return _bounds; });
+  helpers.get(_scope, "bounds", function() { return _bounds; });
 
-  prop(_scope, "parent", {
+  helpers.property(_scope, "parent", {
     get: function() { return _parent; },
     set: function(v) {
-      if (empty(v) || v.getChildIndex(_scope) > -1) {
+      if (helpers.isEmpty(v) || v.getChildIndex(_scope) > -1) {
         _parent = v;
         _scope.sendParentChangeEvent();
       }
     }
   });
 
-  get(_scope, "stage", function() { return _scope.parent ? _scope.parent.stage : null; });
+  helpers.get(_scope, "stage", function() { return _scope.parent ? _scope.parent.stage : null; });
 
   _scope.hasClass = function(v) {
-    return inArray(_scope.getClassList(), v);
+    return helpers.inArray(_scope.getClassList(), v);
   }
 
   _scope.addClass = function(v) {
@@ -87,7 +87,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     var removeClasses = parseClassNames(v);
     var classList     = _scope.getClassList();
     var removeClass;
-    while (removeClass = removeClasses.shift()) removeFromArray(classList, removeClass);
+    while (removeClass = removeClasses.shift()) helpers.removeFromArray(classList, removeClass);
     _el.className = classList.join(" ").trim();
   }
 
@@ -140,7 +140,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     _state = state;
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _parent && _parent.removeChild && _parent.removeChild(_scope);
 
@@ -150,7 +150,7 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
     for (var key in _scope.attributes) attributeNames.push(_scope.attributes[key].name);
     for (var key in attributeNames) _scope.removeAttr(attributeNames[key]);
 
-    destObj(_el);
+    helpers.destructObject(_el);
 
     _bounds =
     _el     =
@@ -161,19 +161,19 @@ createClass(ASJS, "Tag", ASJS.EventDispatcher, function(_scope, _super) {
   }
 
   function parseClassNames(classNames) {
-    return tis(classNames, "object") ? classNames : classNames.split(" ");
+    return helpers.typeIs(classNames, "object") ? classNames : classNames.split(" ");
   }
 });
-rof(ASJS.Tag, "cssProp", function(s, l, pn) {
+helpers.constant(ASJS.Tag, "cssProp", function(s, l, pn) {
   pn = pn || l;
-  prop(s, l, {
+  helpers.property(s, l, {
     get: s.getCSS.bind(s, pn),
     set: s.setCSS.bind(s, pn)
   });
 });
-rof(ASJS.Tag, "attrProp", function(s, l, pn) {
+helpers.constant(ASJS.Tag, "attrProp", function(s, l, pn) {
   pn = pn || l;
-  prop(s, l, {
+  helpers.property(s, l, {
     get: s.getAttr.bind(s, pn),
     set: s.setAttr.bind(s, pn)
   });

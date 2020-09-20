@@ -1,6 +1,6 @@
 require("./asjs.AbstractBitmapFilter.js");
 
-createClass(ASJS, "OpacityBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
+helpers.createClass(ASJS, "OpacityBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   _scope.new = function(adjustment) {
     _scope.adjustment = adjustment;
   }

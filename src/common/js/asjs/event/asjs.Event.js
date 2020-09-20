@@ -1,3 +1,3 @@
-createUtility(ASJS, "Event");
-cnst(ASJS.Event, "CHANGE", "change");
-cnst(ASJS.Event, "INPUT", "input");
+ASJS.Event = {};
+helpers.constant(ASJS.Event, "CHANGE", "change");
+helpers.constant(ASJS.Event, "INPUT", "input");

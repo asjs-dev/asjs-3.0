@@ -1,6 +1,13 @@
-require("../../NameSpace.js");
+require("../../helpers/createClass.js");
+require("../../helpers/BaseClass.js");
+require("../../helpers/isEmpty.js");
+require("../../helpers/property.js");
+require("../../helpers/message.js");
+require("../../helpers/mathHelper.js");
 
-createSingletonClass(ASJSUtils, "MobileUtils", BaseClass, function(_scope) {
+require("../NameSpace.js");
+
+helpers.createSingletonClass(ASJSUtils, "MobileUtils", helpers.BaseClass, function(_scope) {
   var _dpi;
   var _isIOS;
   var _isSafari;
@@ -21,16 +28,16 @@ createSingletonClass(ASJSUtils, "MobileUtils", BaseClass, function(_scope) {
 
     _isSafari  = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);;
     _isIOS     = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    _isDesktop = !_isIOS && (empty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
+    _isDesktop = !_isIOS && (helpers.isEmpty(navigator.maxTouchPoints) || navigator.maxTouchPoints === 0);
 
     calcDPI();
   }
 
-  get(_scope, "isSafari", function() { return _isSafari; });
-  get(_scope, "isIOS", function() { return _isIOS; });
-  get(_scope, "isDesktop", function() { return _isDesktop; });
-  get(_scope, "width", function() { return _scope.useScreenSize ? stage.screenWidth : stage.stageWidth; });
-  get(_scope, "height", function() { return _scope.useScreenSize ? stage.screenHeight : stage.stageHeight; });
+  helpers.get(_scope, "isSafari", function() { return _isSafari; });
+  helpers.get(_scope, "isIOS", function() { return _isIOS; });
+  helpers.get(_scope, "isDesktop", function() { return _isDesktop; });
+  helpers.get(_scope, "width", function() { return _scope.useScreenSize ? stage.screenWidth : stage.stageWidth; });
+  helpers.get(_scope, "height", function() { return _scope.useScreenSize ? stage.screenHeight : stage.stageHeight; });
 
   _scope.getOrientation = function() {
     return _scope.width > _scope.height ? ASJSUtils.MobileUtils.ORIENTATION_LANDSCAPE : ASJSUtils.MobileUtils.ORIENTATION_PORTRAIT;
@@ -75,12 +82,12 @@ createSingletonClass(ASJSUtils, "MobileUtils", BaseClass, function(_scope) {
   }
 
   function calcDPI() {
-    _dpi = bw(1, 2, window.devicePixelRatio || (window.screen.deviceXDPI / window.screen.logicalXDPI) || 1);
+    _dpi = helpers.between(1, 2, window.devicePixelRatio || (window.screen.deviceXDPI / window.screen.logicalXDPI) || 1);
   }
 });
-msg(ASJSUtils.MobileUtils, "ORIENTATION_LANDSCAPE");
-msg(ASJSUtils.MobileUtils, "ORIENTATION_PORTRAIT");
-msg(ASJSUtils.MobileUtils, "TYPE_MINIMUM");
-msg(ASJSUtils.MobileUtils, "TYPE_MAXIMUM");
-msg(ASJSUtils.MobileUtils, "TYPE_WIDTH");
-msg(ASJSUtils.MobileUtils, "TYPE_HEIGHT");
+helpers.message(ASJSUtils.MobileUtils, "ORIENTATION_LANDSCAPE");
+helpers.message(ASJSUtils.MobileUtils, "ORIENTATION_PORTRAIT");
+helpers.message(ASJSUtils.MobileUtils, "TYPE_MINIMUM");
+helpers.message(ASJSUtils.MobileUtils, "TYPE_MAXIMUM");
+helpers.message(ASJSUtils.MobileUtils, "TYPE_WIDTH");
+helpers.message(ASJSUtils.MobileUtils, "TYPE_HEIGHT");

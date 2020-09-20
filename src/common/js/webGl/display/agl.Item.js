@@ -2,12 +2,12 @@ require("../NameSpace.js");
 require("../data/props/agl.ItemProps.js");
 require("../data/props/agl.ColorProps.js");
 
-AGL.Item = createPrototypeClass(
-  BasePrototypeClass,
+AGL.Item = helpers.createPrototypeClass(
+  helpers.BasePrototypeClass,
   function Item() {
-    BasePrototypeClass.call(this);
+    helpers.BasePrototypeClass.call(this);
 
-    cnst(this, "type", AGL.Item.TYPE);
+    helpers.constant(this, "type", AGL.Item.TYPE);
 
     this.renderable  = true;
     this.interactive = false;
@@ -22,7 +22,7 @@ AGL.Item = createPrototypeClass(
     this.parent = null;
   },
   function(_super) {
-    get(this, "stage", function() { return this.parent ? this.parent.stage : null; });
+    helpers.get(this, "stage", function() { return this.parent ? this.parent.stage : null; });
 
     this.destruct = function() {
       this.parent && this.parent.removeChild && this.parent.removeChild(this);
@@ -60,4 +60,4 @@ AGL.Item = createPrototypeClass(
     }
   }
 );
-cnst(AGL.Item, "TYPE", "item");
+helpers.constant(AGL.Item, "TYPE", "item");

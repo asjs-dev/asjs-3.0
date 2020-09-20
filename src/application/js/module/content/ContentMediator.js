@@ -1,15 +1,19 @@
+require("../../../../common/js/helpers/createClass.js");
+require("../../../../common/js/helpers/message.js");
 require("../../../../common/js/utils/dataUtils/Language.js");
+
+require("../../NameSpace.js");
 require("../externalApplication/ExternalApplicationMediator.js");
 require("../notificationWindow/vo/NotificationWindowData.js");
 require("../notificationWindow/NotificationWindowMediator.js");
 require("./view/ContentView.js");
 
-createClass(NS, "ContentMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
+helpers.createClass(NS, "ContentMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
   var _view = _super.protected.view = new NS.ContentView();
 
   var _language = ASJSUtils.Language.instance;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function(root) {
     _super.new(root);
 
@@ -35,6 +39,6 @@ createClass(NS, "ContentMediator", ASJS.AbstractViewMediator, function(_scope, _
     _super.protected.sendNotification(NS.ExternalApplicationMediator.SHOW);
   }
 });
-msg(NS.ContentMediator, "SHOW");
-msg(NS.ContentMediator, "ON_SHOW_EXTERNAL_APPLICATION");
-msg(NS.ContentMediator, "ON_SHOW_NOTIFICATION_WINDOW");
+helpers.message(NS.ContentMediator, "SHOW");
+helpers.message(NS.ContentMediator, "ON_SHOW_EXTERNAL_APPLICATION");
+helpers.message(NS.ContentMediator, "ON_SHOW_NOTIFICATION_WINDOW");

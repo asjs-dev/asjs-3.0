@@ -1,5 +1,8 @@
+require("../event/asjs.DocumentEvent.js");
+require("../geom/asjs.Point.js");
+
 (function() {
-  createUtility(ASJS, "Polyfill");
+  ASJS.Polyfill = {};
 
   var vendors = ["ms", "moz", "webkit", "o"];
 
@@ -63,21 +66,21 @@
     stylePrefixCSS = jsCssMap.ms;
   }
 
-  cnst(ASJS.Polyfill, "stylePrefixJS",  stylePrefixJS);
-  cnst(ASJS.Polyfill, "stylePrefixCSS", stylePrefixCSS);
+  helpers.constant(ASJS.Polyfill, "stylePrefixJS",  stylePrefixJS);
+  helpers.constant(ASJS.Polyfill, "stylePrefixCSS", stylePrefixCSS);
 
   /* Endian */
   var b = new ArrayBuffer(4);
   var a = new Uint32Array(b);
   var c = new Uint8Array(b);
   a[0] = 0xdeadbeef;
-  cnst(ASJS.Polyfill, "isLittleEndian", c[0] == 0xef);
+  helpers.constant(ASJS.Polyfill, "isLittleEndian", c[0] == 0xef);
 
   /* Function name */
   function functionNameTest() {}
 
-  if (!functionNameTest.name || !tis(functionNameTest, "string")) {
-    prop(Function.prototype, "name", {
+  if (!functionNameTest.name || !helpers.typeIs(functionNameTest, "string")) {
+    helpers.property(Function.prototype, "name", {
       get: function() {
         var matches = this.toString().match(/^function\s*([^\s(]+)/);
         return matches
@@ -91,29 +94,29 @@
   for (var x = 0; x < vendors.length && !window.navigator.getUserMedia; ++x) {
     window.navigator.getUserMedia = window.navigator[vendors[x] + "GetUserMedia"];
   }
-  !window.navigator.getUserMedia && trace("window.navigator.getUserMedia is not supported!");
+  !window.navigator.getUserMedia && console.log("window.navigator.getUserMedia is not supported!");
 
   /* URL */
   window.URL = window.URL || window.webkitURL;
-  !window.URL && trace("window.URL is not supported!");
+  !window.URL && console.log("window.URL is not supported!");
 
   /* AudioContext */
   window.AudioContext = window.AudioContext || window.webkitAudioContext;
-  !window.AudioContext && trace("window.AudioContext is not supported!");
+  !window.AudioContext && console.log("window.AudioContext is not supported!");
 
   /* MediaSource */
   window.MediaSource = window.MediaSource || window.WebKitMediaSource;
-  !window.MediaSource && trace("window.MediaSource is not supported!");
+  !window.MediaSource && console.log("window.MediaSource is not supported!");
 
   /* CustomEvent */
-  if (!tis(window.CustomEvent, "function")) {
+  if (!helpers.typeIs(window.CustomEvent, "function")) {
     function CustomEvent(evt, p) {
       p = p || {
         "bubbles": true,
         "cancelable": true,
         "detail": undefined
       };
-      if (empty(p.bubbles)) p.bubbles = true;
+      if (helpers.isEmpty(p.bubbles)) p.bubbles = true;
       var e = document.createEvent("CustomEvent");
       e.initCustomEvent(evt, p.bubbles, p.cancelable, p.detail);
       return e;
@@ -143,8 +146,8 @@
     polyfillVisibilitychange = vendors[2] + visibilitychangeText;
   }
 
-  get(ASJS.Polyfill, visibilitychangeText, function() { return polyfillVisibilitychange; });
-  get(ASJS.Polyfill, "document" + hiddenText,   function() { return document[polyfillHidden]; });
+  helpers.get(ASJS.Polyfill, visibilitychangeText, function() { return polyfillVisibilitychange; });
+  helpers.get(ASJS.Polyfill, "document" + hiddenText,   function() { return document[polyfillHidden]; });
 
   /* Math.sign */
   Math.sign = Math.sign || function(x) {
@@ -169,7 +172,7 @@
     container.appendChild(content);
 
     body.appendChild(container);
-    cnst(ASJS.Polyfill, "scrollBarSize", containerSize - content.offsetWidth);
+    helpers.constant(ASJS.Polyfill, "scrollBarSize", containerSize - content.offsetWidth);
     body.removeChild(container);
 
     container.removeChild(content);
@@ -177,16 +180,16 @@
     content   = null;
   }
 
-  isDocumentComplete()
+  helpers.isDocumentComplete()
     ? initDocument()
     : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function listener() {
-        isDocumentComplete() &&
+        helpers.isDocumentComplete() &&
         initDocument() &&
         document.removeEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, listener);
       });
 
-  cnst(ASJS.Polyfill, "SCROLL_SIZE", -20);
-  cnst(ASJS.Polyfill, "SCROLL_DELTA", {
+  helpers.constant(ASJS.Polyfill, "SCROLL_SIZE", -20);
+  helpers.constant(ASJS.Polyfill, "SCROLL_DELTA", {
     "X": {
       "1": ASJS.Polyfill.SCROLL_SIZE,
       "2": 0
@@ -197,7 +200,7 @@
     }
   });
 
-  rof(ASJS.Polyfill, "getScrollData", function(event) {
+  helpers.constant(ASJS.Polyfill, "getScrollData", function(event) {
     return ASJS.Point.create(
       event.wheelDeltaX || event.deltaX || (event.detail * ASJS.Polyfill.SCROLL_DELTA.X[event.axis]),
       event.wheelDeltaY || event.deltaY || (event.detail * ASJS.Polyfill.SCROLL_DELTA.Y[event.axis])

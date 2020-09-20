@@ -1,43 +1,43 @@
-var stage;
-cnst(this, "ASJS", (function() {
+helpers.constant(this, "ASJS", (function() {
   var _scope = {};
 
-  trace("<AS/JS> core version: {{appVersion}}.{{date}}");
+  console.log("<AS/JS> core version: {{appVersion}}.{{date}}");
 
   _scope.start = function(application, root) {
-    isDocumentComplete()
+    helpers.isDocumentComplete()
       ? start(application, root)
       : document.addEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, function listener() {
-          isDocumentComplete() &&
+          helpers.isDocumentComplete() &&
           start(application, root) &&
           document.removeEventListener(ASJS.DocumentEvent.READY_STATE_CHANGE, listener);
         });
   }
 
   function start(application, root) {
-    if (!stage) stage = ASJS.Stage.instance;
+    ASJS.Stage.instance;
 
     var parent = stage;
     if (root) {
-      if (is(root, ASJS.Sprite)) parent = root;
-      if (is(root, Element)) parent = new ASJS.Sprite(root);
+      if (helpers.is(root, ASJS.Sprite)) parent = root;
+      if (helpers.is(root, Element)) parent = new ASJS.Sprite(root);
     }
 
     try {
       var app = new application();
-      is(app, ASJS.Tag) && parent.addChild(app);
+      helpers.is(app, ASJS.Tag) && parent.addChild(app);
     } catch (e) {
-      trace(e);
+      console.log(e);
     }
   }
 
   return _scope;
 })());
+window.ASJS = this.ASJS;
 
-c1(ASJS, "Importer", Object, function(_scope) {
+helpers.createSingletonClass(ASJS, "Importer", Object, function(_scope) {
   var priv = {};
 
-  cnst(priv, "REQUIRE_REGEX", /require\((\"[^\"]*\"|\'[^\']*\')\)\;/gm);
+  helpers.constant(priv, "REQUIRE_REGEX", /require\((\"[^\"]*\"|\'[^\']*\')\)\;/gm);
 
   var _version = Date.now();
 
@@ -96,7 +96,7 @@ c1(ASJS, "Importer", Object, function(_scope) {
     var requires = [];
     while ((m = priv.REQUIRE_REGEX.exec(content)) !== null) requires.push(m);
 
-    ito(requires, function(index, value, next, end) {
+    helpers.iterateOver(requires, function(index, value, next, end) {
       var path = value[1].substr(1, value[1].length - 2);
 
       require(path, baseUrl, true)
@@ -116,9 +116,9 @@ c1(ASJS, "Importer", Object, function(_scope) {
 
   function resolvePath(basePath, path) {
     var basePathArray = basePath.split("/");
-    emp(basePathArray[basePathArray.length - 1]) && basePathArray.pop();
+    helpers.isEmpty(basePathArray[basePathArray.length - 1]) && basePathArray.pop();
     var pathArray = path.split("/");
-    emp(pathArray[pathArray.length - 1]) && pathArray.pop();
+    helpers.isEmpty(pathArray[pathArray.length - 1]) && pathArray.pop();
 
     if ([".", ".."].indexOf(pathArray[0]) === -1) return path;
 

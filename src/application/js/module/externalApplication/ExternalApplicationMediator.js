@@ -1,11 +1,15 @@
+require("../../../../common/js/helpers/createClass.js");
+require("../../../../common/js/helpers/message.js");
+
+require("../../NameSpace.js");
 require("./view/ExternalApplicationView.js");
 
-createClass(NS, "ExternalApplicationMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
+helpers.createClass(NS, "ExternalApplicationMediator", ASJS.AbstractViewMediator, function(_scope, _super) {
   var _view = _super.protected.view = new NS.ExternalApplicationView();
 
   var _loader = new ASJS.ScriptLoader();
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function(root) {
     _super.new(root);
 
@@ -51,6 +55,6 @@ createClass(NS, "ExternalApplicationMediator", ASJS.AbstractViewMediator, functi
     _view.title = ((e.detail.loaded / e.detail.total) * 100) + "%";
   }
 });
-msg(NS.ExternalApplicationMediator, "SHOW");
-msg(NS.ExternalApplicationMediator, "HIDE");
-msg(NS.ExternalApplicationMediator, "CLOSE");
+helpers.message(NS.ExternalApplicationMediator, "SHOW");
+helpers.message(NS.ExternalApplicationMediator, "HIDE");
+helpers.message(NS.ExternalApplicationMediator, "CLOSE");

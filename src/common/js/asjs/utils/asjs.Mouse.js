@@ -1,11 +1,11 @@
 require("../event/asjs.MouseEvent.js");
 require("../geom/asjs.Point.js");
 
-createSingletonClass(ASJS, "Mouse", BaseClass, function(_scope) {
+helpers.createSingletonClass(ASJS, "Mouse", helpers.BaseClass, function(_scope) {
   var _mousePos = ASJS.Point.create();
 
-  get(_scope, "mouseX", function() { return _mousePos.x; });
-  get(_scope, "mouseY", function() { return _mousePos.y; });
+  helpers.get(_scope, "mouseX", function() { return _mousePos.x; });
+  helpers.get(_scope, "mouseY", function() { return _mousePos.y; });
 
   _scope.show = function() {
     stage.removeCSS("cursor");

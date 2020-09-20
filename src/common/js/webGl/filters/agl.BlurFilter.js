@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.AbstractFilter.js");
 
-AGL.BlurFilter = createPrototypeClass(
+AGL.BlurFilter = helpers.createPrototypeClass(
   AGL.AbstractFilter,
   function BlurFilter(blurX, blurY) {
     AGL.AbstractFilter.call(this);
@@ -11,12 +11,12 @@ AGL.BlurFilter = createPrototypeClass(
     this.blurY = blurY;
   },
   function() {
-    prop(this, "blurX", {
+    helpers.property(this, "blurX", {
       get: function() { return this._values[0]; },
       set: function(v) { this._values[0] = v; },
     });
 
-    prop(this, "blurY", {
+    helpers.property(this, "blurY", {
       get: function() { return this._values[1]; },
       set: function(v) { this._values[1] = v; },
     });

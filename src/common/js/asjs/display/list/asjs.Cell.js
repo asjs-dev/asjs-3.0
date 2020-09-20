@@ -1,11 +1,11 @@
 require("../../event/asjs.MouseEvent.js");
 require("../asjs.Sprite.js");
 
-createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
+helpers.createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
   var _data    = {};
   var _checked = false;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new("li");
     _scope.setCSS("position", "relative");
@@ -15,12 +15,12 @@ createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
 
   ASJS.Tag.attrProp(_scope, "name");
 
-  prop(_scope, "checked", {
+  helpers.property(_scope, "checked", {
     get: function() { return _checked; },
     set: function(v) { _checked = v; }
   });
 
-  prop(_scope, "data", {
+  helpers.property(_scope, "data", {
     get: function() { return _data; },
     set: function(v) {
       _data = v;
@@ -33,7 +33,7 @@ createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
 
   _scope.showData = function() {}
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _data    =
     _checked = null;
@@ -48,4 +48,4 @@ createClass(ASJS, "Cell", ASJS.Sprite, function(_scope, _super) {
     });
   }
 });
-msg(ASJS.Cell, "CLICK");
+helpers.message(ASJS.Cell, "CLICK");

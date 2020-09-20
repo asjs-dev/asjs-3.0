@@ -1,6 +1,6 @@
 require("./asjs.AbstractBitmapFilter.js");
 
-createClass(ASJS, "AlphaBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
+helpers.createClass(ASJS, "AlphaBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   _scope.new = function(type) {
     _scope.type = type || ASJS.AlphaBitmapFilter.TYPE_DARKNESS;
   }
@@ -16,5 +16,5 @@ createClass(ASJS, "AlphaBitmapFilter", ASJS.AbstractBitmapFilter, function(_scop
     return pixels;
   }
 });
-cnst(ASJS.AlphaBitmapFilter, "TYPE_DARKNESS",   "darkness");
-cnst(ASJS.AlphaBitmapFilter, "TYPE_BRIGHTNESS", "brightness");
+helpers.constant(ASJS.AlphaBitmapFilter, "TYPE_DARKNESS",   "darkness");
+helpers.constant(ASJS.AlphaBitmapFilter, "TYPE_BRIGHTNESS", "brightness");

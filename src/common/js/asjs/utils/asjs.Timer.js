@@ -1,4 +1,4 @@
-createClass(ASJS, "Timer", BaseClass, function(_scope, _super) {
+helpers.createClass(ASJS, "Timer", helpers.BaseClass, function(_scope, _super) {
   var _then;
 
   _scope.start = function() {
@@ -16,7 +16,7 @@ createClass(ASJS, "Timer", BaseClass, function(_scope, _super) {
     return delta;
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.stop();
     _super.destruct();

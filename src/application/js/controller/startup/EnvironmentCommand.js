@@ -1,9 +1,16 @@
+require("../../../../common/js/helpers/createClass.js");
+require("../../../../common/js/helpers/throttleFunction.js");
+require("../../../../common/js/helpers/isEmpty.js");
+require("../../../../common/js/helpers/inArray.js");
+
 require("../../../../common/js/utils/urlParser/URLParser.js");
 require("../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../common/js/utils/dataUtils/Cookies.js");
 require("../../../../common/js/utils/dataUtils/Config.js");
 
-createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _super) {
+require("../../NameSpace.js");
+
+helpers.createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _super) {
   var _language  = ASJSUtils.Language.instance;
   var _cookies   = ASJSUtils.Cookies;
   var _config    = ASJSUtils.Config.instance;
@@ -16,7 +23,7 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _su
 
   function setupLanguage() {
     function validateLanguage(sl) {
-      return empty(sl) || !inArray(_language.supportedLanguages, sl) ? null : sl;
+      return helpers.isEmpty(sl) || !helpers.inArray(_language.supportedLanguages, sl) ? null : sl;
     }
     var selectedLanguage = validateLanguage(_urlParser.getQueryParam('lang')) ||
                            validateLanguage(_cookies.readCookie('language')) ||
@@ -32,7 +39,7 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope, _su
     stage.addEventListener(ASJS.Stage.RESIZE, onStageResize);
   }
 
-  var onStageResize = throttleFunction(function() {
+  var onStageResize = helpers.throttleFunction(function() {
     _super.protected.sendNotification(ASJS.Stage.RESIZE);
   })
 });

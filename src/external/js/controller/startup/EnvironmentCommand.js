@@ -1,8 +1,14 @@
+require("../../../../common/js/helpers/createClass.js");
+require("../../../../common/js/helpers/isEmpty.js");
+require("../../../../common/js/helpers/inArray.js");
+
 require("../../../../common/js/utils/dataUtils/Language.js");
 require("../../../../common/js/utils/dataUtils/Cookies.js");
 require("../../../../common/js/utils/urlParser/URLParser.js");
 
-createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
+require("../../NameSpace.js");
+
+helpers.createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
   var _language  = ASJSUtils.Language.instance;
   var _cookies   = ASJSUtils.Cookies;
   var _urlParser = ASJSUtils.URLParser.instance;
@@ -14,7 +20,7 @@ createClass(NS, "EnvironmentCommand", ASJS.AbstractCommand, function(_scope) {
 
   function setupLanguage() {
     function validateLanguage(sl) {
-      return empty(sl) || !inArray(_language.supportedLanguages, sl) ? null : sl;
+      return helpers.isEmpty(sl) || !helpers.inArray(_language.supportedLanguages, sl) ? null : sl;
     }
     var selectedLanguage = validateLanguage(_urlParser.getQueryParam('lang')) ||
                            validateLanguage(_cookies.readCookie('language')) ||

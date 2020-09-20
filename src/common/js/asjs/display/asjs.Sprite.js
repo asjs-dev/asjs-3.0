@@ -1,7 +1,7 @@
 require("../geom/asjs.Rectangle.js");
 require("./asjs.DisplayObject.js");
 
-createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
+helpers.createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   var _children      = [];
   var _mouseChildren = true;
   var _locked        = false;
@@ -9,8 +9,8 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
   _super.protected.lock   = function() { _locked = true; };
   _super.protected.unlock = function() { _locked = false; };
 
-  override(_scope, _super, "bounds");
-  get(_scope, "bounds", function() {
+  helpers.override(_scope, _super, "bounds");
+  helpers.get(_scope, "bounds", function() {
     var rect = _super.bounds;
     var size = ASJS.Rectangle.create();
 
@@ -41,7 +41,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     return rect;
   });
 
-  prop(_scope, "mouseChildren", {
+  helpers.property(_scope, "mouseChildren", {
     get: function() { return _mouseChildren; },
     set: function(v) {
       _mouseChildren = v;
@@ -50,9 +50,9 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     }
   });
 
-  get(_scope, "numChildren", function() { return !empty(_children) ? _children.length : 0; });
+  helpers.get(_scope, "numChildren", function() { return !helpers.isEmpty(_children) ? _children.length : 0; });
 
-  override(_scope, _super, "clear");
+  helpers.override(_scope, _super, "clear");
   _scope.clear = function() {
     while (_scope.numChildren) _scope.removeChildAt(0);
     _super.clear();
@@ -79,7 +79,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.removeChild = function(child) {
     if (!child || !_scope.contains(child) || _locked) return null;
-    removeFromArray(_children, child);
+    helpers.removeFromArray(_children, child);
     _scope.el.removeChild(child.el);
     child.parent = null;
     return child;
@@ -95,7 +95,7 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
 
   _scope.setChildIndex = function(child, index) {
     if (!child || index < 0 || _locked) return null;
-    removeFromArray(_children, child);
+    helpers.removeFromArray(_children, child);
     var afterChild = _scope.getChildAt(index);
     afterChild && _scope.el.insertBefore(child.el, afterChild.el);
     _children.splice(index, 0, child);
@@ -130,14 +130,14 @@ createClass(ASJS, "Sprite", ASJS.DisplayObject, function(_scope, _super) {
     return null;
   }
 
-  override(_scope, _super, "sendParentChangeEvent");
+  helpers.override(_scope, _super, "sendParentChangeEvent");
   _scope.sendParentChangeEvent = function() {
     _super.sendParentChangeEvent();
     var i = _scope.numChildren;
     while (i--) _scope.getChildAt(i).sendParentChangeEvent();
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _children      =
     _mouseChildren =

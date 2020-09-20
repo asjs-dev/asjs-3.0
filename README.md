@@ -49,11 +49,11 @@ Good for single page applications, browser games and other apps.
 
 ```javascript
 var SampleApp = {};
-createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
-    trace("<AS/JS> Application");
+    console.log("<AS/JS> Application");
   }
 });
 
@@ -64,11 +64,11 @@ ASJS.start(SampleApp.Application);
 
 ```javascript
 var SampleApp = {};
-createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
-    trace("<AS/JS> Application");
+    console.log("<AS/JS> Application");
 
     var s = new ASJS.Sprite();
     stage.addChild(s);
@@ -82,11 +82,11 @@ ASJS.start(SampleApp.Application);
 
 ```javascript
 var SampleApp = {};
-createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
-    trace("<AS/JS> Application");
+    console.log("<AS/JS> Application");
 
     var s = new ASJS.Sprite();
         s.setSize( 100, 100 );
@@ -103,11 +103,11 @@ ASJS.start(SampleApp.Application);
 
 ```javascript
 var SampleApp = {};
-createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
-    trace("<AS/JS> Application");
+    console.log("<AS/JS> Application");
 
     var s = new ASJS.Sprite();
         s.setSize( 100, 100 );
@@ -127,11 +127,11 @@ ASJS.start(SampleApp.Application);
 
 ```javascript
 var SampleApp = {};
-createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
-    trace("<AS/JS> Application");
+    console.log("<AS/JS> Application");
 
     var i;
     var s;
@@ -155,12 +155,12 @@ ASJS.start(SampleApp.Application);
 
 ```javascript
 var SampleApp = {};
-createUtility(SampleApp, "Utils");
-rof(SampleApp.Utils, "getRand", function(v) {
+helpers.createUtility(SampleApp, "Utils");
+helpers.constant(SampleApp.Utils, "getRand", function(v) {
   return Math.floor(Math.random() * v);
 });
 
-createClass(SampleApp, "Particle", BaseClass, function(_scope) {
+helpers.createClass(SampleApp, "Particle", BaseClass, function(_scope) {
   _scope.new = function() {
     _scope.color = ASJS.Color.create(
       SampleApp.Utils.getRand(255),
@@ -185,8 +185,8 @@ createClass(SampleApp, "Particle", BaseClass, function(_scope) {
     var maxX  = stage.stageWidth - _scope.size;
     var maxY  = stage.stageHeight - _scope.size;
     var angle = _scope.angle * ASJS.GeomUtils.THETA;
-    _scope.x = between(0, maxX, _scope.x + Math.sin(angle) * speed);
-    _scope.y = between(0, maxY, _scope.y - Math.cos(angle) * speed);
+    _scope.x = helpers.between(0, maxX, _scope.x + Math.sin(angle) * speed);
+    _scope.y = helpers.between(0, maxY, _scope.y - Math.cos(angle) * speed);
   }
 
   function testWallCollision() {
@@ -197,10 +197,10 @@ createClass(SampleApp, "Particle", BaseClass, function(_scope) {
   }
 });
 
-createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
+helpers.createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
   var priv = {};
-  cnst(priv, "PARTICLES_NUM", 50);
-  cnst(priv, "FPS", 60);
+  helpers.constant(priv, "PARTICLES_NUM", 50);
+  helpers.constant(priv, "FPS", 60);
 
   var _mouse     = ASJS.Mouse.instance;
   var _cycler    = ASJS.Cycler.instance;
@@ -209,10 +209,10 @@ createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _super) {
   var _particles = [];
   var _time;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
-    trace("Say hello to <AS/JS>!");
+    console.log("Say hello to <AS/JS>!");
 
     _time = Date.now();
     _scope.addChild(_bitmap);

@@ -1,9 +1,9 @@
 require("../NameSpace.js");
 
-AGL.Texture = createPrototypeClass(
-  BasePrototypeClass,
+AGL.Texture = helpers.createPrototypeClass(
+  helpers.BasePrototypeClass,
   function Texture(gl, source) {
-    BasePrototypeClass.call(this);
+    helpers.BasePrototypeClass.call(this);
 
     this._source;
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
@@ -30,13 +30,13 @@ AGL.Texture = createPrototypeClass(
     this._eventType;
   },
   function(_super) {
-    get(this, "generateMipmap", function() { return this._generateMipmap; });
+    helpers.get(this, "generateMipmap", function() { return this._generateMipmap; });
 
-    get(this, "loaded", function() { return this._loaded; });
-    get(this, "width",  function() { return this._source[this._sourceWidthProperty]; });
-    get(this, "height", function() { return this._source[this._sourceHeightProperty]; });
+    helpers.get(this, "loaded", function() { return this._loaded; });
+    helpers.get(this, "width",  function() { return this._source[this._sourceWidthProperty]; });
+    helpers.get(this, "height", function() { return this._source[this._sourceHeightProperty]; });
 
-    prop(this, "source", {
+    helpers.property(this, "source", {
       get: function() { return this._source; },
       set: function(v) {
         this._source && this._source.removeEventListener(

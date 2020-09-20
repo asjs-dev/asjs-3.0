@@ -1,6 +1,6 @@
-createUtility(ASJS, "WindowEvent");
-cnst(ASJS.WindowEvent, "POPSTATE", "popstate");
-cnst(ASJS.WindowEvent, "RESIZE",   "resize");
-cnst(ASJS.WindowEvent, "ONLINE",   "online");
-cnst(ASJS.WindowEvent, "OFFLINE",  "offline");
-cnst(ASJS.WindowEvent, "MESSAGE",  "message");
+ASJS.WindowEvent = {};
+helpers.constant(ASJS.WindowEvent, "POPSTATE", "popstate");
+helpers.constant(ASJS.WindowEvent, "RESIZE",   "resize");
+helpers.constant(ASJS.WindowEvent, "ONLINE",   "online");
+helpers.constant(ASJS.WindowEvent, "OFFLINE",  "offline");
+helpers.constant(ASJS.WindowEvent, "MESSAGE",  "message");

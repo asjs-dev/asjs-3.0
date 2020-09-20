@@ -1,29 +1,32 @@
-require("./NameSpace.js");
+require("../../common/js/helpers/createClass.js");
+require("../../common/js/helpers/property.js");
 require("../../common/js/utils/dataUtils/Language.js");
 require("../../common/js/utils/dataUtils/Config.js");
+
+require("./NameSpace.js");
 require("./controller/DestructCommand.js");
 require("./controller/StartupCommand.js");
 
-createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
+helpers.createClass(NS, "Application", ASJS.Sprite, function(_scope, _super) {
   var _language       = ASJSUtils.Language.instance;
   var _config         = ASJSUtils.Config.instance;
   var _styleLoader    = new ASJS.StyleLoader();
   var _languageLoaded = false;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
     _scope.addClass("external-application");
 
-    trace("<AS/JS> External Application {{appVersion}}.{{date}}");
+    console.log("<AS/JS> External Application {{appVersion}}.{{date}}");
 
     _scope.addEventListener(ASJS.Stage.ADDED_TO_STAGE, addedToStage);
   }
 
-  get(_scope, "title", function() { return _language.getText("title"); });
+  helpers.get(_scope, "title", function() { return _language.getText("title"); });
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     (new NS.DestructCommand()).execute();
     _styleLoader.destruct();

@@ -1,10 +1,10 @@
 require("../asjs.DisplayObject.js");
 require("./asjs.CanvasApi.js");
 
-createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
+helpers.createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
   ASJS.CanvasApi.initCanvas(_scope, _super);
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function(bitmapWidth, bitmapHeight, contextAttributes) {
     _super.new("canvas");
 
@@ -32,7 +32,7 @@ createClass(ASJS, "Bitmap", ASJS.DisplayObject, function(_scope, _super) {
     return bmp;
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.destructCanvasApi();
     _super.destruct();

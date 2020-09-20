@@ -1,9 +1,9 @@
-createUtility(ASJS, "LoaderEvent");
-cnst(ASJS.LoaderEvent, "ERROR",              "error");
-cnst(ASJS.LoaderEvent, "ABORT",              "abort");
-cnst(ASJS.LoaderEvent, "LOAD_START",         "loadstart");
-cnst(ASJS.LoaderEvent, "PROGRESS",           "progress");
-cnst(ASJS.LoaderEvent, "LOAD",               "load");
-cnst(ASJS.LoaderEvent, "LOAD_END",           "loadend");
-cnst(ASJS.LoaderEvent, "TIMEOUT",            "timeout");
-cnst(ASJS.LoaderEvent, "READY_STATE_CHANGE", "readystatechange");
+ASJS.LoaderEvent = {};
+helpers.constant(ASJS.LoaderEvent, "ERROR",              "error");
+helpers.constant(ASJS.LoaderEvent, "ABORT",              "abort");
+helpers.constant(ASJS.LoaderEvent, "LOAD_START",         "loadstart");
+helpers.constant(ASJS.LoaderEvent, "PROGRESS",           "progress");
+helpers.constant(ASJS.LoaderEvent, "LOAD",               "load");
+helpers.constant(ASJS.LoaderEvent, "LOAD_END",           "loadend");
+helpers.constant(ASJS.LoaderEvent, "TIMEOUT",            "timeout");
+helpers.constant(ASJS.LoaderEvent, "READY_STATE_CHANGE", "readystatechange");

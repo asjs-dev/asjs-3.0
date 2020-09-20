@@ -1,6 +1,6 @@
 require("../../utils/asjs.Cycler.js");
 
-createClass(ASJS, "Easing", BaseClass, function(_scope, _super) {
+helpers.createClass(ASJS, "Easing", helpers.BaseClass, function(_scope, _super) {
   var _cycler = ASJS.Cycler.instance;
   var _isPlaying;
   var _id;
@@ -34,7 +34,7 @@ createClass(ASJS, "Easing", BaseClass, function(_scope, _super) {
     _stepCallback     = stepCallback;
     _completeCallback = completeCallback;
 
-    map(_to, function(k, item) {
+    helpers.map(_to, function(k, item) {
       _from[k]   = _target[k];
       _change[k] = item - _from[k];
     });
@@ -44,7 +44,7 @@ createClass(ASJS, "Easing", BaseClass, function(_scope, _super) {
     letsPlay();
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.stop();
 
@@ -77,7 +77,7 @@ createClass(ASJS, "Easing", BaseClass, function(_scope, _super) {
     if (_step >= _duration) {
       _scope.stop();
 
-      map(_to, function(k, item) {
+      helpers.map(_to, function(k, item) {
         _target[k] = item;
       });
 
@@ -87,7 +87,7 @@ createClass(ASJS, "Easing", BaseClass, function(_scope, _super) {
       return;
     }
 
-    map(_to, function(k) {
+    helpers.map(_to, function(k) {
       _target[k] = ASJS.Easing[_type](_step, _from[k], _change[k], _duration);
     });
 
@@ -96,99 +96,99 @@ createClass(ASJS, "Easing", BaseClass, function(_scope, _super) {
     _step++;
   }
 });
-rof(ASJS.Easing, "linearTween", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "linearTween", function(t, b, c, d) {
   return c*t/d + b;
 });
-rof(ASJS.Easing, "easeInQuad", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInQuad", function(t, b, c, d) {
   t /= d;
   return c*t*t + b;
 });
-rof(ASJS.Easing, "easeOutQuad", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeOutQuad", function(t, b, c, d) {
   t /= d;
   return -c * t*(t-2) + b;
 });
-rof(ASJS.Easing, "easeInOutQuad", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInOutQuad", function(t, b, c, d) {
   t /= d/2;
   if (t < 1) return c/2*t*t + b;
   t--;
   return -c/2 * (t*(t-2) - 1) + b;
 });
-rof(ASJS.Easing, "easeInCubic", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInCubic", function(t, b, c, d) {
   t /= d;
   return c*t*t*t + b;
 });
-rof(ASJS.Easing, "easeOutCubic", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeOutCubic", function(t, b, c, d) {
   t /= d;
   t--;
   return c*(t*t*t + 1) + b;
 });
-rof(ASJS.Easing, "easeInOutCubic", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInOutCubic", function(t, b, c, d) {
   t /= d/2;
   if (t < 1) return c/2*t*t*t + b;
   t -= 2;
   return c/2*(t*t*t + 2) + b;
 });
-rof(ASJS.Easing, "easeInQuart", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInQuart", function(t, b, c, d) {
   t /= d;
   return c*t*t*t*t + b;
 });
-rof(ASJS.Easing, "easeOutQuart", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeOutQuart", function(t, b, c, d) {
   t /= d;
   t--;
   return -c * (t*t*t*t - 1) + b;
 });
-rof(ASJS.Easing, "easeInOutQuart", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInOutQuart", function(t, b, c, d) {
   t /= d/2;
   if (t < 1) return c/2*t*t*t*t + b;
   t -= 2;
   return -c/2 * (t*t*t*t - 2) + b;
 });
-rof(ASJS.Easing, "easeInQuint", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInQuint", function(t, b, c, d) {
   t /= d;
   return c*t*t*t*t*t + b;
 });
-rof(ASJS.Easing, "easeOutQuint", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeOutQuint", function(t, b, c, d) {
   t /= d;
   t--;
   return c*(t*t*t*t*t + 1) + b;
 });
-rof(ASJS.Easing, "easeInOutQuint", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInOutQuint", function(t, b, c, d) {
   t /= d/2;
   if (t < 1) return c/2*t*t*t*t*t + b;
   t -= 2;
   return c/2*(t*t*t*t*t + 2) + b;
 });
-rof(ASJS.Easing, "easeInSine", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInSine", function(t, b, c, d) {
   return -c * Math.cos(t/d * (Math.PI/2)) + c + b;
 });
-rof(ASJS.Easing, "easeOutSine", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeOutSine", function(t, b, c, d) {
   return c * Math.sin(t/d * (Math.PI/2)) + b;
 });
-rof(ASJS.Easing, "easeInOutSine", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInOutSine", function(t, b, c, d) {
   return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
 });
-rof(ASJS.Easing, "easeInExpo", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInExpo", function(t, b, c, d) {
   return c * Math.pow(2, 10 * (t/d - 1)) + b;
 });
-rof(ASJS.Easing, "easeOutExpo", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeOutExpo", function(t, b, c, d) {
   return c * (-Math.pow(2, -10 * t/d) + 1) + b;
 });
-rof(ASJS.Easing, "easeInOutExpo", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInOutExpo", function(t, b, c, d) {
   t /= d/2;
   if (t < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
   t--;
   return c/2 * (-Math.pow(2, -10 * t) + 2) + b;
 });
-rof(ASJS.Easing, "easeInCirc", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInCirc", function(t, b, c, d) {
   t /= d;
   return -c * (Math.sqrt(1 - t*t) - 1) + b;
 });
-rof(ASJS.Easing, "easeOutCirc", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeOutCirc", function(t, b, c, d) {
   t /= d;
   t--;
   return c * Math.sqrt(1 - t*t) + b;
 });
-rof(ASJS.Easing, "easeInOutCirc", function(t, b, c, d) {
+helpers.constant(ASJS.Easing, "easeInOutCirc", function(t, b, c, d) {
   t /= d/2;
   if (t < 1) return -c/2 * (Math.sqrt(1 - t*t) - 1) + b;
   t -= 2;

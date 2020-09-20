@@ -1,7 +1,7 @@
 require("../asjs.DisplayObject.js");
 
-createClass(ASJS, "Form", ASJS.Sprite, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(ASJS, "Form", ASJS.Sprite, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = _super.new.bind(_scope, "form");
 
   ASJS.Tag.attrProp(_scope, "action");
@@ -16,4 +16,4 @@ createClass(ASJS, "Form", ASJS.Sprite, function(_scope, _super) {
     _scope.el.submit();
   }
 });
-cnst(ASJS.Form, "ENCTYPE_MULTIPART", "multipart/form-data");
+helpers.constant(ASJS.Form, "ENCTYPE_MULTIPART", "multipart/form-data");

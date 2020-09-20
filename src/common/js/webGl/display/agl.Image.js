@@ -4,12 +4,12 @@ require("../data/agl.BlendModes.js");
 require("../data/props/agl.TextureProps.js");
 require("../data/props/agl.TextureCrop.js");
 
-AGL.Image = createPrototypeClass(
+AGL.Image = helpers.createPrototypeClass(
   AGL.Item,
   function Image(texture) {
     AGL.Item.call(this);
 
-    cnst(this, "type", AGL.Image.TYPE);
+    helpers.constant(this, "type", AGL.Image.TYPE);
 
     this.textureMatrixCache = AGL.Matrix3.identity();
 
@@ -62,8 +62,8 @@ AGL.Image = createPrototypeClass(
     }
   }
 );
-cnst(AGL.Image, "TYPE", "drawable");
-cnst(AGL.Image, "Tint", {
+helpers.constant(AGL.Image, "TYPE", "drawable");
+helpers.constant(AGL.Image, "Tint", {
   "NORMAL"    : 0,
   "GRAYSCALE" : 1,
   "OVERRIDE"  : 2,

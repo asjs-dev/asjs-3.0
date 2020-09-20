@@ -1,6 +1,6 @@
 require("./asjs.CanvasApi.js");
 
-createClass(ASJS, "OffscreenCanvas", BaseClass, function(_scope, _super) {
+helpers.createClass(ASJS, "OffscreenCanvas", helpers.BaseClass, function(_scope, _super) {
   ASJS.CanvasApi.initCanvas(_scope, _super);
 
   var _el;
@@ -12,7 +12,7 @@ createClass(ASJS, "OffscreenCanvas", BaseClass, function(_scope, _super) {
     _super.protected.contextAttributes = contextAttributes;
   }
 
-  get(_scope, "el", function() { return _el; });
+  helpers.get(_scope, "el", function() { return _el; });
 
   _scope.clone = function() {
     var pixels = _scope.getImageData(0, 0, _scope.bitmapWidth, _scope.bitmapHeight);
@@ -32,7 +32,7 @@ createClass(ASJS, "OffscreenCanvas", BaseClass, function(_scope, _super) {
     return bmp;
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.destructCanvasApi();
     _super.destruct();

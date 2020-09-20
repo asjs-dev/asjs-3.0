@@ -1,8 +1,12 @@
+require("../../../../../common/js/helpers/createClass.js");
+require("../../../../../common/js/helpers/property.js");
 require("../../../../../common/js/utils/dataUtils/Language.js");
-require("../../../../../common/js/view/AbstractAnimatedView.js");
+require("../../../../../common/js/utils/view/AbstractAnimatedView.js");
+
+require("../../../NameSpace.js");
 require("../ExternalApplicationMediator.js");
 
-createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
+helpers.createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
   var _language = ASJSUtils.Language.instance;
   var _mouse    = ASJS.Mouse.instance;
 
@@ -13,7 +17,7 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractAnimatedView, funct
 
   var _externalApplication;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -34,7 +38,7 @@ createClass(NS, "ExternalApplicationView", ASJSUtils.AbstractAnimatedView, funct
     _container.addChild(_externalApplicationContainer);
   }
 
-  set(_scope, "title", function(v) { _title.text = v; });
+  helpers.set(_scope, "title", function(v) { _title.text = v; });
 
   _scope.addExternalApplication = function(externalApplication) {
     _scope.removeExternalApplication();

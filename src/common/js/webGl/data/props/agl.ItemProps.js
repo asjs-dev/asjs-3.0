@@ -1,7 +1,7 @@
 require("../../NameSpace.js");
 require("./agl.AbstractProps.js");
 
-AGL.ItemProps = createPrototypeClass(
+AGL.ItemProps = helpers.createPrototypeClass(
   AGL.AbstractProps,
   function ItemProps() {
     AGL.AbstractProps.call(this);
@@ -34,7 +34,7 @@ AGL.ItemProps = createPrototypeClass(
     this._height   = 1;
   },
   function() {
-    get(this, "scaledWidth", function() {
+    helpers.get(this, "scaledWidth", function() {
       if (this._currentScaledWidthUpdateId !== this._scaledWidthUpdateId) {
         this._currentScaledWidthUpdateId = this._scaledWidthUpdateId;
         this._scaledWidth = this._width * this._scaleX;
@@ -42,7 +42,7 @@ AGL.ItemProps = createPrototypeClass(
       return this._scaledWidth;
     });
 
-    get(this, "scaledHeight", function() {
+    helpers.get(this, "scaledHeight", function() {
       if (this._currentScaledHeightUpdateId !== this._scaledHeightUpdateId) {
         this._currentScaledHeightUpdateId = this._scaledHeightUpdateId;
         this._scaledHeight = this._height * this._scaleY;
@@ -50,7 +50,7 @@ AGL.ItemProps = createPrototypeClass(
       return this._scaledHeight;
     });
 
-    get(this, "sinR", function() {
+    helpers.get(this, "sinR", function() {
       if (this._currentSinRotationUpdateId !== this._rotationUpdateId) {
         this._currentSinRotationUpdateId = this._rotationUpdateId;
         this._sinRotation = Math.sin(this._rotation);
@@ -58,7 +58,7 @@ AGL.ItemProps = createPrototypeClass(
       return this._sinRotation;
     });
 
-    get(this, "cosR", function() {
+    helpers.get(this, "cosR", function() {
       if (this._currentCosRotationUpdateId !== this._rotationUpdateId) {
         this._currentCosRotationUpdateId = this._rotationUpdateId;
         this._cosRotation = Math.cos(this._rotation);
@@ -66,7 +66,7 @@ AGL.ItemProps = createPrototypeClass(
       return this._cosRotation;
     });
 
-    prop(this, "x", {
+    helpers.property(this, "x", {
       get: function() { return this._x; },
       set: function(v) {
         if (this._x !== v) {
@@ -76,7 +76,7 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "y", {
+    helpers.property(this, "y", {
       get: function() { return this._y; },
       set: function(v) {
         if (this._y !== v) {
@@ -86,12 +86,12 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "zIndex", {
+    helpers.property(this, "zIndex", {
       get: function() { return this._zIndex; },
       set: function(v) { this._zIndex !== v && (this._zIndex = v); }
     });
 
-    prop(this, "rotation", {
+    helpers.property(this, "rotation", {
       get: function() { return this._rotation; },
       set: function(v) {
         if (this._rotation !== v) {
@@ -102,7 +102,7 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "scaleX", {
+    helpers.property(this, "scaleX", {
       get: function() { return this._scaleX; },
       set: function(v) {
         if (this._scaleX !== v) {
@@ -113,7 +113,7 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "scaleY", {
+    helpers.property(this, "scaleY", {
       get: function() { return this._scaleY; },
       set: function(v) {
         if (this._scaleY !== v) {
@@ -124,7 +124,7 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "width", {
+    helpers.property(this, "width", {
       get: function() { return this._width; },
       set: function(v) {
         if (this._width !== v) {
@@ -135,7 +135,7 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "height", {
+    helpers.property(this, "height", {
       get: function() { return this._height; },
       set: function(v) {
         if (this._height !== v) {
@@ -146,7 +146,7 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "anchorX", {
+    helpers.property(this, "anchorX", {
       get: function() { return this._anchorX; },
       set: function(v) {
         if (this._anchorX !== v) {
@@ -156,7 +156,7 @@ AGL.ItemProps = createPrototypeClass(
       }
     });
 
-    prop(this, "anchorY", {
+    helpers.property(this, "anchorY", {
       get: function() { return this._anchorY; },
       set: function(v) {
         if (this._anchorY !== v) {

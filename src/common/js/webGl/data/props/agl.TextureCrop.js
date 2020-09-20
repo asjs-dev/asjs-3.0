@@ -1,7 +1,7 @@
 require("../../NameSpace.js");
 require("./agl.AbstractProps.js");
 
-AGL.TextureCrop = createPrototypeClass(
+AGL.TextureCrop = helpers.createPrototypeClass(
   AGL.AbstractProps,
   function TextureCrop() {
     AGL.AbstractProps.call(this);
@@ -12,7 +12,7 @@ AGL.TextureCrop = createPrototypeClass(
     this._height = 1;
   },
   function() {
-    prop(this, "x", {
+    helpers.property(this, "x", {
       get: function() { return this.items[0]; },
       set: function(v) {
         if (this.items[0] !== v) {
@@ -23,7 +23,7 @@ AGL.TextureCrop = createPrototypeClass(
       }
     });
 
-    prop(this, "y", {
+    helpers.property(this, "y", {
       get: function() { return this.items[1]; },
       set: function(v) {
         if (this.items[1] !== v) {
@@ -34,7 +34,7 @@ AGL.TextureCrop = createPrototypeClass(
       }
     });
 
-    prop(this, "width", {
+    helpers.property(this, "width", {
       get: function() { return this._width; },
       set: function(v) {
         if (this._width !== v) {
@@ -45,7 +45,7 @@ AGL.TextureCrop = createPrototypeClass(
       }
     });
 
-    prop(this, "height", {
+    helpers.property(this, "height", {
       get: function() { return this._height; },
       set: function(v) {
         if (this._height !== v) {

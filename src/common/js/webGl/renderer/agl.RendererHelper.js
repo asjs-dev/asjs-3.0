@@ -22,9 +22,9 @@ AGL.RendererHelper = {
     this._gl.enable(this._gl.BLEND);
   },
   "createFunctionality": function(canvas) {
-    get(this, "canvas", function() { return this._canvas; });
+    helpers.get(this, "canvas", function() { return this._canvas; });
 
-    get(this, "context", function() {
+    helpers.get(this, "context", function() {
       if (!this._context || (this._context.isContextLost && this._context.isContextLost())) {
         this._canvas.addEventListener("webglcontextlost", function(event) { console.log(event); });
         this._canvas.addEventListener("webglcontextrestored", function(event) { console.log(event); });
@@ -38,7 +38,7 @@ AGL.RendererHelper = {
       return this._context;
     });
 
-    prop(this, "width", {
+    helpers.property(this, "width", {
       get: function() { return this._width; },
       set: function(v) {
         if (this._width !== v) {
@@ -48,7 +48,7 @@ AGL.RendererHelper = {
       }
     });
 
-    prop(this, "height", {
+    helpers.property(this, "height", {
       get: function() { return this._height; },
       set: function(v) {
         if (this._height !== v) {

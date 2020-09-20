@@ -1,12 +1,12 @@
 require("./agl.Item.js");
 require("../NameSpace.js");
 
-AGL.Container = createPrototypeClass(
+AGL.Container = helpers.createPrototypeClass(
   AGL.Item,
   function Container() {
     AGL.Item.call(this);
 
-    cnst(this, "type", AGL.Container.TYPE);
+    helpers.constant(this, "type", AGL.Container.TYPE);
 
     this.children = [];
 
@@ -19,7 +19,7 @@ AGL.Container = createPrototypeClass(
     this._currentWorldColorUpdateId = 0;
   },
   function() {
-    get(this, "numChildren", function() { return this.children.length; });
+    helpers.get(this, "numChildren", function() { return this.children.length; });
 
     this.clear = function() {
       while (this.numChildren) this.removeChildAt(0);
@@ -44,7 +44,7 @@ AGL.Container = createPrototypeClass(
 
     this.removeChild = function(child) {
       if (!child || !this.contains(child)) return null;
-      removeFromArray(this.children, child);
+      helpers.removeFromArray(this.children, child);
       child.parent = null;
       return child;
     }
@@ -59,7 +59,7 @@ AGL.Container = createPrototypeClass(
 
     this.setChildIndex = function(child, index) {
       if (!child || index < 0) return null;
-      removeFromArray(this.children, child);
+      helpers.removeFromArray(this.children, child);
       this.children.splice(index, 0, child);
       return child;
     }
@@ -110,4 +110,4 @@ AGL.Container = createPrototypeClass(
     }
   }
 );
-cnst(AGL.Container, "TYPE", "container");
+helpers.constant(AGL.Container, "TYPE", "container");

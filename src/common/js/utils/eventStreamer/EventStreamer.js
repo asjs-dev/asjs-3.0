@@ -1,6 +1,10 @@
-require("../../NameSpace.js");
+require("../../helpers/createClass.js");
+require("../../helpers/property.js");
+require("../../helpers/typeIs.js");
 
-createClass(ASJSUtils, "EventStreamer", ASJS.EventDispatcher, function(_scope) {
+require("../NameSpace.js");
+
+helpers.createClass(ASJSUtils, "EventStreamer", ASJS.EventDispatcher, function(_scope) {
   var _stream;
 
   _scope.target;
@@ -8,7 +12,7 @@ createClass(ASJSUtils, "EventStreamer", ASJS.EventDispatcher, function(_scope) {
 
   _scope.new = _scope.reset;
 
-  get(_scope, "stream", function() { return _stream; });
+  helpers.get(_scope, "stream", function() { return _stream; });
 
   _scope.reset = function() {
     _scope.stopWatch();
@@ -24,7 +28,7 @@ createClass(ASJSUtils, "EventStreamer", ASJS.EventDispatcher, function(_scope) {
 
   _scope.stopWatch = function() {
     if (!_scope.eventTypes || !_scope.target) return;
-    var types = tis(_scope.eventTypes, "object") ? _scope.eventTypes : _scope.eventTypes.split(" ");
+    var types = helpers.typeIs(_scope.eventTypes, "object") ? _scope.eventTypes : _scope.eventTypes.split(" ");
     var i = types.length;
     while (i--) _scope.target.removeEventListener(types[i], onEventStream);
   }

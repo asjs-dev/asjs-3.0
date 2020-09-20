@@ -1,7 +1,7 @@
 require("../../NameSpace.js");
 require("./agl.AbstractProps.js");
 
-AGL.ColorProps = createPrototypeClass(
+AGL.ColorProps = helpers.createPrototypeClass(
   AGL.AbstractProps,
   function ColorProps() {
     AGL.AbstractProps.call(this);
@@ -9,7 +9,7 @@ AGL.ColorProps = createPrototypeClass(
     this.items = [1, 1, 1, 1];
   },
   function() {
-    prop(this, "r", {
+    helpers.property(this, "r", {
       get: function() { return this.items[0]; },
       set: function(v) {
         if (this.items[0] !== v) {
@@ -19,7 +19,7 @@ AGL.ColorProps = createPrototypeClass(
       }
     });
 
-    prop(this, "g", {
+    helpers.property(this, "g", {
       get: function() { return this.items[1]; },
       set: function(v) {
         if (this.items[1] !== v) {
@@ -29,7 +29,7 @@ AGL.ColorProps = createPrototypeClass(
       }
     });
 
-    prop(this, "b", {
+    helpers.property(this, "b", {
       get: function() { return this.items[2]; },
       set: function(v) {
         if (this.items[2] !== v) {
@@ -39,7 +39,7 @@ AGL.ColorProps = createPrototypeClass(
       }
     });
 
-    prop(this, "a", {
+    helpers.property(this, "a", {
       get: function() { return this.items[3]; },
       set: function(v) {
         if (this.items[3] !== v) {

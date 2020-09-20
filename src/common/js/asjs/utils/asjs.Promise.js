@@ -1,4 +1,4 @@
-createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
+helpers.createClass(ASJS, "Promise", helpers.BaseClass, function(_scope, _super) {
   var _resolveFunction = [];
   var _rejectFunction  = [];
   var _finallyFunction = [];
@@ -28,7 +28,7 @@ createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
   }
 
   _scope.then = function(f) {
-    if (!inArray(_resolveFunction, f)) {
+    if (!helpers.inArray(_resolveFunction, f)) {
       _resolveFunction.push(f);
       callResolve();
     }
@@ -36,7 +36,7 @@ createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
   }
 
   _scope.catch = function(f) {
-    if (!inArray(_rejectFunction, f)) {
+    if (!helpers.inArray(_rejectFunction, f)) {
       _rejectFunction.push(f);
       callReject();
     }
@@ -44,14 +44,14 @@ createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
   }
 
   _scope.finally = function(f) {
-    if (!inArray(_finallyFunction, f)) {
+    if (!helpers.inArray(_finallyFunction, f)) {
       _finallyFunction.push(f);
       callFinally();
     }
     return _scope;
   }
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     if (
       (_resolveFunction && _resolveFunction.length > 0) ||
@@ -88,7 +88,7 @@ createClass(ASJS, "Promise", BaseClass, function(_scope, _super) {
     if (_destructRequired) _scope.destruct();
   }
 });
-rof(ASJS.Promise, "all", function(promises) {
+helpers.constant(ASJS.Promise, "all", function(promises) {
   var dfd = new ASJS.Promise();
 
   var responses = [];
@@ -107,7 +107,7 @@ rof(ASJS.Promise, "all", function(promises) {
 
   return dfd;
 });
-rof(ASJS.Promise, "race", function(promises) {
+helpers.constant(ASJS.Promise, "race", function(promises) {
   var dfd = new ASJS.Promise();
 
   var hadResponse = false;

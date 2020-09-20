@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.SimpleRenderer.js");
 
-AGL.MaskRenderer = createPrototypeClass(
+AGL.MaskRenderer = helpers.createPrototypeClass(
   AGL.SimpleRenderer,
   function MaskRenderer(config) {
     config.vertexShader   = config.vertexShader   || AGL.MaskRenderer.createVertexShader;

@@ -1,13 +1,13 @@
 require("../../event/asjs.EventDispatcher.js");
 
-createClass(ASJS, "AbstractModel", ASJS.EventDispatcher, function(_scope) {
+helpers.createClass(ASJS, "AbstractModel", ASJS.EventDispatcher, function(_scope) {
   var priv = {};
 
-  cnst(priv, "PREFIX", "ASJS-AbstractModel-");
+  helpers.constant(priv, "PREFIX", "ASJS-AbstractModel-");
 
   var _data = {};
 
-  prop(_scope, "data", {
+  helpers.property(_scope, "data", {
     get: function() { return _data; },
     set: function(v) {
       _data = v;
@@ -16,7 +16,7 @@ createClass(ASJS, "AbstractModel", ASJS.EventDispatcher, function(_scope) {
   });
 
   _scope.get = function(k) {
-    return _data && !empty(_data[k]) ? _data[k] : null;
+    return _data && !helpers.isEmpty(_data[k]) ? _data[k] : null;
   }
 
   _scope.set = function(k, v) {
@@ -41,12 +41,12 @@ createClass(ASJS, "AbstractModel", ASJS.EventDispatcher, function(_scope) {
   }
 
   function merge(oData, nData) {
-    map(nData, function(k, item) {
-      tis(oData[k], "object")
+    helpers.map(nData, function(k, item) {
+      helpers.typeIs(oData[k], "object")
         ? merge(oData[k], item)
         : oData[k] = item;
     });
   }
 });
-msg(ASJS.AbstractModel, "CHANGED");
-msg(ASJS.AbstractModel, "CLEARED");
+helpers.message(ASJS.AbstractModel, "CHANGED");
+helpers.message(ASJS.AbstractModel, "CLEARED");

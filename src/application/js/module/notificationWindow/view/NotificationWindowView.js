@@ -1,7 +1,14 @@
-require("../../../../../common/js/view/AbstractAnimatedView.js");
+require("../../../../../common/js/helpers/createClass.js");
+require("../../../../../common/js/helpers/isEmpty.js");
+require("../../../../../common/js/helpers/typeIs.js");
+require("../../../../../common/js/helpers/is.js");
+require("../../../../../common/js/helpers/mathHelper.js");
+require("../../../../../common/js/utils/view/AbstractAnimatedView.js");
+
+require("../../../NameSpace.js");
 require("../NotificationWindowMediator.js");
 
-createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
+helpers.createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, function(_scope, _super) {
   var _notificationItem = {};
 
   var _window       = new ASJS.Scale9Grid();
@@ -12,7 +19,7 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
   var _cancelButton = new ASJS.Button();
   var _scrollBar    = new ASJS.ScrollBar();
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -45,13 +52,13 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
     _okButton.addEventListener(ASJS.MouseEvent.CLICK, function() {
       _scope.hideWindow();
-      !empty(_notificationItem['okCallback']) && _notificationItem['okCallback']();
+      !helpers.isEmpty(_notificationItem['okCallback']) && _notificationItem['okCallback']();
     });
     _okButton.addClass("ok-button button");
 
     _cancelButton.addEventListener(ASJS.MouseEvent.CLICK, function() {
       _scope.hideWindow();
-      !empty(_notificationItem['cancelCallback']) && _notificationItem['cancelCallback']();
+      !helpers.isEmpty(_notificationItem['cancelCallback']) && _notificationItem['cancelCallback']();
     });
     _cancelButton.addClass("cancel-button button");
   }
@@ -72,11 +79,11 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
     _notificationItem = notificationItem;
 
-    if (tis(_notificationItem.title, "string")) _title.html = _notificationItem.title;
-    else if (is(_notificationItem.title, ASJS.Tag)) _title.addChild(_notificationItem.title);
+    if (helpers.typeIs(_notificationItem.title, "string")) _title.html = _notificationItem.title;
+    else if (helpers.is(_notificationItem.title, ASJS.Tag)) _title.addChild(_notificationItem.title);
 
-    if (tis(_notificationItem.content, "string")) _content.html = _notificationItem.content;
-    else if (is(_notificationItem.content, ASJS.Tag)) _content.addChild(_notificationItem.content);
+    if (helpers.typeIs(_notificationItem.content, "string")) _content.html = _notificationItem.content;
+    else if (helpers.is(_notificationItem.content, ASJS.Tag)) _content.addChild(_notificationItem.content);
 
     if (_notificationItem['showOk']) {
       _okButton.label = _notificationItem['okLabel'];
@@ -91,8 +98,8 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
 
   _scope.render = function() {
     _window.setSize(
-      bw(150, stage.stageWidth,  _notificationItem.width),
-      bw(150, stage.stageHeight, _notificationItem.height)
+      helpers.between(150, stage.stageWidth,  _notificationItem.width),
+      helpers.between(150, stage.stageHeight, _notificationItem.height)
     );
 
     _container.setSize(_window.width, _window.height);
@@ -141,6 +148,6 @@ createClass(NS, "NotificationWindowView", ASJSUtils.AbstractAnimatedView, functi
   }
 
   function isTag(data) {
-    return tis(data, "object") && is(data, ASJS.Tag);
+    return helpers.typeIs(data, "object") && helpers.is(data, ASJS.Tag);
   }
 });

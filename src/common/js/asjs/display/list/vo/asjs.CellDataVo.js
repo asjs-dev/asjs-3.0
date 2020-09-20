@@ -1,4 +1,4 @@
-createClass(ASJS, "CellDataVo", BaseClass, function(_scope) {
+helpers.createClass(ASJS, "CellDataVo", helpers.BaseClass, function(_scope) {
   _scope.new = function(data) {
     var d = data || {};
 

@@ -1,7 +1,7 @@
-createUtility(ASJS, "Point");
-rof(ASJS.Point, "create", function(x, y) {
+ASJS.Point = {};
+helpers.constant(ASJS.Point, "create", function(x, y) {
   var point = {};
-      point.x = valueOrDefault(x, 0);
-      point.y = valueOrDefault(y, 0);
+      point.x = helpers.valueOrDefault(x, 0);
+      point.y = helpers.valueOrDefault(y, 0);
   return point;
 });

@@ -1,31 +1,31 @@
 require("./asjs.Point.js");
 
-createUtility(ASJS, "GeomUtils");
+ASJS.GeomUtils = {};
 
-cnst(ASJS.GeomUtils, "THETA", Math.PI / 180);
+helpers.constant(ASJS.GeomUtils, "THETA", Math.PI / 180);
 
-rof(ASJS.GeomUtils, "pointInOrigo", function(point) {
+helpers.constant(ASJS.GeomUtils, "pointInOrigo", function(point) {
   return point.x === 0 && point.y === 0;
 });
 
-rof(ASJS.GeomUtils, "twoPointDistance", function(pointA, pointB) {
+helpers.constant(ASJS.GeomUtils, "twoPointDistance", function(pointA, pointB) {
   return Math.sqrt(Math.pow(pointB.x - pointA.x, 2) + Math.pow(pointB.y - pointA.y, 2));
 });
 
-rof(ASJS.GeomUtils, "pointInRect", function(point, rect) {
+helpers.constant(ASJS.GeomUtils, "pointInRect", function(point, rect) {
   return point.x >= rect.x && point.x <= rect.x + rect.width &&
          point.y >= rect.y && point.y <= rect.y + rect.height;
 });
 
-rof(ASJS.GeomUtils, "twoPointEquals", function(pointA, pointB) {
+helpers.constant(ASJS.GeomUtils, "twoPointEquals", function(pointA, pointB) {
   return pointA.x === pointB.x && pointA.y === pointB.y;
 });
 
-rof(ASJS.GeomUtils, "twoPointAngle", function(pointA, pointB) {
+helpers.constant(ASJS.GeomUtils, "twoPointAngle", function(pointA, pointB) {
   return Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x) / ASJS.GeomUtils.THETA;
 });
 
-rof(ASJS.GeomUtils, "twoRectsIntersect", function(rectA, rectB) {
+helpers.constant(ASJS.GeomUtils, "twoRectsIntersect", function(rectA, rectB) {
   var section        = ASJS.Rectangle.create();
       section.x      = Math.max(rectA.x, rectB.x);
       section.y      = Math.max(rectA.y, rectB.y);
@@ -39,13 +39,13 @@ rof(ASJS.GeomUtils, "twoRectsIntersect", function(rectA, rectB) {
   return isRectIntersection;
 });
 
-rof(ASJS.GeomUtils, "rectInRect", function(rectA, rectB) {
+helpers.constant(ASJS.GeomUtils, "rectInRect", function(rectA, rectB) {
   return rectA.x >= rectB.x && rectA.y >= rectB.y &&
          rectA.x + rectA.width <= rectB.x + rectB.width &&
          rectA.y + rectA.height <= rectB.y + rectB.height;
 });
 
-rof(ASJS.GeomUtils, "localToGlobal", function(target, point) {
+helpers.constant(ASJS.GeomUtils, "localToGlobal", function(target, point) {
   var pos = ASJS.Point.create(point.x, point.y);
   var child = target;
   while (child) {
@@ -58,7 +58,7 @@ rof(ASJS.GeomUtils, "localToGlobal", function(target, point) {
   return pos;
 });
 
-rof(ASJS.GeomUtils, "globalToLocal", function(target, point) {
+helpers.constant(ASJS.GeomUtils, "globalToLocal", function(target, point) {
   var pos = ASJS.Point.create(point.x, point.y);
   var child = target;
   var children = [child];
@@ -73,7 +73,7 @@ rof(ASJS.GeomUtils, "globalToLocal", function(target, point) {
   return pos;
 });
 
-rof(ASJS.GeomUtils, "hitTest", function(target, point) {
+helpers.constant(ASJS.GeomUtils, "hitTest", function(target, point) {
   var rotationDeg = - target.rotation * ASJS.GeomUtils.THETA;
 
   var rect = target.bounds;
@@ -106,7 +106,7 @@ rof(ASJS.GeomUtils, "hitTest", function(target, point) {
   return isHit;
 });
 
-rof(ASJS.GeomUtils, "getQuadCenter", function(x1, y1, x2, y2, x3, y3, x4, y4) {
+helpers.constant(ASJS.GeomUtils, "getQuadCenter", function(x1, y1, x2, y2, x3, y3, x4, y4) {
   var a = x1 * y2;
   var b = y1 * x2;
   var c = x3 - x4;

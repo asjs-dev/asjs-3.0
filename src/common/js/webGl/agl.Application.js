@@ -1,11 +1,13 @@
-require("../common/useStrict.js");
-require("../common/array.js");
-require("../common/constant.js");
-require("../common/property.js");
-require("../common/map.js");
-require("../common/emptyFunction.js");
-require("../common/iterateOver.js");
-require("../common/BasePrototypeClass.js");
+require("../helpers/removeFromArray.js");
+require("../helpers/arraySet.js");
+require("../helpers/constant.js");
+require("../helpers/property.js");
+require("../helpers/map.js");
+require("../helpers/emptyFunction.js");
+require("../helpers/iterateOver.js");
+require("../helpers/destructObjectFlat.js");
+require("../helpers/createPrototypeClass.js");
+require("../helpers/BasePrototypeClass.js");
 
 require("./NameSpace.js");
 

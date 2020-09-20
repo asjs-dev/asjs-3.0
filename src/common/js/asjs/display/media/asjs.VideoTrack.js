@@ -1,7 +1,7 @@
 require("../asjs.Tag.js");
 
-createClass(ASJS, "VideoTrack", ASJS.Tag, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(ASJS, "VideoTrack", ASJS.Tag, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = _super.new.bind(_scope, "track");
 
   ASJS.Tag.attrProp(_scope, "src");
@@ -9,8 +9,8 @@ createClass(ASJS, "VideoTrack", ASJS.Tag, function(_scope, _super) {
   ASJS.Tag.attrProp(_scope, "label");
   ASJS.Tag.attrProp(_scope, "srclang");
 });
-cnst(ASJS.VideoTrack, "KIND_CAPTIONS",     "captions");
-cnst(ASJS.VideoTrack, "KIND_CHAPTERS",     "chapters");
-cnst(ASJS.VideoTrack, "KIND_DESCRIPTIONS", "descriptions");
-cnst(ASJS.VideoTrack, "KIND_METADATA",     "metadata");
-cnst(ASJS.VideoTrack, "KIND_SUBTITLES",    "subtitles");
+helpers.constant(ASJS.VideoTrack, "KIND_CAPTIONS",     "captions");
+helpers.constant(ASJS.VideoTrack, "KIND_CHAPTERS",     "chapters");
+helpers.constant(ASJS.VideoTrack, "KIND_DESCRIPTIONS", "descriptions");
+helpers.constant(ASJS.VideoTrack, "KIND_METADATA",     "metadata");
+helpers.constant(ASJS.VideoTrack, "KIND_SUBTITLES",    "subtitles");

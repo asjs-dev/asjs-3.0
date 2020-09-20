@@ -1,12 +1,12 @@
 require("../asjs.Bitmap.js");
 require("./asjs.AbstractBitmapFilter.js");
 
-createClass(ASJS, "AbstractConvoluteBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope, _super) {
+helpers.createClass(ASJS, "AbstractConvoluteBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope, _super) {
   _scope.new = function(opaque) {
     _scope.opaque = opaque;
   }
 
-  get(_super.protected, "matrix", function() { return [1]; });
+  helpers.get(_super.protected, "matrix", function() { return [1]; });
 
   _scope.execute = function(pixels) {
     var d = pixels.data;

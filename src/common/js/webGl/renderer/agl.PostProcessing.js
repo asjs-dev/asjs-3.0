@@ -1,10 +1,10 @@
 require("../NameSpace.js");
 require("./agl.RendererHelper.js");
 
-AGL.PostProcessing = createPrototypeClass(
-  BasePrototypeClass,
+AGL.PostProcessing = helpers.createPrototypeClass(
+  helpers.BasePrototypeClass,
   function PostProcessing(config) {
-    BasePrototypeClass.call(this);
+    helpers.BasePrototypeClass.call(this);
 
     config.vertexShader   = config.vertexShader   || AGL.PostProcessing.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.PostProcessing.createFragmentShader;

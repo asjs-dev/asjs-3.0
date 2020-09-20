@@ -1,7 +1,7 @@
 require("../utils/asjs.Color.js");
 require("./asjs.AbstractBitmapFilter.js");
 
-createClass(ASJS, "PaletteLimitBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
+helpers.createClass(ASJS, "PaletteLimitBitmapFilter", ASJS.AbstractBitmapFilter, function(_scope) {
   var _map = {};
   var _palette;
 

@@ -1,24 +1,24 @@
 require("../asjs.Tag.js");
 require("./asjs.FormElement.js");
 
-createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
-  override(_scope, _super, "new");
+helpers.createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
+  helpers.override(_scope, _super, "new");
   _scope.new = function(value, label, disabled, selected) {
     _super.new("option");
-    _scope.value = valueOrDefault(value, 0);
-    _scope.label = valueOrDefault(label, "");
-    _scope.disabled = valueOrDefault(disabled, false);
-    _scope.selected = valueOrDefault(selected, false);
+    _scope.value    = helpers.valueOrDefault(value, 0);
+    _scope.label    = helpers.valueOrDefault(label, "");
+    _scope.disabled = helpers.valueOrDefault(disabled, false);
+    _scope.selected = helpers.valueOrDefault(selected, false);
   }
 
   ASJS.Tag.attrProp(_scope, "value");
 
-  prop(_scope, "label", {
+  helpers.property(_scope, "label", {
     get: function() { return _scope.text; },
     set: function(v) { _scope.text = v; }
   });
 
-  prop(_scope, "selected", {
+  helpers.property(_scope, "selected", {
     get: _scope.getAttr.bind(_scope, "selected"),
     set: function(v) {
       v
@@ -27,7 +27,7 @@ createClass(ASJS, "DropDownOption", ASJS.Tag, function(_scope, _super) {
     }
   });
 
-  prop(_scope, "disabled", {
+  helpers.property(_scope, "disabled", {
     get: _scope.getAttr.bind(_scope, "disabled"),
     set: function(v) {
       v

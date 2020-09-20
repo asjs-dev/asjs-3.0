@@ -1,7 +1,11 @@
-require("../../NameSpace.js");
+require("../../helpers/createClass.js");
+require("../../helpers/isEmpty.js");
+require("../../helpers/constant.js");
 
-createUtility(ASJSUtils, "Cookies");
-rof(ASJSUtils.Cookies, "createCookie", function(n, v, d) {
+require("../NameSpace.js");
+
+ASJSUtils.Cookies = {};
+helpers.constant(ASJSUtils.Cookies, "createCookie", function(n, v, d) {
   if ( d ) {
     var date = new Date();
         date.setTime(date.getTime() + (d * 86400000));
@@ -9,12 +13,12 @@ rof(ASJSUtils.Cookies, "createCookie", function(n, v, d) {
   } else var expires = "";
   document.cookie = n + "=" + v + expires + "; path=/";
   try {
-    !empty(Storage) && localStorage.setItem(n, v);
+    !helpers.isEmpty(Storage) && localStorage.setItem(n, v);
   } catch (e) {
-    trace(e);
+    console.log(e);
   }
 });
-rof(ASJSUtils.Cookies, "readCookie", function(n) {
+helpers.constant(ASJSUtils.Cookies, "readCookie", function(n) {
   var nameEQ = n + "=";
   var ca = document.cookie.split(';');
   var i = -1;
@@ -25,17 +29,17 @@ rof(ASJSUtils.Cookies, "readCookie", function(n) {
     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   try {
-    if (!empty(Storage)) return localStorage.getItem(n);
+    if (!helpers.isEmpty(Storage)) return localStorage.getItem(n);
   } catch (e) {
-    trace(e);
+    console.log(e);
   }
   return null;
 });
-rof(ASJSUtils.Cookies, "eraseCookie", function(n) {
+helpers.constant(ASJSUtils.Cookies, "eraseCookie", function(n) {
   _scope.createCookie(n, "", -1);
   try {
-    !empty(Storage) && localStorage.removeItem(n);
+    !helpers.isEmpty(Storage) && localStorage.removeItem(n);
   } catch (e) {
-    trace(e);
+    console.log(e);
   }
 });

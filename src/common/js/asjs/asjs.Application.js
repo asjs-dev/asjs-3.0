@@ -1,20 +1,17 @@
-require("../common/useStrict.js");
-
-require("../common/array.js");
-require("../common/mathHelper.js");
-require("../common/trace.js");
-require("../common/constant.js");
-require("../common/documentComplete.js");
-require("../common/readOnlyFunction.js");
-require("../common/map.js");
-require("../common/message.js");
-require("../common/typeIs.js");
-require("../common/is.js");
-require("../common/valueOrDefault.js");
-require("../common/throttleFunction.js");
-require("../common/deleteProperty.js");
-require("../common/clone.js");
-require("../common/BaseClass.js");
+require("../helpers/cloneArray.js");
+require("../helpers/inArray.js");
+require("../helpers/removeFromArray.js");
+require("../helpers/mathHelper.js");
+require("../helpers/constant.js");
+require("../helpers/documentComplete.js");
+require("../helpers/map.js");
+require("../helpers/message.js");
+require("../helpers/typeIs.js");
+require("../helpers/is.js");
+require("../helpers/valueOrDefault.js");
+require("../helpers/throttleFunction.js");
+require("../helpers/deleteProperty.js");
+require("../helpers/BaseClass.js");
 
 require("core/asjs.Core.js");
 

@@ -1,3 +1,5 @@
-require("../../NameSpace.js");
+require("../../helpers/createClass.js");
 
-createSingletonClass(ASJSUtils, "Config", ASJS.AbstractModel);
+require("../NameSpace.js");
+
+helpers.createSingletonClass(ASJSUtils, "Config", ASJS.AbstractModel);

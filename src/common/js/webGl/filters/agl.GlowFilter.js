@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.AbstractFilter.js");
 
-AGL.GlowFilter = createPrototypeClass(
+AGL.GlowFilter = helpers.createPrototypeClass(
   AGL.AbstractFilter,
   function GlowFilter(intensityX, intensityY) {
     AGL.AbstractFilter.call(this);
@@ -11,12 +11,12 @@ AGL.GlowFilter = createPrototypeClass(
     this.intensityY = intensityY;
   },
   function() {
-    prop(this, "intensityX", {
+    helpers.property(this, "intensityX", {
       get: function() { return this._values[0]; },
       set: function(v) { this._values[0] = v; },
     });
 
-    prop(this, "intensityY", {
+    helpers.property(this, "intensityY", {
       get: function() { return this._values[1]; },
       set: function(v) { this._values[1] = v; },
     });

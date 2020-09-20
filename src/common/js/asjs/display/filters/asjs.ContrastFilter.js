@@ -1,6 +1,6 @@
 require("./asjs.AbstractFilter.js");
 
-createClass(ASJS, "ContrastFilter", ASJS.AbstractFilter, function(_scope) {
+helpers.createClass(ASJS, "ContrastFilter", ASJS.AbstractFilter, function(_scope) {
   _scope.execute = function() {
     return "contrast(" + _scope.value + "%)";
   }

@@ -1,4 +1,4 @@
-createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
+helpers.createClass(ASJS, "EventDispatcher", helpers.BaseClass, function(_scope, _super) {
   var _handlers = {};
 
   _scope.dispatchEvent = function(event, data, bubble) {
@@ -11,14 +11,14 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
 
     if (!_scope.hasEventListener(e.type)) return;
 
-    map(cloneArray(_handlers[e.type]), function(handlerIndex, handlerItem) {
+    helpers.map(helpers.cloneArray(_handlers[e.type]), function(handlerIndex, handlerItem) {
       handlerItem(e);
     });
   }
 
   _scope.addEventListener = function(type, handler, options) {
     var types = parseTypes(type);
-    map(types, function(typeIndex, typeItem) {
+    helpers.map(types, function(typeIndex, typeItem) {
       if (typeItem !== "" && !_scope.hasEventListener(typeItem, handler)) {
         if (!_handlers[typeItem]) _handlers[typeItem] = [];
         _handlers[typeItem].push(handler);
@@ -28,7 +28,7 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
   }
 
   _scope.removeEventListeners = function() {
-    map(_handlers, function(handlerIndex, handlerItem) {
+    helpers.map(_handlers, function(handlerIndex, handlerItem) {
       _scope.removeEventListener(handlerIndex);
     });
     _handlers = {};
@@ -36,18 +36,18 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
 
   _scope.removeEventListener = function(type, handler) {
     var types = parseTypes(type);
-    map(types, function(typeIndex, typeItem) {
+    helpers.map(types, function(typeIndex, typeItem) {
       if (typeItem !== "" && _scope.hasEventListener(typeItem, handler)) {
         var handlers = _handlers[typeItem];
         var i = handlers.length;
         while (i--) {
           var handlerItem = handlers[i];
           if (!handler || handlerItem === handler) {
-            removeFromArray(_handlers[typeItem], handlerItem);
+            helpers.removeFromArray(_handlers[typeItem], handlerItem);
             _scope.el && _scope.el.removeEventListener(typeItem, handlerItem, true);
           }
         }
-        _handlers[typeItem].length === 0 && del(_handlers, typeItem);
+        _handlers[typeItem].length === 0 && helpers.deleteProperty(_handlers, typeItem);
       }
     });
   }
@@ -61,13 +61,13 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
         t !== "" &&
         _handlers[t] &&
         _handlers[t].length > 0 &&
-        (!handler || inArray(_handlers[t], handler))
+        (!handler || helpers.inArray(_handlers[t], handler))
       ) return true;
     }
     return false;
   };
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _scope.removeEventListeners && _scope.removeEventListeners();
 
@@ -78,9 +78,9 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
 
   function parseTypes(type) {
     var types;
-    if (tis(type, "object")) {
+    if (helpers.typeIs(type, "object")) {
       types = [];
-      map(type, function(id, item) {
+      helpers.map(type, function(id, item) {
         types = types.concat(item.split(" "));
       });
     } else {
@@ -90,12 +90,12 @@ createClass(ASJS, "EventDispatcher", BaseClass, function(_scope, _super) {
     return types;
   }
 });
-rof(ASJS.EventDispatcher, "createEvent", function(event, data, bubble) {
-  return !tis(event, "string")
+helpers.constant(ASJS.EventDispatcher, "createEvent", function(event, data, bubble) {
+  return !helpers.typeIs(event, "string")
     ? event
     : new CustomEvent(event, {
         detail     : data,
         cancelable : true,
-        bubbles    : empty(bubble) ? true : bubble
+        bubbles    : helpers.isEmpty(bubble) ? true : bubble
     });
 });

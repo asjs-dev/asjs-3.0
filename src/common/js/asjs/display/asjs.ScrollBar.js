@@ -3,7 +3,7 @@ require("../core/asjs.Polyfill.js");
 require("../geom/asjs.GeomUtils.js");
 require("../event/asjs.DocumentEvent.js");
 
-createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
+helpers.createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   var _previousOffsetSize     = ASJS.Point.create();
   var _previousScrollSize     = ASJS.Point.create();
   var _previousScrollPosition = ASJS.Point.create();
@@ -19,7 +19,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
   _scope.horizontalAngle = 1;
   _scope.verticalAngle   = 1;
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -33,9 +33,9 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     _super.protected.lock();
   }
 
-  get(_scope, "container", function() { return _scrollableContainer; });
+  helpers.get(_scope, "container", function() { return _scrollableContainer; });
 
-  prop(_scope, "useNative", {
+  helpers.property(_scope, "useNative", {
     get: function() { return _useNative; },
     set: function(v) {
       if (_useNative === v) return;
@@ -44,10 +44,10 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     }
   });
 
-  get(_scope, "verticalScrollBar",   function() { return _verticalScrollBar; });
-  get(_scope, "horizontalScrollBar", function() { return _horizontalScrollBar; });
+  helpers.get(_scope, "verticalScrollBar",   function() { return _verticalScrollBar; });
+  helpers.get(_scope, "horizontalScrollBar", function() { return _horizontalScrollBar; });
 
-  _scope.update = throttleFunction(function() {
+  _scope.update = helpers.throttleFunction(function() {
     if (_useNative) return;
 
     var offsetSize = ASJS.Point.create(
@@ -88,7 +88,7 @@ createClass(ASJS, "ScrollBar", ASJS.Sprite, function(_scope, _super) {
     scrollSize     = null;
   });
 
-  override(_scope, _super, "destruct");
+  helpers.override(_scope, _super, "destruct");
   _scope.destruct = function() {
     _super.protected.unlock();
 

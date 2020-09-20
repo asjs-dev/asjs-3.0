@@ -1,9 +1,9 @@
 require("../NameSpace.js");
 
-AGL.AbstractFilter = createPrototypeClass(
-  BasePrototypeClass,
+AGL.AbstractFilter = helpers.createPrototypeClass(
+  helpers.BasePrototypeClass,
   function AbstractFilter() {
-    BasePrototypeClass.call(this);
+    helpers.BasePrototypeClass.call(this);
 
     this.type    =
     this.subType = 0;
@@ -18,11 +18,11 @@ AGL.AbstractFilter = createPrototypeClass(
     this._framebuffer = null;
   },
   function() {
-    get(this, "framebufferTexture", function() { return this._framebufferTexture; });
-    get(this, "framebuffer",        function() { return this._framebuffer; });
-    get(this, "values",             function() { return this._values; });
+    helpers.get(this, "framebufferTexture", function() { return this._framebufferTexture; });
+    helpers.get(this, "framebuffer",        function() { return this._framebuffer; });
+    helpers.get(this, "values",             function() { return this._values; });
 
-    prop(this, "intensity", {
+    helpers.property(this, "intensity", {
       get: function() { return this._values[0]; },
       set: function(v) { this._values[0] = v; },
     });
@@ -74,5 +74,5 @@ AGL.AbstractFilter = createPrototypeClass(
     }
   }
 );
-cnst(AGL.AbstractFilter, "CONVOLUTE_TYPE", 1);
-cnst(AGL.AbstractFilter, "COLOR_MANIPULATION_TYPE", 2);
+helpers.constant(AGL.AbstractFilter, "CONVOLUTE_TYPE", 1);
+helpers.constant(AGL.AbstractFilter, "COLOR_MANIPULATION_TYPE", 2);

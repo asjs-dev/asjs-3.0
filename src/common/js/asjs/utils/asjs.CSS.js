@@ -2,7 +2,7 @@ require("../display/asjs.Head.js");
 require("../core/asjs.Polyfill.js");
 require("../utils/asjs.CSS.js");
 
-createSingletonClass(ASJS, "CSS", BaseClass, function(_scope) {
+helpers.createSingletonClass(ASJS, "CSS", helpers.BaseClass, function(_scope) {
   var _head = ASJS.Head.instance;
 
   var priv = {};
@@ -12,7 +12,7 @@ createSingletonClass(ASJS, "CSS", BaseClass, function(_scope) {
 
   _scope.new = updateMergedList;
 
-  get(_scope, "styles", function() { return _merged; });
+  helpers.get(_scope, "styles", function() { return _merged; });
 
   _scope.getRuleBySelector = function(s) {
     var i = _merged.length;
@@ -24,7 +24,7 @@ createSingletonClass(ASJS, "CSS", BaseClass, function(_scope) {
   }
 
   _scope.getRuleExists = function(s) {
-    return !empty(_scope.getRuleBySelector(s));
+    return !helpers.isEmpty(_scope.getRuleBySelector(s));
   }
 
   _scope.getPropertyFromRule = function(s, t) {
@@ -85,7 +85,7 @@ createSingletonClass(ASJS, "CSS", BaseClass, function(_scope) {
     _head.addChild(_runTimeStyle);
   }
 
-  createClass(priv, "Rule", BaseClass, function(_scope) {
+  helpers.createClass(priv, "Rule", helpers.BaseClass, function(_scope) {
     _scope.sheetId;
     _scope.ruleId;
     _scope.rule;
@@ -98,7 +98,7 @@ createSingletonClass(ASJS, "CSS", BaseClass, function(_scope) {
   });
 });
 
-cnst(ASJS.CSS, "ADD_PIXEL_TYPES", [
+helpers.constant(ASJS.CSS, "ADD_PIXEL_TYPES", [
   "width",
   "min-width",
   "max-width",
@@ -123,9 +123,9 @@ cnst(ASJS.CSS, "ADD_PIXEL_TYPES", [
   "border-size"
 ]);
 
-cnst(ASJS.CSS, "SELECTOR", ['fullscreen', 'placeholder']);
+helpers.constant(ASJS.CSS, "SELECTOR", ['fullscreen', 'placeholder']);
 
-cnst(ASJS.CSS, "VALUE", [
+helpers.constant(ASJS.CSS, "VALUE", [
   'gradient',
   'intrinsic',
   'pixelated',
@@ -137,13 +137,13 @@ cnst(ASJS.CSS, "VALUE", [
   'filter-value'
 ]);
 
-rof(ASJS.CSS, "replaceHyphen", function(s) {
+helpers.constant(ASJS.CSS, "replaceHyphen", function(s) {
   return s.replace(/-./g, function(v) {
     return v.replace("-", "").toUpperCase();
   });
 });
 
-rof(ASJS.CSS, "convertProperty", function(k) {
+helpers.constant(ASJS.CSS, "convertProperty", function(k) {
   var nk = ASJS.Polyfill.stylePrefixCSS + k;
   var i = -1;
   var l = ASJS.CSS.SELECTOR.length;
@@ -158,7 +158,7 @@ rof(ASJS.CSS, "convertProperty", function(k) {
   return nk;
 });
 
-rof(ASJS.CSS, "convertValue", function(v) {
+helpers.constant(ASJS.CSS, "convertValue", function(v) {
   var i = -1;
   var l = ASJS.CSS.VALUE.length;
   while (++i < l) {
@@ -167,28 +167,28 @@ rof(ASJS.CSS, "convertValue", function(v) {
   return v;
 });
 
-rof(ASJS.CSS, "setCSS", function(t, k, v) {
-  v = tis(v, "number") && inArray(ASJS.CSS.ADD_PIXEL_TYPES, k) ? v + "px" : v;
+helpers.constant(ASJS.CSS, "setCSS", function(t, k, v) {
+  v = helpers.typeIs(v, "number") && helpers.inArray(ASJS.CSS.ADD_PIXEL_TYPES, k) ? v + "px" : v;
   var nk = ASJS.CSS.convertProperty(k);
   var nv = ASJS.CSS.convertValue(v);
   t.el.style[ASJS.CSS.replaceHyphen(k)] = v;
   t.el.style[ASJS.CSS.replaceHyphen(nk)] = nv;
 });
 
-rof(ASJS.CSS, "getCSS", function(t, k) {
+helpers.constant(ASJS.CSS, "getCSS", function(t, k) {
   var v = t.el.style[ASJS.CSS.replaceHyphen(k)];
   if (!v) {
     var style = window.getComputedStyle(t.el);
     v = style.getPropertyValue(k);
   }
   return (
-    inArray(ASJS.CSS.ADD_PIXEL_TYPES, k) &&
-    (tis(v, "number") || v.indexOf("px") > -1)
+    helpers.inArray(ASJS.CSS.ADD_PIXEL_TYPES, k) &&
+    (helpers.typeIs(v, "number") || v.indexOf("px") > -1)
       ? parseFloat(v)
       : v
   ) || 0;
 });
 
-rof(ASJS.CSS, "removeCSS", function(t, k) {
+helpers.constant(ASJS.CSS, "removeCSS", function(t, k) {
   t.el.style[ASJS.CSS.replaceHyphen(k)] = "";
 });

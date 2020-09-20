@@ -1,12 +1,16 @@
+require("../../../../../../common/js/helpers/createClass.js");
+require("../../../../../../common/js/helpers/property.js");
 require("../../../../../../common/js/utils/dataUtils/Language.js");
+
+require("../../../../NameSpace.js");
 require("../../ContentMediator.js");
 
-createClass(NS, "Box", ASJS.Sprite, function(_scope, _super) {
+helpers.createClass(NS, "Box", ASJS.Sprite, function(_scope, _super) {
   var _language = ASJSUtils.Language.instance;
   var _label    = new ASJS.Label();
   var _button   = new ASJS.Button();
 
-  override(_scope, _super, "new");
+  helpers.override(_scope, _super, "new");
   _scope.new = function() {
     _super.new();
 
@@ -23,7 +27,7 @@ createClass(NS, "Box", ASJS.Sprite, function(_scope, _super) {
     _scope.addChild(_button);
   }
 
-  get(_scope, "label", function() { return _label; });
+  helpers.get(_scope, "label", function() { return _label; });
 
   function onButtonClick() {
     _scope.dispatchEvent(NS.ContentMediator.ON_SHOW_NOTIFICATION_WINDOW);

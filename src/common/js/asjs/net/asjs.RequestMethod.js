@@ -1,7 +1,7 @@
-createUtility(ASJS, "RequestMethod");
-cnst(ASJS.RequestMethod, "DELETE",  "DELETE");
-cnst(ASJS.RequestMethod, "GET",     "GET");
-cnst(ASJS.RequestMethod, "HEAD",    "HEAD");
-cnst(ASJS.RequestMethod, "OPTIONS", "OPTIONS");
-cnst(ASJS.RequestMethod, "POST",    "POST");
-cnst(ASJS.RequestMethod, "PUT",     "PUT");
+ASJS.RequestMethod = {};
+helpers.constant(ASJS.RequestMethod, "DELETE",  "DELETE");
+helpers.constant(ASJS.RequestMethod, "GET",     "GET");
+helpers.constant(ASJS.RequestMethod, "HEAD",    "HEAD");
+helpers.constant(ASJS.RequestMethod, "OPTIONS", "OPTIONS");
+helpers.constant(ASJS.RequestMethod, "POST",    "POST");
+helpers.constant(ASJS.RequestMethod, "PUT",     "PUT");
