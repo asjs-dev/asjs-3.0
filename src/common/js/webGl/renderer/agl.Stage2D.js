@@ -353,12 +353,10 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
     shader +=
     "if(fgCol.a>.0){" +
-      "if(vTintType<.5) " +
-        "fgCol*=vTintCol;" +
-      "else if(vTintType<1.5 && fgCol.r==fgCol.g && fgCol.r==fgCol.b) " +
+      "if(vTintType<.5||(vTintType<1.5 && fgCol.r==fgCol.g && fgCol.r==fgCol.b)) " +
         "fgCol*=vTintCol;" +
       "else if(vTintType<2.5) " +
-        "fgCol=vec4((fgCol.rgb*(1.-vTintCol.a))+(vTintCol.rgb*vTintCol.a),fgCol.a);";
+        "fgCol=vec4(vTintCol.rgb,fgCol.a*vTintCol.a);";
 
       shader +=
       "vec4 finalCol=vec4(fgCol.rgb*vColMult,fgCol.a);" +
