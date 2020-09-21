@@ -77,7 +77,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
       this._gl.uniform1f(this._locations["uFlpY"], 1);
       this._gl.uniform1i(this._locations["uFtrT"], 0);
-      this._gl.uniform1f(this._locations["uTm"],   (this._renderTime / 10000) % 10000);
+      this._gl.uniform1f(this._locations["uTm"],   (this._renderTime / 16) % 10000);
 
       this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
 
@@ -134,7 +134,7 @@ AGL.PostProcessing.createVertexShader = function() {
 };
 AGL.PostProcessing.createFragmentShader = function() {
   var shader = "#version 300 es\n" +
-  "precision lowp float;\n" +
+  "precision mediump float;\n" +
 
   "uniform sampler2D uTex;" +
   "uniform sampler2D uDspTex;" +
@@ -271,7 +271,7 @@ AGL.PostProcessing.createFragmentShader = function() {
       "else if(uFtrT<7){" +
         "vec2 dspMd=vec2(1,-1)*(texture(" +
           "uDspTex," +
-          "mod(vec2(1,-1)*vCrd*.5+vec2(.5)+uTm*vec2(fvl[1],fvl[2]),1.)" +
+          "mod(vec2(1,-1)*(vCrd*.5+.5)+uTm*vec2(fvl[1],fvl[2])*oPx,1.)" +
         ").rg-.5)*2.*oPx*fvl[0];" +
         "vec2 mdPs=vTexCrd+dspMd;" +
         "if(mdPs.x>=.0&&mdPs.y>=.0&&mdPs.x<=1.&&mdPs.y<=1.)fgCol=texture(uTex,mdPs);" +
