@@ -30,6 +30,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       "uFtrT"   : "getUniformLocation",
       "uFtrST"  : "getUniformLocation",
       "uFtrVal" : "getUniformLocation",
+      "uFtrKer" : "getUniformLocation",
       "uTm"     : "getUniformLocation",
     }));
 
@@ -96,6 +97,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
         this._gl.uniform1f(this._locations["uFlpY"],    -1);
         this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
+        this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
         this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
         this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
 
@@ -139,6 +141,7 @@ AGL.PostProcessing.createFragmentShader = function() {
   "uniform int uFtrT;" +
   "uniform int uFtrST;" +
   "uniform float uFtrVal[9];" +
+  "uniform float uFtrKer[9];" +
   "uniform float uTm;" +
 
   "in vec2 vCrd;" +
@@ -205,8 +208,8 @@ AGL.PostProcessing.createFragmentShader = function() {
 
   "void main(void){" +
     "float[] fvl=uFtrVal;" +
-    "vec2 oSz=vec2(textureSize(uTex,0));" +
-    "vec2 oPx=vec2(1)/oSz;" +
+    "float[] fkr=uFtrKer;" +
+    "vec2 oPx=1./vec2(textureSize(uTex,0));" +
     "fgCol=texture(uTex,vTexCrd);" +
     // FILTERS
     "if(uFtrT>0){" +
@@ -215,7 +218,7 @@ AGL.PostProcessing.createFragmentShader = function() {
           - SharpenFilter
           - EdgeDetectFilter
       */
-      "if(uFtrT<2)fgCol=convMat(fgCol,fvl,vTexCrd,oPx);" +
+      "if(uFtrT<2)fgCol=convMat(fgCol,fkr,vTexCrd,oPx)*fvl[0];" +
       // COLOR MANIPULATION FILTERS
       "else if(uFtrT<3){"+
         // GrayscaleFilter
@@ -233,7 +236,7 @@ AGL.PostProcessing.createFragmentShader = function() {
         // TintFilter
         "else if(uFtrST<5)" +
           "fgCol=vec4(" +
-            "fgCol.rgb*vec3(fvl[0],fvl[1],fvl[2])," +
+            "(fgCol.rgb*(1.-fvl[0]))+(vec3(fvl[2],fvl[3],fvl[4])*fvl[0])," +
             "fgCol.a);" +
         // ColorLimitFilter
         "else if(uFtrST<6)" +
@@ -241,14 +244,16 @@ AGL.PostProcessing.createFragmentShader = function() {
             "(round((fgCol.rgb*256.)/fvl[0])/256.)*fvl[0]," +
             "fgCol.a);" +
         // VignetteFilter
-        "else if(uFtrST<7)" +
-          "fgCol*=vec4(" +
-            "vec3((1.-sqrt(pow(vCrd.x,4.)+pow(vCrd.y,4.))))," +
-            "1);" +
+        "else if(uFtrST<7){" +
+          "vec2 pv=pow(vCrd*fvl[0],vec2(fvl[1]));" +
+          "float v=max(0.,min(1.,-(1.-fvl[5])+(1.-sqrt(pv.x+pv.y))*(1./fvl[5])));" +
+          "fgCol*=vec4(vec3(v),fgCol.a);" +
+          "fgCol+=vec4(vec3(fvl[2],fvl[3],fvl[4])*(1.-v),0);" +
+        "}" +
         // RainbowFilter
         "else if(uFtrST<8)fgCol+=vec4(vCrd.xy*.15,(vCrd.x-vCrd.y)*.15,0);" +
         // LinesFilter
-        "else if(uFtrST<9)fgCol*=vec4(.2+sin(vCrd.y*500.)*.5);" +
+        "else if(uFtrST<9)fgCol*=vec4(.2+sin(vCrd.y*(500.*fvl[0]))*.5);" +
         // BrightnessContrastFilter
         "else if(uFtrST<10)fgCol=vec4((fgCol.rgb-.5)*fvl[1]+.5+fvl[0],fgCol.a);" +
         // GammaFilter
@@ -266,7 +271,7 @@ AGL.PostProcessing.createFragmentShader = function() {
       "else if(uFtrT<7){" +
         "vec2 dspMd=vec2(1,-1)*(texture(" +
           "uDspTex," +
-          "fract(vec2(1,-1)*vCrd*.5+vec2(.5)+uTm*vec2(fvl[1],fvl[2]))" +
+          "mod(vec2(1,-1)*vCrd*.5+vec2(.5)+uTm*vec2(fvl[1],fvl[2]),1.)" +
         ").rg-.5)*2.*oPx*fvl[0];" +
         "vec2 mdPs=vTexCrd+dspMd;" +
         "if(mdPs.x>=.0&&mdPs.y>=.0&&mdPs.x<=1.&&mdPs.y<=1.)fgCol=texture(uTex,mdPs);" +

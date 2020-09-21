@@ -39,7 +39,7 @@ AGL.MaskRenderer.createFragmentShader = function(config) {
       "if(vTexId<" + (i + 1) + ".5){";
         shader += i < 0
           ? "fgCol=vec4(0);"
-          : "vec4 col=texture(uTex[" + i + "],vTexCrop+vTexCropSize*fract(vTexCrd));" +
+          : "vec4 col=texture(uTex[" + i + "],vTexCrop+vTexCropSize*mod(vTexCrd,1.));" +
             "fgCol=vec4(1)*((col.r+col.g+col.b+col.a)/4.);";
       shader +=
       "}";

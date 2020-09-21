@@ -9,16 +9,5 @@ AGL.GlowFilter = helpers.createPrototypeClass(
     this.type       = 5;
     this.intensityX = intensityX;
     this.intensityY = intensityY;
-  },
-  function() {
-    helpers.property(this, "intensityX", {
-      get: function() { return this._values[0]; },
-      set: function(v) { this._values[0] = v; },
-    });
-
-    helpers.property(this, "intensityY", {
-      get: function() { return this._values[1]; },
-      set: function(v) { this._values[1] = v; },
-    });
   }
 );

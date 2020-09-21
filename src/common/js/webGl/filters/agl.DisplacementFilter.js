@@ -8,18 +8,19 @@ AGL.DisplacementFilter = helpers.createPrototypeClass(
 
     this.type      = 6;
     this.texture   = texture;
+
     this.intensity = intensity;
     this.x         = x;
     this.y         = y;
   }, function() {
     helpers.property(this, "x", {
       get: function() { return this._values[1]; },
-      set: function(v) { this._values[1] = v || 0; },
+      set: function(v) { this._values[1] = v || 0; }
     });
 
     helpers.property(this, "y", {
       get: function() { return this._values[2]; },
-      set: function(v) { this._values[2] = v || 0; },
+      set: function(v) { this._values[2] = v || 0; }
     });
   }
 );

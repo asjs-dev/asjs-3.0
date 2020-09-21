@@ -3,11 +3,13 @@ require("./agl.AbstractFilter.js");
 
 AGL.SharpenFilter = helpers.createPrototypeClass(
   AGL.AbstractFilter,
-  function SharpenFilter() {
+  function SharpenFilter(intensity) {
     AGL.AbstractFilter.call(this);
 
     this.type = AGL.AbstractFilter.CONVOLUTE_TYPE;
-    this._values.set([
+    this.intensity = intensity;
+
+    this._kernels.set([
       -1,  -1,  -1,
       -1,  16,  -1,
       -1,  -1,  -1

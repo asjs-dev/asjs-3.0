@@ -13,13 +13,15 @@ AGL.Texture = helpers.createPrototypeClass(
     this.isVideo = false;
     this.shouldUpdate = false;
 
+    this._gl = gl;
+
     this.texture = gl.createTexture();
 
     this.maxLevel  = 10;
     this.target    = gl.TEXTURE_2D;
-    this.wrapS     = gl.CLAMP_TO_EDGE;
+    this.wrapS     =
     this.wrapT     = gl.CLAMP_TO_EDGE;
-    this.minFilter = gl.NEAREST;
+    this.minFilter =
     this.magFilter = gl.NEAREST;
 
     this.source = source;
@@ -30,11 +32,11 @@ AGL.Texture = helpers.createPrototypeClass(
     this._eventType;
   },
   function(_super) {
+    helpers.get(this, "gl",             function() { return this._gl; });
     helpers.get(this, "generateMipmap", function() { return this._generateMipmap; });
-
-    helpers.get(this, "loaded", function() { return this._loaded; });
-    helpers.get(this, "width",  function() { return this._source[this._sourceWidthProperty]; });
-    helpers.get(this, "height", function() { return this._source[this._sourceHeightProperty]; });
+    helpers.get(this, "loaded",         function() { return this._loaded; });
+    helpers.get(this, "width",          function() { return this._source[this._sourceWidthProperty]; });
+    helpers.get(this, "height",         function() { return this._source[this._sourceHeightProperty]; });
 
     helpers.property(this, "source", {
       get: function() { return this._source; },

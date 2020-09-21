@@ -3,7 +3,9 @@ require("./agl.AbstractColorFilter.js");
 
 AGL.LinesFilter = helpers.createPrototypeClass(
   AGL.AbstractColorFilter,
-  function LinesFilter() {
+  function LinesFilter(intensity) {
     AGL.AbstractColorFilter.call(this, 8);
+
+    this.intensity = intensity;
   }
 );

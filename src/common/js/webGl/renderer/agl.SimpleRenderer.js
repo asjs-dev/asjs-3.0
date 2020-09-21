@@ -77,7 +77,7 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
         shader += "fgCol=" + (
           i < 0
             ? "vec4(0);"
-            : "texture(uTex[" + i + "],vTexCrop+vTexCropSize*fract(vTexCrd));"
+            : "texture(uTex[" + i + "],vTexCrop+vTexCropSize*mod(vTexCrd,1.));"
         );
       shader +=
       "}";
