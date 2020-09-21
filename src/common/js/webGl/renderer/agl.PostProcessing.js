@@ -245,7 +245,7 @@ AGL.PostProcessing.createFragmentShader = function() {
             "fgCol.a);" +
         // VignetteFilter
         "else if(uFtrST<7){" +
-          "vec2 pv=pow(vCrd*fvl[0],vec2(fvl[1]));" +
+          "vec2 pv=pow(abs(vCrd*fvl[0]),vec2(fvl[1]));" +
           "float v=max(0.,min(1.,-(1.-fvl[5])+(1.-sqrt(pv.x+pv.y))*(1./fvl[5])));" +
           "fgCol*=vec4(vec3(v),fgCol.a);" +
           "fgCol+=vec4(vec3(fvl[2],fvl[3],fvl[4])*(1.-v),0);" +
