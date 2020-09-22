@@ -75,7 +75,7 @@ require("../NameSpace.js");
         var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
         if (!compiled) {
           var lastError = gl.getShaderInfoLog(shader);
-          console.log("Error compiling shader " + shaderType + ":" + lastError);
+          console.log("Error compiling shader " + shaderType + ": " + lastError);
           gl.deleteShader(shader);
           return null;
         }
@@ -107,7 +107,7 @@ require("../NameSpace.js");
         var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
         if (!linked) {
             var lastError = gl.getProgramInfoLog(program);
-            console.log("Error in program linking:" + lastError);
+            console.log("Error in program linking: " + lastError);
             gl.deleteProgram(program);
             return null;
         }

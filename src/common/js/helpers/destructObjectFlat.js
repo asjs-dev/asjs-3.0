@@ -3,7 +3,7 @@ require("./iterateOver.js");
 require("./deleteProperty.js");
 
 helpers.destructObjectFlat = helpers.destructObjectFlat || function(target) {
-  helpers.iterateOver(t, function(key, item, next) {
+  helpers.iterateOver(target, function(key, item, next) {
     helpers.deleteProperty(target, key);
     next();
   });

@@ -65,15 +65,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._collectLightsFunc = this._collectLights.bind(this);
     }
 
-    this._colorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._colorBuffer     = this._createArrayBuffer(this._colorData,     "aFillCol", 4, 1, 4, this._gl.FLOAT, 4);
-    this._tintColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._tintColorBuffer = this._createArrayBuffer(this._tintColorData, "aTintCol", 4, 1, 4, this._gl.FLOAT, 4);
-
-    this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
-    this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
-    this._effectBuffer = this._createArrayBuffer(this._effectData, "aFx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
-
     this._setMaskDataFunc = this._config.isMaskEnabled
       ? this._setMaskData.bind(this)
       : helpers.emptyFunction;
@@ -192,6 +183,19 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     this._updateColor = function() {
       this.color.isUpdated() && this.worldColorUpdateId++;
+    }
+
+    this._initCustom = function() {
+      _super._initCustom.call(this);
+
+      this._colorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+      this._colorBuffer     = this._createArrayBuffer(this._colorData,     "aFillCol", 4, 1, 4, this._gl.FLOAT, 4);
+      this._tintColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+      this._tintColorBuffer = this._createArrayBuffer(this._tintColorData, "aTintCol", 4, 1, 4, this._gl.FLOAT, 4);
+
+      this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
+      this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
+      this._effectBuffer = this._createArrayBuffer(this._effectData, "aFx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
     }
   }
 );

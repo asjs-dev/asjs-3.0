@@ -10,12 +10,18 @@ require("./agl.RendererHelper.js");
 AGL.BaseRenderer = helpers.createPrototypeClass(
   AGL.Container,
   function BaseRenderer(config) {
+    AGL.Container.call(this);
+
     config.vertexShader   = config.vertexShader   || AGL.BaseRenderer.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.BaseRenderer.createFragmentShader;
-
-    Object.freeze(config);
-
-    AGL.Container.call(this);
+    config.locations      = Object.assign(config.locations, {
+      "aPos"      : "getAttribLocation",
+      "aMat"      : "getAttribLocation",
+      "aWorldMat" : "getAttribLocation",
+      "aTexMat"   : "getAttribLocation",
+      "aTexCrop"  : "getAttribLocation",
+      "uTex"      : "getUniformLocation",
+    });
 
     this.clearColor = new AGL.ColorProps();
 
@@ -33,61 +39,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     this._textureIdBufferUpdated = false;
 
-    this._config = config;
-
-    AGL.RendererHelper.init.call(this, config.canvas);
-
-    var program = AGL.Utils.createProgram(this._gl, [
-      AGL.Utils.loadVertexShader(this._gl,   config.vertexShader(config)),
-      AGL.Utils.loadFragmentShader(this._gl, config.fragmentShader(config))
-    ]);
-    this._locations = AGL.Utils.getLocationsFor(this._gl, program, Object.assign(config.locations, {
-      "aPos"      : "getAttribLocation",
-      "aMat"      : "getAttribLocation",
-      "aWorldMat" : "getAttribLocation",
-      "aTexMat"   : "getAttribLocation",
-      "aTexCrop"  : "getAttribLocation",
-      "uTex"      : "getUniformLocation",
-    }));
-
-    this._gl.useProgram(program);
-
-    this._setBlendMode();
-
-    var positionBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuffer);
-    this._gl.bufferData(
-      this._gl.ARRAY_BUFFER,
-      new Float32Array([
-        0, 0,
-        1, 0,
-        1, 1,
-        0, 1
-      ]),
-      this._gl.STATIC_DRAW
-    );
-    this._gl.vertexAttribPointer(this._locations["aPos"], 2, this._gl.FLOAT, false, 0, 0);
-    this._gl.enableVertexAttribArray(this._locations["aPos"]);
-
-    var indexBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    this._gl.bufferData(
-      this._gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array([
-        0, 1, 2,
-        0, 2, 3
-      ]),
-      this._gl.STATIC_DRAW
-    );
-
-    this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",      9, 3, 3, this._gl.FLOAT, 4);
-    this._worldMatrixData     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-		this._worldMatrixBuffer   = this._createArrayBuffer(this._matrixData,        "aWorldMat", 9, 3, 3, this._gl.FLOAT, 4);
-    this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-    this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "aTexMat",   9, 3, 3, this._gl.FLOAT, 4);
-    this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-    this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "aTexCrop",  4, 1, 4, this._gl.FLOAT, 4);
+    AGL.RendererHelper.init.call(this, config);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE]      = helpers.emptyFunction;
@@ -99,7 +51,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     this._resize();
   },
-  function() {
+  function(_super) {
     AGL.RendererHelper.createFunctionality.call(this);
 
     helpers.property(this, "clearBeforeRender", {
@@ -118,6 +70,11 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       var clearColor = this.clearColor;
       clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
       this._gl.clear(this._gl.COLOR_BUFFER_BIT);
+    }
+
+    this.destruct = function() {
+      this._destructRenderer();
+      _super.destruct.call(this);
     }
 
     this._render = function() {
@@ -265,6 +222,30 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this.worldPropsUpdateId++;
 
       return true;
+    }
+
+    this._initCustom = function() {
+      this._setBlendMode();
+
+      var indexBuffer = this._gl.createBuffer();
+      this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      this._gl.bufferData(
+        this._gl.ELEMENT_ARRAY_BUFFER,
+        new Uint16Array([
+          0, 1, 2,
+          0, 2, 3
+        ]),
+        this._gl.STATIC_DRAW
+      );
+
+      this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+  		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",      9, 3, 3, this._gl.FLOAT, 4);
+      this._worldMatrixData     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+  		this._worldMatrixBuffer   = this._createArrayBuffer(this._matrixData,        "aWorldMat", 9, 3, 3, this._gl.FLOAT, 4);
+      this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
+      this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "aTexMat",   9, 3, 3, this._gl.FLOAT, 4);
+      this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+      this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "aTexCrop",  4, 1, 4, this._gl.FLOAT, 4);
     }
   }
 );

@@ -8,21 +8,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
     config.vertexShader   = config.vertexShader   || AGL.PostProcessing.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.PostProcessing.createFragmentShader;
-
-    Object.freeze(config);
-
-    this.texture = null;
-    this.filters = [];
-
-    this._config = config;
-
-    AGL.RendererHelper.init.call(this, config.canvas);
-
-    var program = AGL.Utils.createProgram(this._gl, [
-      AGL.Utils.loadVertexShader(this._gl,   config.vertexShader(config)),
-      AGL.Utils.loadFragmentShader(this._gl, config.fragmentShader(config))
-    ]);
-    this._locations = AGL.Utils.getLocationsFor(this._gl, program, Object.assign(config.locations, {
+    config.locations      = Object.assign(config.locations, {
       "aPos"    : "getAttribLocation",
       "uTex"    : "getUniformLocation",
       "uDspTex" : "getUniformLocation",
@@ -32,41 +18,16 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       "uFtrVal" : "getUniformLocation",
       "uFtrKer" : "getUniformLocation",
       "uTm"     : "getUniformLocation",
-    }));
+    });
 
-    this._gl.useProgram(program);
+    this.texture = null;
+    this.filters = [];
 
-    var positionBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuffer);
-    this._gl.bufferData(
-      this._gl.ARRAY_BUFFER,
-      new Float32Array([
-        0, 0,
-        1, 0,
-        1, 1,
-        0, 1
-      ]),
-      this._gl.STATIC_DRAW
-    );
-    this._gl.vertexAttribPointer(this._locations["aPos"], 2, this._gl.FLOAT, false, 0, 0);
-    this._gl.enableVertexAttribArray(this._locations["aPos"]);
-
-    this._gl.bufferData(this._gl.ARRAY_BUFFER, new Float32Array([
-        -1, -1,
-         1, -1,
-        -1,  1,
-        -1,  1,
-         1,  1,
-         1, -1
-      ]), this._gl.STATIC_DRAW
-    );
-
-    this._gl.uniform1i(this._locations["uTex"],    0);
-    this._gl.uniform1i(this._locations["uDspTex"], 2);
+    AGL.RendererHelper.init.call(this, config);
 
     this._resize();
   },
-  function() {
+  function(_super) {
     AGL.RendererHelper.createFunctionality.call(this);
 
     this._render = function() {
@@ -86,8 +47,8 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       for (i = 0; i < l; ++i) {
         var filter = this.filters[i];
 
-        this._gl.uniform1i(this._locations["uTex"],    0);
-        this._gl.uniform1i(this._locations["uDspTex"], 2);
+        //this._gl.uniform1i(this._locations["uTex"],    0);
+        //this._gl.uniform1i(this._locations["uDspTex"], 2);
 
         filter.texture && filter.texture.loaded && AGL.Utils.useTexture(this._gl, 2, filter.texture);
 
@@ -112,6 +73,26 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       this._gl.uniform1i(this._locations["uFtrT"], 0);
 
       this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
+    }
+
+    this.destruct = function() {
+      this._destructRenderer();
+      _super.destruct.call(this);
+    }
+
+    this._initCustom = function() {
+      this._gl.bufferData(this._gl.ARRAY_BUFFER, new Float32Array([
+          -1, -1,
+           1, -1,
+          -1,  1,
+          -1,  1,
+           1,  1,
+           1, -1
+        ]), this._gl.STATIC_DRAW
+      );
+
+      this._gl.uniform1i(this._locations["uTex"],    0);
+      this._gl.uniform1i(this._locations["uDspTex"], 2);
     }
   }
 );
