@@ -2,27 +2,27 @@ require("../NameSpace.js");
 
 AGL.Texture = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function Texture(gl, source) {
+  function Texture(renderer, source) {
     helpers.BasePrototypeClass.call(this);
 
     this._source;
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
-    this._generateMipmap = false;
-    this._loaded = false;
 
-    this.isVideo = false;
-    this.shouldUpdate = false;
+    this._generateMipmap =
+    this._loaded         =
+    this.isVideo         =
+    this.shouldUpdate    = false;
 
-    this._gl = gl;
+    this._gl = renderer.context;
 
-    this.texture = gl.createTexture();
+    this.texture = this._gl.createTexture();
 
     this.maxLevel  = 10;
-    this.target    = gl.TEXTURE_2D;
+    this.target    = this._gl.TEXTURE_2D;
     this.wrapS     =
-    this.wrapT     = gl.CLAMP_TO_EDGE;
+    this.wrapT     = this._gl.CLAMP_TO_EDGE;
     this.minFilter =
-    this.magFilter = gl.NEAREST;
+    this.magFilter = this._gl.NEAREST;
 
     this.source = source;
 
@@ -101,15 +101,15 @@ AGL.Texture = helpers.createPrototypeClass(
     this._onTextureLoaded = this._parseTextureSize;
   }
 );
-AGL.Texture.loadImage = function(gl, src) {
+AGL.Texture.loadImage = function(renderer, src) {
   var image = document.createElement("img");
-  var texture = new AGL.Texture(gl, image);
+  var texture = new AGL.Texture(renderer, image);
   image.src = src;
   return texture;
 };
-AGL.Texture.loadVideo = function(gl, src) {
+AGL.Texture.loadVideo = function(renderer, src) {
   var video = document.createElement("video");
-  var texture = new AGL.Texture(gl, video);
+  var texture = new AGL.Texture(renderer, video);
   video.src = src;
   return texture;
 };
