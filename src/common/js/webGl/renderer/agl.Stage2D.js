@@ -19,6 +19,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "uLghtFX"       : "getUniformLocation",
       "uLghtZIndices" : "getUniformLocation",
       "uFog"          : "getUniformLocation",
+      "uMskTp"        : "getUniformLocation",
     });
 
     AGL.BaseRenderer.call(this, config);
@@ -31,8 +32,10 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this._DEFAULT_DUO  = [0, 0];
     this._DEFAULT_QUAD = [0, 0, 0, 0];
 
-    this._widthHalf  =
-    this._heightHalf = 0;
+    this._zIndexCounter =
+    this._maskType      =
+    this._widthHalf     =
+    this._heightHalf    = 0;
 
     this._lights = [];
 
@@ -69,12 +72,19 @@ AGL.Stage2D = helpers.createPrototypeClass(
       ? this._setMaskData.bind(this)
       : helpers.emptyFunction;
 
-    this._zIndexCounter = 0;
-
     this._resize();
   },
   function(_super) {
     helpers.get(this, "picked", function() { return this._picked; });
+
+    helpers.property(this, "maskType", {
+      get: function() { return this._maskType; },
+      set: function(v) {
+        if (this._maskType === v) return;
+        this._maskType = v;
+        this._gl.uniform1i(this._locations["uMskTp"], this._maskType);
+      }
+    });
 
     this.render = function() {
       this._preRender();
@@ -199,6 +209,13 @@ AGL.Stage2D = helpers.createPrototypeClass(
     }
   }
 );
+helpers.constant(AGL.Stage2D, "MASK_TYPES", {
+  "RED"   : 0,
+  "GREEN" : 1,
+  "BLUE"  : 2,
+  "ALPHA" : 3,
+  "AVG"   : 4,
+});
 helpers.constant(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
 AGL.Stage2D.createVertexShader = function(config) {
   var maxLightSources = config.lightNum;
@@ -320,7 +337,8 @@ AGL.Stage2D.createFragmentShader = function(config) {
   if (config.isMaskEnabled) shader += "in float vMskTexId;";
 
   shader +=
-  "uniform sampler2D uTex[" + maxTextureImageUnits + "];";
+  "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
+  "uniform int uMskTp;";
 
   shader += "out vec4 fgCol;";
 
@@ -334,8 +352,13 @@ AGL.Stage2D.createFragmentShader = function(config) {
         for (var i = 0; i < maxTextureImageUnits; i++) {
           shader += (i > 0 ? " else " : "") +
           "if(vMskTexId<" + (i + 1) + ".5){" +
-            "mskAlpha=texture(uTex[" + i + "],vMskCrd).r;" +
-            "if(mskAlpha==0.)discard;" +
+            "vec4 mskCol=texture(uTex[" + i + "],vMskCrd);" +
+            "if(uMskTp<1)mskAlpha=mskCol.r;" +
+            "else if(uMskTp<2)mskAlpha=mskCol.g;" +
+            "else if(uMskTp<3)mskAlpha=mskCol.b;" +
+            "else if(uMskTp<4)mskAlpha=mskCol.a;" +
+            "else if(uMskTp<5)mskAlpha=(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
+            "if(mskAlpha<0.01)discard;" +
           "}";
         }
       shader +=

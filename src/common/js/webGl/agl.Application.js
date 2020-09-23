@@ -34,7 +34,6 @@ require("./renderer/agl.RendererHelper.js");
 require("./renderer/agl.BaseRenderer.js");
 require("./renderer/agl.PostProcessing.js");
 require("./renderer/agl.SimpleRenderer.js");
-require("./renderer/agl.MaskRenderer.js");
 require("./renderer/agl.Stage2D.js");
 
 require("./filters/agl.AbstractFilter.js");
