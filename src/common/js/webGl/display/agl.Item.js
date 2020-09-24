@@ -27,6 +27,11 @@ AGL.Item = helpers.createPrototypeClass(
     this.destruct = function() {
       this.parent && this.parent.removeChild && this.parent.removeChild(this);
 
+      this.matrixCache =
+      this.props       =
+      this.color       =
+      this.colorCache  = null;
+
       _super.destruct.call(this);
     }
 

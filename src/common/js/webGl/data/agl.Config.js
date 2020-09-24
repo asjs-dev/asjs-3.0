@@ -1,4 +1,5 @@
 require("../NameSpace.js");
+require("../utils/agl.Utils.js");
 
 AGL.CreateConfig = function(options) {
   var warnMessage = "Maximum of ";

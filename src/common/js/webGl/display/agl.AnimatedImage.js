@@ -7,10 +7,10 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
     AGL.Image.call(this, texture);
 
     this.frameLength = 120;
-    this.frame       = 0;
     this.frames      = [];
     this.isPlaying   = false;
 
+    this.frame              =
     this._currentRenderTime = 0;
   },
   function(_super) {
@@ -57,6 +57,9 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
 
     this.destruct = function() {
       this.stop();
+
+      this.frames = null;
+
       _super.destruct.call(this);
     }
   }

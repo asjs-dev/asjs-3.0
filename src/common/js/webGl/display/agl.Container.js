@@ -10,18 +10,27 @@ AGL.Container = helpers.createPrototypeClass(
 
     this.children = [];
 
-    this.worldPropsUpdateId =
-    this.worldColorUpdateId = 0;
+    this.worldPropsUpdateId         =
+    this.worldColorUpdateId         =
+    this._currentWorldPropsUpdateId =
+    this._currentWorldColorUpdateId = 0;
 
     this.colorCache = [1, 1, 1, 1];
 
-    this._currentWorldPropsUpdateId =
-    this._currentWorldColorUpdateId = 0;
   },
-  function() {
+  function(_super) {
     helpers.get(this, "numChildren", function() { return this.children.length; });
 
-    this.clear = function() {
+    this.destruct = function() {
+      this.empty();
+
+      this.children   =
+      this.colorCache = null;
+
+      _super.destruct.call(this);
+    }
+
+    this.empty = function() {
       while (this.numChildren) this.removeChildAt(0);
     }
 

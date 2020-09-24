@@ -1,4 +1,5 @@
 require("../NameSpace.js");
+require("../utils/agl.Utils.js");
 
 (function() {
   function createBlendMode(funcs) {
@@ -13,11 +14,32 @@ require("../NameSpace.js");
   }
 
   AGL.BlendModes = {
-    "NORMAL"  : createBlendMode(["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA", "ONE", "ONE_MINUS_SRC_ALPHA"]),
-    "ADD"     : createBlendMode(["SRC_ALPHA", "DST_ALPHA",           "ONE", "DST_ALPHA"]),
-    "MULTIPLY": createBlendMode(["DST_COLOR", "ONE_MINUS_SRC_ALPHA"]),
-    "SCREEN"  : createBlendMode(["SRC_ALPHA", "ONE_MINUS_SRC_COLOR", "ONE", "ONE_MINUS_SRC_COLOR"]),
-    "OVERLAY" : createBlendMode(["ONE",       "ONE_MINUS_SRC_ALPHA"])
+    "NORMAL"  : createBlendMode([
+      AGL.Consts.SRC_ALPHA,
+      AGL.Consts.ONE_MINUS_SRC_ALPHA,
+      AGL.Consts.ONE,
+      AGL.Consts.ONE_MINUS_SRC_ALPHA
+    ]),
+    "ADD"     : createBlendMode([
+      AGL.Consts.SRC_ALPHA,
+      AGL.Consts.DST_ALPHA,
+      AGL.Consts.ONE,
+      AGL.Consts.DST_ALPHA
+    ]),
+    "MULTIPLY": createBlendMode([
+      AGL.Consts.DST_COLOR,
+      AGL.Consts.ONE_MINUS_SRC_ALPHA
+    ]),
+    "SCREEN"  : createBlendMode([
+      AGL.Consts.SRC_ALPHA,
+      AGL.Consts.ONE_MINUS_SRC_COLOR,
+      AGL.Consts.ONE,
+      AGL.Consts.ONE_MINUS_SRC_COLOR
+    ]),
+    "OVERLAY" : createBlendMode([
+      AGL.Consts.ONE,
+      AGL.Consts.ONE_MINUS_SRC_ALPHA
+    ])
   };
 
   Object.freeze(AGL.BlendModes);

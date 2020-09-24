@@ -86,6 +86,28 @@ AGL.Stage2D = helpers.createPrototypeClass(
       }
     });
 
+    this.destruct = function() {
+      this.fog                =
+      this.colorCache         =
+      this._DEFAULT_DUO       =
+      this._DEFAULT_QUAD      =
+      this._lights            =
+      this._picked            =
+      this._tempPickerVector  =
+      this._tempMatrix        =
+      this._tempInverseMatrix =
+      this._collectLightsFunc =
+      this._lightPositions    =
+      this._lightVolumes      =
+      this._lightColors       =
+      this._lightEffects      =
+      this._lightZIndices     =
+      this._collectLightsFunc =
+      this._setMaskDataFunc   = null;
+
+      _super.destruct.call(this);
+    }
+
     this.render = function() {
       this._preRender();
 
@@ -199,13 +221,13 @@ AGL.Stage2D = helpers.createPrototypeClass(
       _super._initCustom.call(this);
 
       this._colorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-      this._colorBuffer     = this._createArrayBuffer(this._colorData,     "aFillCol", 4, 1, 4, this._gl.FLOAT, 4);
+      this._colorBuffer     = this._createArrayBuffer(this._colorData,     "aFillCol", 4, 1, 4, AGL.Consts.FLOAT, 4);
       this._tintColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-      this._tintColorBuffer = this._createArrayBuffer(this._tintColorData, "aTintCol", 4, 1, 4, this._gl.FLOAT, 4);
+      this._tintColorBuffer = this._createArrayBuffer(this._tintColorData, "aTintCol", 4, 1, 4, AGL.Consts.FLOAT, 4);
 
       this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
       this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
-      this._effectBuffer = this._createArrayBuffer(this._effectData, "aFx", this._effectLength, 1, this._effectLength, this._gl.FLOAT, 4);
+      this._effectBuffer = this._createArrayBuffer(this._effectData, "aFx", this._effectLength, 1, this._effectLength, AGL.Consts.FLOAT, 4);
     }
   }
 );

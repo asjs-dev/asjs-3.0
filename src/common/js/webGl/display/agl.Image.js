@@ -25,7 +25,20 @@ AGL.Image = helpers.createPrototypeClass(
 
     this.texture = texture;
   },
-  function() {
+  function(_super) {
+    this.destruct = function() {
+      this.textureMatrixCache =
+      this.mask               =
+      this.tintType           =
+      this.blendMode          =
+      this.textureProps       =
+      this.textureCrop        =
+      this.textureCropCache   =
+      this.texture            = null;
+
+      _super.destruct.call(this);
+    }
+
     this.mouseOver = function() {}
 
     this.update = function() {

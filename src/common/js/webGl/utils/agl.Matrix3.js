@@ -38,13 +38,13 @@ AGL.Matrix3 = {
   },
   projection: function(width, height, dst) {
     dst[0] = 2 / width;
-    dst[1] = 0;
-    dst[2] = 0;
-    dst[3] = 0;
-    dst[4] = -2 / height;
+    dst[1] =
+    dst[2] =
+    dst[3] =
     dst[5] = 0;
+    dst[4] = -2 / height;
     dst[6] = -1;
-    dst[7] = 1;
+    dst[7] = 
     dst[8] = 1;
   },
   transformLocal: function(

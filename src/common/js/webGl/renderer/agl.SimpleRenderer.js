@@ -13,6 +13,13 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
     AGL.BaseRenderer.call(this, config);
   },
   function(_super) {
+    this.destruct = function() {
+      this._textureIdData   =
+      this._textureIdBuffer = null;
+
+      _super.destruct.call(this);
+    }
+
     this._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
       _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
       this._textureIdData[this._batchItems] = textureMapIndex;
@@ -27,7 +34,7 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
       _super._initCustom.call(this);
 
       this._textureIdData   = new Float32Array(this._MAX_BATCH_ITEMS);
-      this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, this._gl.FLOAT, 4);
+      this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, AGL.Consts.FLOAT, 4);
     }
   }
 );

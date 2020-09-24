@@ -32,15 +32,15 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
     this._render = function() {
       if (!this.texture.loaded) return;
-      this._gl.clear(this._gl.COLOR_BUFFER_BIT);
+      this._gl.clear(AGL.Consts.COLOR_BUFFER_BIT);
 
       AGL.Utils.useTexture(this._gl, 0, this.texture);
 
       this._gl.uniform1f(this._locations["uFlpY"], 1);
       this._gl.uniform1i(this._locations["uFtrT"], 0);
-      this._gl.uniform1f(this._locations["uTm"],   (this._renderTime / 16) % 10000);
+      this._gl.uniform1f(this._locations["uTm"],   (this._renderTime % 3600000) / 3600000);
 
-      this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
+      this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
 
       var i;
       var l = this.filters.length;
@@ -54,7 +54,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
         filter.updateFramebuffer(this._gl, this._width, this._height);
 
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, filter.framebuffer);
+        this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, filter.framebuffer);
 
         this._gl.uniform1f(this._locations["uFlpY"],    -1);
         this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
@@ -62,33 +62,37 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
         this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
 
-        this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
+        this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
 
         filter.bindTexture(this._gl, 0);
       }
 
-      this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, null);
+      this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
 
       this._gl.uniform1f(this._locations["uFlpY"], 1);
       this._gl.uniform1i(this._locations["uFtrT"], 0);
 
-      this._gl.drawArrays(this._gl.TRIANGLE_FAN, 0, 6);
+      this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
     }
 
     this.destruct = function() {
+      this.texture =
+      this.filters = null;
+
       this._destructRenderer();
+
       _super.destruct.call(this);
     }
 
     this._initCustom = function() {
-      this._gl.bufferData(this._gl.ARRAY_BUFFER, new Float32Array([
+      this._gl.bufferData(AGL.Consts.ARRAY_BUFFER, new Float32Array([
           -1, -1,
            1, -1,
           -1,  1,
           -1,  1,
            1,  1,
            1, -1
-        ]), this._gl.STATIC_DRAW
+        ]), AGL.Consts.STATIC_DRAW
       );
 
       this._gl.uniform1i(this._locations["uTex"],    0);
@@ -252,7 +256,7 @@ AGL.PostProcessing.createFragmentShader = function() {
       "else if(uFtrT<7){" +
         "vec2 dspMd=vec2(1,-1)*(texture(" +
           "uDspTex," +
-          "mod(vec2(1,-1)*(vCrd*.5+.5)+uTm*vec2(fvl[1],fvl[2])*oPx,1.)" +
+          "mod(vec2(1,-1)*(vCrd*.5+.5)+uTm*vec2(fvl[1],fvl[2]),1.)" +
         ").rg-.5)*2.*oPx*fvl[0];" +
         "vec2 mdPs=vTexCrd+dspMd;" +
         "if(mdPs.x>=.0&&mdPs.y>=.0&&mdPs.x<=1.&&mdPs.y<=1.)fgCol=texture(uTex,mdPs);" +

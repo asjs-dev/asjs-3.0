@@ -23,9 +23,9 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       "uTex"      : "getUniformLocation",
     });
 
-    this.clearColor = new AGL.ColorProps();
-
     helpers.constant(this, "_MAX_BATCH_ITEMS", 10000);
+
+    this.clearColor = new AGL.ColorProps();
 
     this._clearBeforeRender     = true;
     this._clearBeforeRenderFunc = this.clear.bind(this);
@@ -69,11 +69,30 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this.clear = function() {
       var clearColor = this.clearColor;
       clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-      this._gl.clear(this._gl.COLOR_BUFFER_BIT);
+      this._gl.clear(AGL.Consts.COLOR_BUFFER_BIT);
     }
 
     this.destruct = function() {
+      this._matrixData                          =
+  		this._matrixBuffer                        =
+      this._worldMatrixData                     =
+  		this._worldMatrixBuffer                   =
+      this._textureMatrixData                   =
+      this._textureMatrixBuffer                 =
+      this._textureCropData                     =
+      this._textureCropBuffer                   =
+      this.clearColor                           =
+      this._clearBeforeRenderFunc               =
+      this._currentBlendMode                    =
+      this._textureMap                          =
+      this._textureIds                          =
+      this._drawFunctionMap[AGL.Item.TYPE]      =
+      this._drawFunctionMap[AGL.Image.TYPE]     =
+      this._drawFunctionMap[AGL.Container.TYPE] =
+      this._drawFunctionMap                     = null;
+
       this._destructRenderer();
+
       _super.destruct.call(this);
     }
 
@@ -129,8 +148,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     this._createArrayBuffer = function(data, locationId, length, num, size, type, bytes) {
       var buffer = this._gl.createBuffer();
-      this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
-  		this._gl.bufferData(this._gl.ARRAY_BUFFER, data.byteLength, this._gl.DYNAMIC_DRAW);
+      this._gl.bindBuffer(AGL.Consts.ARRAY_BUFFER, buffer);
+  		this._gl.bufferData(AGL.Consts.ARRAY_BUFFER, data.byteLength, AGL.Consts.DYNAMIC_DRAW);
 
       this._attachArrayBuffer(this._locations[locationId], buffer, data, length, num, size, type, bytes);
 
@@ -148,7 +167,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
         this._gl[
           "vertexAttrib" + (
-            type === this._gl.FLOAT
+            type === AGL.Consts.FLOAT
             ? ""
             : "I"
           ) + "Pointer"
@@ -158,8 +177,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
   	}
 
     this._bindArrayBuffer = function(buffer, data) {
-      this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
-  		this._gl.bufferSubData(this._gl.ARRAY_BUFFER, 0, data);
+      this._gl.bindBuffer(AGL.Consts.ARRAY_BUFFER, buffer);
+  		this._gl.bufferSubData(AGL.Consts.ARRAY_BUFFER, 0, data);
     }
 
     this._bindBuffers = function() {
@@ -178,7 +197,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
       this._bindBuffers();
 
-      this._gl.drawElementsInstanced(this._gl.TRIANGLE_FAN, 6, this._gl.UNSIGNED_SHORT, 0, this._batchItems);
+      this._gl.drawElementsInstanced(AGL.Consts.TRIANGLE_FAN, 6, AGL.Consts.UNSIGNED_SHORT, 0, this._batchItems);
 
       this._batchItems = 0;
     }
@@ -207,10 +226,10 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     this._setBlendMode = function() {
       this._gl[this._currentBlendMode.funcName](
-        this._gl[this._currentBlendMode.funcs[0]],
-        this._gl[this._currentBlendMode.funcs[1]],
-        this._gl[this._currentBlendMode.funcs[2]],
-        this._gl[this._currentBlendMode.funcs[3]]
+        this._currentBlendMode.funcs[0],
+        this._currentBlendMode.funcs[1],
+        this._currentBlendMode.funcs[2],
+        this._currentBlendMode.funcs[3]
       );
     }
 
@@ -228,24 +247,24 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._setBlendMode();
 
       var indexBuffer = this._gl.createBuffer();
-      this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      this._gl.bindBuffer(AGL.Consts.ELEMENT_ARRAY_BUFFER, indexBuffer);
       this._gl.bufferData(
-        this._gl.ELEMENT_ARRAY_BUFFER,
+        AGL.Consts.ELEMENT_ARRAY_BUFFER,
         new Uint16Array([
           0, 1, 2,
           0, 2, 3
         ]),
-        this._gl.STATIC_DRAW
+        AGL.Consts.STATIC_DRAW
       );
 
       this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-  		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",      9, 3, 3, this._gl.FLOAT, 4);
+  		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",      9, 3, 3, AGL.Consts.FLOAT, 4);
       this._worldMatrixData     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-  		this._worldMatrixBuffer   = this._createArrayBuffer(this._matrixData,        "aWorldMat", 9, 3, 3, this._gl.FLOAT, 4);
+  		this._worldMatrixBuffer   = this._createArrayBuffer(this._matrixData,        "aWorldMat", 9, 3, 3, AGL.Consts.FLOAT, 4);
       this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-      this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "aTexMat",   9, 3, 3, this._gl.FLOAT, 4);
+      this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "aTexMat",   9, 3, 3, AGL.Consts.FLOAT, 4);
       this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-      this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "aTexCrop",  4, 1, 4, this._gl.FLOAT, 4);
+      this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "aTexCrop",  4, 1, 4, AGL.Consts.FLOAT, 4);
     }
   }
 );

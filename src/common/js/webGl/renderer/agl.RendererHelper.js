@@ -14,7 +14,6 @@ AGL.RendererHelper = {
     this._config = config;
     this._canvas = config.canvas;
 
-
     this._loseContextExt =
     this._vertexShader   =
     this._fragmentShader =
@@ -96,8 +95,25 @@ AGL.RendererHelper = {
 
     this._destructRenderer = function() {
       //this._removeListeners();
-      this._destructContext();
+
       this._loseContextExt && this._loseContextExt.loseContext();
+
+      this._destructContext();
+
+      this.context         =
+      this._gl             =
+      this._loseContextExt =
+      this._vertexShader   =
+      this._fragmentShader =
+      this._program        =
+      this._locations      =
+      this._config         =
+      this._canvas         =
+      this._loseContextExt =
+      this._vertexShader   =
+      this._fragmentShader =
+      this._program        =
+      this._context        = null;
     }
     /*
     this._addListeners = function() {
@@ -122,8 +138,8 @@ AGL.RendererHelper = {
     this._init = function() {
       this._gl = this.context;
       this._loseContextExt = this._gl.getExtension('WEBGL_lose_context');
-      this._gl.pixelStorei(this._gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-      this._gl.enable(this._gl.BLEND);
+      this._gl.pixelStorei(AGL.Consts.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      this._gl.enable(AGL.Consts.BLEND);
 
       this._vertexShader   = AGL.Utils.loadVertexShader(this._gl,   this._config.vertexShader(this._config));
       this._fragmentShader = AGL.Utils.loadFragmentShader(this._gl, this._config.fragmentShader(this._config));
@@ -132,18 +148,18 @@ AGL.RendererHelper = {
       this._gl.useProgram(this._program);
 
       var positionBuffer = this._gl.createBuffer();
-      this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionBuffer);
+      this._gl.bindBuffer(AGL.Consts.ARRAY_BUFFER, positionBuffer);
       this._gl.bufferData(
-        this._gl.ARRAY_BUFFER,
+        AGL.Consts.ARRAY_BUFFER,
         new Float32Array([
           0, 0,
           1, 0,
           1, 1,
           0, 1
         ]),
-        this._gl.STATIC_DRAW
+        AGL.Consts.STATIC_DRAW
       );
-      this._gl.vertexAttribPointer(this._locations["aPos"], 2, this._gl.FLOAT, false, 0, 0);
+      this._gl.vertexAttribPointer(this._locations["aPos"], 2, AGL.Consts.FLOAT, false, 0, 0);
       this._gl.enableVertexAttribArray(this._locations["aPos"]);
 
       this._initCustom();

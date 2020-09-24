@@ -6,19 +6,19 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
     helpers.BasePrototypeClass.call(this);
 
     this.type    =
-    this.subType = 0;
+    this.subType =
+    this._width  =
+    this._height = 0;
 
     this._values  = new Float32Array(9);
     this._kernels = new Float32Array(9);
 
-    this._width =
-    this._height = 0;
 
     this._gl =
     this._framebufferTexture =
     this._framebuffer = null;
   },
-  function() {
+  function(_super) {
     helpers.get(this, "framebufferTexture", function() { return this._framebufferTexture; });
     helpers.get(this, "framebuffer",        function() { return this._framebuffer; });
     helpers.get(this, "values",             function() { return this._values; });
@@ -53,6 +53,19 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
       get: function() { return this._values[4]; },
       set: function(v) { this._values[4] = v; }
     });
+
+    this.destruct = function() {
+      this._framebufferTexture && this._gl.deleteTexture(this._framebufferTexture);
+      this._framebuffer && this._gl.deleteFramebuffer(this._framebuffer);
+      
+      this._values             =
+      this._kernels            =
+      this._gl                 =
+      this._framebufferTexture =
+      this._framebuffer        = null;
+
+      _super.destruct.call(this);
+    }
 
     this.updateFramebuffer = function(gl, width, height) {
       if (width > 0 && height > 0 && (!this._framebuffer || this._gl !== gl || this._width !== width || this._height !== height)) {

@@ -2,7 +2,7 @@ require("../NameSpace.js");
 
 AGL.Texture = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function Texture(renderer, source) {
+  function Texture(source) {
     helpers.BasePrototypeClass.call(this);
 
     this._source;
@@ -13,16 +13,12 @@ AGL.Texture = helpers.createPrototypeClass(
     this.isVideo         =
     this.shouldUpdate    = false;
 
-    this._gl = renderer.context;
-
-    this.texture = this._gl.createTexture();
-
     this.maxLevel  = 10;
-    this.target    = this._gl.TEXTURE_2D;
+    this.target    = AGL.Consts.TEXTURE_2D;
     this.wrapS     =
-    this.wrapT     = this._gl.CLAMP_TO_EDGE;
+    this.wrapT     = AGL.Consts.CLAMP_TO_EDGE;
     this.minFilter =
-    this.magFilter = this._gl.NEAREST;
+    this.magFilter = AGL.Consts.NEAREST;
 
     this.source = source;
 
@@ -62,6 +58,15 @@ AGL.Texture = helpers.createPrototypeClass(
       }
     });
 
+    this.getTexture = function(context) {
+      if (!this._texture || this._gl !== context) {
+        this._gl && this._texture && AGL.Utils.deleteTexture(this._gl, this._texture);
+        this._gl = context;
+        this._texture = this._gl.createTexture();
+      }
+      return this._texture;
+    }
+
     this.autoUpdate = function(renderTime) {
       var shouldUpdate = this._currentRenderTime < renderTime;
       this._currentRenderTime = renderTime;
@@ -73,6 +78,9 @@ AGL.Texture = helpers.createPrototypeClass(
         this._eventType,
         this._onTextureLoadedBind
       );
+
+      this._source              =
+      this._onTextureLoadedBind = null;
 
       _super.destruct.call(this);
     }
@@ -101,15 +109,15 @@ AGL.Texture = helpers.createPrototypeClass(
     this._onTextureLoaded = this._parseTextureSize;
   }
 );
-AGL.Texture.loadImage = function(renderer, src) {
+AGL.Texture.loadImage = function(src) {
   var image = document.createElement("img");
-  var texture = new AGL.Texture(renderer, image);
+  var texture = new AGL.Texture(image);
   image.src = src;
   return texture;
 };
-AGL.Texture.loadVideo = function(renderer, src) {
+AGL.Texture.loadVideo = function(src) {
   var video = document.createElement("video");
-  var texture = new AGL.Texture(renderer, video);
+  var texture = new AGL.Texture(video);
   video.src = src;
   return texture;
 };

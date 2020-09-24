@@ -6,64 +6,74 @@ require("../NameSpace.js");
     function Utils() {
       helpers.BasePrototypeClass.call(this);
 
+      this.loadVertexShader = this.loadShader.bind(this, "VERTEX_SHADER");
+      this.loadFragmentShader = this.loadShader.bind(this, "FRAGMENT_SHADER");
+
       this.info = {
         "isWebGl2Supported": false
       };
 
+      AGL.Consts = {};
+
       var canvas = document.createElement("canvas");
       var gl;
       if (gl = canvas.getContext("webgl2")) {
+        for (var key in gl) {
+            if (typeof gl[key] == "number") AGL.Consts[key] = gl[key];
+        }
+
         this.info.isWebGl2Supported            = true;
-        this.info.maxTextureImageUnits         = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-        this.info.maxTextureSize               = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-        this.info.maxVertexAttributes          = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
-        this.info.maxVaryingVectors            = gl.getParameter(gl.MAX_VARYING_VECTORS);
-        this.info.maxVertexUniformVectors      = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
-        this.info.maxFragmentUniformComponents = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_COMPONENTS);
-        this.info.maxFragmentUniformVectors    = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
-        this.info.maxVaryingComponents         = gl.getParameter(gl.MAX_VARYING_COMPONENTS);
+        this.info.maxTextureImageUnits         = gl.getParameter(AGL.Consts.MAX_TEXTURE_IMAGE_UNITS);
+        this.info.maxTextureSize               = gl.getParameter(AGL.Consts.MAX_TEXTURE_SIZE);
+        this.info.maxVertexAttributes          = gl.getParameter(AGL.Consts.MAX_VERTEX_ATTRIBS);
+        this.info.maxVaryingVectors            = gl.getParameter(AGL.Consts.MAX_VARYING_VECTORS);
+        this.info.maxVertexUniformVectors      = gl.getParameter(AGL.Consts.MAX_VERTEX_UNIFORM_VECTORS);
+        this.info.maxFragmentUniformComponents = gl.getParameter(AGL.Consts.MAX_FRAGMENT_UNIFORM_COMPONENTS);
+        this.info.maxFragmentUniformVectors    = gl.getParameter(AGL.Consts.MAX_FRAGMENT_UNIFORM_VECTORS);
+        this.info.maxVaryingComponents         = gl.getParameter(AGL.Consts.MAX_VARYING_COMPONENTS);
       }
+      canvas = null;
     },
     function() {
       this.useTexture = function(gl, index, textureInfo) {
-        gl.activeTexture(gl.TEXTURE0 + index);
-        gl.bindTexture(textureInfo.target, textureInfo.texture);
+        gl.activeTexture(AGL.Consts.TEXTURE0 + index);
+        gl.bindTexture(textureInfo.target, textureInfo.getTexture(gl));
 
         gl.texImage2D(
           textureInfo.target,
           0,
-          gl.RGBA,
+          AGL.Consts.RGBA,
           textureInfo.width,
           textureInfo.height,
           0,
-          gl.RGBA,
-          gl.UNSIGNED_BYTE,
+          AGL.Consts.RGBA,
+          AGL.Consts.UNSIGNED_BYTE,
           textureInfo.source
         );
-        gl.texParameteri(textureInfo.target, gl.TEXTURE_MAX_LEVEL, textureInfo.maxLevel);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MAX_LEVEL, textureInfo.maxLevel);
 
         if (textureInfo.generateMipmap) {
           gl.generateMipmap(textureInfo.target);
           gl.flush();
         }
 
-        gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_S, textureInfo.wrapS);
-        gl.texParameteri(textureInfo.target, gl.TEXTURE_WRAP_T, textureInfo.wrapT);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_WRAP_S, textureInfo.wrapS);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_WRAP_T, textureInfo.wrapT);
 
         if (textureInfo.generateMipmap) {
           gl.texParameteri(
             textureInfo.target,
-            gl.TEXTURE_MIN_FILTER,
-            textureInfo.minFilter === gl.LINEAR
-              ? gl.LINEAR_MIPMAP_LINEAR
-              : gl.NEAREST_MIPMAP_NEAREST
+            AGL.Consts.TEXTURE_MIN_FILTER,
+            textureInfo.minFilter === AGL.Consts.LINEAR
+              ? AGL.Consts.LINEAR_MIPMAP_LINEAR
+              : AGL.Consts.NEAREST_MIPMAP_NEAREST
           );
         } else {
-          gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
+          gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MIN_FILTER, textureInfo.minFilter);
         }
 
-        gl.texParameteri(textureInfo.target, gl.TEXTURE_MIN_FILTER, textureInfo.minFilter);
-        gl.texParameteri(textureInfo.target, gl.TEXTURE_MAG_FILTER, textureInfo.magFilter);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MIN_FILTER, textureInfo.minFilter);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MAG_FILTER, textureInfo.magFilter);
       }
 
       this.loadShader = function(shaderType, gl, shaderSource) {
@@ -72,7 +82,7 @@ require("../NameSpace.js");
         gl.shaderSource(shader, shaderSource);
         gl.compileShader(shader);
 
-        var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+        var compiled = gl.getShaderParameter(shader, AGL.Consts.COMPILE_STATUS);
         if (!compiled) {
           var lastError = gl.getShaderInfoLog(shader);
           console.log("Error compiling shader " + shaderType + ": " + lastError);
@@ -82,9 +92,6 @@ require("../NameSpace.js");
 
         return shader;
       }
-
-      this.loadVertexShader = this.loadShader.bind(this, "VERTEX_SHADER");
-      this.loadFragmentShader = this.loadShader.bind(this, "FRAGMENT_SHADER");
 
       this.createProgram = function(gl, shaders, opt_attribs, opt_locations) {
         var program = gl.createProgram();
@@ -104,7 +111,7 @@ require("../NameSpace.js");
         }
         gl.linkProgram(program);
 
-        var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+        var linked = gl.getProgramParameter(program, AGL.Consts.LINK_STATUS);
         if (!linked) {
             var lastError = gl.getProgramInfoLog(program);
             console.log("Error in program linking: " + lastError);
@@ -130,8 +137,8 @@ require("../NameSpace.js");
       }
 
       this.destroyTexture = function(gl, texture) {
-        gl.bindTexture(texture.target, null);
-        gl.deleteTexture(texture.texture);
+        this.unbindTexture(gl, texture);
+        gl.deleteTexture(texture.getTexture(gl));
       }
 
       this.isPowerOf2 = function(value) {
@@ -139,7 +146,10 @@ require("../NameSpace.js");
       }
     }
   );
+
+  AGL.Consts = {};
   AGL.Utils = new Utils();
 
+  Object.freeze(AGL.Consts);
   Object.freeze(AGL.Utils);
 })();

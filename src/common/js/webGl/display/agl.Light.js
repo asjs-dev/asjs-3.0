@@ -34,7 +34,7 @@ AGL.Light = helpers.createPrototypeClass(
     this._lightEffects   = lightEffects;
     this._lightZIndices  = lightZIndices;
   },
-  function() {
+  function(_super) {
     helpers.property(this, "on", {
       get: function() { return this._on && this.stage; },
       set: function(v) { this._on = v; }
@@ -59,6 +59,18 @@ AGL.Light = helpers.createPrototypeClass(
           helpers.arraySet(this._lightEffects, this.effectCache, this._quadId);
         } else this._lightColors[this._quadId + 3] = 0;
       }
+    }
+
+    this.destruct = function() {
+      this.effect          =
+      this.effectCache     =
+      this._lightPositions =
+      this._lightVolumes   =
+      this._lightColors    =
+      this._lightEffects   =
+      this._lightZIndices  = null;
+
+      _super.destruct.call(this);
     }
   }
 );
