@@ -285,10 +285,11 @@ AGL.Stage2D.createVertexShader = function(config) {
   if (config.isLightEnabled) {
     shader +=
     "vec4 lghtVal(vec4 pos,vec2 lghtPos,vec2 lghtVol,vec4 lghtCol,vec4 lghtFX){" +
-      "vec2 dist=pos.xy-lghtPos;" +
+      "vec2 dist=abs(pos.xy-lghtPos);" +
+      "vec2 v=pow(dist+(dist*lghtFX.xy),lghtFX.zw);"+
       "return lghtCol*lghtCol.a*max(0.,min(1.,1.-sqrt(" +
-        "pow(abs(dist.x+(abs(dist.x)*lghtFX.x)),lghtFX.z)*(lghtVol.x/uRes.y)+" +
-        "pow(abs(dist.y+(abs(dist.y)*lghtFX.y)),lghtFX.w)*(lghtVol.y/uRes.x/uRes.y)" +
+        "v.x*(lghtVol.x/uRes.y)+" +
+        "v.y*(lghtVol.y/uRes.x/uRes.y)" +
       ")));" +
     "}";
   }
@@ -342,7 +343,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
-  "precision lowp float;" +
+  "precision highp float;" +
 
   "in vec4 vCrd;" +
   "in vec2 vMskCrd;" +

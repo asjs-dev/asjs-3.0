@@ -47,9 +47,6 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       for (i = 0; i < l; ++i) {
         var filter = this.filters[i];
 
-        //this._gl.uniform1i(this._locations["uTex"],    0);
-        //this._gl.uniform1i(this._locations["uDspTex"], 2);
-
         filter.texture && filter.texture.loaded && AGL.Utils.useTexture(this._gl, 2, filter.texture);
 
         filter.updateFramebuffer(this._gl, this._width, this._height);
@@ -119,7 +116,7 @@ AGL.PostProcessing.createVertexShader = function() {
 };
 AGL.PostProcessing.createFragmentShader = function() {
   var shader = "#version 300 es\n" +
-  "precision mediump float;\n" +
+  "precision highp float;" +
 
   "uniform sampler2D uTex;" +
   "uniform sampler2D uDspTex;" +
@@ -254,9 +251,10 @@ AGL.PostProcessing.createFragmentShader = function() {
       "else if(uFtrT<6)fgCol=glw(fgCol,fvl[0],fvl[1],vTexCrd,oPx);" +
       // DisplacementFilter
       "else if(uFtrT<7){" +
-        "vec2 dspMd=vec2(1,-1)*(texture(" +
+        "vec2 flp=vec2(1,-1);" +
+        "vec2 dspMd=flp*(texture(" +
           "uDspTex," +
-          "mod(vec2(1,-1)*(vCrd*.5+.5)+uTm*vec2(fvl[1],fvl[2]),1.)" +
+          "mod(flp*(vCrd*.5+.5)+uTm*vec2(fvl[1],fvl[2]),1.)" +
         ").rg-.5)*2.*oPx*fvl[0];" +
         "vec2 mdPs=vTexCrd+dspMd;" +
         "if(mdPs.x>=.0&&mdPs.y>=.0&&mdPs.x<=1.&&mdPs.y<=1.)fgCol=texture(uTex,mdPs);" +

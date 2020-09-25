@@ -290,7 +290,7 @@ AGL.BaseRenderer.createVertexShader = function() {
 };
 AGL.BaseRenderer.createFragmentShader = function() {
   return "#version 300 es\n" +
-  "precision lowp float;" +
+  "precision highp float;" +
 
   "in vec2 vTexCrd;" +
   "in vec2 vTexCrop;" +
