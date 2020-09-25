@@ -32,7 +32,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
     this._render = function() {
       if (!this.texture.loaded) return;
-      this._gl.clear(AGL.Consts.COLOR_BUFFER_BIT);
+      this.clear();
 
       AGL.Utils.useTexture(this._gl, 0, this.texture);
 
@@ -114,9 +114,9 @@ AGL.PostProcessing.createVertexShader = function() {
     "vTexCrd=(aPos+vec2(1,-1))/vec2(2,-2);" +
   "}";
 };
-AGL.PostProcessing.createFragmentShader = function() {
-  var shader = "#version 300 es\n" +
-  "precision highp float;" +
+AGL.PostProcessing.createFragmentShader = function(config) {
+  return "#version 300 es\n" +
+  "precision " + config.precision + " float;" +
 
   "uniform sampler2D uTex;" +
   "uniform sampler2D uDspTex;" +
@@ -131,38 +131,41 @@ AGL.PostProcessing.createFragmentShader = function() {
 
   "out vec4 fgCol;" +
 
-  "vec4 blur(vec4 oCol,float bx, float by,vec2 crd,vec2 oPx){" +
-    "vec4 col=oCol;" +
+  "vec4 blur(float bx,float by,vec2 crd,vec2 oPx){" +
+    "vec4 col=vec4(0);" +
 
-    "float w=oPx.x*bx;" +
-    "float h=oPx.y*by;" +
+    "vec2 wh=oPx*vec2(bx,by);" +
 
-    "for(float i=-2.;i<3.;++i){" +
-  		"for(float j=-2.;j<3.;++j){" +
-  			"if(i!=0.&&j!=0.)col+=texture(uTex,crd+vec2(i*w,j*h));" +
+    "float c=0.;" +
+
+    "for(float i=-3.;i<4.;++i){" +
+      "for(float j=-3.;j<4.;++j){" +
+        "float m=1.-abs((i/3.)*(j/3.));" +
+        "col+=texture(uTex,crd+(wh*vec2(i,j)))*m;" +
+        "c+=m;" +
       "}" +
     "}" +
 
-    "return col/25.;" +
+    "return col/c;" +
   "}"+
 
-  "vec4 glw(vec4 oCol,float bx, float by,vec2 crd,vec2 oPx){" +
-    "float oAvg=(oCol.r+oCol.g+oCol.b)/3.;" +
+  "vec4 glw(vec4 oCol,float bx,float by,float v,vec2 crd,vec2 oPx){" +
+    "float oAvg=(oCol.r+oCol.g+oCol.b+oCol.a)/4.;" +
     "vec4 col=oCol;" +
 
-    "float w=oPx.x*bx;" +
-    "float h=oPx.y*by;" +
+    "vec2 wh=oPx*vec2(bx,by);" +
 
     "float c=1.;" +
 
     "for(float i=-3.;i<4.;++i){" +
   		"for(float j=-3.;j<4.;++j){" +
-        "vec4 tCol=texture(uTex,crd+vec2(i*w,j*h));" +
-        "float avg=(tCol.r+tCol.g+tCol.b)/3.;" +
-        "if(avg>oAvg){" +
-          "col+=tCol;" +
-          "c++;" +
-        "}" +
+        "if(i==0.&&j==0.)continue;" +
+        "vec4 tCol=texture(uTex,crd+(wh*vec2(i,j)));" +
+        "float avg=(tCol.r+tCol.g+tCol.b+tCol.a)/4.;" +
+        "float m=abs((i/3.)*(j/3.));" +
+        "if(avg-oAvg<v*m)continue;" +
+        "col+=tCol*(1.-m);" +
+        "c+=1.-m;" +
       "}" +
     "}" +
 
@@ -244,11 +247,11 @@ AGL.PostProcessing.createFragmentShader = function() {
           "fgCol.a);" +
       "}" +
       // BlurFilter
-      "else if(uFtrT<4)fgCol=blur(fgCol,fvl[0],fvl[1],vTexCrd,oPx);" +
+      "else if(uFtrT<4)fgCol=blur(fvl[0],fvl[1],vTexCrd,oPx);" +
       // PixelateFilter
       "else if(uFtrT<5)fgCol=pxlt(fvl[0],vTexCrd,oPx);" +
       // GlowFilter
-      "else if(uFtrT<6)fgCol=glw(fgCol,fvl[0],fvl[1],vTexCrd,oPx);" +
+      "else if(uFtrT<6)fgCol=glw(fgCol,fvl[0],fvl[1],fvl[3],vTexCrd,oPx);" +
       // DisplacementFilter
       "else if(uFtrT<7){" +
         "vec2 flp=vec2(1,-1);" +
@@ -261,6 +264,4 @@ AGL.PostProcessing.createFragmentShader = function() {
       "}" +
     "}" +
   "}";
-
-  return shader;
 };

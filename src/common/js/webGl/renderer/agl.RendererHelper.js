@@ -1,9 +1,12 @@
 require("../NameSpace.js");
 require("../utils/agl.Utils.js");
+require("../data/props/agl.ColorProps.js");
 
 AGL.RendererHelper = {
   "init": function(config) {
     Object.freeze(config);
+
+    this.clearColor = new AGL.ColorProps();
 
     this._width                 =
     this._height                =
@@ -62,6 +65,12 @@ AGL.RendererHelper = {
       }
     });
 
+    this.clear = function() {
+      var clearColor = this.clearColor;
+      clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+      this._gl.clear(AGL.Consts.COLOR_BUFFER_BIT);
+    }
+
     this.setSize = function(width, height) {
       this.width  = width;
       this.height = height;
@@ -100,7 +109,7 @@ AGL.RendererHelper = {
 
       this._destructContext();
 
-      this.context         =
+      this.clearColor      =
       this._gl             =
       this._loseContextExt =
       this._vertexShader   =
@@ -181,4 +190,9 @@ AGL.RendererHelper = {
     }
     */
   }
+}
+AGL.RendererHelper.Precisons = {
+  "HIGH"   : "highp",
+  "MEDIUM" : "mediump",
+  "LOW"    : "lowp"
 }

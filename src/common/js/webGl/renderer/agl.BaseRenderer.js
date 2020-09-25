@@ -25,8 +25,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     helpers.constant(this, "_MAX_BATCH_ITEMS", 10000);
 
-    this.clearColor = new AGL.ColorProps();
-
     this._clearBeforeRender     = true;
     this._clearBeforeRenderFunc = this.clear.bind(this);
 
@@ -66,12 +64,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     helpers.get(this, "stage",  function() { return this; });
 
-    this.clear = function() {
-      var clearColor = this.clearColor;
-      clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-      this._gl.clear(AGL.Consts.COLOR_BUFFER_BIT);
-    }
-
     this.destruct = function() {
       this._matrixData                          =
   		this._matrixBuffer                        =
@@ -81,7 +73,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._textureMatrixBuffer                 =
       this._textureCropData                     =
       this._textureCropBuffer                   =
-      this.clearColor                           =
       this._clearBeforeRenderFunc               =
       this._currentBlendMode                    =
       this._textureMap                          =
@@ -288,9 +279,9 @@ AGL.BaseRenderer.createVertexShader = function() {
     "vTexCropSize=aTexCrop.zw;" +
   "}";
 };
-AGL.BaseRenderer.createFragmentShader = function() {
+AGL.BaseRenderer.createFragmentShader = function(config) {
   return "#version 300 es\n" +
-  "precision highp float;" +
+  "precision " + config.precision + " float;" +
 
   "in vec2 vTexCrd;" +
   "in vec2 vTexCrop;" +

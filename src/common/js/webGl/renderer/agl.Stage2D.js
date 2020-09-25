@@ -343,7 +343,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
-  "precision highp float;" +
+  "precision " + config.precision + " float;" +
 
   "in vec4 vCrd;" +
   "in vec2 vMskCrd;" +

@@ -27,6 +27,8 @@ AGL.CreateConfig = function(options) {
     "vertexShader"      : options.vertexShader,
     "fragmentShader"    : options.fragmentShader,
 
+    "precision"         : options.precision || AGL.RendererHelper.Precisons.HIGH,
+
     "contextAttributes" : {
       "alpha"              : attributes.alpha || false,
       "antialias"          : attributes.antialias || false,

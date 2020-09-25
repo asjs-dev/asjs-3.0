@@ -68,7 +68,7 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
   var shader = "#version 300 es\n" +
-  "precision highp float;" +
+  "precision " + config.precision + " float;" +
 
   "in vec2 vTexCrd;" +
   "in vec2 vTexCrop;" +
