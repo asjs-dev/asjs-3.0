@@ -9,7 +9,7 @@ AGL.SharpenFilter = helpers.createPrototypeClass(
     this.type = AGL.AbstractFilter.CONVOLUTE_TYPE;
     this.intensity = intensity;
 
-    helpers.arraySet(his._kernels, [
+    helpers.arraySet(this._kernels, [
       -1,  -1,  -1,
       -1,  16,  -1,
       -1,  -1,  -1
