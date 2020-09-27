@@ -6,6 +6,6 @@ helpers.createPrototypeClass = helpers.createPrototypeClass || function(parent, 
   Object.setPrototypeOf(construct, parent);
   Object.setPrototypeOf(_scope, _super);
   _scope.constructor = construct;
-  body && body.call(_scope, _super);
+  body && body.call(_scope, _scope, _super);
   return construct;
 }

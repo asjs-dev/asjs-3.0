@@ -1,6 +1,6 @@
 require("./NameSpace.js");
 
-helpers.isEmpty = helpers.isEmpty = function(target) {
+helpers.isEmpty = helpers.isEmpty || function(target) {
   try {
     return target === undefined || target === null || target === "" || target.length === 0;
   } catch(e) {

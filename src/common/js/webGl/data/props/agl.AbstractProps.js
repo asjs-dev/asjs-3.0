@@ -8,8 +8,8 @@ AGL.AbstractProps = helpers.createPrototypeClass(
     this._id              =
     this._currentUpdateId = -1;
   },
-  function() {
-    this.isUpdated = function() {
+  function(_scope) {
+    _scope.isUpdated = function() {
       var isUpdated = this._currentUpdateId < this._id;
       this._currentUpdateId = this._id;
       return isUpdated;

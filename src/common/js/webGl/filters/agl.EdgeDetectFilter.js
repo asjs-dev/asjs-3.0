@@ -9,7 +9,7 @@ AGL.EdgeDetectFilter = helpers.createPrototypeClass(
     this.type = AGL.AbstractFilter.CONVOLUTE_TYPE;
     this.intensity = intensity;
 
-    this._kernels.set([
+    helpers.arraySet(this._kernels, [
       -1, -1, -1,
       -1,  8, -1,
       -1, -1, -1

@@ -9,17 +9,16 @@ AGL.Stage2D = helpers.createPrototypeClass(
     config.vertexShader   = config.vertexShader   || AGL.Stage2D.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.Stage2D.createFragmentShader;
     config.locations      = Object.assign(config.locations, {
-      "aFillCol"      : "getAttribLocation",
-      "aTintCol"      : "getAttribLocation",
-      "aFx"           : "getAttribLocation",
-      "uRes"          : "getUniformLocation",
-      "uLghtPos"      : "getUniformLocation",
-      "uLghtVol"      : "getUniformLocation",
-      "uLghtCol"      : "getUniformLocation",
-      "uLghtFX"       : "getUniformLocation",
-      "uLghtZIndices" : "getUniformLocation",
-      "uFog"          : "getUniformLocation",
-      "uMskTp"        : "getUniformLocation",
+      "aFillCol" : "getAttribLocation",
+      "aTintCol" : "getAttribLocation",
+      "aFx"      : "getAttribLocation",
+      "uRes"     : "getUniformLocation",
+      "uLghtPos" : "getUniformLocation",
+      "uLghtVol" : "getUniformLocation",
+      "uLghtCol" : "getUniformLocation",
+      "uLghtFX"  : "getUniformLocation",
+      "uFog"     : "getUniformLocation",
+      "uMskTp"   : "getUniformLocation",
     });
 
     AGL.BaseRenderer.call(this, config);
@@ -47,37 +46,35 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this._tempInverseMatrix = new Float32Array(6);
 
     this._collectLightsFunc = helpers.emptyFunction;
-    if (this._config.isLightEnabled) {
-      this._lightPositions = new Float32Array(this._config.lightNum * 2);
-      this._lightVolumes   = new Float32Array(this._config.lightNum * 2);
-      this._lightColors    = new Float32Array(this._config.lightNum * 4);
-      this._lightEffects   = new Float32Array(this._config.lightNum * 4);
-      this._lightZIndices  = new Int32Array(this._config.lightNum);
+    if (config.isLightEnabled) {
+      this._lightPositions = new Float32Array(config.lightNum * 3);
+      this._lightVolumes   = new Float32Array(config.lightNum * 2);
+      this._lightColors    = new Float32Array(config.lightNum * 4);
+      this._lightEffects   = new Float32Array(config.lightNum * 6);
 
-      for (var i = 0, l = this._config.lightNum; i < l; ++i) {
+      for (var i = 0, l = config.lightNum; i < l; ++i) {
         this._lights.push(new AGL.Light(
           i,
           this._lightPositions,
           this._lightVolumes,
           this._lightColors,
-          this._lightEffects,
-          this._lightZIndices
+          this._lightEffects
         ));
       }
 
       this._collectLightsFunc = this._collectLights.bind(this);
     }
 
-    this._setMaskDataFunc = this._config.isMaskEnabled
+    this._setMaskDataFunc = config.isMaskEnabled
       ? this._setMaskData.bind(this)
       : helpers.emptyFunction;
 
     this._resize();
   },
-  function(_super) {
-    helpers.get(this, "picked", function() { return this._picked; });
+  function(_scope, _super) {
+    helpers.get(_scope, "picked", function() { return this._picked; });
 
-    helpers.property(this, "maskType", {
+    helpers.property(_scope, "maskType", {
       get: function() { return this._maskType; },
       set: function(v) {
         if (this._maskType === v) return;
@@ -86,7 +83,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       }
     });
 
-    this.destruct = function() {
+    _scope.destruct = function() {
       this.fog                =
       this.colorCache         =
       this._DEFAULT_DUO       =
@@ -101,14 +98,13 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._lightVolumes      =
       this._lightColors       =
       this._lightEffects      =
-      this._lightZIndices     =
       this._collectLightsFunc =
       this._setMaskDataFunc   = null;
 
       _super.destruct.call(this);
     }
 
-    this.render = function() {
+    _scope.render = function() {
       this._preRender();
 
       this._picked = null;
@@ -123,41 +119,43 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._isPickerSet = false;
     }
 
-    this.getLight = function(id) {
+    _scope.getLight = function(id) {
       return this._lights[id];
     }
 
-    this.setPickerPoint = function(x, y) {
+    _scope.setPickerPoint = function(x, y) {
       this._isPickerSet = true;
 
       this._tempPickerVector[0] = (x - this._widthHalf) * this.matrixCache[0];
       this._tempPickerVector[1] = (y - this._heightHalf) * this.matrixCache[4];
     }
 
-    this._updateFog = function() {
+    _scope._updateFog = function() {
       this.fog.isUpdated() && this._gl.uniform4fv(this._locations["uFog"], this.fog.items);
     }
 
-    this._collectLights = function() {
-      this._gl.uniform2fv(this._locations["uLghtPos"],      this._lightPositions);
-      this._gl.uniform2fv(this._locations["uLghtVol"],      this._lightVolumes);
-      this._gl.uniform4fv(this._locations["uLghtCol"],      this._lightColors);
-      this._gl.uniform4fv(this._locations["uLghtFX"],       this._lightEffects);
-      this._gl.uniform1fv(this._locations["uLghtZIndices"], this._lightZIndices);
+    _scope._collectLights = function() {
+      this._gl.uniform3fv(this._locations["uLghtPos"],  this._lightPositions);
+      this._gl.uniform2fv(this._locations["uLghtVol"],  this._lightVolumes);
+      this._gl.uniform4fv(this._locations["uLghtCol"],  this._lightColors);
+
+      this._gl.uniformMatrix3x2fv(this._locations["uLghtFX"], false, this._lightEffects);
     }
 
-    this._drawItem = function(item, parent) {
+    _scope._drawItem = function(item, parent) {
       if (!item.renderable) return;
       item.props.zIndex = ++this._zIndexCounter;
       item.update(this._renderTime, parent);
       item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
 
-    this._setMaskData = function(item) {
-      item.mask && (this._effectData[this._batchItems * this._effectLength + 3] = this._drawTexture(item.mask));
+    _scope._setMaskData = function(item) {
+      this._effectData[this._batchItems * this._effectLength + 3] = item.mask
+        ? this._drawTexture(item.mask, true)
+        : -1;
     }
 
-    this._setBufferData = function(item, parent, textureMapIndex, matId, quadId, effectId) {
+    _scope._setBufferData = function(item, parent, textureMapIndex, matId, quadId, effectId) {
       _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
 
       helpers.arraySet(this._colorData,     parent.colorCache, quadId);
@@ -168,7 +166,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._effectData[effectId + 2] = item.props.zIndex;
     }
 
-    this._drawImage = function(item, parent) {
+    _scope._drawImage = function(item, parent) {
       this._checkBlendMode(item);
 
       if (
@@ -199,25 +197,25 @@ AGL.Stage2D = helpers.createPrototypeClass(
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
 
-    this._bindBuffers = function() {
+    _scope._bindBuffers = function() {
       _super._bindBuffers.call(this);
   		this._bindArrayBuffer(this._colorBuffer,     this._colorData);
       this._bindArrayBuffer(this._tintColorBuffer, this._tintColorData);
       this._bindArrayBuffer(this._effectBuffer,    this._effectData);
     }
 
-    this._resize = function() {
+    _scope._resize = function() {
       if (!_super._resize.call(this)) return;
       this._widthHalf  = this._width * 0.5;
       this._heightHalf = this._height * 0.5;
       this._gl.uniform2f(this._locations["uRes"], this._width / this._height, 100 / this._width);
     }
 
-    this._updateColor = function() {
+    _scope._updateColor = function() {
       this.color.isUpdated() && this.worldColorUpdateId++;
     }
 
-    this._initCustom = function() {
+    _scope._initCustom = function() {
       _super._initCustom.call(this);
 
       this._colorData       = new Float32Array(this._MAX_BATCH_ITEMS * 4);
@@ -260,11 +258,10 @@ AGL.Stage2D.createVertexShader = function(config) {
 
   if (config.isLightEnabled) {
     shader +=
-    "uniform vec2 uLghtPos[" + maxLightSources + "];" +
+    "uniform vec3 uLghtPos[" + maxLightSources + "];" +
     "uniform vec2 uLghtVol[" + maxLightSources + "];" +
     "uniform vec4 uLghtCol[" + maxLightSources + "];" +
-    "uniform vec4 uLghtFX[" + maxLightSources + "];" +
-    "uniform float uLghtZIndices[" + maxLightSources + "];";
+    "uniform mat3x2 uLghtFX[" + maxLightSources + "];";
   }
 
   shader +=
@@ -284,13 +281,13 @@ AGL.Stage2D.createVertexShader = function(config) {
 
   if (config.isLightEnabled) {
     shader +=
-    "vec4 lghtVal(vec4 pos,vec2 lghtPos,vec2 lghtVol,vec4 lghtCol,vec4 lghtFX){" +
+    "vec4 lghtVal(vec4 pos,vec2 lghtPos,vec2 lghtVol,vec4 lghtCol,mat3x2 lghtFX){" +
       "vec2 dist=abs(pos.xy-lghtPos);" +
-      "vec2 v=pow(dist+(dist*lghtFX.xy),lghtFX.zw);"+
-      "return lghtCol*lghtCol.a*max(0.,min(1.,1.-sqrt(" +
+      "vec2 v=pow(dist+(dist*lghtFX[0]),lghtFX[1]);"+
+      "return lghtCol*lghtCol.a*max(0.,min(1.,(1.-sqrt(" +
         "v.x*(lghtVol.x/uRes.y)+" +
         "v.y*(lghtVol.y/uRes.x/uRes.y)" +
-      ")));" +
+      "))*(1./lghtFX[2].x)));" +
     "}";
   }
 
@@ -315,10 +312,10 @@ AGL.Stage2D.createVertexShader = function(config) {
     if (config.isLightEnabled) {
       for (var i = 0; i < maxLightSources; i++) {
         shader +=
-        "if(uLghtCol[" + i + "].a>0. && uLghtZIndices[" + i + "]>aFx.z){" +
+        "if(uLghtCol[" + i + "].a>0. && uLghtPos[" + i + "].z>aFx.z){" +
           "lghtCol+=lghtVal(" +
             "vCrd," +
-            "uLghtPos[" + i + "]," +
+            "uLghtPos[" + i + "].xy," +
             "uLghtVol[" + i + "]," +
             "uLghtCol[" + i + "]," +
             "uLghtFX[" + i + "]" +
@@ -361,61 +358,44 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
   shader +=
   "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
-  "uniform int uMskTp;";
+  "uniform int uMskTp;" +
 
-  shader += "out vec4 fgCol;";
+  "out vec4 fgCol;" +
 
-  shader +=
+  AGL.RendererHelper.createGetTextureFunction(maxTextureImageUnits) +
+
   "void main(void){";
 
     if (config.isMaskEnabled) {
       shader +=
-      "float mskAlpha=1.;" +
-      "if(vMskTexId>0.){";
-        for (var i = 0; i < maxTextureImageUnits; i++) {
-          shader += (i > 0 ? " else " : "") +
-          "if(vMskTexId<" + (i + 1) + ".5){" +
-            "vec4 mskCol=texture(uTex[" + i + "],vMskCrd);" +
-            "if(uMskTp<1)mskAlpha=mskCol.r;" +
-            "else if(uMskTp<2)mskAlpha=mskCol.g;" +
-            "else if(uMskTp<3)mskAlpha=mskCol.b;" +
-            "else if(uMskTp<4)mskAlpha=mskCol.a;" +
-            "else if(uMskTp<5)mskAlpha=(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
-            "if(mskAlpha<0.01)discard;" +
-          "}";
-        }
-      shader +=
-      "}";
-    }
-
-    for (var i = -1; i < maxTextureImageUnits; i++) {
-      shader += (i > -1 ? " else " : "") +
-      "if(vTexId<" + (i + 1) + ".5){";
-        shader += "fgCol=" + (
-          i < 0
-            ? "vec4(0);"
-            : "texture(uTex[" + i + "],vTexCrop+vTexCropSize*mod(vTexCrd,1.));"
-          );
-      shader +=
-        "if(fgCol.a==0.) discard;" +
+      "float mskA=1.;" +
+      "if(vMskTexId>-1.){";
+        shader +=
+        "vec4 mskCol=gtTexCol(vec4(1),vMskTexId,vMskCrd);" +
+        "if(uMskTp<1)mskA=mskCol.r;" +
+        "else if(uMskTp<2)mskA=mskCol.g;" +
+        "else if(uMskTp<3)mskA=mskCol.b;" +
+        "else if(uMskTp<4)mskA=mskCol.a;" +
+        "else if(uMskTp<5)mskA=(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
+        "if(mskA==0.)discard;" +
       "}";
     }
 
     shader +=
-    "if(fgCol.a>.0){" +
-      "if(vTintType<.5||(vTintType<1.5 && fgCol.r==fgCol.g && fgCol.r==fgCol.b)) " +
-        "fgCol*=vTintCol;" +
-      "else if(vTintType<2.5) " +
-        "fgCol=vec4(vTintCol.rgb,fgCol.a*vTintCol.a);";
+    "fgCol=gtTexCol(vec4(0),vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));" +
+    "if(fgCol.a==0.)discard;" +
 
-      shader +=
-      "vec4 finalCol=vec4(fgCol.rgb*vColMult,fgCol.a);" +
-      "fgCol=(finalCol*vFillCol)+vFogCol;";
+    "if(vTintType<.5||(vTintType<1.5 && fgCol.r==fgCol.g && fgCol.r==fgCol.b)) " +
+      "fgCol*=vTintCol;" +
+    "else if(vTintType<2.5) " +
+      "fgCol=vec4(vTintCol.rgb,fgCol.a*vTintCol.a);" +
 
-      if (config.isMaskEnabled) shader += "fgCol.a*=mskAlpha;";
+    "vec4 finalCol=vec4(fgCol.rgb*vColMult,fgCol.a);" +
+    "fgCol=(finalCol*vFillCol)+vFogCol;";
 
-      shader +=
-    "}" +
+    if (config.isMaskEnabled) shader += "fgCol.a*=mskA;";
+
+  shader +=
   "}";
 
   return shader;

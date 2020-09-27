@@ -27,14 +27,14 @@ AGL.Texture = helpers.createPrototypeClass(
     this._currentRenderTime    = -1;
     this._eventType;
   },
-  function(_super) {
-    helpers.get(this, "gl",             function() { return this._gl; });
-    helpers.get(this, "generateMipmap", function() { return this._generateMipmap; });
-    helpers.get(this, "loaded",         function() { return this._loaded; });
-    helpers.get(this, "width",          function() { return this._source[this._sourceWidthProperty]; });
-    helpers.get(this, "height",         function() { return this._source[this._sourceHeightProperty]; });
+  function(_scope, _super) {
+    helpers.get(_scope, "gl",             function() { return this._gl; });
+    helpers.get(_scope, "generateMipmap", function() { return this._generateMipmap; });
+    helpers.get(_scope, "loaded",         function() { return this._loaded; });
+    helpers.get(_scope, "width",          function() { return this._source[this._sourceWidthProperty]; });
+    helpers.get(_scope, "height",         function() { return this._source[this._sourceHeightProperty]; });
 
-    helpers.property(this, "source", {
+    helpers.property(_scope, "source", {
       get: function() { return this._source; },
       set: function(v) {
         this._source && this._source.removeEventListener(
@@ -58,7 +58,7 @@ AGL.Texture = helpers.createPrototypeClass(
       }
     });
 
-    this.getTexture = function(context) {
+    _scope.getTexture = function(context) {
       if (!this._texture || this._gl !== context) {
         this._gl && this._texture && AGL.Utils.deleteTexture(this._gl, this._texture);
         this._gl = context;
@@ -67,13 +67,13 @@ AGL.Texture = helpers.createPrototypeClass(
       return this._texture;
     }
 
-    this.autoUpdate = function(renderTime) {
+    _scope.autoUpdate = function(renderTime) {
       var shouldUpdate = this._currentRenderTime < renderTime;
       this._currentRenderTime = renderTime;
       return shouldUpdate && (this.shouldUpdate || (this.isVideo && !this._source.paused));
     }
 
-    this.destruct = function() {
+    _scope.destruct = function() {
       this._source && this._source.removeEventListener(
         this._eventType,
         this._onTextureLoadedBind
@@ -85,7 +85,7 @@ AGL.Texture = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
-    this._parseTextureSize = function() {
+    _scope._parseTextureSize = function() {
       this._sourceWidthProperty = "naturalWidth";
       this._sourceHeightProperty = "naturalHeight";
       if (!this._source[this._sourceWidthProperty]) {
@@ -102,11 +102,11 @@ AGL.Texture = helpers.createPrototypeClass(
       this._loaded = this._getSourceType() === "canvas" || this.width > 0 && this.height > 0;
     }
 
-    this._getSourceType = function() {
+    _scope._getSourceType = function() {
       return this._source.tagName.toLowerCase();
     }
 
-    this._onTextureLoaded = this._parseTextureSize;
+    _scope._onTextureLoaded = _scope._parseTextureSize;
   }
 );
 AGL.Texture.loadImage = function(src) {

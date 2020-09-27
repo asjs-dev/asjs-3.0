@@ -9,13 +9,13 @@ AGL.BrightnessContrastFilter = helpers.createPrototypeClass(
     this.brightness = brightness;
     this.contrast   = contrast;
   },
-  function() {
-    helpers.property(this, "brightness", {
+  function(_scope) {
+    helpers.property(_scope, "brightness", {
       get: function() { return this._values[0]; },
       set: function(v) { this._values[0] = v; }
     });
 
-    helpers.property(this, "contrast", {
+    helpers.property(_scope, "contrast", {
       get: function() { return this._values[1]; },
       set: function(v) { this._values[1] = v; }
     });

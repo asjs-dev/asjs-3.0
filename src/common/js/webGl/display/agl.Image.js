@@ -25,8 +25,8 @@ AGL.Image = helpers.createPrototypeClass(
 
     this.texture = texture;
   },
-  function(_super) {
-    this.destruct = function() {
+  function(_scope, _super) {
+    _scope.destruct = function() {
       this.textureMatrixCache =
       this.mask               =
       this.tintType           =
@@ -39,24 +39,22 @@ AGL.Image = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
-    this.mouseOver = function() {}
-
-    this.update = function() {
+    _scope.update = function() {
       this._updateProps();
       this._updateTextureProps();
     }
 
-    this._updateProps = function() {
+    _scope._updateProps = function() {
       var props = this.props;
       props.isUpdated() && this._transformItem(props, this.matrixCache);
     }
 
-    this._updateTextureProps = function() {
+    _scope._updateTextureProps = function() {
       var textureProps = this.textureProps;
       textureProps.isUpdated() && this._transformItem(textureProps, this.textureMatrixCache);
     }
 
-    this._transformItem = function(props, cache) {
+    _scope._transformItem = function(props, cache) {
       AGL.Matrix3.transformLocal(
         props.x,
         props.y,

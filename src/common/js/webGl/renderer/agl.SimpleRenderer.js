@@ -12,25 +12,25 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
 
     AGL.BaseRenderer.call(this, config);
   },
-  function(_super) {
-    this.destruct = function() {
+  function(_scope, _super) {
+    _scope.destruct = function() {
       this._textureIdData   =
       this._textureIdBuffer = null;
 
       _super.destruct.call(this);
     }
 
-    this._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
+    _scope._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
       _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
       this._textureIdData[this._batchItems] = textureMapIndex;
     }
 
-    this._bindBuffers = function() {
+    _scope._bindBuffers = function() {
       _super._bindBuffers.call(this);
       this._bindArrayBuffer(this._textureIdBuffer, this._textureIdData);
     }
 
-    this._initCustom = function() {
+    _scope._initCustom = function() {
       _super._initCustom.call(this);
 
       this._textureIdData   = new Float32Array(this._MAX_BATCH_ITEMS);
@@ -77,24 +77,12 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
 
   "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
 
-  "out vec4 fgCol;";
+  "out vec4 fgCol;" +
 
-  shader +=
-  "void main(void){";
+  AGL.RendererHelper.createGetTextureFunction(maxTextureImageUnits) +
 
-    for (var i = -1; i < maxTextureImageUnits; i++) {
-      shader += (i > -1 ? " else " : "") +
-      "if(vTexId<" + (i + 1) + ".5){";
-        shader += "fgCol=" + (
-          i < 0
-            ? "vec4(0);"
-            : "texture(uTex[" + i + "],vTexCrop+vTexCropSize*mod(vTexCrd,1.));"
-        );
-      shader +=
-      "}";
-    }
-
-    shader +=
+  "void main(void){" +
+    "fgCol=gtTexCol(vec4(0),vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));" +
   "}";
 
   return shader;

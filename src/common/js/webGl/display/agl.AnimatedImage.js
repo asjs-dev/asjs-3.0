@@ -13,30 +13,30 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
     this.frame              =
     this._currentRenderTime = 0;
   },
-  function(_super) {
-    this.gotoAndStop = function(frame) {
+  function(_scope, _super) {
+    _scope.gotoAndStop = function(frame) {
       this.frame = frame;
     }
 
-    this.gotoAndPlay = function(frame) {
+    _scope.gotoAndPlay = function(frame) {
       this.frame = frame;
       this.play();
     }
 
-    this.stop = function() {
+    _scope.stop = function() {
       this.isPlaying = false;
     }
 
-    this.play = function() {
+    _scope.play = function() {
       this.isPlaying = true;
     }
 
-    this.update = function(renderTime) {
+    _scope.update = function(renderTime) {
       this.updateAnimation(renderTime);
       _super.update.call(this);
     }
 
-    this.updateAnimation = function(renderTime) {
+    _scope.updateAnimation = function(renderTime) {
       if (this.isPlaying) {
         var ellapsedTime = renderTime - this._currentRenderTime;
         if (ellapsedTime >= this.frameLength) {
@@ -55,7 +55,7 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
       }
     }
 
-    this.destruct = function() {
+    _scope.destruct = function() {
       this.stop();
 
       this.frames = null;

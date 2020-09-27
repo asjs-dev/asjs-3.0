@@ -19,23 +19,23 @@ require("../NameSpace.js");
       var gl;
       if (gl = canvas.getContext("webgl2")) {
         for (var key in gl) {
-            if (typeof gl[key] == "number") AGL.Consts[key] = gl[key];
+            if (typeof gl[key] === "number") AGL.Consts[key] = gl[key];
         }
 
         this.info.isWebGl2Supported            = true;
         this.info.maxTextureImageUnits         = gl.getParameter(AGL.Consts.MAX_TEXTURE_IMAGE_UNITS);
-        this.info.maxTextureSize               = gl.getParameter(AGL.Consts.MAX_TEXTURE_SIZE);
-        this.info.maxVertexAttributes          = gl.getParameter(AGL.Consts.MAX_VERTEX_ATTRIBS);
-        this.info.maxVaryingVectors            = gl.getParameter(AGL.Consts.MAX_VARYING_VECTORS);
-        this.info.maxVertexUniformVectors      = gl.getParameter(AGL.Consts.MAX_VERTEX_UNIFORM_VECTORS);
-        this.info.maxFragmentUniformComponents = gl.getParameter(AGL.Consts.MAX_FRAGMENT_UNIFORM_COMPONENTS);
-        this.info.maxFragmentUniformVectors    = gl.getParameter(AGL.Consts.MAX_FRAGMENT_UNIFORM_VECTORS);
-        this.info.maxVaryingComponents         = gl.getParameter(AGL.Consts.MAX_VARYING_COMPONENTS);
+        //this.info.maxTextureSize               = gl.getParameter(AGL.Consts.MAX_TEXTURE_SIZE);
+        //this.info.maxVertexAttributes          = gl.getParameter(AGL.Consts.MAX_VERTEX_ATTRIBS);
+        //this.info.maxVaryingVectors            = gl.getParameter(AGL.Consts.MAX_VARYING_VECTORS);
+        //this.info.maxVertexUniformVectors      = gl.getParameter(AGL.Consts.MAX_VERTEX_UNIFORM_VECTORS);
+        //this.info.maxFragmentUniformComponents = gl.getParameter(AGL.Consts.MAX_FRAGMENT_UNIFORM_COMPONENTS);
+        //this.info.maxFragmentUniformVectors    = gl.getParameter(AGL.Consts.MAX_FRAGMENT_UNIFORM_VECTORS);
+        //this.info.maxVaryingComponents         = gl.getParameter(AGL.Consts.MAX_VARYING_COMPONENTS);
       }
       canvas = null;
     },
-    function() {
-      this.useTexture = function(gl, index, textureInfo) {
+    function(_scope) {
+      _scope.useTexture = function(gl, index, textureInfo) {
         gl.activeTexture(AGL.Consts.TEXTURE0 + index);
         gl.bindTexture(textureInfo.target, textureInfo.getTexture(gl));
 
@@ -76,7 +76,7 @@ require("../NameSpace.js");
         gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MAG_FILTER, textureInfo.magFilter);
       }
 
-      this.loadShader = function(shaderType, gl, shaderSource) {
+      _scope.loadShader = function(shaderType, gl, shaderSource) {
         var shader = gl.createShader(gl[shaderType]);
 
         gl.shaderSource(shader, shaderSource);
@@ -93,7 +93,7 @@ require("../NameSpace.js");
         return shader;
       }
 
-      this.createProgram = function(gl, shaders, opt_attribs, opt_locations) {
+      _scope.createProgram = function(gl, shaders, opt_attribs, opt_locations) {
         var program = gl.createProgram();
 
         helpers.map(shaders, function(key, shader) {
@@ -124,7 +124,7 @@ require("../NameSpace.js");
         return program;
       }
 
-      this.getLocationsFor = function(gl, program, locationsDescriptor) {
+      _scope.getLocationsFor = function(gl, program, locationsDescriptor) {
         var locations = {};
         helpers.map(locationsDescriptor, function(key, shaderLocationType) {
           locations[key] = gl[shaderLocationType](program, key);
@@ -132,16 +132,16 @@ require("../NameSpace.js");
         return locations;
       }
 
-      this.unbindTexture = function(gl, texture) {
+      _scope.unbindTexture = function(gl, texture) {
         gl.bindTexture(texture.target, null);
       }
 
-      this.destroyTexture = function(gl, texture) {
+      _scope.destroyTexture = function(gl, texture) {
         this.unbindTexture(gl, texture);
         gl.deleteTexture(texture.getTexture(gl));
       }
 
-      this.isPowerOf2 = function(value) {
+      _scope.isPowerOf2 = function(value) {
         return (value & (value - 1)) == 0;
       }
     }

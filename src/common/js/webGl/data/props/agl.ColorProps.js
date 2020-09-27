@@ -8,8 +8,8 @@ AGL.ColorProps = helpers.createPrototypeClass(
 
     this.items = [1, 1, 1, 1];
   },
-  function() {
-    helpers.property(this, "r", {
+  function(_scope) {
+    helpers.property(_scope, "r", {
       get: function() { return this.items[0]; },
       set: function(v) {
         if (this.items[0] !== v) {
@@ -19,7 +19,7 @@ AGL.ColorProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "g", {
+    helpers.property(_scope, "g", {
       get: function() { return this.items[1]; },
       set: function(v) {
         if (this.items[1] !== v) {
@@ -29,7 +29,7 @@ AGL.ColorProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "b", {
+    helpers.property(_scope, "b", {
       get: function() { return this.items[2]; },
       set: function(v) {
         if (this.items[2] !== v) {
@@ -39,7 +39,7 @@ AGL.ColorProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "a", {
+    helpers.property(_scope, "a", {
       get: function() { return this.items[3]; },
       set: function(v) {
         if (this.items[3] !== v) {

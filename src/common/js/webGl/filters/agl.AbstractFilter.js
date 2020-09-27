@@ -13,51 +13,50 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
     this._values  = new Float32Array(9);
     this._kernels = new Float32Array(9);
 
-
     this._gl =
     this._framebufferTexture =
     this._framebuffer = null;
   },
-  function(_super) {
-    helpers.get(this, "framebufferTexture", function() { return this._framebufferTexture; });
-    helpers.get(this, "framebuffer",        function() { return this._framebuffer; });
-    helpers.get(this, "values",             function() { return this._values; });
-    helpers.get(this, "kernels",            function() { return this._kernels; });
+  function(_scope, _super) {
+    helpers.get(_scope, "framebufferTexture", function() { return this._framebufferTexture; });
+    helpers.get(_scope, "framebuffer",        function() { return this._framebuffer; });
+    helpers.get(_scope, "values",             function() { return this._values; });
+    helpers.get(_scope, "kernels",            function() { return this._kernels; });
 
-    helpers.property(this, "intensity", {
+    helpers.property(_scope, "intensity", {
       get: function() { return this.intensityX; },
       set: function(v) { this.intensityX = v; }
     });
 
-    helpers.property(this, "intensityX", {
+    helpers.property(_scope, "intensityX", {
       get: function() { return this._values[0]; },
       set: function(v) { this._values[0] = v; }
     });
 
-    helpers.property(this, "intensityY", {
+    helpers.property(_scope, "intensityY", {
       get: function() { return this._values[1]; },
       set: function(v) { this._values[1] = v; }
     });
 
-    helpers.property(this, "r", {
+    helpers.property(_scope, "r", {
       get: function() { return this._values[2]; },
       set: function(v) { this._values[2] = v; }
     });
 
-    helpers.property(this, "g", {
+    helpers.property(_scope, "g", {
       get: function() { return this._values[3]; },
       set: function(v) { this._values[3] = v; }
     });
 
-    helpers.property(this, "b", {
+    helpers.property(_scope, "b", {
       get: function() { return this._values[4]; },
       set: function(v) { this._values[4] = v; }
     });
 
-    this.destruct = function() {
+    _scope.destruct = function() {
       this._framebufferTexture && this._gl.deleteTexture(this._framebufferTexture);
       this._framebuffer && this._gl.deleteFramebuffer(this._framebuffer);
-      
+
       this._values             =
       this._kernels            =
       this._gl                 =
@@ -67,7 +66,7 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
-    this.updateFramebuffer = function(gl, width, height) {
+    _scope.updateFramebuffer = function(gl, width, height) {
       if (width > 0 && height > 0 && (!this._framebuffer || this._gl !== gl || this._width !== width || this._height !== height)) {
         this._framebufferTexture && this._gl.deleteTexture(this._framebufferTexture);
         this._framebuffer && this._gl.deleteFramebuffer(this._framebuffer);
@@ -103,7 +102,7 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
       }
     }
 
-    this.bindTexture = function(gl, index) {
+    _scope.bindTexture = function(gl, index) {
       gl.activeTexture(gl.TEXTURE0 + index);
       gl.bindTexture(gl.TEXTURE_2D, this._framebufferTexture);
 

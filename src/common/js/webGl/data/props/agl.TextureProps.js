@@ -21,11 +21,11 @@ AGL.TextureProps = helpers.createPrototypeClass(
     this._width    =
     this._height   = 1;
   },
-  function() {
-    helpers.get(this, "scaledWidth", function() { return this._width; });
-    helpers.get(this, "scaledHeight", function() { return this._height; });
+  function(_scope) {
+    helpers.get(_scope, "scaledWidth", function() { return this._width; });
+    helpers.get(_scope, "scaledHeight", function() { return this._height; });
 
-    helpers.get(this, "sinR", function() {
+    helpers.get(_scope, "sinR", function() {
       if (this._currentSinRotationUpdateId !== this._rotationUpdateId) {
         this._currentSinRotationUpdateId = this._rotationUpdateId;
         this._sinRotation = Math.sin(this._rotation);
@@ -33,7 +33,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       return this._sinRotation;
     });
 
-    helpers.get(this, "cosR", function() {
+    helpers.get(_scope, "cosR", function() {
       if (this._currentCosRotationUpdateId !== this._rotationUpdateId) {
         this._currentCosRotationUpdateId = this._rotationUpdateId;
         this._cosRotation = Math.cos(this._rotation);
@@ -41,7 +41,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       return this._cosRotation;
     });
 
-    helpers.property(this, "x", {
+    helpers.property(_scope, "x", {
       get: function() { return this._x; },
       set: function(v) {
         if (this._x !== v) {
@@ -51,7 +51,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "y", {
+    helpers.property(_scope, "y", {
       get: function() { return this._y; },
       set: function(v) {
         if (this._y !== v) {
@@ -61,7 +61,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "rotation", {
+    helpers.property(_scope, "rotation", {
       get: function() { return this._rotation; },
       set: function(v) {
         if (this._rotation !== v) {
@@ -72,7 +72,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "width", {
+    helpers.property(_scope, "width", {
       get: function() { return this._width; },
       set: function(v) {
         if (this._width !== v) {
@@ -82,7 +82,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "height", {
+    helpers.property(_scope, "height", {
       get: function() { return this._height; },
       set: function(v) {
         if (this._height !== v) {
@@ -92,7 +92,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "anchorX", {
+    helpers.property(_scope, "anchorX", {
       get: function() { return this._anchorX; },
       set: function(v) {
         if (this._anchorX !== v) {
@@ -102,7 +102,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "anchorY", {
+    helpers.property(_scope, "anchorY", {
       get: function() { return this._anchorY; },
       set: function(v) {
         if (this._anchorY !== v) {

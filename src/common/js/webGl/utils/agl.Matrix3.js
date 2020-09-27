@@ -2,30 +2,30 @@ require("../NameSpace.js");
 
 AGL.Matrix3 = {
   isPointInMatrix: function(
-    vec,
-    pm,
-    cm,
-    mdst,
-    invDst
+    vector,
+    parentMatrix,
+    matrix,
+    destinationMatrix,
+    destinationMatrixInverse
   ) {
-    mdst[0] = pm[0] * cm[0] + pm[3] * cm[1];
-    mdst[1] = pm[1] * cm[0] + pm[4] * cm[1];
-    mdst[2] = pm[0] * cm[3] + pm[3] * cm[4];
-    mdst[3] = pm[1] * cm[3] + pm[4] * cm[4];
-    mdst[4] = pm[0] * cm[6] + pm[3] * cm[7] + pm[6];
-    mdst[5] = pm[1] * cm[6] + pm[4] * cm[7] + pm[7];
+    destinationMatrix[0] = parentMatrix[0] * matrix[0] + parentMatrix[3] * matrix[1];
+    destinationMatrix[1] = parentMatrix[1] * matrix[0] + parentMatrix[4] * matrix[1];
+    destinationMatrix[2] = parentMatrix[0] * matrix[3] + parentMatrix[3] * matrix[4];
+    destinationMatrix[3] = parentMatrix[1] * matrix[3] + parentMatrix[4] * matrix[4];
+    destinationMatrix[4] = parentMatrix[0] * matrix[6] + parentMatrix[3] * matrix[7] + parentMatrix[6];
+    destinationMatrix[5] = parentMatrix[1] * matrix[6] + parentMatrix[4] * matrix[7] + parentMatrix[7];
 
-    var d = 1 / (mdst[0] * mdst[3] - mdst[2] * mdst[1]);
+    var d = 1 / (destinationMatrix[0] * destinationMatrix[3] - destinationMatrix[2] * destinationMatrix[1]);
 
-    invDst[0] =  d * mdst[3];
-    invDst[1] = -d * mdst[1];
-    invDst[2] = -d * mdst[2];
-    invDst[3] =  d * mdst[0];
-    invDst[4] =  d * (mdst[2] * mdst[5] - mdst[3] * mdst[4]);
-    invDst[5] = -d * (mdst[0] * mdst[5] - mdst[1] * mdst[4]);
+    destinationMatrixInverse[0] =  d * destinationMatrix[3];
+    destinationMatrixInverse[1] = -d * destinationMatrix[1];
+    destinationMatrixInverse[2] = -d * destinationMatrix[2];
+    destinationMatrixInverse[3] =  d * destinationMatrix[0];
+    destinationMatrixInverse[4] =  d * (destinationMatrix[2] * destinationMatrix[5] - destinationMatrix[3] * destinationMatrix[4]);
+    destinationMatrixInverse[5] = -d * (destinationMatrix[0] * destinationMatrix[5] - destinationMatrix[1] * destinationMatrix[4]);
 
-    var x = vec[0] * invDst[0] + vec[1] * invDst[2] + invDst[4];
-    var y = vec[0] * invDst[1] + vec[1] * invDst[3] + invDst[5];
+    var x = vector[0] * destinationMatrixInverse[0] + vector[1] * destinationMatrixInverse[2] + destinationMatrixInverse[4];
+    var y = vector[0] * destinationMatrixInverse[1] + vector[1] * destinationMatrixInverse[3] + destinationMatrixInverse[5];
 
     return x >= 0 && y >= 0 && x <= 1 && y <= 1;
   },
@@ -36,53 +36,55 @@ AGL.Matrix3 = {
       0, 0, 1,
     ]);
   },
-  projection: function(width, height, dst) {
-    dst[0] = 2 / width;
-    dst[1] =
-    dst[2] =
-    dst[3] =
-    dst[5] = 0;
-    dst[4] = -2 / height;
-    dst[6] = -1;
-    dst[7] = 
-    dst[8] = 1;
+  projection: function(
+    width,
+    height,
+    destinationMatrix
+  ) {
+    destinationMatrix[0] = 2 / width;
+    destinationMatrix[1] =
+    destinationMatrix[2] =
+    destinationMatrix[3] =
+    destinationMatrix[5] = 0;
+    destinationMatrix[4] = -2 / height;
+    destinationMatrix[6] = -1;
+    destinationMatrix[7] =
+    destinationMatrix[8] = 1;
   },
   transformLocal: function(
     x, y,
-    sr,
-    cr,
-    ax, ay,
-    sx, sy,
-    dst
+    sinRotation, cosRotation,
+    anchorX, anchorY,
+    scaleX, scaleY,
+    destinationMatrix
   ) {
-    dst[0] =  cr * sx;
-    dst[1] =  sr * sx;
-    dst[3] = -sr * sy;
-    dst[4] =  cr * sy;
-    dst[6] =  x - (ax * dst[0]) - (ay * dst[3]);
-    dst[7] =  y - (ax * dst[1]) - (ay * dst[4]);
+    destinationMatrix[0] =  cosRotation * scaleX;
+    destinationMatrix[1] =  sinRotation * scaleX;
+    destinationMatrix[3] = -sinRotation * scaleY;
+    destinationMatrix[4] =  cosRotation * scaleY;
+    destinationMatrix[6] =  x - anchorX * destinationMatrix[0] - anchorY * destinationMatrix[3];
+    destinationMatrix[7] =  y - anchorX * destinationMatrix[1] - anchorY * destinationMatrix[4];
   },
   transform: function(
-    m,
+    matrix,
     x, y,
-    sr,
-    cr,
-    ax, ay,
-    sx, sy,
-    dst
+    sinRotation, cosRotation,
+    anchorX, anchorY,
+    scaleX, scaleY,
+    destinationMatrix
   ) {
-    dst[0] = (cr * m[0]) + (sr * m[3]);
-    dst[1] = (cr * m[1]) + (sr * m[4]);
-    dst[3] = (cr * m[3]) - (sr * m[0]);
-    dst[4] = (cr * m[4]) - (sr * m[1]);
+    destinationMatrix[0] = cosRotation * matrix[0] + sinRotation * matrix[3];
+    destinationMatrix[1] = cosRotation * matrix[1] + sinRotation * matrix[4];
+    destinationMatrix[3] = cosRotation * matrix[3] - sinRotation * matrix[0];
+    destinationMatrix[4] = cosRotation * matrix[4] - sinRotation * matrix[1];
 
-    dst[6] = -(ax * dst[0]) - (ay * dst[3]) + (x * m[0]) + (y * m[3]) + m[6];
-    dst[7] = -(ax * dst[1]) - (ay * dst[4]) + (x * m[1]) + (y * m[4]) + m[7];
+    destinationMatrix[6] = -anchorX * destinationMatrix[0] - anchorY * destinationMatrix[3] + x * matrix[0] + y * matrix[3] + matrix[6];
+    destinationMatrix[7] = -anchorX * destinationMatrix[1] - anchorY * destinationMatrix[4] + x * matrix[1] + y * matrix[4] + matrix[7];
 
-    dst[0] *= sx;
-    dst[1] *= sx;
-    dst[3] *= sy;
-    dst[4] *= sy;
+    destinationMatrix[0] *= scaleX;
+    destinationMatrix[1] *= scaleX;
+    destinationMatrix[3] *= scaleY;
+    destinationMatrix[4] *= scaleY;
   }
 };
 

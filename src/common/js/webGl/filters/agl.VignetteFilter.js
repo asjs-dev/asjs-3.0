@@ -12,13 +12,13 @@ AGL.VignetteFilter = helpers.createPrototypeClass(
     this.r          = r;
     this.g          = g;
     this.b          = b;
-  }, function() {
-    helpers.property(this, "roundness", {
+  }, function(_scope) {
+    helpers.property(_scope, "roundness", {
       get: function() { return this._values[1]; },
       set: function(v) { this._values[1] = v; }
     });
 
-    helpers.property(this, "transition", {
+    helpers.property(_scope, "transition", {
       get: function() { return this._values[5]; },
       set: function(v) { this._values[5] = v; }
     });

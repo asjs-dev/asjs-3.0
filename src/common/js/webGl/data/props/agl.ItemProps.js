@@ -33,8 +33,8 @@ AGL.ItemProps = helpers.createPrototypeClass(
     this._width    =
     this._height   = 1;
   },
-  function() {
-    helpers.get(this, "scaledWidth", function() {
+  function(_scope) {
+    helpers.get(_scope, "scaledWidth", function() {
       if (this._currentScaledWidthUpdateId !== this._scaledWidthUpdateId) {
         this._currentScaledWidthUpdateId = this._scaledWidthUpdateId;
         this._scaledWidth = this._width * this._scaleX;
@@ -42,7 +42,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       return this._scaledWidth;
     });
 
-    helpers.get(this, "scaledHeight", function() {
+    helpers.get(_scope, "scaledHeight", function() {
       if (this._currentScaledHeightUpdateId !== this._scaledHeightUpdateId) {
         this._currentScaledHeightUpdateId = this._scaledHeightUpdateId;
         this._scaledHeight = this._height * this._scaleY;
@@ -50,7 +50,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       return this._scaledHeight;
     });
 
-    helpers.get(this, "sinR", function() {
+    helpers.get(_scope, "sinR", function() {
       if (this._currentSinRotationUpdateId !== this._rotationUpdateId) {
         this._currentSinRotationUpdateId = this._rotationUpdateId;
         this._sinRotation = Math.sin(this._rotation);
@@ -58,7 +58,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       return this._sinRotation;
     });
 
-    helpers.get(this, "cosR", function() {
+    helpers.get(_scope, "cosR", function() {
       if (this._currentCosRotationUpdateId !== this._rotationUpdateId) {
         this._currentCosRotationUpdateId = this._rotationUpdateId;
         this._cosRotation = Math.cos(this._rotation);
@@ -66,7 +66,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       return this._cosRotation;
     });
 
-    helpers.property(this, "x", {
+    helpers.property(_scope, "x", {
       get: function() { return this._x; },
       set: function(v) {
         if (this._x !== v) {
@@ -76,7 +76,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "y", {
+    helpers.property(_scope, "y", {
       get: function() { return this._y; },
       set: function(v) {
         if (this._y !== v) {
@@ -86,12 +86,12 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "zIndex", {
+    helpers.property(_scope, "zIndex", {
       get: function() { return this._zIndex; },
       set: function(v) { this._zIndex !== v && (this._zIndex = v); }
     });
 
-    helpers.property(this, "rotation", {
+    helpers.property(_scope, "rotation", {
       get: function() { return this._rotation; },
       set: function(v) {
         if (this._rotation !== v) {
@@ -102,7 +102,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "scaleX", {
+    helpers.property(_scope, "scaleX", {
       get: function() { return this._scaleX; },
       set: function(v) {
         if (this._scaleX !== v) {
@@ -113,7 +113,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "scaleY", {
+    helpers.property(_scope, "scaleY", {
       get: function() { return this._scaleY; },
       set: function(v) {
         if (this._scaleY !== v) {
@@ -124,7 +124,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "width", {
+    helpers.property(_scope, "width", {
       get: function() { return this._width; },
       set: function(v) {
         if (this._width !== v) {
@@ -135,7 +135,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "height", {
+    helpers.property(_scope, "height", {
       get: function() { return this._height; },
       set: function(v) {
         if (this._height !== v) {
@@ -146,7 +146,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "anchorX", {
+    helpers.property(_scope, "anchorX", {
       get: function() { return this._anchorX; },
       set: function(v) {
         if (this._anchorX !== v) {
@@ -156,7 +156,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "anchorY", {
+    helpers.property(_scope, "anchorY", {
       get: function() { return this._anchorY; },
       set: function(v) {
         if (this._anchorY !== v) {

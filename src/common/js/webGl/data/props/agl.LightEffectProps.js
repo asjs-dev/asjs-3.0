@@ -6,10 +6,10 @@ AGL.LightEffectProps = helpers.createPrototypeClass(
   function LightEffectProps() {
     AGL.AbstractProps.call(this);
 
-    this.items = [0, 0, 2, 2];
+    this.items = [0, 0, 2, 2, 1];
   },
-  function() {
-    helpers.property(this, "anchorX", {
+  function(_scope) {
+    helpers.property(_scope, "anchorX", {
       get: function() { return this.items[0]; },
       set: function(v) {
         if (this.items[0] !== v) {
@@ -19,7 +19,7 @@ AGL.LightEffectProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "anchorY", {
+    helpers.property(_scope, "anchorY", {
       get: function() { return this.items[1]; },
       set: function(v) {
         if (this.items[1] !== v) {
@@ -29,7 +29,7 @@ AGL.LightEffectProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "quadX", {
+    helpers.property(_scope, "quadX", {
       get: function() { return this.items[2]; },
       set: function(v) {
         if (this.items[2] !== v) {
@@ -39,11 +39,21 @@ AGL.LightEffectProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(this, "quadY", {
+    helpers.property(_scope, "quadY", {
       get: function() { return this.items[3]; },
       set: function(v) {
         if (this.items[3] !== v) {
           this.items[3] = v;
+          ++this._id;
+        }
+      }
+    });
+
+    helpers.property(_scope, "transition", {
+      get: function() { return this.items[4]; },
+      set: function(v) {
+        if (this.items[4] !== v) {
+          this.items[4] = v;
           ++this._id;
         }
       }

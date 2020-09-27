@@ -21,10 +21,10 @@ AGL.Item = helpers.createPrototypeClass(
 
     this.parent = null;
   },
-  function(_super) {
-    helpers.get(this, "stage", function() { return this.parent ? this.parent.stage : null; });
+  function(_scope, _super) {
+    helpers.get(_scope, "stage", function() { return this.parent ? this.parent.stage : null; });
 
-    this.destruct = function() {
+    _scope.destruct = function() {
       this.parent && this.parent.removeChild && this.parent.removeChild(this);
 
       this.matrixCache =
@@ -35,16 +35,16 @@ AGL.Item = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
-    this.update = function(renderTime, parent) {
+    _scope.update = function(renderTime, parent) {
       this._updateProps(parent);
     }
 
-    this._updateProps = function(parent) {
+    _scope._updateProps = function(parent) {
       var props = this.props;
       props.isUpdated() && this._transformItem(props, parent);
     }
 
-    this._transformItem = function(props, parent) {
+    _scope._transformItem = function(props, parent) {
       AGL.Matrix3.transform(
         parent.matrixCache,
 
