@@ -37,11 +37,11 @@ require("./renderer/agl.SimpleRenderer.js");
 require("./renderer/agl.Stage2D.js");
 
 require("./filters/agl.AbstractFilter.js");
-require("./filters/agl.BlurFilter.js");
+require("./filters/agl.DisplacementFilter.js");
 require("./filters/agl.EdgeDetectFilter.js");
 require("./filters/agl.SharpenFilter.js");
 require("./filters/agl.PixelateFilter.js");
-require("./filters/agl.GlowFilter.js");
+
 require("./filters/agl.AbstractColorFilter.js");
 require("./filters/agl.GrayscaleFilter.js");
 require("./filters/agl.SepiaFilter.js");
@@ -53,4 +53,7 @@ require("./filters/agl.RainbowFilter.js");
 require("./filters/agl.LinesFilter.js");
 require("./filters/agl.BrightnessContrastFilter.js");
 require("./filters/agl.GammaFilter.js");
-require("./filters/agl.DisplacementFilter.js");
+
+require("./filters/agl.AbstractSamplingFilter.js");
+require("./filters/agl.BlurFilter.js");
+require("./filters/agl.GlowFilter.js");

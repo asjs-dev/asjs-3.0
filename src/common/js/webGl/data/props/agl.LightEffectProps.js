@@ -50,8 +50,9 @@ AGL.LightEffectProps = helpers.createPrototypeClass(
     });
 
     helpers.property(_scope, "transition", {
-      get: function() { return this.items[4]; },
+      get: function() { return 1 / this.items[4]; },
       set: function(v) {
+        v = 1 / v;
         if (this.items[4] !== v) {
           this.items[4] = v;
           ++this._id;

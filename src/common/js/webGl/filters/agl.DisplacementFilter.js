@@ -6,7 +6,7 @@ AGL.DisplacementFilter = helpers.createPrototypeClass(
   function DisplacementFilter(texture, intensity, x, y) {
     AGL.AbstractFilter.call(this);
 
-    this.type      = 6;
+    this.type      = 5;
     this.texture   = texture;
 
     this.intensity = intensity;

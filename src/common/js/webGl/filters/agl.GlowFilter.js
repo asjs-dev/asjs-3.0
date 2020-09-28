@@ -2,11 +2,10 @@ require("../NameSpace.js");
 require("./agl.AbstractFilter.js");
 
 AGL.GlowFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.AbstractSamplingFilter,
   function GlowFilter(intensityX, intensityY, volume) {
-    AGL.AbstractFilter.call(this);
+    AGL.AbstractSamplingFilter.call(this, 2);
 
-    this.type       = 5;
     this.intensityX = intensityX;
     this.intensityY = intensityY;
     this.volume     = volume;

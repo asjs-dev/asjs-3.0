@@ -260,7 +260,9 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
   }
 );
 AGL.BaseRenderer.createVertexShader = function() {
-  return "#version 300 es\n" +
+  return
+  "#version 300 es\n" +
+
   "in vec2 aPos;" +
   "in mat3 aMat;" +
   "in mat3 aWorldMat;" +
@@ -280,7 +282,8 @@ AGL.BaseRenderer.createVertexShader = function() {
   "}";
 };
 AGL.BaseRenderer.createFragmentShader = function(config) {
-  return "#version 300 es\n" +
+  return
+  "#version 300 es\n" +
   "precision " + config.precision + " float;" +
 
   "in vec2 vTexCrd;" +

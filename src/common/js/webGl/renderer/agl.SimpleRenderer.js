@@ -39,7 +39,8 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
   }
 );
 AGL.SimpleRenderer.createVertexShader = function() {
-  var shader = "#version 300 es\n" +
+  return
+  "#version 300 es\n" +
 
   "in vec2 aPos;" +
   "in mat3 aMat;" +
@@ -61,13 +62,12 @@ AGL.SimpleRenderer.createVertexShader = function() {
     "vTexCropSize=aTexCrop.zw;" +
     "vTexId=aTexId;" +
   "}";
-
-  return shader;
 };
 AGL.SimpleRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = config.textureNum;
 
-  var shader = "#version 300 es\n" +
+  return
+  "#version 300 es\n" +
   "precision " + config.precision + " float;" +
 
   "in vec2 vTexCrd;" +
@@ -84,6 +84,4 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
   "void main(void){" +
     "fgCol=gtTexCol(vec4(0),vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));" +
   "}";
-
-  return shader;
 };

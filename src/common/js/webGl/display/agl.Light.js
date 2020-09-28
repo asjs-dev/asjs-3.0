@@ -63,8 +63,8 @@ AGL.Light = helpers.createPrototypeClass(
           this._lightPositions[this._tripId + 1] = this.matrixCache[7];
           this._lightPositions[this._tripId + 2] = this.props.zIndex;
 
-          this._lightVolumes[this._duoId]     = 1 / Math.abs(this.matrixCache[0]);
-          this._lightVolumes[this._duoId + 1] = 1 / Math.abs(this.matrixCache[4]);
+          this._lightVolumes[this._duoId]     = this.matrixCache[0];
+          this._lightVolumes[this._duoId + 1] = this.matrixCache[4];
         }
 
         helpers.arraySet(this._lightColors, this.colorCache, this._quadId);
