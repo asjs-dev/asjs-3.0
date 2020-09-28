@@ -12,6 +12,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       "aPos"    : "getAttribLocation",
       "uTex"    : "getUniformLocation",
       "uDspTex" : "getUniformLocation",
+      "uFlpY"   : "getUniformLocation",
       "uFtrT"   : "getUniformLocation",
       "uFtrST"  : "getUniformLocation",
       "uFtrVal" : "getUniformLocation",
@@ -39,7 +40,10 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       var filter;
       var isLast;
       for (i = 0; i < l; ++i) {
-        i === 0 && AGL.Utils.useTexture(this._gl, 0, this.texture);
+        if (i === 0) {
+          AGL.Utils.useTexture(this._gl, 0, this.texture);
+          this._gl.uniform1f(this._locations["uFlpY"], 1);
+        }
 
         isLast = i == l - 1;
         filter = this.filters[i];
@@ -50,10 +54,13 @@ AGL.PostProcessing = helpers.createPrototypeClass(
             this._latestFilterTexture = filter.texture;
           }
 
-          if (isLast) this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
-          else {
+          if (isLast) {
+            this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
+            this._gl.uniform1f(this._locations["uFlpY"], 1);
+          } else {
             filter.updateFramebuffer(this._gl, this._width, this._height);
             this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, filter.framebuffer);
+            this._gl.uniform1f(this._locations["uFlpY"], -1);
           }
 
           this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
@@ -100,11 +107,14 @@ AGL.PostProcessing.createVertexShader = function() {
 
   "in vec2 aPos;" +
 
+  "uniform float uFlpY;" +
+
   "out vec2 vCrd;" +
   "out vec2 vTexCrd;" +
 
   "void main(void){" +
     "gl_Position=vec4(aPos.xy,0,1);" +
+    "gl_Position.y*=uFlpY;" +
     "vCrd=aPos;" +
     "vTexCrd=(aPos+vec2(1,-1))/vec2(2,-2);" +
   "}";
