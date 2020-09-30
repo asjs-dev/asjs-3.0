@@ -138,13 +138,13 @@ AGL.PostProcessing.createFragmentShader = function(config) {
   "out vec4 fgCol;" +
 
   "void main(void){" +
-    "float[] fvl=uFtrVal;" +
-    "float[] fkr=uFtrKer;" +
-    "vec2 oPx=1./vec2(textureSize(uTex,0));" +
     "fgCol=texture(uTex,vTexCrd);" +
-    "vec2 vol=fvl[0]*oPx;" +
     // FILTERS
     "if(uFtrT>0){" +
+      "float[] fvl=uFtrVal;" +
+      "float[] fkr=uFtrKer;" +
+      "vec2 oPx=1./vec2(textureSize(uTex,0));" +
+      "vec2 vol=fvl[0]*oPx;" +
       /*
         CONVOLUTE FILTERS:
           - SharpenFilter

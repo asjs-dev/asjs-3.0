@@ -307,7 +307,7 @@ AGL.Stage2D.createVertexShader = function(config) {
     if (config.isLightEnabled) {
       for (var i = 0; i < maxLightSources; i++) {
         shader +=
-        "if(uLghtCol[" + i + "].a>0. && uLghtPos[" + i + "].z>aFx.z){" +
+        "if(uLghtCol[" + i + "].a>0.&&uLghtPos[" + i + "].z>aFx.z){" +
           "lghtCol+=lghtVal(" +
             "gl_Position.xy," +
             "uLghtPos[" + i + "].xy," +
@@ -373,11 +373,9 @@ AGL.Stage2D.createFragmentShader = function(config) {
         ? "float mskA=1.;" +
           "if(vMskTexId>-1.){" +
             "vec4 mskCol=gtTexCol(vec4(1),vMskTexId,vMskCrd);" +
-            "if(uMskTp<1)mskA=mskCol.r;" +
-            "else if(uMskTp<2)mskA=mskCol.g;" +
-            "else if(uMskTp<3)mskA=mskCol.b;" +
-            "else if(uMskTp<4)mskA=mskCol.a;" +
-            "else if(uMskTp<5)mskA=(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
+            "mskA=uMskTp<4" +
+              "?mskCol[uMskTp]" +
+              ":(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
             "if(mskA==0.)discard;" +
           "}"
         : ""
@@ -386,7 +384,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
     "fgCol=gtTexCol(vec4(0),vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));" +
     "if(fgCol.a>0.){" +
 
-      "if(vTintType<.5||(vTintType<1.5 && fgCol.r==fgCol.g && fgCol.r==fgCol.b)) " +
+      "if(vTintType<.5||(vTintType<1.5&&fgCol.r==fgCol.g&&fgCol.r==fgCol.b)) " +
         "fgCol*=vTintCol;" +
       "else if(vTintType<2.5) " +
         "fgCol=vec4(vTintCol.rgb,fgCol.a*vTintCol.a);" +
