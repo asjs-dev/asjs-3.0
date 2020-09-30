@@ -30,10 +30,10 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this._DEFAULT_DUO  = [0, 0];
     this._DEFAULT_QUAD = [0, 0, 0, 0];
 
-    this._zIndexCounter =
-    this._maskType      =
-    this._widthHalf     =
-    this._heightHalf    = 0;
+    this._zCounter   =
+    this._maskType   =
+    this._widthHalf  =
+    this._heightHalf = 0;
 
     this._lights = [];
 
@@ -107,7 +107,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._preRender();
 
       this._picked = null;
-      this._zIndexCounter = 0;
+      this._zCounter = 0;
 
       this._updateColor();
       this._updateFog();
@@ -143,7 +143,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     _scope._drawItem = function(item, parent) {
       if (!item.renderable) return;
-      item.props.zIndex = ++this._zIndexCounter;
+      item.props.z = ++this._zCounter;
       item.update(this._renderTime, parent);
       item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
     }
@@ -162,7 +162,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       this._effectData[effectId] = textureMapIndex;
       this._effectData[effectId + 1] = item.tintType;
-      this._effectData[effectId + 2] = item.props.zIndex;
+      this._effectData[effectId + 2] = item.props.z;
     }
 
     _scope._drawImage = function(item, parent) {

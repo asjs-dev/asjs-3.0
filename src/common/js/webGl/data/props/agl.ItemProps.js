@@ -24,7 +24,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
 
     this._x        =
     this._y        =
-    this._zIndex   =
+    this._z        =
     this._rotation =
     this._anchorX  =
     this._anchorY  = 0;
@@ -86,9 +86,14 @@ AGL.ItemProps = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(_scope, "zIndex", {
-      get: function() { return this._zIndex; },
-      set: function(v) { this._zIndex !== v && (this._zIndex = v); }
+    helpers.property(_scope, "z", {
+      get: function() { return this._z; },
+      set: function(v) {
+        if (this._z !== v) {
+          this._z = v;
+          ++this._id;
+        }
+      }
     });
 
     helpers.property(_scope, "rotation", {

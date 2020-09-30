@@ -61,7 +61,7 @@ AGL.Light = helpers.createPrototypeClass(
 
           this._lightPositions[this._tripId]     = this.matrixCache[6];
           this._lightPositions[this._tripId + 1] = this.matrixCache[7];
-          this._lightPositions[this._tripId + 2] = this.props.zIndex;
+          this._lightPositions[this._tripId + 2] = this.props.z;
 
           this._lightVolumes[this._duoId]     = this.matrixCache[0];
           this._lightVolumes[this._duoId + 1] = this.matrixCache[4];
