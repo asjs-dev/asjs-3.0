@@ -2,7 +2,7 @@ require("./NameSpace.js");
 require("./isEmpty.js");
 
 helpers.padStart = helpers.padStart || function(value, length) {
-  return String(value / Math.pow(10, !helpers.isEmpty(l) ? length : 2)).substr(2);
+  return String(Math.pow(10, length || 1)).substr(1 + String(parseInt(value)).length) + String(value);
 }
 
 helpers.between = helpers.between || function(min, max, value) {
