@@ -1,12 +1,11 @@
 require("../NameSpace.js");
-require("./agl.AbstractColorFilter.js");
+require("./agl.AbstractFilter.js");
 
 AGL.VignetteFilter = helpers.createPrototypeClass(
-  AGL.AbstractColorFilter,
+  AGL.AbstractFilter,
   function VignetteFilter(intensity, roundness, transition, r, g, b) {
-    AGL.AbstractColorFilter.call(this, 6);
+    AGL.AbstractFilter.call(this, 2, 6, intensity);
 
-    this.intensity  = intensity;
     this.roundness  = roundness;
     this.transition = transition;
     this.r          = r;
@@ -19,8 +18,8 @@ AGL.VignetteFilter = helpers.createPrototypeClass(
     });
 
     helpers.property(_scope, "transition", {
-      get: function() { return this._values[5]; },
-      set: function(v) { this._values[5] = v; }
+      get: function() { return 1 / this._values[5]; },
+      set: function(v) { this._values[5] = 1 / v; }
     });
   }
 );

@@ -2,11 +2,10 @@ require("../NameSpace.js");
 require("./agl.AbstractFilter.js");
 
 AGL.BlurFilter = helpers.createPrototypeClass(
-  AGL.AbstractSamplingFilter,
+  AGL.AbstractFilter,
   function BlurFilter(intensityX, intensityY) {
-    AGL.AbstractSamplingFilter.call(this, 1);
+    AGL.AbstractFilter.call(this, 3, 1, intensityX);
 
-    this.intensityX = intensityX;
     this.intensityY = intensityY;
   }
 );

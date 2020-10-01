@@ -4,14 +4,12 @@ require("./agl.AbstractFilter.js");
 AGL.DisplacementFilter = helpers.createPrototypeClass(
   AGL.AbstractFilter,
   function DisplacementFilter(texture, intensity, x, y) {
-    AGL.AbstractFilter.call(this);
+    AGL.AbstractFilter.call(this, 5, 0, intensity);
 
-    this.type      = 5;
-    this.texture   = texture;
+    this.texture = texture;
 
-    this.intensity = intensity;
-    this.x         = x;
-    this.y         = y;
+    this.x = x;
+    this.y = y;
   }, function(_scope) {
     helpers.property(_scope, "x", {
       get: function() { return this._values[1]; },

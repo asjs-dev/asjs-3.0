@@ -1,11 +1,9 @@
 require("../NameSpace.js");
-require("./agl.AbstractColorFilter.js");
+require("./agl.AbstractFilter.js");
 
 AGL.GammaFilter = helpers.createPrototypeClass(
-  AGL.AbstractColorFilter,
+  AGL.AbstractFilter,
   function GammaFilter(intensity) {
-    AGL.AbstractColorFilter.call(this, 10);
-
-    this.intensity = intensity;
+    AGL.AbstractFilter.call(this, 2, 9, intensity);
   }
 );

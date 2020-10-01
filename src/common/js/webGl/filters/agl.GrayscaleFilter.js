@@ -1,9 +1,9 @@
 require("../NameSpace.js");
-require("./agl.AbstractColorFilter.js");
+require("./agl.AbstractFilter.js");
 
 AGL.GrayscaleFilter = helpers.createPrototypeClass(
-  AGL.AbstractColorFilter,
+  AGL.AbstractFilter,
   function GrayscaleFilter() {
-    AGL.AbstractColorFilter.call(this, 1);
+    AGL.AbstractFilter.call(this, 2, 1);
   }
 );

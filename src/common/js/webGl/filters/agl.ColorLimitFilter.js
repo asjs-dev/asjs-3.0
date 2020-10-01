@@ -1,11 +1,9 @@
 require("../NameSpace.js");
-require("./agl.AbstractColorFilter.js");
+require("./agl.AbstractFilter.js");
 
 AGL.ColorLimitFilter = helpers.createPrototypeClass(
-  AGL.AbstractColorFilter,
+  AGL.AbstractFilter,
   function ColorLimitFilter(intensity) {
-    AGL.AbstractColorFilter.call(this, 5);
-
-    this.intensity = intensity;
+    AGL.AbstractFilter.call(this, 2, 5, intensity);
   }
 );

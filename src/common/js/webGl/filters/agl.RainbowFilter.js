@@ -1,9 +1,9 @@
 require("../NameSpace.js");
-require("./agl.AbstractColorFilter.js");
+require("./agl.AbstractFilter.js");
 
 AGL.RainbowFilter = helpers.createPrototypeClass(
-  AGL.AbstractColorFilter,
+  AGL.AbstractFilter,
   function RainbowFilter() {
-    AGL.AbstractColorFilter.call(this, 7);
+    AGL.AbstractFilter.call(this, 2, 7);
   }
 );

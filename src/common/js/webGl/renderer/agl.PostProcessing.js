@@ -190,21 +190,20 @@ AGL.PostProcessing.createFragmentShader = function(config) {
         // VignetteFilter
         "else if(uFtrST<7){" +
           "vec2 pv=pow(abs(vCrd*fvl[0]),vec2(fvl[1]));" +
-          "float v=max(0.,min(1.,(1.-sqrt(pv.x+pv.y))*(1./fvl[5])));" +
+          "float v=max(0.,min(1.,(1.-sqrt(pv.x+pv.y))*fvl[5]));" +
           "fgCol*=vec4(vec3(v),fgCol.a);" +
           "fgCol+=vec4(vec3(fvl[2],fvl[3],fvl[4])*(1.-v),0);" +
         "}" +
         // RainbowFilter
         "else if(uFtrST<8)" +
           "fgCol+=vec4(vCrd.xy*.15,(vCrd.x-vCrd.y)*.15,0);" +
-        // LinesFilter
-        "else if(uFtrST<9)" +
-          "fgCol*=vec4(.2+sin(vCrd.y*(500.*fvl[0]))*.5);" +
         // BrightnessContrastFilter
-        "else if(uFtrST<10)" +
-          "fgCol=vec4((fgCol.rgb-.5)*fvl[1]+.5+fvl[0],fgCol.a);" +
+        "else if(uFtrST<9)" +
+          "fgCol=vec4(" +
+            "(fgCol.rgb-.5)*fvl[1]+.5+fvl[0]," +
+            "fgCol.a);" +
         // GammaFilter
-        "else if(uFtrST<11)" +
+        "else if(uFtrST<10)" +
           "fgCol=vec4(" +
             "pow(fgCol.rgb,vec3(fvl[0]))," +
             "fgCol.a);" +

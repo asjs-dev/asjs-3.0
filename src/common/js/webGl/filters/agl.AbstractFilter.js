@@ -2,11 +2,12 @@ require("../NameSpace.js");
 
 AGL.AbstractFilter = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function AbstractFilter() {
+  function AbstractFilter(type, subType, intensity) {
     helpers.BasePrototypeClass.call(this);
 
-    this.type    =
-    this.subType =
+    this.type    = type;
+    this.subType = subType;
+
     this._width  =
     this._height = 0;
 
@@ -16,6 +17,8 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
     this._gl =
     this._framebufferTexture =
     this._framebuffer = null;
+
+    this.intensity = intensity;
   },
   function(_scope, _super) {
     helpers.get(_scope, "framebufferTexture", function() { return this._framebufferTexture; });
@@ -24,8 +27,8 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
     helpers.get(_scope, "kernels",            function() { return this._kernels; });
 
     helpers.property(_scope, "intensity", {
-      get: function() { return this.intensityX; },
-      set: function(v) { this.intensityX = v; }
+      get: function() { return this._values[0]; },
+      set: function(v) { this._values[0] = v; }
     });
 
     helpers.property(_scope, "intensityX", {
@@ -113,5 +116,3 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
     }
   }
 );
-helpers.constant(AGL.AbstractFilter, "CONVOLUTE_TYPE", 1);
-helpers.constant(AGL.AbstractFilter, "COLOR_MANIPULATION_TYPE", 2);
