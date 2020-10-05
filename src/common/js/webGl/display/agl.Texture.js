@@ -86,20 +86,22 @@ AGL.Texture = helpers.createPrototypeClass(
     }
 
     _scope._parseTextureSize = function() {
-      this._sourceWidthProperty = "naturalWidth";
+      this._sourceWidthProperty  = "naturalWidth";
       this._sourceHeightProperty = "naturalHeight";
+
       if (!this._source[this._sourceWidthProperty]) {
-        this._sourceWidthProperty = "videoWidth";
+        this._sourceWidthProperty  = "videoWidth";
         this._sourceHeightProperty = "videoHeight";
       }
+
       if (!this._source[this._sourceWidthProperty]) {
-        this._sourceWidthProperty = "width";
+        this._sourceWidthProperty  = "width";
         this._sourceHeightProperty = "height";
       }
 
       this._generateMipmap = AGL.Utils.isPowerOf2(this.width) && AGL.Utils.isPowerOf2(this.height);
 
-      this._loaded = this._getSourceType() === "canvas" || this.width > 0 && this.height > 0;
+      this._loaded = this._getSourceType() === "canvas" || (this.width > 0 && this.height > 0);
     }
 
     _scope._getSourceType = function() {

@@ -94,9 +94,10 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._drawItem = function(item, parent) {
-      if (!item.renderable) return;
-      item.update(this._renderTime, parent);
-      item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
+      if (item.renderable) {
+        item.update(this._renderTime, parent);
+        item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
+      }
     }
 
     _scope._drawContainer = function(container) {
@@ -194,25 +195,28 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._drawTexture = function(textureInfo, isMask) {
-      if (!textureInfo.loaded) return -1;
-      var textureMapIndex = this._textureMap.indexOf(textureInfo);
-      if (textureMapIndex === -1 || textureInfo.autoUpdate(this._renderTime)) {
-        if (textureMapIndex === -1) {
-          if (this._textureMap.length === this._config.textureNum - (isMask ? 1 : 0)) {
-            this._batchDraw();
-            this._textureIds.length =
-            this._textureMap.length = 0;
+      if (textureInfo.loaded) {
+        var textureMapIndex = this._textureMap.indexOf(textureInfo);
+        var isTextureNotMapped = textureMapIndex === -1;
+        if (isTextureNotMapped || textureInfo.autoUpdate(this._renderTime)) {
+          if (isTextureNotMapped) {
+            if (this._textureMap.length === this._config.textureNum - (isMask ? 1 : 0)) {
+              this._batchDraw();
+              this._textureIds.length =
+              this._textureMap.length = 0;
+            }
+            this._textureMap.push(textureInfo);
+            textureMapIndex = this._textureMap.length - 1;
+            this._textureIds.push(textureMapIndex);
+            this._textureIdBufferUpdated = true;
           }
-          this._textureMap.push(textureInfo);
-          textureMapIndex = this._textureMap.length - 1;
-          this._textureIds.push(textureMapIndex);
-          this._textureIdBufferUpdated = true;
+
+          AGL.Utils.useTexture(this._gl, textureMapIndex, textureInfo);
         }
 
-        AGL.Utils.useTexture(this._gl, textureMapIndex, textureInfo);
+        return textureMapIndex;
       }
-
-      return textureMapIndex;
+      return -1;
     }
 
     _scope._setBlendMode = function() {
@@ -225,13 +229,14 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._resize = function() {
-      if (!this._resizeCanvas()) return false;
+      if (this._resizeCanvas()) {
+        AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
 
-      AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
+        this.worldPropsUpdateId++;
 
-      this.worldPropsUpdateId++;
-
-      return true;
+        return true;
+      }
+      return false;
     }
 
     _scope._initCustom = function() {

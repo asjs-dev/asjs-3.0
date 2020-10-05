@@ -32,46 +32,47 @@ AGL.PostProcessing = helpers.createPrototypeClass(
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
 
     _scope._render = function() {
-      if (!this.texture.loaded) return;
-      this.clear();
+      if (this.texture.loaded) {
+        this.clear();
 
-      var i;
-      var l = Math.max(1, this.filters.length);
-      var filter;
-      var isLast;
-      for (i = 0; i < l; ++i) {
-        if (i === 0) {
-          AGL.Utils.useTexture(this._gl, 0, this.texture);
-          this._gl.uniform1f(this._locations["uFlpY"], 1);
-        }
-
-        isLast = i == l - 1;
-        filter = this.filters[i];
-
-        if (filter) {
-          if (filter.texture && filter.texture.loaded) {
-            this._latestFilterTexture !== filter.texture && AGL.Utils.useTexture(this._gl, 2, filter.texture);
-            this._latestFilterTexture = filter.texture;
-          }
-
-          if (isLast) {
-            this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
+        var i;
+        var l = Math.max(1, this.filters.length);
+        var filter;
+        var isLast;
+        for (i = 0; i < l; ++i) {
+          if (i === 0) {
+            AGL.Utils.useTexture(this._gl, 0, this.texture);
             this._gl.uniform1f(this._locations["uFlpY"], 1);
-          } else {
-            filter.updateFramebuffer(this._gl, this._width, this._height);
-            this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, filter.framebuffer);
-            this._gl.uniform1f(this._locations["uFlpY"], -1);
           }
 
-          this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
-          this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
-          this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
-          this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
+          isLast = i == l - 1;
+          filter = this.filters[i];
+
+          if (filter) {
+            if (filter.texture && filter.texture.loaded) {
+              this._latestFilterTexture !== filter.texture && AGL.Utils.useTexture(this._gl, 2, filter.texture);
+              this._latestFilterTexture = filter.texture;
+            }
+
+            if (isLast) {
+              this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
+              this._gl.uniform1f(this._locations["uFlpY"], 1);
+            } else {
+              filter.updateFramebuffer(this._gl, this._width, this._height);
+              this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, filter.framebuffer);
+              this._gl.uniform1f(this._locations["uFlpY"], -1);
+            }
+
+            this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
+            this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
+            this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
+            this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
+          }
+
+          this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
+
+          !isLast && filter.bindTexture(this._gl, 0);
         }
-
-        this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
-
-        !isLast && filter.bindTexture(this._gl, 0);
       }
     }
 

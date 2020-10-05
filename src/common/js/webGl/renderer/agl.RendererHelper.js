@@ -196,12 +196,12 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
   var func =
   "vec4 gtTexCol(vec4 col,float id,vec2 crd){";
-  for (var i = 0; i < maxTextureImageUnits; i++) {
-    func += (i > 0 ? " else " : "") +
-    "if(id<" + i + ".5)return texture(uTex[" + i + "],crd);";
-  }
-  func +=
-  "return col;" +
+    for (var i = 0; i < maxTextureImageUnits; i++) {
+      func += (i > 0 ? " else " : "") +
+      "if(id<" + i + ".5)return texture(uTex[" + i + "],crd);";
+    }
+    func +=
+    "return col;" +
   "}";
   return func;
 };

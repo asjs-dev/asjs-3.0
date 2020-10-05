@@ -57,8 +57,10 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
     });
 
     _scope.destruct = function() {
-      this._framebufferTexture && this._gl.deleteTexture(this._framebufferTexture);
-      this._framebuffer && this._gl.deleteFramebuffer(this._framebuffer);
+      if (this._gl) {
+        this._framebufferTexture && this._gl.deleteTexture(this._framebufferTexture);
+        this._framebuffer && this._gl.deleteFramebuffer(this._framebuffer);
+      }
 
       this._values             =
       this._kernels            =
@@ -76,7 +78,7 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
 
         this._width  = width;
         this._height = height;
-        this._gl = gl;
+        this._gl     = gl;
 
         this._framebufferTexture = gl.createTexture();
         this.bindTexture(gl, 0);

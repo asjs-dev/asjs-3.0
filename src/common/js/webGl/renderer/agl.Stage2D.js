@@ -142,10 +142,11 @@ AGL.Stage2D = helpers.createPrototypeClass(
     }
 
     _scope._drawItem = function(item, parent) {
-      if (!item.renderable) return;
-      item.props.z = ++this._zCounter;
-      item.update(this._renderTime, parent);
-      item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
+      if (item.renderable) {
+        item.props.z = ++this._zCounter;
+        item.update(this._renderTime, parent);
+        item.type !== AGL.Item.TYPE && this._drawFunctionMap[item.type](item, parent);
+      }
     }
 
     _scope._setMaskData = function(item) {
@@ -204,9 +205,10 @@ AGL.Stage2D = helpers.createPrototypeClass(
     }
 
     _scope._resize = function() {
-      if (!_super._resize.call(this)) return;
-      this._widthHalf  = this._width * 0.5;
-      this._heightHalf = this._height * 0.5;
+      if (_super._resize.call(this)) {
+        this._widthHalf  = this._width * 0.5;
+        this._heightHalf = this._height * 0.5;
+      }
     }
 
     _scope._updateColor = function() {

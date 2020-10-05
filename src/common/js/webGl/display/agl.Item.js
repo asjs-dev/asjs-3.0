@@ -51,8 +51,8 @@ AGL.Item = helpers.createPrototypeClass(
         props.x,
         props.y,
 
-        props.sinR,
-        props.cosR,
+        props.sinRotation,
+        props.cosRotation,
 
         props.anchorX,
         props.anchorY,

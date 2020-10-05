@@ -14,6 +14,7 @@ require("./NameSpace.js");
 require("./data/agl.Config.js");
 require("./data/agl.BlendModes.js");
 require("./data/props/agl.AbstractProps.js");
+require("./data/props/agl.AbstractPositioningProps.js");
 require("./data/props/agl.ColorProps.js");
 require("./data/props/agl.ItemProps.js");
 require("./data/props/agl.LightEffectProps.js");
