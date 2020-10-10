@@ -40,17 +40,17 @@ AGL.Light = helpers.createPrototypeClass(
     });
 
     _scope.destruct = function() {
-      this.effect            =
-      this.effectCache       =
-      this._lightPositions   =
-      this._lightVolumes     =
-      this._lightColors      =
-      this._lightEffects     = null;
+      this.effect          =
+      this.effectCache     =
+      this._lightPositions =
+      this._lightVolumes   =
+      this._lightColors    =
+      this._lightEffects   = null;
 
       _super.destruct.call(this);
     }
 
-    _scope._updateProps = function(parent) {
+    _scope.update = function(renderTime, parent) {
       if (this.on) {
         var props = this.props;
 
@@ -61,7 +61,7 @@ AGL.Light = helpers.createPrototypeClass(
 
           this._lightPositions[this._tripId]     = this.matrixCache[6];
           this._lightPositions[this._tripId + 1] = this.matrixCache[7];
-          this._lightPositions[this._tripId + 2] = this.props.z;
+          this._lightPositions[this._tripId + 2] = props.z;
 
           this._lightVolumes[this._duoId]     = this.matrixCache[0];
           this._lightVolumes[this._duoId + 1] = this.matrixCache[4];

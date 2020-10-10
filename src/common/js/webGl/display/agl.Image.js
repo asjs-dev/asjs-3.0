@@ -40,16 +40,8 @@ AGL.Image = helpers.createPrototypeClass(
     }
 
     _scope.update = function() {
-      this._updateProps();
-      this._updateTextureProps();
-    }
-
-    _scope._updateProps = function() {
       var props = this.props;
       props.isUpdated() && this._transformItem(props, this.matrixCache);
-    }
-
-    _scope._updateTextureProps = function() {
       var textureProps = this.textureProps;
       textureProps.isUpdated() && this._transformItem(textureProps, this.textureMatrixCache);
     }

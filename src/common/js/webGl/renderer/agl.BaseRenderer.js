@@ -102,9 +102,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     _scope._drawContainer = function(container) {
       var children = container.children;
-      var i;
-      var l;
-      for (i = 0, l = children.length; i < l; ++i) this._drawItem(children[i], container);
+      var l = children.length;
+      for (var i = 0; i < l; ++i) this._drawItem(children[i], container);
     }
 
     _scope._checkBlendMode = function(item) {
@@ -197,8 +196,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     _scope._drawTexture = function(textureInfo, isMask) {
       if (textureInfo.loaded) {
         var textureMapIndex = this._textureMap.indexOf(textureInfo);
-        var isTextureNotMapped = textureMapIndex === -1;
-        if (isTextureNotMapped || textureInfo.autoUpdate(this._renderTime)) {
+        var isTextureNotMapped = textureMapIndex < 0;
+        if (isTextureNotMapped || textureInfo.isNeedToDraw(this._gl, this._renderTime)) {
           if (isTextureNotMapped) {
             if (this._textureMap.length === this._config.textureNum - (isMask ? 1 : 0)) {
               this._batchDraw();

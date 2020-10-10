@@ -51,7 +51,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._lightColors    = new Float32Array(config.lightNum * 4);
       this._lightEffects   = new Float32Array(config.lightNum * 6);
 
-      for (var i = 0, l = config.lightNum; i < l; ++i) {
+      var l = config.lightNum;
+      for (var i = 0; i < l; ++i)
         this._lights.push(new AGL.Light(
           i,
           this._lightPositions,
@@ -59,7 +60,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
           this._lightColors,
           this._lightEffects
         ));
-      }
 
       this._collectLightsFunc = this._collectLights.bind(this);
     }
@@ -206,7 +206,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     _scope._resize = function() {
       if (_super._resize.call(this)) {
-        this._widthHalf  = this._width * 0.5;
+        this._widthHalf  = this._width  * 0.5;
         this._heightHalf = this._height * 0.5;
       }
     }
@@ -309,15 +309,14 @@ AGL.Stage2D.createVertexShader = function(config) {
     if (config.isLightEnabled) {
       for (var i = 0; i < maxLightSources; i++) {
         shader +=
-        "if(uLghtCol[" + i + "].a>0.&&uLghtPos[" + i + "].z>aFx.z){" +
+        "if(uLghtCol[" + i + "].a>0.&&uLghtPos[" + i + "].z>aFx.z)" +
           "lghtCol+=lghtVal(" +
             "gl_Position.xy," +
             "uLghtPos[" + i + "].xy," +
             "uLghtVol[" + i + "]," +
             "uLghtCol[" + i + "]," +
             "uLghtFX[" + i + "]" +
-          ");" +
-        "}";
+          ");";
       }
     }
 

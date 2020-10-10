@@ -1,26 +1,24 @@
 require("../NameSpace.js");
 
 (function() {
+  AGL.Consts = {};
+
   var Utils = helpers.createPrototypeClass(
     helpers.BasePrototypeClass,
     function Utils() {
       helpers.BasePrototypeClass.call(this);
 
-      this.loadVertexShader = this.loadShader.bind(this, "VERTEX_SHADER");
+      this.loadVertexShader   = this.loadShader.bind(this, "VERTEX_SHADER");
       this.loadFragmentShader = this.loadShader.bind(this, "FRAGMENT_SHADER");
 
       this.info = {
         "isWebGl2Supported": false
       };
 
-      AGL.Consts = {};
-
       var canvas = document.createElement("canvas");
       var gl;
       if (gl = canvas.getContext("webgl2")) {
-        for (var key in gl) {
-            if (typeof gl[key] === "number") AGL.Consts[key] = gl[key];
-        }
+        for (var key in gl) typeof gl[key] === "number" && (AGL.Consts[key] = gl[key]);
 
         this.info.isWebGl2Supported            = true;
         this.info.maxTextureImageUnits         = gl.getParameter(AGL.Consts.MAX_TEXTURE_IMAGE_UNITS);
@@ -36,43 +34,35 @@ require("../NameSpace.js");
     },
     function(_scope) {
       _scope.useTexture = function(gl, index, textureInfo) {
-        gl.activeTexture(AGL.Consts.TEXTURE0 + index);
-        gl.bindTexture(textureInfo.target, textureInfo.getTexture(gl));
+        this.bindTexture(gl, index, textureInfo);
 
         gl.texImage2D(
           textureInfo.target,
           0,
-          AGL.Consts.RGBA,
+          textureInfo.internalFormat,
           textureInfo.width,
           textureInfo.height,
           0,
-          AGL.Consts.RGBA,
+          textureInfo.format,
           AGL.Consts.UNSIGNED_BYTE,
           textureInfo.source
         );
+
         gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MAX_LEVEL, textureInfo.maxLevel);
 
         if (textureInfo.generateMipmap) {
           gl.generateMipmap(textureInfo.target);
           gl.flush();
         }
+      }
 
-        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_WRAP_S, textureInfo.wrapS);
-        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_WRAP_T, textureInfo.wrapT);
+      _scope.bindTexture = function(gl, index, textureInfo) {
+        gl.activeTexture(AGL.Consts.TEXTURE0 + index);
+        gl.bindTexture(textureInfo.target, textureInfo.baseTexture);
 
-        if (textureInfo.generateMipmap) {
-          gl.texParameteri(
-            textureInfo.target,
-            AGL.Consts.TEXTURE_MIN_FILTER,
-            textureInfo.minFilter === AGL.Consts.LINEAR
-              ? AGL.Consts.LINEAR_MIPMAP_LINEAR
-              : AGL.Consts.NEAREST_MIPMAP_NEAREST
-          );
-        } else {
-          gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MIN_FILTER, textureInfo.minFilter);
-        }
-
-        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MIN_FILTER, textureInfo.minFilter);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_WRAP_S,     textureInfo.wrapS);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_WRAP_T,     textureInfo.wrapT);
+        gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MIN_FILTER, textureInfo.mipmapMinFilter);
         gl.texParameteri(textureInfo.target, AGL.Consts.TEXTURE_MAG_FILTER, textureInfo.magFilter);
       }
 
@@ -132,13 +122,14 @@ require("../NameSpace.js");
         return locations;
       }
 
-      _scope.unbindTexture = function(gl, texture) {
-        gl.bindTexture(texture.target, null);
+      _scope.destroyTexture = function(gl, textureInfo) {
+        gl.bindTexture(textureInfo.target, null);
+        gl.deleteTexture(textureInfo.baseTexture);
       }
 
-      _scope.destroyTexture = function(gl, texture) {
-        this.unbindTexture(gl, texture);
-        gl.deleteTexture(texture.getTexture(gl));
+      _scope.destroyFramebuffer = function(gl, framebuffer) {
+        gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
+        gl.deleteFramebuffer(framebuffer);
       }
 
       _scope.isPowerOf2 = function(value) {

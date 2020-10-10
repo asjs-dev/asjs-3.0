@@ -15,14 +15,14 @@ AGL.ItemProps = helpers.createPrototypeClass(
     this._scaledWidth  =
     this._scaledHeight =
 
-    this._scaleX   =
-    this._scaleY   =
-    this._width    =
-    this._height   = 1;
+    this._scaleX =
+    this._scaleY =
+    this._width  =
+    this._height = 1;
   },
   function(_scope) {
     helpers.get(_scope, "scaledWidth", function() {
-      if (this._currentScaledWidthUpdateId !== this._scaledWidthUpdateId) {
+      if (this._currentScaledWidthUpdateId < this._scaledWidthUpdateId) {
         this._currentScaledWidthUpdateId = this._scaledWidthUpdateId;
         this._scaledWidth = this._width * this._scaleX;
       }
@@ -30,7 +30,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
     });
 
     helpers.get(_scope, "scaledHeight", function() {
-      if (this._currentScaledHeightUpdateId !== this._scaledHeightUpdateId) {
+      if (this._currentScaledHeightUpdateId < this._scaledHeightUpdateId) {
         this._currentScaledHeightUpdateId = this._scaledHeightUpdateId;
         this._scaledHeight = this._height * this._scaleY;
       }

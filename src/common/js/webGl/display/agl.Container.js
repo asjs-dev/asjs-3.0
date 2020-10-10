@@ -43,11 +43,12 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope.addChildAt = function(child, index) {
-      if (!child) return null;
-      if (child.parent) child.parent.removeChild(child);
-      this.children.push(child);
-      this.setChildIndex(child, index);
-      child.parent = this;
+      if (child) {
+        child.parent && child.parent.removeChild(child);
+        this.children.push(child);
+        this.setChildIndex(child, index);
+        child.parent = this;
+      }
       return child;
     }
 
@@ -80,7 +81,7 @@ AGL.Container = helpers.createPrototypeClass(
     _scope.swapChildren = function(childA, childB) {
       var childAIndex = this.getChildIndex(childA);
       var childBIndex = this.getChildIndex(childB);
-      if (childAIndex === -1 || childBIndex === -1) return false;
+      if (childAIndex < 0 || childBIndex < 0) return false;
       this.setChildIndex(childA, childBIndex);
       this.setChildIndex(childB, childAIndex);
       return true;
@@ -93,7 +94,6 @@ AGL.Container = helpers.createPrototypeClass(
 
     _scope._updateProps = function(parent) {
       var props = this.props;
-
       if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || props.isUpdated()) {
         this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
         this.worldPropsUpdateId++;
@@ -103,18 +103,17 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope._updateColor = function(parent) {
-      var color = this.color;
-
-      if (this._currentWorldColorUpdateId < parent.worldColorUpdateId || color.isUpdated()) {
+      var props = this.color;
+      if (this._currentWorldColorUpdateId < parent.worldColorUpdateId || props.isUpdated()) {
         this._currentWorldColorUpdateId = parent.worldColorUpdateId;
         this.worldColorUpdateId++;
 
         var parentColor = parent.colorCache;
 
-        this.colorCache[0] = parentColor[0] * color.r;
-        this.colorCache[1] = parentColor[1] * color.g;
-        this.colorCache[2] = parentColor[2] * color.b;
-        this.colorCache[3] = parentColor[3] * color.a;
+        this.colorCache[0] = parentColor[0] * props.r;
+        this.colorCache[1] = parentColor[1] * props.g;
+        this.colorCache[2] = parentColor[2] * props.b;
+        this.colorCache[3] = parentColor[3] * props.a;
       }
     }
   }

@@ -19,11 +19,11 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       "uFtrKer" : "getUniformLocation",
     });
 
-    this.texture = null;
     this.filters = [];
 
     AGL.RendererHelper.initRenderer.call(this, config);
 
+    this.texture              =
     this._latestFilterTexture = null;
 
     this._resize();
@@ -33,24 +33,33 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
     _scope._render = function() {
       if (this.texture.loaded) {
+        this.texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useTexture(this._gl, 0, this.texture);
+
+        this._gl.uniform1f(this._locations["uFlpY"], 1);
+
         this.clear();
 
-        var i;
-        var l = Math.max(1, this.filters.length);
+        var l = this.filters.length;
+        var minL = l - 2;
         var filter;
         var isLast;
-        for (i = 0; i < l; ++i) {
-          if (i === 0) {
-            AGL.Utils.useTexture(this._gl, 0, this.texture);
-            this._gl.uniform1f(this._locations["uFlpY"], 1);
-          }
-
-          isLast = i == l - 1;
+        var frameBuffer;
+        for (var i = 0; i < l; ++i) {
           filter = this.filters[i];
 
+          if (i > minL) {
+            isLast = true;
+            i = l;
+          }
+
+          frameBuffer = null;
+
           if (filter) {
-            if (filter.texture && filter.texture.loaded) {
-              this._latestFilterTexture !== filter.texture && AGL.Utils.useTexture(this._gl, 2, filter.texture);
+            if (
+              filter.texture && filter.texture.loaded &&
+              (filter.texture.isNeedToDraw(this._gl, this._renderTime) || this._latestFilterTexture !== filter.texture)
+            ) {
+              AGL.Utils.useTexture(this._gl, 1, filter.texture);
               this._latestFilterTexture = filter.texture;
             }
 
@@ -58,8 +67,9 @@ AGL.PostProcessing = helpers.createPrototypeClass(
               this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
               this._gl.uniform1f(this._locations["uFlpY"], 1);
             } else {
-              filter.updateFramebuffer(this._gl, this._width, this._height);
-              this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, filter.framebuffer);
+              frameBuffer = this._frameBuffers[i % 2];
+              frameBuffer.isNeedToDraw(this._gl, this._width, this._height);
+              this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, frameBuffer.framebuffer);
               this._gl.uniform1f(this._locations["uFlpY"], -1);
             }
 
@@ -71,15 +81,20 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
           this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
 
-          !isLast && filter.bindTexture(this._gl, 0);
+          frameBuffer && !isLast && AGL.Utils.bindTexture(this._gl, 0, frameBuffer);
         }
       }
     }
 
     _scope.destruct = function() {
+      this._frameBuffers[0].destruct();
+      this._frameBuffers[1].destruct();
+      this._frameBuffers.length = 0;
+
       this.texture              =
       this.filters              =
-      this._latestFilterTexture = null;
+      this._latestFilterTexture =
+      this._frameBuffers        = null;
 
       this._destructRenderer();
 
@@ -97,8 +112,13 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         ]), AGL.Consts.STATIC_DRAW
       );
 
+      this._frameBuffers = [
+        new AGL.Framebuffer(),
+        new AGL.Framebuffer()
+      ];
+
       this._gl.uniform1i(this._locations["uTex"],    0);
-      this._gl.uniform1i(this._locations["uDspTex"], 2);
+      this._gl.uniform1i(this._locations["uDspTex"], 1);
     }
   }
 );
@@ -214,22 +234,34 @@ AGL.PostProcessing.createFragmentShader = function(config) {
         "vec2 wh=oPx*vec2(fvl[0],fvl[1]);" +
         "vec4 col=vec4(0);" +
         "float c=0.;" +
-        "float oAvg=uFtrST==2?(fgCol.r+fgCol.g+fgCol.b+fgCol.a)/4.:0.;" +
-        // BlurFilter
-        "for(float i=-2.;i<3.;++i){" +
-          "for(float j=-2.;j<3.;++j){" +
-            "float m=abs((i/2.)*(j/2.));" +
-            "float im=1.-m;" +
-            "vec4 tCol=i==0.&&j==0." +
-              "?fgCol" +
-              ":texture(uTex,vTexCrd+(wh*vec2(i,j)));" +
-            "if(uFtrST<2){" +
+        "float m;" +
+        "float im;" +
+        "vec4 tCol;" +
+        "float avg;" +
+        "if(uFtrST<2)" +
+          // BlurFilter
+          "for(float i=-1.;i<2.;++i){" +
+            "for(float j=-1.;j<2.;++j){" +
+              "m=abs(i*j);" +
+              "im=1.-m;" +
+              "tCol=i==0.&&j==0." +
+                "?fgCol" +
+                ":texture(uTex,vTexCrd+(wh*vec2(i,j)));" +
               "col+=tCol*im;" +
               "c+=im;" +
             "}" +
-            // GlowFilter
-            "else if(uFtrST<3){" +
-              "float avg=(tCol.r+tCol.g+tCol.b+tCol.a)/4.;" +
+          "}" +
+        "else{" +
+          // GlowFilter
+          "float oAvg=uFtrST==2?(fgCol.r+fgCol.g+fgCol.b+fgCol.a)/4.:0.;" +
+          "for(float i=-1.;i<2.;++i){" +
+            "for(float j=-1.;j<2.;++j){" +
+              "m=abs(i*j);" +
+              "im=1.-m;" +
+              "tCol=i==0.&&j==0." +
+                "?fgCol" +
+                ":texture(uTex,vTexCrd+(wh*vec2(i,j)));" +
+              "avg=(tCol.r+tCol.g+tCol.b+tCol.a)/4.;" +
               "if(avg-oAvg>=fvl[3]*m){" +
                 "col+=tCol*im;" +
                 "c+=im;" +

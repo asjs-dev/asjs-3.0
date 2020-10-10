@@ -13,6 +13,7 @@ require("./NameSpace.js");
 
 require("./data/agl.Config.js");
 require("./data/agl.BlendModes.js");
+require("./data/agl.TextureInfo.js");
 require("./data/props/agl.AbstractProps.js");
 require("./data/props/agl.AbstractPositioningProps.js");
 require("./data/props/agl.ColorProps.js");
@@ -25,6 +26,7 @@ require("./utils/agl.Matrix3.js");
 require("./utils/agl.Utils.js");
 
 require("./display/agl.Texture.js");
+require("./display/agl.Framebuffer.js");
 require("./display/agl.Item.js");
 require("./display/agl.Light.js");
 require("./display/agl.AnimatedImage.js");

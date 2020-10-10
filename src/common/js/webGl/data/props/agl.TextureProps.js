@@ -6,8 +6,8 @@ AGL.TextureProps = helpers.createPrototypeClass(
   function TextureProps() {
     AGL.AbstractPositioningProps.call(this);
 
-    this._width    =
-    this._height   = 1;
+    this._width  =
+    this._height = 1;
   },
   function(_scope) {
     helpers.get(_scope, "scaledWidth", function() { return this._width; });

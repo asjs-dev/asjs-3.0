@@ -2,11 +2,10 @@ require("../NameSpace.js");
 require("../utils/agl.Utils.js");
 
 AGL.CreateConfig = function(options) {
-  var warnMessage = "Maximum of ";
   if (options.textureNum === undefined || options.textureNum > AGL.Utils.info.maxTextureImageUnits)
     options.textureNum = AGL.Utils.info.maxTextureImageUnits;
 
-  if (options.isMaskEnabled && options.textureNum === 1) options.textureNum = 2;
+  if (options.isMaskEnabled && options.textureNum < 2) options.textureNum = 2;
 
   if (options.lightNum === undefined) options.lightNum = 0;
   else if (options.lightNum > AGL.Stage2D.MAX_LIGHT_SOURCES)

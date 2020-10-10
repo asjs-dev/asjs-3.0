@@ -5,7 +5,7 @@ require("../utils/agl.Utils.js");
   function createBlendMode(funcs) {
     return {
       "funcName": "blendFunc" + (
-        funcs.length === 2
+        funcs.length < 3
         ? ""
         : "Separate"
       ),

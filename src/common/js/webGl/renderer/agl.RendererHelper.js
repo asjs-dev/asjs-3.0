@@ -91,15 +91,17 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   _scope._render = helpers.emptyFunction;
 
   _scope._resizeCanvas = function() {
-    if (this._currentResizeUpdateId === this._resizeUpdateId) return false;
-    this._currentResizeUpdateId = this._resizeUpdateId;
+    if (this._currentResizeUpdateId < this._resizeUpdateId) {
+      this._currentResizeUpdateId = this._resizeUpdateId;
 
-    this._canvas.width  = this._width;
-    this._canvas.height = this._height;
+      this._canvas.width  = this._width;
+      this._canvas.height = this._height;
 
-    this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
+      this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
 
-    return true;
+      return true;
+    }
+    return false;
   }
 
   _scope._resize = _scope._resizeCanvas;
@@ -196,11 +198,11 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
   var func =
   "vec4 gtTexCol(vec4 col,float id,vec2 crd){";
-    for (var i = 0; i < maxTextureImageUnits; i++) {
-      func += (i > 0 ? " else " : "") +
-      "if(id<" + i + ".5)return texture(uTex[" + i + "],crd);";
-    }
-    func +=
+
+  for (var i = 0; i < maxTextureImageUnits; i++) func +=
+    (i > 0 ? "else " : "") + "if(id<" + i + ".5)return texture(uTex[" + i + "],crd);";
+
+  func +=
     "return col;" +
   "}";
   return func;
