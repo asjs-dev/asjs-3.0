@@ -109,15 +109,15 @@ AGL.Texture = helpers.createPrototypeClass(
     _scope._onTextureLoaded = _scope._parseTextureSize;
   }
 );
-AGL.Texture.loadImage = function(src) {
+AGL.Texture.loadImage = function(src, shouldUpdate) {
   var image = document.createElement("img");
-  var texture = new AGL.Texture(image);
+  var texture = new AGL.Texture(image, shouldUpdate);
   image.src = src;
   return texture;
 };
-AGL.Texture.loadVideo = function(src) {
+AGL.Texture.loadVideo = function(src, shouldUpdate) {
   var video = document.createElement("video");
-  var texture = new AGL.Texture(video);
+  var texture = new AGL.Texture(video, shouldUpdate);
   video.src = src;
   return texture;
 };

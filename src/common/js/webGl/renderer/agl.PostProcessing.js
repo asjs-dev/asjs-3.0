@@ -33,8 +33,8 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
     _scope._render = function() {
       if (this.texture.loaded) {
-        this.texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useTexture(this._gl, 0, this.texture);
-
+        this.texture.isNeedToDraw(this._gl, this._renderTime);
+        AGL.Utils.useTexture(this._gl, 0, this.texture);
         this._gl.uniform1f(this._locations["uFlpY"], 1);
 
         this.clear();
