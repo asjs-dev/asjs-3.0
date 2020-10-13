@@ -23,7 +23,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
   },
   function(_scope) {
     helpers.get(_scope, "sinRotation", function() {
-      if (this._currentSinRotationUpdateId !== this._rotationUpdateId) {
+      if (this._currentSinRotationUpdateId < this._rotationUpdateId) {
         this._currentSinRotationUpdateId = this._rotationUpdateId;
         this._sinRotation = Math.sin(this._rotation);
       }
@@ -31,7 +31,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
     });
 
     helpers.get(_scope, "cosRotation", function() {
-      if (this._currentCosRotationUpdateId !== this._rotationUpdateId) {
+      if (this._currentCosRotationUpdateId < this._rotationUpdateId) {
         this._currentCosRotationUpdateId = this._rotationUpdateId;
         this._cosRotation = Math.cos(this._rotation);
       }

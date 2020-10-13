@@ -21,7 +21,7 @@ AGL.Light = helpers.createPrototypeClass(
 
     this._on = false;
 
-    this._currentWorldPropsUpdateId = -1;
+    this._currentWorldPropsUpdateId = 0;
 
     this._duoId  = id * 2;
     this._tripId = id * 3;

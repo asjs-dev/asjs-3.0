@@ -6,7 +6,7 @@ AGL.AbstractProps = helpers.createPrototypeClass(
     helpers.BasePrototypeClass.call(this);
 
     this._id              =
-    this._currentUpdateId = -1;
+    this._currentUpdateId = 0;
   },
   function(_scope) {
     _scope.isUpdated = function() {

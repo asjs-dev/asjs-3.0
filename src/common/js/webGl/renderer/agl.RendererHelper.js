@@ -68,8 +68,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   });
 
   _scope.clear = function() {
-    var clearColor = this.clearColor;
-    clearColor.isUpdated() && this._gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+    this.clearColor.isUpdated() && this._gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearColor.a);
     this._gl.clear(AGL.Consts.COLOR_BUFFER_BIT);
   }
 
@@ -84,7 +83,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   }
 
   _scope._preRender = function() {
-    this._renderTime = Date.now();
+    this._renderTime = performance.now();
     this._resize();
   }
 

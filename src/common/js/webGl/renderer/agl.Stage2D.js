@@ -76,9 +76,10 @@ AGL.Stage2D = helpers.createPrototypeClass(
     helpers.property(_scope, "maskType", {
       get: function() { return this._maskType; },
       set: function(v) {
-        if (this._maskType === v) return;
-        this._maskType = v;
-        this._gl.uniform1i(this._locations["uMskTp"], this._maskType);
+        if (this._maskType !== v) {
+          this._maskType = v;
+          this._gl.uniform1i(this._locations["uMskTp"], this._maskType);
+        }
       }
     });
 
@@ -125,7 +126,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
     _scope.setPickerPoint = function(x, y) {
       this._isPickerSet = true;
 
-      this._tempPickerVector[0] = (x - this._widthHalf) * this.matrixCache[0];
+      this._tempPickerVector[0] = (x - this._widthHalf)  * this.matrixCache[0];
       this._tempPickerVector[1] = (y - this._heightHalf) * this.matrixCache[4];
     }
 
@@ -134,9 +135,9 @@ AGL.Stage2D = helpers.createPrototypeClass(
     }
 
     _scope._collectLights = function() {
-      this._gl.uniform3fv(this._locations["uLghtPos"],  this._lightPositions);
-      this._gl.uniform2fv(this._locations["uLghtVol"],  this._lightVolumes);
-      this._gl.uniform4fv(this._locations["uLghtCol"],  this._lightColors);
+      this._gl.uniform3fv(this._locations["uLghtPos"], this._lightPositions);
+      this._gl.uniform2fv(this._locations["uLghtVol"], this._lightVolumes);
+      this._gl.uniform4fv(this._locations["uLghtCol"], this._lightColors);
 
       this._gl.uniformMatrix3x2fv(this._locations["uLghtFX"], false, this._lightEffects);
     }
@@ -149,8 +150,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
       }
     }
 
-    _scope._setMaskData = function(item) {
-      this._effectData[this._batchItems * this._effectLength + 3] = item.mask
+    _scope._setMaskData = function(item, position) {
+      this._effectData[position + 3] = item.mask
         ? this._drawTexture(item.mask, true)
         : -1;
     }
@@ -161,7 +162,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       helpers.arraySet(this._colorData,     parent.colorCache, quadId);
       helpers.arraySet(this._tintColorData, item.colorCache,   quadId);
 
-      this._effectData[effectId] = textureMapIndex;
+      this._effectData[effectId]     = textureMapIndex;
       this._effectData[effectId + 1] = item.tintType;
       this._effectData[effectId + 2] = item.props.z;
     }
@@ -181,7 +182,9 @@ AGL.Stage2D = helpers.createPrototypeClass(
         )
       ) this._picked = item;
 
-      this._setMaskDataFunc(item);
+      var effectPosition = this._batchItems * this._effectLength;
+      
+      this._setMaskDataFunc(item, effectPosition);
 
       var textureMapIndex = this._drawTexture(item.texture);
 
@@ -191,7 +194,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
         textureMapIndex,
         this._batchItems * 9,
         this._batchItems * 4,
-        this._batchItems * this._effectLength
+        effectPosition
       );
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
