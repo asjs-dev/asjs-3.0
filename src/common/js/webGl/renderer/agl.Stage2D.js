@@ -183,7 +183,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       ) this._picked = item;
 
       var effectPosition = this._batchItems * this._effectLength;
-      
+
       this._setMaskDataFunc(item, effectPosition);
 
       var textureMapIndex = this._drawTexture(item.texture);
@@ -286,7 +286,7 @@ AGL.Stage2D.createVertexShader = function(config) {
   (
     config.isLightEnabled
       ? "vec4 lghtVal(vec2 pos,vec2 lghtPos,vec2 lghtVol,vec4 lghtCol,mat3x2 lghtFX){" +
-          "vec2 dist=abs(pos-lghtPos)/lghtVol;" +
+          "vec2 dist=abs((pos-lghtPos)/lghtVol);" +
           "if(dist.x>1.||dist.y>1.)return vec4(0);" +
           "vec2 v=pow(dist+(dist*lghtFX[0]),lghtFX[1]);" +
           "return lghtCol*lghtCol.a*max(0.,(1.-sqrt(v.x+v.y))*lghtFX[2].x);" +
