@@ -1,6 +1,5 @@
 require("./agl.Item.js");
 require("../NameSpace.js");
-require("../data/props/agl.LightEffectProps.js");
 
 AGL.Light = helpers.createPrototypeClass(
   AGL.Item,
@@ -12,17 +11,15 @@ AGL.Light = helpers.createPrototypeClass(
     lightEffects
   ) {
     AGL.Item.call(this);
-
-    this.effect = new AGL.LightEffectProps();
-
-    this.effectCache = this.effect.items;
-
     this.color.a = 0;
+
+    this.transition = 1;
 
     this._on = false;
 
     this._currentWorldPropsUpdateId = 0;
 
+    this._id     = id;
     this._duoId  = id * 2;
     this._tripId = id * 3;
     this._quadId = id * 4;
@@ -40,12 +37,10 @@ AGL.Light = helpers.createPrototypeClass(
     });
 
     _scope.destruct = function() {
-      this.effect          =
-      this.effectCache     =
+      this._lightEffects   =
       this._lightPositions =
       this._lightVolumes   =
-      this._lightColors    =
-      this._lightEffects   = null;
+      this._lightColors    = null;
 
       _super.destruct.call(this);
     }
@@ -67,8 +62,9 @@ AGL.Light = helpers.createPrototypeClass(
           this._lightVolumes[this._duoId + 1] = this.matrixCache[4];
         }
 
-        helpers.arraySet(this._lightColors, this.colorCache, this._quadId);
-        helpers.arraySet(this._lightEffects, this.effectCache, this._hexId);
+        this.color.isUpdated() && helpers.arraySet(this._lightColors,  this.colorCache,  this._quadId);
+
+        this._lightEffects[this._id] = this.transition;
       } else this._lightColors[this._quadId + 3] = 0;
     }
   }

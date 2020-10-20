@@ -33,9 +33,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._batchItems = 0;
 
     this._textureMap = [];
-    this._textureIds = [];
-
-    this._textureIdBufferUpdated = false;
+    this._textureIds = new Uint16Array(config.textureNum);
+    for (var i = 0; i < config.textureNum; ++i) this._textureIds[i] = i;
 
     AGL.RendererHelper.initRenderer.call(this, config);
 
@@ -124,7 +123,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     _scope._drawImage = function(item, parent) {
       this._checkBlendMode(item);
 
-      var textureMapIndex = this._drawTexture(item.texture);
+      var textureMapIndex = this._drawTexture(item.texture, false);
 
       this._setBufferData(
         item,
@@ -180,12 +179,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._batchDraw = function() {
-      if (this._textureIdBufferUpdated) {
-        this._textureIdBufferUpdated = false;
-        var textureIdBuffer = new Uint16Array(this._textureIds);
-        this._gl.uniform1iv(this._locations["uTex"], textureIdBuffer);
-      }
-
       this._bindBuffers();
 
       this._gl.drawElementsInstanced(AGL.Consts.TRIANGLE_FAN, 6, AGL.Consts.UNSIGNED_SHORT, 0, this._batchItems);
@@ -197,17 +190,15 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       if (textureInfo.loaded) {
         var textureMapIndex = this._textureMap.indexOf(textureInfo);
         var isTextureNotMapped = textureMapIndex < 0;
-        if (isTextureNotMapped || textureInfo.isNeedToDraw(this._gl, this._renderTime)) {
+        var isNeedToDraw = textureInfo.isNeedToDraw(this._gl, this._renderTime);
+        if (isTextureNotMapped || isNeedToDraw) {
           if (isTextureNotMapped) {
-            if (this._textureMap.length === this._config.textureNum - (isMask ? 1 : 0)) {
+            if (this._textureMap.length === this._config.textureNum - isMask) {
               this._batchDraw();
-              this._textureIds.length =
               this._textureMap.length = 0;
             }
             this._textureMap.push(textureInfo);
             textureMapIndex = this._textureMap.length - 1;
-            this._textureIds.push(textureMapIndex);
-            this._textureIdBufferUpdated = true;
           }
 
           AGL.Utils.useTexture(this._gl, textureMapIndex, textureInfo);
@@ -251,6 +242,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
         ]),
         AGL.Consts.STATIC_DRAW
       );
+
+      this._gl.uniform1iv(this._locations["uTex"], this._textureIds);
 
       this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
   		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",      9, 3, 3, AGL.Consts.FLOAT, 4);

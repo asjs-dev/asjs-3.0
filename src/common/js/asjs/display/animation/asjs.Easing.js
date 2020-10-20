@@ -29,7 +29,7 @@ helpers.createClass(ASJS, "Easing", helpers.BaseClass, function(_scope, _super) 
     _change   = {};
     _to       = to;
     _type     = type;
-    _duration = Math.round(duration / (1000 / _cycler.fps));
+    _duration = Math.round(duration / (1e3 / _cycler.fps));
 
     _stepCallback     = stepCallback;
     _completeCallback = completeCallback;

@@ -18,7 +18,6 @@ require("./data/props/agl.AbstractProps.js");
 require("./data/props/agl.AbstractPositioningProps.js");
 require("./data/props/agl.ColorProps.js");
 require("./data/props/agl.ItemProps.js");
-require("./data/props/agl.LightEffectProps.js");
 require("./data/props/agl.TextureCrop.js");
 require("./data/props/agl.TextureProps.js");
 

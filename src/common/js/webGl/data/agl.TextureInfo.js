@@ -8,7 +8,7 @@ AGL.TextureInfo = helpers.createPrototypeClass(
     this.target = AGL.Consts.TEXTURE_2D;
 
     this.maxLevel = 5;
-    
+
     this.shouldUpdate   = shouldUpdate;
     this.generateMipmap = false;
 
@@ -58,7 +58,7 @@ AGL.TextureInfo = helpers.createPrototypeClass(
 
         return shouldUpdate;
       }
-
+      
       return false;
     }
 

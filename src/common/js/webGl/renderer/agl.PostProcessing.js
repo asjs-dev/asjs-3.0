@@ -47,37 +47,32 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         for (var i = 0; i < l; ++i) {
           filter = this.filters[i];
 
-          if (i > minL) {
-            isLast = true;
-            i = l;
-          }
+          isLast = i > minL;
 
           frameBuffer = null;
 
-          if (filter) {
-            if (
-              filter.texture && filter.texture.loaded &&
-              (filter.texture.isNeedToDraw(this._gl, this._renderTime) || this._latestFilterTexture !== filter.texture)
-            ) {
-              AGL.Utils.useTexture(this._gl, 1, filter.texture);
-              this._latestFilterTexture = filter.texture;
-            }
-
-            if (isLast) {
-              this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
-              this._gl.uniform1f(this._locations["uFlpY"], 1);
-            } else {
-              frameBuffer = this._frameBuffers[i % 2];
-              frameBuffer.isNeedToDraw(this._gl, this._width, this._height);
-              this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, frameBuffer.framebuffer);
-              this._gl.uniform1f(this._locations["uFlpY"], -1);
-            }
-
-            this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
-            this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
-            this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
-            this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
+          if (
+            filter.texture && filter.texture.loaded &&
+            (filter.texture.isNeedToDraw(this._gl, this._renderTime) || this._latestFilterTexture !== filter.texture)
+          ) {
+            AGL.Utils.useTexture(this._gl, 1, filter.texture);
+            this._latestFilterTexture = filter.texture;
           }
+
+          if (isLast) {
+            this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
+            this._gl.uniform1f(this._locations["uFlpY"], 1);
+          } else {
+            frameBuffer = this._frameBuffers[i % 2];
+            frameBuffer.isNeedToDraw(this._gl, this._width, this._height);
+            this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, frameBuffer.framebuffer);
+            this._gl.uniform1f(this._locations["uFlpY"], -1);
+          }
+
+          this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
+          this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
+          this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
+          this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
 
           this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
 

@@ -52,6 +52,6 @@ helpers.createSingletonClass(ASJS, "Cycler", helpers.BaseClass, function(_scope)
   };
 
   function getIntervalByFps() {
-    return 1000 / _fps;
+    return 1e3 / _fps;
   };
 });

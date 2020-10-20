@@ -5,7 +5,7 @@ require("../NameSpace.js");
 
 helpers.createSingletonClass(ASJSUtils, "AnimationParser", helpers.BaseClass, function(_scope) {
   var priv = {};
-  helpers.constant(priv, "DEFAULT_FPS", 1000 / 24);
+  helpers.constant(priv, "DEFAULT_FPS", 1e3 / 24);
 
   _scope.createCSSAnimationsByJSON = function(list) {
     var i = -1;

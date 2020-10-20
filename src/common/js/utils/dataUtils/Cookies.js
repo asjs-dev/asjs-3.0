@@ -8,7 +8,7 @@ ASJSUtils.Cookies = {};
 helpers.constant(ASJSUtils.Cookies, "createCookie", function(n, v, d) {
   if ( d ) {
     var date = new Date();
-        date.setTime(date.getTime() + (d * 86400000));
+        date.setTime(date.getTime() + (d * 864e5));
     var expires = "; expires=" + date.toGMTString();
   } else var expires = "";
   document.cookie = n + "=" + v + expires + "; path=/";

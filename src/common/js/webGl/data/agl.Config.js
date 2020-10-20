@@ -30,7 +30,7 @@ AGL.CreateConfig = function(options) {
 
     "precision"         : options.precision || AGL.RendererHelper.Precisons.HIGH,
 
-    "maxBatchItems"     : options.maxBatchItems || 10000,
+    "maxBatchItems"     : options.maxBatchItems || 1e4,
 
     "contextAttributes" : {
       "alpha"              : attributes.alpha || false,

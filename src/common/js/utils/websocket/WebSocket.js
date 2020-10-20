@@ -62,7 +62,7 @@ helpers.createClass(ASJSUtils, "WS", ASJS.EventDispatcher, function(_scope) {
       var timeout = priv.RECONNECT_INTERVALS[_reconnectCounter];
       _scope.dispatchEvent(ASJSUtils.WS.ON_RECONNECT, timeout);
       _reconnectTimeoutId = clearTimeout(_reconnectTimeoutId);
-      _reconnectTimeoutId = setTimeout(reconnect, timeout * 1000);
+      _reconnectTimeoutId = setTimeout(reconnect, timeout * 1e3);
     }
   }
 
