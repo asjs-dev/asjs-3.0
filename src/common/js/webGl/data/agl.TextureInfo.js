@@ -5,31 +5,37 @@ AGL.TextureInfo = helpers.createPrototypeClass(
   function TextureInfo(shouldUpdate) {
     helpers.BasePrototypeClass.call(this);
 
-    this.target = AGL.Consts.TEXTURE_2D;
+    this.target = AGL.Const.TEXTURE_2D;
 
-    this.maxLevel = 5;
+    this.maxLevel = 0;
 
-    this.shouldUpdate   = shouldUpdate;
+    this.shouldUpdate = shouldUpdate;
+
+    this._updateId        =
+    this._currentUpdateId = 0;
+
+    this._loaded        =
     this.generateMipmap = false;
 
     this.baseTexture =
     this.gl          = null;
 
     this.wrapS =
-    this.wrapT = AGL.Consts.CLAMP_TO_EDGE;
+    this.wrapT = AGL.Const.CLAMP_TO_EDGE;
 
     this.internalFormat =
-    this.format         = AGL.Consts.RGBA;
+    this.format         = AGL.Const.RGBA;
 
     this._minFilter       =
     this._mipmapMinFilter =
-    this.magFilter        = AGL.Consts.NEAREST;
+    this.magFilter        = AGL.Const.NEAREST;
 
     this._width             =
     this._height            =
     this._currentRenderTime = 0;
   },
   function(_scope, _super) {
+    helpers.get(_scope, "loaded", function() { return this._loaded; });
     helpers.get(_scope, "width",  function() { return this._width; });
     helpers.get(_scope, "height", function() { return this._height; });
 
@@ -58,7 +64,12 @@ AGL.TextureInfo = helpers.createPrototypeClass(
 
         return shouldUpdate;
       }
-      
+
+      if (this._currentUpdateId < this._updateId) {
+        this._currentUpdateId = this._updateId;
+        return true;
+      }
+
       return false;
     }
 
@@ -69,7 +80,7 @@ AGL.TextureInfo = helpers.createPrototypeClass(
     }
 
     _scope._destroyTexture = function() {
-      this.gl && this.baseTexture && AGL.Utils.destroyTexture(this.gl, this);
+      AGL.Utils.destroyTexture(this.gl, this);
     }
   }
 );

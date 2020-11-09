@@ -10,7 +10,6 @@ AGL.Texture = helpers.createPrototypeClass(
 
     this._source = null;
 
-    this._loaded =
     this.isVideo = false;
 
     this.source = source;
@@ -22,7 +21,6 @@ AGL.Texture = helpers.createPrototypeClass(
   function(_scope, _super) {
     helpers.get(_scope, "width",  function() { return this._source[this._sourceWidthProperty]; });
     helpers.get(_scope, "height", function() { return this._source[this._sourceHeightProperty]; });
-    helpers.get(_scope, "loaded", function() { return this._loaded; });
 
     helpers.property(_scope, "minFilter", {
       get: function() { return this._minFilter; },
@@ -37,6 +35,8 @@ AGL.Texture = helpers.createPrototypeClass(
     helpers.property(_scope, "source", {
       get: function() { return this._source; },
       set: function(v) {
+        this._loaded = false;
+
         this._source && this._source.removeEventListener(
           this._eventType,
           this._onTextureLoadedBind
@@ -68,9 +68,6 @@ AGL.Texture = helpers.createPrototypeClass(
         this._onTextureLoadedBind
       );
 
-      this._source              =
-      this._onTextureLoadedBind = null;
-
       _super.destruct.call(this);
     }
 
@@ -92,6 +89,7 @@ AGL.Texture = helpers.createPrototypeClass(
       this._updateMipmapMinFilter();
 
       this._loaded = this._getSourceType() === "canvas" || (this.width > 0 && this.height > 0);
+      this._loaded && ++this._updateId;
     }
 
     _scope._getSourceType = function() {
@@ -100,9 +98,9 @@ AGL.Texture = helpers.createPrototypeClass(
 
     _scope._updateMipmapMinFilter = function() {
       this._mipmapMinFilter = this.generateMipmap
-        ? (this._minFilter === AGL.Consts.LINEAR
-          ? AGL.Consts.LINEAR_MIPMAP_LINEAR
-          : AGL.Consts.NEAREST_MIPMAP_NEAREST)
+        ? (this._minFilter === AGL.Const.LINEAR
+          ? AGL.Const.LINEAR_MIPMAP_LINEAR
+          : AGL.Const.NEAREST_MIPMAP_NEAREST)
         : this._minFilter;
     }
 

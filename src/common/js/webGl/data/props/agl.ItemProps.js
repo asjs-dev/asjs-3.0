@@ -18,7 +18,8 @@ AGL.ItemProps = helpers.createPrototypeClass(
     this._scaleX =
     this._scaleY =
     this._width  =
-    this._height = 1;
+    this._height =
+    this.alpha   = 1;
   },
   function(_scope) {
     helpers.get(_scope, "scaledWidth", function() {
@@ -43,7 +44,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
         if (this._scaleX !== v) {
           this._scaleX = v;
           ++this._scaledWidthUpdateId;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -54,7 +55,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
         if (this._scaleY !== v) {
           this._scaleY = v;
           ++this._scaledHeightUpdateId;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -65,7 +66,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
         if (this._width !== v) {
           this._width = v;
           ++this._scaledWidthUpdateId;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -76,7 +77,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
         if (this._height !== v) {
           this._height = v;
           ++this._scaledHeightUpdateId;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });

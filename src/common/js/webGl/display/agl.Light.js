@@ -15,8 +15,6 @@ AGL.Light = helpers.createPrototypeClass(
 
     this.transition = 1;
 
-    this._on = false;
-
     this._currentWorldPropsUpdateId = 0;
 
     this._id     = id;
@@ -29,43 +27,56 @@ AGL.Light = helpers.createPrototypeClass(
     this._lightVolumes   = lightVolumes;
     this._lightColors    = lightColors;
     this._lightEffects   = lightEffects;
+
+    this.colorCache = [1, 1, 1, 1];
+
+    this.update;
+    this.on = false;
   },
   function(_scope, _super) {
     helpers.property(_scope, "on", {
       get: function() { return this._on && this.stage; },
-      set: function(v) { this._on = v; }
+      set: function(v) {
+        if (this._on !== v) {
+          this._on = v;
+          if (this._on) this.update = this._update;
+          else {
+            this.update = helpers.emptyFunction;
+            this._lightColors[this._quadId + 3] = 0;
+          }
+        }
+      }
     });
 
-    _scope.destruct = function() {
-      this._lightEffects   =
-      this._lightPositions =
-      this._lightVolumes   =
-      this._lightColors    = null;
+    _scope._update = function(renderTime, parent) {
+      var props = this.props;
+      if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || this._currentPropsUpdateId < props.updateId) {
+        this._currentPropsUpdateId = props.updateId;
+        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
 
-      _super.destruct.call(this);
-    }
+        this._transformItem(props, parent);
 
-    _scope.update = function(renderTime, parent) {
-      if (this.on) {
-        var props = this.props;
+        this._lightPositions[this._tripId]     = this.matrixCache[6];
+        this._lightPositions[this._tripId + 1] = this.matrixCache[7];
+        this._lightPositions[this._tripId + 2] = props.z;
 
-        if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || props.isUpdated()) {
-          this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
+        this._lightVolumes[this._duoId]     = this.matrixCache[0];
+        this._lightVolumes[this._duoId + 1] = this.matrixCache[4];
+      }
 
-          this._transformItem(props, parent);
+      var colorProps = this.color;
+      if (this._currentColorUpdateId < colorProps.updateId) {
+        this._currentColorUpdateId = colorProps.updateId;
 
-          this._lightPositions[this._tripId]     = this.matrixCache[6];
-          this._lightPositions[this._tripId + 1] = this.matrixCache[7];
-          this._lightPositions[this._tripId + 2] = props.z;
+        this.colorCache[0] = this.color.r * this.color.a;
+        this.colorCache[1] = this.color.g * this.color.a;
+        this.colorCache[2] = this.color.b * this.color.a;
+        this.colorCache[3] = this.color.a;
 
-          this._lightVolumes[this._duoId]     = this.matrixCache[0];
-          this._lightVolumes[this._duoId + 1] = this.matrixCache[4];
-        }
+        helpers.arraySet(this._lightColors,  this.colorCache,  this._quadId);
+      }
 
-        this.color.isUpdated() && helpers.arraySet(this._lightColors,  this.colorCache,  this._quadId);
-
-        this._lightEffects[this._id] = this.transition;
-      } else this._lightColors[this._quadId + 3] = 0;
+      this._lightEffects[this._id] = this.transition;
     }
   }
 );

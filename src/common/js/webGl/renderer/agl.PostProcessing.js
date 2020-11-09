@@ -23,8 +23,8 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
     AGL.RendererHelper.initRenderer.call(this, config);
 
-    this.texture              =
-    this._latestFilterTexture = null;
+    this.texture               =
+    this._currentFilterTexture = null;
 
     this._resize();
   },
@@ -32,79 +32,86 @@ AGL.PostProcessing = helpers.createPrototypeClass(
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
 
     _scope._render = function() {
-      if (this.texture.loaded) {
-        this.texture.isNeedToDraw(this._gl, this._renderTime);
-        AGL.Utils.useTexture(this._gl, 0, this.texture);
-        this._gl.uniform1f(this._locations["uFlpY"], 1);
+      this.texture.isNeedToDraw(this._gl, this._renderTime);
+      AGL.Utils.useTexture(this._gl, 0, this.texture);
+      this._gl.uniform1f(this._locations["uFlpY"], 1);
 
-        this.clear();
+      this.clear();
 
-        var l = this.filters.length;
-        var minL = l - 2;
-        var filter;
-        var isLast;
-        var frameBuffer;
-        for (var i = 0; i < l; ++i) {
-          filter = this.filters[i];
+      var i;
+      var l = this.filters.length || 1;
+      var minL = l - 2;
+      var filter;
+      var isLast;
+      var framebuffer;
+      var useFilter;
+      for (i = 0; i < l; ++i) {
+        filter    = this.filters[i];
+        useFilter = filter && filter.on;
 
-          isLast = i > minL;
+        framebuffer = null;
 
-          frameBuffer = null;
+        isLast = i > minL;
 
-          if (
-            filter.texture && filter.texture.loaded &&
-            (filter.texture.isNeedToDraw(this._gl, this._renderTime) || this._latestFilterTexture !== filter.texture)
-          ) {
-            AGL.Utils.useTexture(this._gl, 1, filter.texture);
-            this._latestFilterTexture = filter.texture;
-          }
+        if (
+          useFilter && filter.texture &&
+          (this._currentFilterTexture !== filter.texture || filter.texture.isNeedToDraw(this._gl, this._renderTime))
+        ) {
+          this._currentFilterTexture = filter.texture;
+          AGL.Utils.useTexture(this._gl, 1, filter.texture);
+        }
 
-          if (isLast) {
-            this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, null);
-            this._gl.uniform1f(this._locations["uFlpY"], 1);
-          } else {
-            frameBuffer = this._frameBuffers[i % 2];
-            frameBuffer.isNeedToDraw(this._gl, this._width, this._height);
-            this._gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, frameBuffer.framebuffer);
-            this._gl.uniform1f(this._locations["uFlpY"], -1);
-          }
+        if (isLast) {
+          this._gl.bindFramebuffer(AGL.Const.FRAMEBUFFER, null);
+          this._gl.uniform1f(this._locations["uFlpY"], 1);
+        } else if (useFilter) {
+          framebuffer = this._frameBuffers[i & 1];
+          framebuffer.isNeedToDraw(this._gl, this._renderTime);
+          this._gl.bindFramebuffer(AGL.Const.FRAMEBUFFER, framebuffer.framebuffer);
+          this._gl.uniform1f(this._locations["uFlpY"],    -1);
+        }
 
+        if (useFilter) {
           this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
           this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
           this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
           this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
-
-          this._gl.drawArrays(AGL.Consts.TRIANGLE_FAN, 0, 6);
-
-          frameBuffer && !isLast && AGL.Utils.bindTexture(this._gl, 0, frameBuffer);
         }
+
+        (useFilter || isLast) && this._gl.drawArrays(AGL.Const.TRIANGLE_FAN, 0, 6);
+
+        framebuffer && AGL.Utils.bindTexture(this._gl, 0, framebuffer);
       }
     }
 
     _scope.destruct = function() {
       this._frameBuffers[0].destruct();
       this._frameBuffers[1].destruct();
-      this._frameBuffers.length = 0;
-
-      this.texture              =
-      this.filters              =
-      this._latestFilterTexture =
-      this._frameBuffers        = null;
 
       this._destructRenderer();
 
       _super.destruct.call(this);
     }
 
+    _scope._resize = function() {
+      if (this._resizeCanvas()) {
+        this._frameBuffers[0].setSize(this._width, this._height);
+        this._frameBuffers[1].setSize(this._width, this._height);
+
+        return true;
+      }
+      return false;
+    }
+
     _scope._initCustom = function() {
-      this._gl.bufferData(AGL.Consts.ARRAY_BUFFER, new Float32Array([
+      this._gl.bufferData(AGL.Const.ARRAY_BUFFER, new Float32Array([
           -1, -1,
            1, -1,
           -1,  1,
           -1,  1,
            1,  1,
            1, -1
-        ]), AGL.Consts.STATIC_DRAW
+        ]), AGL.Const.STATIC_DRAW
       );
 
       this._frameBuffers = [

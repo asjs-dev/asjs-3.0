@@ -17,6 +17,9 @@ AGL.Item = helpers.createPrototypeClass(
     this.props = new AGL.ItemProps();
     this.color = new AGL.ColorProps();
 
+    this._currentPropsUpdateId =
+    this._currentColorUpdateId = 0;
+
     this.colorCache = this.color.items;
 
     this.parent = null;
@@ -27,17 +30,15 @@ AGL.Item = helpers.createPrototypeClass(
     _scope.destruct = function() {
       this.parent && this.parent.removeChild && this.parent.removeChild(this);
 
-      this.matrixCache =
-      this.props       =
-      this.color       =
-      this.colorCache  = null;
-
       _super.destruct.call(this);
     }
 
     _scope.update = function(renderTime, parent) {
       var props = this.props;
-      props.isUpdated() && this._transformItem(props, parent);
+      if (this._currentPropsUpdateId < props.updateId) {
+        this._currentPropsUpdateId = props.updateId;
+        this._transformItem(props, parent);
+      }
     }
 
     _scope._transformItem = function(props, parent) {

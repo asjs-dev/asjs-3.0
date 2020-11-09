@@ -4,15 +4,7 @@ AGL.AbstractProps = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
   function AbstractProps() {
     helpers.BasePrototypeClass.call(this);
-
-    this._id              =
-    this._currentUpdateId = 0;
+    this.updateId = 0;
   },
-  function(_scope) {
-    _scope.isUpdated = function() {
-      var isUpdated = this._currentUpdateId < this._id;
-      this._currentUpdateId = this._id;
-      return isUpdated;
-    }
-  }
+  function() {}
 );

@@ -10,22 +10,31 @@ AGL.Container = helpers.createPrototypeClass(
 
     this.children = [];
 
+    this._parent = null;
+
     this.worldPropsUpdateId         =
     this.worldColorUpdateId         =
     this._currentWorldPropsUpdateId =
     this._currentWorldColorUpdateId = 0;
 
     this.colorCache = [1, 1, 1, 1];
-
   },
   function(_scope, _super) {
     helpers.get(_scope, "numChildren", function() { return this.children.length; });
 
+    helpers.property(_scope, "parent", {
+      get: function() { return this._parent; },
+      set: function(v) {
+        if (this._parent !== v) {
+          this._parent = v;
+          this._currentWorldPropsUpdateId =
+          this._currentWorldColorUpdateId = 0;
+        }
+      }
+    });
+
     _scope.destruct = function() {
       this.empty();
-
-      this.children   =
-      this.colorCache = null;
 
       _super.destruct.call(this);
     }
@@ -94,9 +103,10 @@ AGL.Container = helpers.createPrototypeClass(
 
     _scope._updateProps = function(parent) {
       var props = this.props;
-      if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || props.isUpdated()) {
+      if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || this._currentPropsUpdateId < props.updateId) {
+        this._currentPropsUpdateId = props.updateId;
         this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
-        this.worldPropsUpdateId++;
+        ++this.worldPropsUpdateId;
 
         this._transformItem(props, parent);
       }
@@ -104,9 +114,10 @@ AGL.Container = helpers.createPrototypeClass(
 
     _scope._updateColor = function(parent) {
       var props = this.color;
-      if (this._currentWorldColorUpdateId < parent.worldColorUpdateId || props.isUpdated()) {
+      if (this._currentWorldColorUpdateId < parent.worldColorUpdateId || this._currentColorUpdateId < props.updateId) {
+        this._currentColorUpdateId = props.updateId;
         this._currentWorldColorUpdateId = parent.worldColorUpdateId;
-        this.worldColorUpdateId++;
+        ++this.worldColorUpdateId;
 
         var parentColor = parent.colorCache;
 

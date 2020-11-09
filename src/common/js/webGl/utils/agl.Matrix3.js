@@ -88,4 +88,4 @@ AGL.Matrix3 = {
   }
 };
 
-Object.freeze(AGL.Matrix3);
+helpers.deepFreeze(AGL.Matrix3);

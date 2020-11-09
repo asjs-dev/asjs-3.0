@@ -7,6 +7,7 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
 
     this.type    = type;
     this.subType = subType;
+    this.on      = true;
 
     this._values  = new Float32Array(9);
     this._kernels = new Float32Array(9);
@@ -46,12 +47,5 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
       get: function() { return this._values[4]; },
       set: function(v) { this._values[4] = v; }
     });
-
-    _scope.destruct = function() {
-      this._values  =
-      this._kernels = null;
-
-      _super.destruct.call(this);
-    }
   }
 );

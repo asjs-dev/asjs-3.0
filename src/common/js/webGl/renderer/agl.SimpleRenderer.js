@@ -13,13 +13,6 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
     AGL.BaseRenderer.call(this, config);
   },
   function(_scope, _super) {
-    _scope.destruct = function() {
-      this._textureIdData   =
-      this._textureIdBuffer = null;
-
-      _super.destruct.call(this);
-    }
-
     _scope._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
       _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
       this._textureIdData[this._batchItems] = textureMapIndex;
@@ -34,7 +27,7 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
       _super._initCustom.call(this);
 
       this._textureIdData   = new Float32Array(this._MAX_BATCH_ITEMS);
-      this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, AGL.Consts.FLOAT, 4);
+      this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, AGL.Const.FLOAT, 4);
     }
   }
 );
@@ -44,7 +37,7 @@ AGL.SimpleRenderer.createVertexShader = function() {
 
   "in vec2 aPos;" +
   "in mat3 aMat;" +
-  "in mat3 aWorldMat;" +
+  "in mat3 aWrlMat;" +
   "in mat3 aTexMat;" +
   "in vec4 aTexCrop;" +
   "in float aTexId;" +
@@ -56,7 +49,7 @@ AGL.SimpleRenderer.createVertexShader = function() {
 
   "void main(void){" +
     "vec3 pos=vec3(aPos,1);" +
-    "gl_Position=vec4((aWorldMat*aMat*pos).xy,0,1);" +
+    "gl_Position=vec4((aWrlMat*aMat*pos).xy,0,1);" +
     "vTexCrd=(aTexMat*pos).xy;" +
     "vTexCrop=aTexCrop.xy;" +
     "vTexCropSize=aTexCrop.zw;" +
@@ -64,7 +57,7 @@ AGL.SimpleRenderer.createVertexShader = function() {
   "}";
 };
 AGL.SimpleRenderer.createFragmentShader = function(config) {
-  var maxTextureImageUnits = config.textureNum;
+  var maxTextureImageUnits = AGL.Utils.info.maxTextureImageUnits;
 
   return
   "#version 300 es\n" +
@@ -82,6 +75,6 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
   AGL.RendererHelper.createGetTextureFunction(maxTextureImageUnits) +
 
   "void main(void){" +
-    "fgCol=gtTexCol(vec4(0),vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));" +
+    AGL.RendererHelper.createGetTexColor() +
   "}";
 };

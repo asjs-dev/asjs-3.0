@@ -5,15 +5,16 @@ require("../data/props/agl.ColorProps.js");
 AGL.RendererHelper = {};
 
 AGL.RendererHelper.initRenderer = function(config) {
-  Object.freeze(config);
+  helpers.deepFreeze(config);
 
   this.clearColor = new AGL.ColorProps();
 
-  this._width                 =
-  this._height                =
-  this._resizeUpdateId        =
-  this._currentResizeUpdateId =
-  this._renderTime            = 0;
+  this._width                     =
+  this._height                    =
+  this._sizeUpdateId              =
+  this._currentSizeUpdateId       =
+  this._renderTime                =
+  this._currentClearColorUpdateId = 0;
 
   this._config = config;
   this._canvas = config.canvas;
@@ -52,7 +53,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     set: function(v) {
       if (this._width !== v) {
         this._width = v;
-        this._resizeUpdateId++;
+        ++this._sizeUpdateId;
       }
     }
   });
@@ -62,14 +63,18 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     set: function(v) {
       if (this._height !== v) {
         this._height = v;
-        this._resizeUpdateId++;
+        ++this._sizeUpdateId;
       }
     }
   });
 
   _scope.clear = function() {
-    this.clearColor.isUpdated() && this._gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearColor.a);
-    this._gl.clear(AGL.Consts.COLOR_BUFFER_BIT);
+    var clearColorProps = this.clearColor;
+    if (this._currentClearColorUpdateId < clearColorProps.updateId) {
+      this._currentClearColorUpdateId = clearColorProps.updateId;
+      this._gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearColor.a);
+    }
+    this._gl.clear(AGL.Const.COLOR_BUFFER_BIT);
   }
 
   _scope.setSize = function(width, height) {
@@ -83,15 +88,15 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   }
 
   _scope._preRender = function() {
-    this._renderTime = performance.now();
+    this._renderTime = Date.now();
     this._resize();
   }
 
   _scope._render = helpers.emptyFunction;
 
   _scope._resizeCanvas = function() {
-    if (this._currentResizeUpdateId < this._resizeUpdateId) {
-      this._currentResizeUpdateId = this._resizeUpdateId;
+    if (this._currentSizeUpdateId < this._sizeUpdateId) {
+      this._currentSizeUpdateId = this._sizeUpdateId;
 
       this._canvas.width  = this._width;
       this._canvas.height = this._height;
@@ -150,8 +155,8 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   _scope._init = function() {
     this._gl = this.context;
     this._loseContextExt = this._gl.getExtension('WEBGL_lose_context');
-    this._gl.pixelStorei(AGL.Consts.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    this._gl.enable(AGL.Consts.BLEND);
+    this._gl.pixelStorei(AGL.Const.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    this._gl.enable(AGL.Const.BLEND);
 
     this._vertexShader   = AGL.Utils.loadVertexShader(this._gl,   this._config.vertexShader(this._config));
     this._fragmentShader = AGL.Utils.loadFragmentShader(this._gl, this._config.fragmentShader(this._config));
@@ -160,18 +165,18 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._gl.useProgram(this._program);
 
     var positionBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(AGL.Consts.ARRAY_BUFFER, positionBuffer);
+    this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, positionBuffer);
     this._gl.bufferData(
-      AGL.Consts.ARRAY_BUFFER,
+      AGL.Const.ARRAY_BUFFER,
       new Float32Array([
         0, 0,
         1, 0,
         1, 1,
         0, 1
       ]),
-      AGL.Consts.STATIC_DRAW
+      AGL.Const.STATIC_DRAW
     );
-    this._gl.vertexAttribPointer(this._locations["aPos"], 2, AGL.Consts.FLOAT, false, 0, 0);
+    this._gl.vertexAttribPointer(this._locations["aPos"], 2, AGL.Const.FLOAT, false, 0, 0);
     this._gl.enableVertexAttribArray(this._locations["aPos"]);
 
     this._initCustom();
@@ -196,16 +201,20 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
 AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
   var func =
-  "vec4 gtTexCol(vec4 col,float id,vec2 crd){";
+  "vec4 gtTexCol(float id,vec2 crd){";
 
-  for (var i = 0; i < maxTextureImageUnits; i++) func +=
-    (i > 0 ? "else " : "") + "if(id<" + i + ".5)return texture(uTex[" + i + "],crd);";
+  for (var i = 0; i < maxTextureImageUnits; ++i) func +=
+    (i > 0 ? "else " : "") + "if(id<" + (i + 1) + ".)return texture(uTex[" + i + "],crd);";
 
   func +=
-    "return col;" +
+    "return vec4(0);" +
   "}";
   return func;
 };
+
+AGL.RendererHelper.createGetTexColor = function() {
+  return "fgCol=gtTexCol(vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));";
+}
 
 AGL.RendererHelper.Precisons = {
   "HIGH"   : "highp",

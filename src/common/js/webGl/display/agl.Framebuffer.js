@@ -7,20 +7,47 @@ AGL.Framebuffer = helpers.createPrototypeClass(
     AGL.TextureInfo.call(this, shouldUpdate);
 
     this.framebuffer = null;
+
+    this._sizeUpdateId         =
+    this._currentSizeUpdatedId = 0;
+
+    this._loaded = true;
   },
   function(_scope, _super) {
+    helpers.property(_scope, "width", {
+      get: function() { return this._width; },
+      set: function(v) {
+        if (this._width !== v && v > 0) {
+          this._width = v;
+          ++this._sizeUpdateId;
+        }
+      }
+    });
+
+    helpers.property(_scope, "height", {
+      get: function() { return this._height; },
+      set: function(v) {
+        if (this._height !== v && v > 0) {
+          this._height = v;
+          ++this._sizeUpdateId;
+        }
+      }
+    });
+
+    _scope.setSize = function(w, h) {
+      this.width  = w;
+      this.height = h;
+    }
+
     _scope.destruct = function() {
       this._destroyFramebuffer();
-
-      this.framebuffer = null;
 
       _super.destruct.call(this);
     }
 
-    _scope.isNeedToDraw = function(gl, width, height) {
-      if ((this.gl !== gl || this._width !== width || this._height !== height) && width > 0 && height > 0) {
-        this._width  = width;
-        this._height = height;
+    _scope.isNeedToDraw = function(gl, renderTime) {
+      if (this.gl !== gl || this._currentSizeUpdatedId < this._sizeUpdateId) {
+        this._currentSizeUpdatedId = this._sizeUpdateId;
 
         this._destroyTexture();
         this.baseTexture = gl.createTexture();
@@ -29,11 +56,11 @@ AGL.Framebuffer = helpers.createPrototypeClass(
 
         this._destroyFramebuffer();
         this.framebuffer = gl.createFramebuffer();
-        gl.bindFramebuffer(AGL.Consts.FRAMEBUFFER, this.framebuffer);
+        gl.bindFramebuffer(AGL.Const.FRAMEBUFFER, this.framebuffer);
         gl.framebufferTexture2D(
-          AGL.Consts.FRAMEBUFFER,
-          AGL.Consts.COLOR_ATTACHMENT0,
-          AGL.Consts.TEXTURE_2D,
+          AGL.Const.FRAMEBUFFER,
+          AGL.Const.COLOR_ATTACHMENT0,
+          AGL.Const.TEXTURE_2D,
           this.baseTexture,
           0
         );
@@ -46,7 +73,7 @@ AGL.Framebuffer = helpers.createPrototypeClass(
     }
 
     _scope._destroyFramebuffer = function() {
-      this.gl && this.framebuffer && AGL.Utils.destroyFramebuffer(this.gl, this.framebuffer);
+      AGL.Utils.destroyFramebuffer(this.gl, this.framebuffer);
     }
   }
 );

@@ -1,3 +1,4 @@
+require("../helpers/deepFreeze.js");
 require("../helpers/removeFromArray.js");
 require("../helpers/arraySet.js");
 require("../helpers/constant.js");
@@ -12,7 +13,7 @@ require("../helpers/BasePrototypeClass.js");
 require("./NameSpace.js");
 
 require("./data/agl.Config.js");
-require("./data/agl.BlendModes.js");
+require("./data/agl.BlendMode.js");
 require("./data/agl.TextureInfo.js");
 require("./data/props/agl.AbstractProps.js");
 require("./data/props/agl.AbstractPositioningProps.js");

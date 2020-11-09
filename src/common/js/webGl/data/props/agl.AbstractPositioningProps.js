@@ -43,7 +43,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._x !== v) {
           this._x = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -53,7 +53,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._y !== v) {
           this._y = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -63,7 +63,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._z !== v) {
           this._z = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -74,7 +74,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
         if (this._rotation !== v) {
           this._rotation = v;
           ++this._rotationUpdateId;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -84,7 +84,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._anchorX !== v) {
           this._anchorX = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -94,7 +94,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._anchorY !== v) {
           this._anchorY = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });

@@ -1,6 +1,6 @@
 require("./agl.Item.js");
 require("../NameSpace.js");
-require("../data/agl.BlendModes.js");
+require("../data/agl.BlendMode.js");
 require("../data/props/agl.TextureProps.js");
 require("../data/props/agl.TextureCrop.js");
 
@@ -15,35 +15,31 @@ AGL.Image = helpers.createPrototypeClass(
 
     this.mask = null;
 
-    this.tintType  = AGL.Image.Tint.NORMAL;
-    this.blendMode = AGL.BlendModes.NORMAL;
+    this.tintType  = AGL.Image.TintType.NONE;
+    this.blendMode = AGL.BlendMode.NORMAL;
 
     this.textureProps = new AGL.TextureProps();
     this.textureCrop  = new AGL.TextureCrop();
+
+    this._currentTexturePropsUpdateId = 0;
 
     this.textureCropCache = this.textureCrop.items;
 
     this.texture = texture;
   },
   function(_scope, _super) {
-    _scope.destruct = function() {
-      this.textureMatrixCache =
-      this.mask               =
-      this.tintType           =
-      this.blendMode          =
-      this.textureProps       =
-      this.textureCrop        =
-      this.textureCropCache   =
-      this.texture            = null;
-
-      _super.destruct.call(this);
-    }
-
     _scope.update = function() {
       var props = this.props;
-      props.isUpdated() && this._transformItem(props, this.matrixCache);
+      if (this._currentPropsUpdateId < props.updateId) {
+        this._currentPropsUpdateId = props.updateId;
+        this._transformItem(props, this.matrixCache);
+      }
+
       var textureProps = this.textureProps;
-      textureProps.isUpdated() && this._transformItem(textureProps, this.textureMatrixCache);
+      if (this._currentTexturePropsUpdateId < textureProps.updateId) {
+        this._currentTexturePropsUpdateId = textureProps.updateId;
+        this._transformItem(textureProps, this.textureMatrixCache);
+      }
     }
 
     _scope._transformItem = function(props, cache) {
@@ -66,8 +62,9 @@ AGL.Image = helpers.createPrototypeClass(
   }
 );
 helpers.constant(AGL.Image, "TYPE", "drawable");
-helpers.constant(AGL.Image, "Tint", {
-  "NORMAL"    : 0,
-  "GRAYSCALE" : 1,
-  "OVERRIDE"  : 2,
+helpers.constant(AGL.Image, "TintType", {
+  "NONE"      : 0,
+  "NORMAL"    : 1,
+  "GRAYSCALE" : 2,
+  "OVERRIDE"  : 3,
 });

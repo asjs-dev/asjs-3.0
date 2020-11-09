@@ -14,7 +14,7 @@ AGL.ColorProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[0] !== v) {
           this.items[0] = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -24,7 +24,7 @@ AGL.ColorProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[1] !== v) {
           this.items[1] = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -34,7 +34,7 @@ AGL.ColorProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[2] !== v) {
           this.items[2] = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
@@ -44,7 +44,7 @@ AGL.ColorProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[3] !== v) {
           this.items[3] = v;
-          ++this._id;
+          ++this.updateId;
         }
       }
     });
