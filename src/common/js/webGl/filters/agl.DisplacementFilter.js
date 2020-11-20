@@ -12,13 +12,13 @@ AGL.DisplacementFilter = helpers.createPrototypeClass(
     this.y = y;
   }, function(_scope) {
     helpers.property(_scope, "x", {
-      get: function() { return this._values[1]; },
-      set: function(v) { this._values[1] = v; }
+      get: function() { return this.values[1]; },
+      set: function(v) { this.values[1] = v; }
     });
 
     helpers.property(_scope, "y", {
-      get: function() { return this._values[2]; },
-      set: function(v) { this._values[2] = v; }
+      get: function() { return this.values[2]; },
+      set: function(v) { this.values[2] = v; }
     });
   }
 );

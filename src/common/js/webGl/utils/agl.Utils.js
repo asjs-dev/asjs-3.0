@@ -18,20 +18,13 @@ require("../NameSpace.js");
       var canvas = document.createElement("canvas");
       var gl;
       if (gl = canvas.getContext("webgl2")) {
-        for (var key in gl) typeof gl[key] === "number" && (AGL.Const[key] = gl[key]);
+        for (var key in gl) helpers.typeIs(gl[key], "number") && (AGL.Const[key] = gl[key]);
 
-        this.info.isWebGl2Supported            = true;
-        this.info.maxTextureImageUnits         = gl.getParameter(AGL.Const.MAX_TEXTURE_IMAGE_UNITS);
-        //this.info.maxTextureSize               = gl.getParameter(AGL.Const.MAX_TEXTURE_SIZE);
-        //this.info.maxVertexAttributes          = gl.getParameter(AGL.Const.MAX_VERTEX_ATTRIBS);
-        //this.info.maxVaryingVectors            = gl.getParameter(AGL.Const.MAX_VARYING_VECTORS);
-        //this.info.maxVertexUniformVectors      = gl.getParameter(AGL.Const.MAX_VERTEX_UNIFORM_VECTORS);
-        //this.info.maxFragmentUniformComponents = gl.getParameter(AGL.Const.MAX_FRAGMENT_UNIFORM_COMPONENTS);
-        //this.info.maxFragmentUniformVectors    = gl.getParameter(AGL.Const.MAX_FRAGMENT_UNIFORM_VECTORS);
-        //this.info.maxVaryingComponents         = gl.getParameter(AGL.Const.MAX_VARYING_COMPONENTS);
+        this.info.isWebGl2Supported    = true;
+        this.info.maxTextureImageUnits = gl.getParameter(AGL.Const.MAX_TEXTURE_IMAGE_UNITS);
       }
-      canvas =
-      gl     = null;
+      gl     =
+      canvas = null;
     },
     function(_scope) {
       _scope.useTexture = function(gl, index, textureInfo) {
@@ -145,7 +138,4 @@ require("../NameSpace.js");
 
   AGL.Const = {};
   AGL.Utils = new Utils();
-
-  helpers.deepFreeze(AGL.Const);
-  helpers.deepFreeze(AGL.Utils);
 })();

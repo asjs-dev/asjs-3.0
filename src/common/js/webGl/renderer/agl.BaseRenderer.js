@@ -4,7 +4,7 @@ require("../display/agl.Item.js");
 require("../display/agl.Container.js");
 require("../display/agl.Image.js");
 require("../utils/agl.Utils.js");
-require("../utils/agl.Matrix3.js");
+require("../geom/agl.Matrix3.js");
 require("./agl.RendererHelper.js");
 
 AGL.BaseRenderer = helpers.createPrototypeClass(
@@ -17,7 +17,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     config.locations      = Object.assign(config.locations, {
       "aPos"     : "getAttribLocation",
       "aMat"     : "getAttribLocation",
-      "aWrlMat"  : "getAttribLocation",
       "aTexMat"  : "getAttribLocation",
       "aTexCrop" : "getAttribLocation",
       "uTex"     : "getUniformLocation",
@@ -46,7 +45,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._drawFunctionMap[AGL.Image.TYPE]     = this._drawImage.bind(this);
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
-    this._update      =
+    this.update       =
     this._updateProps = helpers.emptyFunction;
 
     this._resize();
@@ -81,7 +80,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     _scope._drawItem = function(item, parent) {
       if (item.renderable) {
         item.update(this._renderTime, parent);
-        this._drawFunctionMap[item.type](item, parent);
+        this._drawFunctionMap[item.TYPE](item, parent);
       }
     }
 
@@ -93,7 +92,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
-      helpers.arraySet(this._worldMatrixData,   parent.matrixCache,      matId);
       helpers.arraySet(this._matrixData,        item.matrixCache,        matId);
       helpers.arraySet(this._textureMatrixData, item.textureMatrixCache, matId);
       helpers.arraySet(this._textureCropData,   item.textureCropCache,   quadId);
@@ -153,7 +151,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     _scope._bindBuffers = function() {
       this._bindArrayBuffer(this._matrixBuffer,        this._matrixData);
-      this._bindArrayBuffer(this._worldMatrixBuffer,   this._worldMatrixData);
       this._bindArrayBuffer(this._textureMatrixBuffer, this._textureMatrixData);
       this._bindArrayBuffer(this._textureCropBuffer,   this._textureCropData);
     }
@@ -229,8 +226,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
       this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
   		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",     9, 3, 3, AGL.Const.FLOAT, 4);
-      this._worldMatrixData     = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-  		this._worldMatrixBuffer   = this._createArrayBuffer(this._matrixData,        "aWrlMat",  9, 3, 3, AGL.Const.FLOAT, 4);
       this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
       this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "aTexMat",  9, 3, 3, AGL.Const.FLOAT, 4);
       this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
@@ -244,7 +239,6 @@ AGL.BaseRenderer.createVertexShader = function() {
 
   "in vec2 aPos;" +
   "in mat3 aMat;" +
-  "in mat3 aWrlMat;" +
   "in mat3 aTexMat;" +
   "in vec4 aTexCrop;" +
 
@@ -254,7 +248,7 @@ AGL.BaseRenderer.createVertexShader = function() {
 
   "void main(void){" +
     "vec3 pos=vec3(aPos,1);" +
-    "gl_Position=vec4((aWrlMat*aMat*pos).xy,0,1);" +
+    "gl_Position=vec4((aMat*pos).xy,0,1);" +
     "vTexCrd=(aTexMat*pos).xy;" +
     "vTexCrop=aTexCrop.xy;" +
     "vTexCropSize=aTexCrop.zw;" +

@@ -37,7 +37,6 @@ AGL.SimpleRenderer.createVertexShader = function() {
 
   "in vec2 aPos;" +
   "in mat3 aMat;" +
-  "in mat3 aWrlMat;" +
   "in mat3 aTexMat;" +
   "in vec4 aTexCrop;" +
   "in float aTexId;" +
@@ -49,7 +48,7 @@ AGL.SimpleRenderer.createVertexShader = function() {
 
   "void main(void){" +
     "vec3 pos=vec3(aPos,1);" +
-    "gl_Position=vec4((aWrlMat*aMat*pos).xy,0,1);" +
+    "gl_Position=vec4((aMat*pos).xy,0,1);" +
     "vTexCrd=(aTexMat*pos).xy;" +
     "vTexCrop=aTexCrop.xy;" +
     "vTexCropSize=aTexCrop.zw;" +

@@ -93,7 +93,7 @@ AGL.Texture = helpers.createPrototypeClass(
     }
 
     _scope._getSourceType = function() {
-      return this._source.tagName.toLowerCase();
+      return this._source.tagName ? this._source.tagName.toLowerCase() : "canvas";
     }
 
     _scope._updateMipmapMinFilter = function() {

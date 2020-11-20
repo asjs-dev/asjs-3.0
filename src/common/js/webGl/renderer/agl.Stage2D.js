@@ -1,7 +1,7 @@
 require("../NameSpace.js");
 require("./agl.BaseRenderer.js");
 require("../display/agl.Item.js");
-require("../utils/agl.Matrix3.js");
+require("../geom/agl.Matrix3.js");
 
 AGL.Stage2D = helpers.createPrototypeClass(
   AGL.BaseRenderer,
@@ -33,25 +33,21 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     this._zCounter    =
     this._maskType    =
-    this._widthHalf   =
-    this._heightHalf  =
     this._fogUpdateId = 0;
 
     this._lights = [];
 
-    this._picked;
+    this.picked;
     this._isPickerSet = false;
 
-    this._tempPickerVector  = new Float32Array([0, 0, 1]);
-    this._tempMatrix        = new Float32Array(6);
-    this._tempInverseMatrix = new Float32Array(6);
+    this.pickerPoint = AGL.Point.create();
 
     this._collectLightsFunc = helpers.emptyFunction;
     if (config.isLightEnabled) {
       this._lightPositions = new Float32Array(config.lightNum * 3);
-      this._lightVolumes   = new Float32Array(config.lightNum * 2);
+      this._lightVolumes   = new Float32Array(config.lightNum * 4);
       this._lightColors    = new Float32Array(config.lightNum * 4);
-      this._lightEffects   = new Float32Array(config.lightNum);
+      this._lightEffects   = new Float32Array(config.lightNum * 2);
 
       var i;
       var l = config.lightNum;
@@ -74,8 +70,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this._resize();
   },
   function(_scope, _super) {
-    helpers.get(_scope, "picked", function() { return this._picked; });
-
     helpers.property(_scope, "maskType", {
       get: function() { return this._maskType; },
       set: function(v) {
@@ -89,7 +83,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
     _scope.render = function() {
       this._preRender();
 
-      this._picked = null;
+      this.picked = null;
       this._zCounter = 0;
 
       this._updateColor();
@@ -105,11 +99,11 @@ AGL.Stage2D = helpers.createPrototypeClass(
       return this._lights[id];
     }
 
-    _scope.setPickerPoint = function(x, y) {
+    _scope.setPickerPoint = function(point) {
       this._isPickerSet = true;
 
-      this._tempPickerVector[0] = (x - this._widthHalf)  * this.matrixCache[0];
-      this._tempPickerVector[1] = (y - this._heightHalf) * this.matrixCache[4];
+      this.pickerPoint.x = (point.x - this.widthHalf)  * this.matrixCache[0];
+      this.pickerPoint.y = (point.y - this.heightHalf) * this.matrixCache[4];
     }
 
     _scope._updateFog = function() {
@@ -122,16 +116,16 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     _scope._collectLights = function() {
       this._gl.uniform3fv(this._locations["uLghtPos"], this._lightPositions);
-      this._gl.uniform2fv(this._locations["uLghtVol"], this._lightVolumes);
+      this._gl.uniform4fv(this._locations["uLghtVol"], this._lightVolumes);
       this._gl.uniform4fv(this._locations["uLghtCol"], this._lightColors);
-      this._gl.uniform1fv(this._locations["uLghtFX"],  this._lightEffects);
+      this._gl.uniform2fv(this._locations["uLghtFX"],  this._lightEffects);
     }
 
     _scope._drawItem = function(item, parent) {
       if (item.renderable) {
         item.props.z = ++this._zCounter;
         item.update(this._renderTime, parent);
-        this._drawFunctionMap[item.type](item, parent);
+        this._drawFunctionMap[item.TYPE](item, parent);
       }
     }
 
@@ -159,14 +153,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
       if (
         this._isPickerSet &&
         item.interactive &&
-        AGL.Matrix3.isPointInMatrix(
-          this._tempPickerVector,
-          parent.matrixCache,
-          item.matrixCache,
-          this._tempMatrix,
-          this._tempInverseMatrix
-        )
-      ) this._picked = item;
+        item.isContainsPoint(this.pickerPoint)
+      ) this.picked = item;
 
       var effectPosition = this._batchItems * this._effectLength;
 
@@ -195,13 +183,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._bindArrayBuffer(this._effectBuffer,     this._effectData);
     }
 
-    _scope._resize = function() {
-      if (_super._resize.call(this)) {
-        this._widthHalf  = this._width  * .5;
-        this._heightHalf = this._height * .5;
-      }
-    }
-
     _scope._updateColor = function() {
       this.worldColorUpdateId = this.color.updateId;
     }
@@ -222,21 +203,20 @@ AGL.Stage2D = helpers.createPrototypeClass(
     }
   }
 );
-helpers.constant(AGL.Stage2D, "MASK_TYPES", {
+AGL.Stage2D.MASK_TYPES = {
   "RED"   : 0,
   "GREEN" : 1,
   "BLUE"  : 2,
   "ALPHA" : 3,
   "AVG"   : 4,
-});
-helpers.constant(AGL.Stage2D, "MAX_LIGHT_SOURCES", 16);
+};
+AGL.Stage2D.MAX_LIGHT_SOURCES = 16;
 AGL.Stage2D.createVertexShader = function(config) {
   return
   "#version 300 es\n" +
 
   "in vec2 aPos;" +
   "in mat3 aMat;" +
-  "in mat3 aWrlMat;" +
   "in mat3 aTexMat;" +
   "in vec4 aTexCrop;" +
   "in vec4 aWrlCol;" +
@@ -264,7 +244,7 @@ AGL.Stage2D.createVertexShader = function(config) {
 
   "void main(void){" +
     "vec3 pos=vec3(aPos,1);" +
-    "gl_Position=vec4((aWrlMat*aMat*pos).xy,0,1);" +
+    "gl_Position=vec4((aMat*pos).xy,0,1);" +
     "vGlPos=gl_Position.xy;" +
     "vTexCrd=(aTexMat*pos).xy;" +
     "vMskCrd=(gl_Position.xy+vec2(1,-1))/vec2(2,-2);" +
@@ -318,9 +298,9 @@ AGL.Stage2D.createFragmentShader = function(config) {
   (
     config.isLightEnabled
       ? "uniform vec3 uLghtPos[" + maxLightSources + "];" +
-        "uniform vec2 uLghtVol[" + maxLightSources + "];" +
+        "uniform vec4 uLghtVol[" + maxLightSources + "];" +
         "uniform vec4 uLghtCol[" + maxLightSources + "];" +
-        "uniform float uLghtFX[" + maxLightSources + "];"
+        "uniform vec2 uLghtFX[" + maxLightSources + "];"
       : ""
   ) +
 
@@ -330,11 +310,11 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
   (
     config.isLightEnabled
-      ? "vec4 lghtVal(vec2 pos,vec2 lghtPos,vec2 lghtVol,vec4 lghtCol,float lghtFX){" +
-          "vec2 dist=abs((pos-lghtPos)/lghtVol);" +
-          "if(dist.x>1.||dist.y>1.)return vec4(0);" +
-          "vec2 v=pow(dist,vec2(2.));" +
-          "return lghtCol*max(0.,(1.-sqrt(v.x+v.y))*lghtFX);" +
+      ? "vec4 lghtVal(vec2 lghtPos,vec4 lghtVol,vec4 lghtCol,vec2 lghtFX){" +
+          "vec2 p=pow(abs(vGlPos*lghtVol.xw+vGlPos.yx*lghtVol.zy+lghtPos),vec2(2.));" +
+          "float dst=sqrt(p.x+p.y);" +
+          "if(dst>1.||dst<0.)return vec4(0);" +
+          "return lghtCol*max(0.,(1.-dst)*lghtFX.x)*lghtFX.y;" +
         "}"
       : ""
   ) +
@@ -381,7 +361,6 @@ AGL.Stage2D.createFragmentShader = function(config) {
           shader +=
           "if(uLghtCol[" + i + "].a>0.&&uLghtPos[" + i + "].z>vZIndex)" +
             "lghtCol+=lghtVal(" +
-              "vGlPos.xy," +
               "uLghtPos[" + i + "].xy," +
               "uLghtVol[" + i + "]," +
               "uLghtCol[" + i + "]," +

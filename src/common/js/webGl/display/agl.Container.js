@@ -6,33 +6,16 @@ AGL.Container = helpers.createPrototypeClass(
   function Container() {
     AGL.Item.call(this);
 
-    helpers.constant(this, "type", AGL.Container.TYPE);
+    this.TYPE = AGL.Container.TYPE;
 
     this.children = [];
 
-    this._parent = null;
-
-    this.worldPropsUpdateId         =
-    this.worldColorUpdateId         =
-    this._currentWorldPropsUpdateId =
-    this._currentWorldColorUpdateId = 0;
+    this.worldPropsUpdateId =
+    this.worldColorUpdateId = 0;
 
     this.colorCache = [1, 1, 1, 1];
   },
   function(_scope, _super) {
-    helpers.get(_scope, "numChildren", function() { return this.children.length; });
-
-    helpers.property(_scope, "parent", {
-      get: function() { return this._parent; },
-      set: function(v) {
-        if (this._parent !== v) {
-          this._parent = v;
-          this._currentWorldPropsUpdateId =
-          this._currentWorldColorUpdateId = 0;
-        }
-      }
-    });
-
     _scope.destruct = function() {
       this.empty();
 
@@ -40,7 +23,7 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope.empty = function() {
-      while (this.numChildren) this.removeChildAt(0);
+      while (this.children.length) this.removeChildAt(0);
     }
 
     _scope.contains = function(child) {
@@ -48,7 +31,7 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope.addChild = function(child) {
-      return this.addChildAt(child, this.numChildren);
+      return this.addChildAt(child, this.children.length);
     }
 
     _scope.addChildAt = function(child, index) {
@@ -96,25 +79,38 @@ AGL.Container = helpers.createPrototypeClass(
       return true;
     }
 
+    _scope.getBounds = function() {
+      this._bounds.x      =  1/0;
+      this._bounds.y      =  1/0;
+      this._bounds.width  = -1/0;
+      this._bounds.height = -1/0;
+
+      var i;
+      var l = this.children.length;
+      var childBounds;
+      for (i = 0; i < l; ++i) {
+        childBounds = this.children[i].getBounds();
+        if (this._bounds.x      > childBounds.x)      this._bounds.x      = childBounds.x;
+        if (this._bounds.y      > childBounds.y)      this._bounds.y      = childBounds.y;
+        if (this._bounds.width  < childBounds.width)  this._bounds.width  = childBounds.width;
+        if (this._bounds.height < childBounds.height) this._bounds.height = childBounds.height;
+      }
+
+      return this._bounds;
+    }
+
     _scope.update = function(renderTime, parent) {
       this._updateProps(parent);
       this._updateColor(parent);
     }
 
     _scope._updateProps = function(parent) {
-      var props = this.props;
-      if (this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || this._currentPropsUpdateId < props.updateId) {
-        this._currentPropsUpdateId = props.updateId;
-        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
-        ++this.worldPropsUpdateId;
-
-        this._transformItem(props, parent);
-      }
+      _super._updateProps.call(this, parent) && ++this.worldPropsUpdateId;
     }
 
     _scope._updateColor = function(parent) {
       var props = this.color;
-      if (this._currentWorldColorUpdateId < parent.worldColorUpdateId || this._currentColorUpdateId < props.updateId) {
+      if (parent && this._currentWorldColorUpdateId < parent.worldColorUpdateId || this._currentColorUpdateId < props.updateId) {
         this._currentColorUpdateId = props.updateId;
         this._currentWorldColorUpdateId = parent.worldColorUpdateId;
         ++this.worldColorUpdateId;
@@ -129,4 +125,4 @@ AGL.Container = helpers.createPrototypeClass(
     }
   }
 );
-helpers.constant(AGL.Container, "TYPE", "container");
+AGL.Container.TYPE = "container";

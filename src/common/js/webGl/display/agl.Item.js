@@ -1,65 +1,92 @@
 require("../NameSpace.js");
 require("../data/props/agl.ItemProps.js");
 require("../data/props/agl.ColorProps.js");
+require("../geom/agl.Rect.js");
 
 AGL.Item = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
   function Item() {
     helpers.BasePrototypeClass.call(this);
 
-    helpers.constant(this, "type", AGL.Item.TYPE);
+    this.TYPE = AGL.Item.TYPE;
 
-    this.renderable  = true;
-    this.interactive = false;
+    this.renderable = true;
 
     this.matrixCache = AGL.Matrix3.identity();
 
     this.props = new AGL.ItemProps();
     this.color = new AGL.ColorProps();
 
-    this._currentPropsUpdateId =
-    this._currentColorUpdateId = 0;
+    this._currentPropsUpdateId      =
+    this._currentColorUpdateId      =
+    this._currentWorldPropsUpdateId =
+    this._currentWorldColorUpdateId =
+    this._matrixUpdateId            =
+    this._currentMatrixUpdateId     = 0;
 
     this.colorCache = this.color.items;
 
-    this.parent = null;
+    this._parent = null;
+
+    this._bounds = AGL.Rect.create();
   },
   function(_scope, _super) {
-    helpers.get(_scope, "stage", function() { return this.parent ? this.parent.stage : null; });
+    helpers.get(_scope, "stage", function() { return this._parent ? this._parent.stage : null; });
+
+    helpers.property(_scope, "parent", {
+      get: function() { return this._parent; },
+      set: function(v) {
+        if (this._parent !== v) {
+          this._parent = v;
+          this._currentWorldPropsUpdateId =
+          this._currentWorldColorUpdateId = 0;
+        }
+      }
+    });
+
+    _scope.getBounds = function() {
+      return this._bounds;
+    }
 
     _scope.destruct = function() {
-      this.parent && this.parent.removeChild && this.parent.removeChild(this);
-
+      this._parent && this._parent.removeChild && this._parent.removeChild(this);
       _super.destruct.call(this);
     }
 
     _scope.update = function(renderTime, parent) {
-      var props = this.props;
-      if (this._currentPropsUpdateId < props.updateId) {
-        this._currentPropsUpdateId = props.updateId;
-        this._transformItem(props, parent);
-      }
+      this._updateProps(parent);
     }
 
-    _scope._transformItem = function(props, parent) {
-      AGL.Matrix3.transform(
-        parent.matrixCache,
+    _scope._updateProps = function(parent) {
+      var props = this.props;
+      if (parent && this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || this._currentPropsUpdateId < props.updateId) {
+        this._currentPropsUpdateId = props.updateId;
+        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
+        ++this._matrixUpdateId;
 
-        props.x,
-        props.y,
+        AGL.Matrix3.transform(
+          parent.matrixCache,
 
-        props.sinRotation,
-        props.cosRotation,
+          props.x,
+          props.y,
 
-        props.anchorX,
-        props.anchorY,
+          props.sinRotation,
+          props.cosRotation,
 
-        props.scaledWidth,
-        props.scaledHeight,
+          props.anchorX,
+          props.anchorY,
 
-        this.matrixCache
-      );
+          props.scaledWidth,
+          props.scaledHeight,
+
+          this.matrixCache
+        );
+
+        return true;
+      }
+
+      return false;
     }
   }
 );
-helpers.constant(AGL.Item, "TYPE", "item");
+AGL.Item.TYPE = "item";

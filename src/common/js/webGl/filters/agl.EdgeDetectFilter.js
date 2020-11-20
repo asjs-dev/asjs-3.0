@@ -6,7 +6,7 @@ AGL.EdgeDetectFilter = helpers.createPrototypeClass(
   function EdgeDetectFilter(intensity) {
     AGL.AbstractFilter.call(this, 1, 0, intensity);
 
-    helpers.arraySet(this._kernels, [
+    helpers.arraySet(this.kernels, [
       -1, -1, -1,
       -1,  8, -1,
       -1, -1, -1

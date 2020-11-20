@@ -6,7 +6,7 @@ AGL.SharpenFilter = helpers.createPrototypeClass(
   function SharpenFilter(intensity) {
     AGL.AbstractFilter.call(this, 1, 0, intensity);
 
-    helpers.arraySet(this._kernels, [
+    helpers.arraySet(this.kernels, [
       -1,  -1,  -1,
       -1,  16,  -1,
       -1,  -1,  -1

@@ -36,9 +36,9 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
       this.updateAnimation = this._updateAnimation;
     }
 
-    _scope.update = function(renderTime) {
+    _scope.update = function(renderTime, parent) {
       this.updateAnimation(renderTime);
-      _super.update.call(this);
+      _super.update.call(this, renderTime, parent);
     }
 
     _scope._updateAnimation = function(renderTime) {
@@ -60,7 +60,6 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
 
     _scope.destruct = function() {
       this.stop();
-
       _super.destruct.call(this);
     }
   }

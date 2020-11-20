@@ -10,8 +10,8 @@ AGL.GlowFilter = helpers.createPrototypeClass(
     this.volume     = volume;
   }, function(_scope) {
     helpers.property(_scope, "volume", {
-      get: function() { return this._values[3]; },
-      set: function(v) { this._values[3] = v; }
+      get: function() { return this.values[3]; },
+      set: function(v) { this.values[3] = v; }
     });
   }
 );

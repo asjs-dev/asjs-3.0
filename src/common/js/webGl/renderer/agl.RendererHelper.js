@@ -11,6 +11,8 @@ AGL.RendererHelper.initRenderer = function(config) {
 
   this._width                     =
   this._height                    =
+  this.widthHalf                  =
+  this.heightHalf                 =
   this._sizeUpdateId              =
   this._currentSizeUpdateId       =
   this._renderTime                =
@@ -100,6 +102,9 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
       this._canvas.width  = this._width;
       this._canvas.height = this._height;
+
+      this.widthHalf  = this._width  * .5;
+      this.heightHalf = this._height * .5;
 
       this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
 

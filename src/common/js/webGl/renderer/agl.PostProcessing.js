@@ -54,8 +54,9 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         isLast = i > minL;
 
         if (
-          useFilter && filter.texture &&
-          (this._currentFilterTexture !== filter.texture || filter.texture.isNeedToDraw(this._gl, this._renderTime))
+          useFilter &&
+          filter.texture &&
+          (filter.texture.isNeedToDraw(this._gl, this._renderTime) || this._currentFilterTexture !== filter.texture)
         ) {
           this._currentFilterTexture = filter.texture;
           AGL.Utils.useTexture(this._gl, 1, filter.texture);
@@ -74,8 +75,8 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         if (useFilter) {
           this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
           this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
-          this._gl.uniform1i(this._locations["uFtrT"],    filter.type);
-          this._gl.uniform1i(this._locations["uFtrST"],   filter.subType);
+          this._gl.uniform1i(this._locations["uFtrT"],    filter.TYPE);
+          this._gl.uniform1i(this._locations["uFtrST"],   filter.SUB_TYPE);
         }
 
         (useFilter || isLast) && this._gl.drawArrays(AGL.Const.TRIANGLE_FAN, 0, 6);
