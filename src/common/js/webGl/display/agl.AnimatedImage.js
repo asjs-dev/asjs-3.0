@@ -18,7 +18,9 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
   },
   function(_scope, _super) {
     _scope.gotoAndStop = function(frame) {
+      this.stop();
       this.frame = frame;
+      this._useTextureFrame();
     }
 
     _scope.gotoAndPlay = function(frame) {
@@ -48,14 +50,18 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
         this.frame += Math.floor(ellapsedTime / this.frameLength);
         this.frame >= this.frames.length && (this.frame = 0);
 
-        var textureFrameCrop = this.frames[this.frame];
-        var textureCrop      = this.textureCrop;
-
-        textureCrop.x      = textureFrameCrop.x;
-        textureCrop.y      = textureFrameCrop.y;
-        textureCrop.width  = textureFrameCrop.width;
-        textureCrop.height = textureFrameCrop.height;
+        this._useTextureFrame();
       }
+    }
+
+    _scope._useTextureFrame = function() {
+      var textureFrameCrop = this.frames[this.frame];
+      var textureCrop      = this.textureCrop;
+
+      textureCrop.x      = textureFrameCrop.x;
+      textureCrop.y      = textureFrameCrop.y;
+      textureCrop.width  = textureFrameCrop.width;
+      textureCrop.height = textureFrameCrop.height;
     }
 
     _scope.destruct = function() {
