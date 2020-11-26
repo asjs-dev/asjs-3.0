@@ -38,9 +38,9 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
       this.updateAnimation = this._updateAnimation;
     }
 
-    _scope.update = function(renderTime, parent) {
+    _scope.update = function(renderTime) {
       this.updateAnimation(renderTime);
-      _super.update.call(this, renderTime, parent);
+      _super.update.call(this, renderTime);
     }
 
     _scope._updateAnimation = function(renderTime) {
@@ -56,12 +56,11 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
 
     _scope._useTextureFrame = function() {
       var textureFrameCrop = this.frames[this.frame];
-      var textureCrop      = this.textureCrop;
 
-      textureCrop.x      = textureFrameCrop.x;
-      textureCrop.y      = textureFrameCrop.y;
-      textureCrop.width  = textureFrameCrop.width;
-      textureCrop.height = textureFrameCrop.height;
+      this.textureCrop.x      = textureFrameCrop.x;
+      this.textureCrop.y      = textureFrameCrop.y;
+      this.textureCrop.width  = textureFrameCrop.width;
+      this.textureCrop.height = textureFrameCrop.height;
     }
 
     _scope.destruct = function() {

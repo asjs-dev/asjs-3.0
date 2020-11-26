@@ -1,4 +1,4 @@
-require("../NameSpace.js");
+require("../../NameSpace.js");
 
 AGL.TextureInfo = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,

@@ -56,8 +56,8 @@ AGL.AbstractDrawable = helpers.createPrototypeClass(
     }
 
     _scope._updateAdditionalData = function() {
-      if (this.stage && this._currentMatrixUpdateId < this._matrixUpdateId) {
-        this._currentMatrixUpdateId = this._matrixUpdateId;
+      if (this.stage && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
+        this._currentAdditionalPropsUpdateId = this.propsUpdateId;
         AGL.Matrix3.inverse(this.matrixCache, this._inverseMatrixCache);
         this._calcBounds();
       }

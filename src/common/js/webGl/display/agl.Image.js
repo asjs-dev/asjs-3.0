@@ -30,8 +30,8 @@ AGL.Image = helpers.createPrototypeClass(
     this.texture = texture;
   },
   function(_scope) {
-    _scope.update = function(renderTime, parent) {
-      this._updateProps(parent);
+    _scope.update = function(renderTime) {
+      this._updateProps();
       this._updateTexture();
     }
 
@@ -39,24 +39,25 @@ AGL.Image = helpers.createPrototypeClass(
       this._updateAdditionalData();
       return AGL.Matrix3.isPointInMatrix(this._inverseMatrixCache, point);
     }
-    
+
     _scope._updateTexture = function() {
-      var textureProps = this.textureProps;
-      if (this._currentTexturePropsUpdateId < textureProps.updateId) {
-        this._currentTexturePropsUpdateId = textureProps.updateId;
+      if (this._currentTexturePropsUpdateId < this.textureProps.updateId) {
+        this._currentTexturePropsUpdateId = this.textureProps.updateId;
 
         AGL.Matrix3.transformLocal(
-          textureProps.x,
-          textureProps.y,
+          this.textureProps.x,
+          this.textureProps.y,
 
-          textureProps.sinRotation,
-          textureProps.cosRotation,
+          this.textureProps.sinRotationA,
+          this.textureProps.cosRotationA,
+          this.textureProps.sinRotationB,
+          this.textureProps.cosRotationB,
 
-          textureProps.anchorX,
-          textureProps.anchorY,
+          this.textureProps.anchorX,
+          this.textureProps.anchorY,
 
-          textureProps.scaledWidth,
-          textureProps.scaledHeight,
+          this.textureProps.scaledWidth,
+          this.textureProps.scaledHeight,
 
           this.textureMatrixCache
         );
@@ -66,8 +67,8 @@ AGL.Image = helpers.createPrototypeClass(
 );
 AGL.Image.TYPE     = "drawable";
 AGL.Image.TintType = {
-  "NONE"      : 0,
-  "NORMAL"    : 1,
-  "GRAYSCALE" : 2,
-  "OVERRIDE"  : 3,
+  NONE      : 0,
+  NORMAL    : 1,
+  GRAYSCALE : 2,
+  OVERRIDE  : 3,
 };

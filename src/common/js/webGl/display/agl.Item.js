@@ -17,12 +17,12 @@ AGL.Item = helpers.createPrototypeClass(
     this.props = new AGL.ItemProps();
     this.color = new AGL.ColorProps();
 
-    this._currentPropsUpdateId      =
-    this._currentColorUpdateId      =
-    this._currentWorldPropsUpdateId =
-    this._currentWorldColorUpdateId =
-    this._matrixUpdateId            =
-    this._currentMatrixUpdateId     = 0;
+    this._currentPropsUpdateId           =
+    this._currentColorUpdateId           =
+    this._currentParentPropsUpdateId     =
+    this._currentParentColorUpdateId     =
+    this._currentAdditionalPropsUpdateId =
+    this.propsUpdateId                   = 0;
 
     this.colorCache = this.color.items;
 
@@ -38,8 +38,9 @@ AGL.Item = helpers.createPrototypeClass(
       set: function(v) {
         if (this._parent !== v) {
           this._parent = v;
-          this._currentWorldPropsUpdateId =
-          this._currentWorldColorUpdateId = 0;
+          this._currentParentPropsUpdateId     =
+          this._currentParentColorUpdateId     =
+          this._currentAdditionalPropsUpdateId = 0;
         }
       }
     });
@@ -53,39 +54,41 @@ AGL.Item = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
-    _scope.update = function(renderTime, parent) {
-      this._updateProps(parent);
+    _scope.update = function(renderTime) {
+      this._updateProps();
     }
 
-    _scope._updateProps = function(parent) {
-      var props = this.props;
-      if (parent && this._currentWorldPropsUpdateId < parent.worldPropsUpdateId || this._currentPropsUpdateId < props.updateId) {
-        this._currentPropsUpdateId = props.updateId;
-        this._currentWorldPropsUpdateId = parent.worldPropsUpdateId;
-        ++this._matrixUpdateId;
+    _scope._updateProps = function() {
+      if (
+        this._currentParentPropsUpdateId < this._parent.propsUpdateId ||
+        this._currentPropsUpdateId < this.props.updateId
+      ) this._updateTransform();
+    }
 
-        AGL.Matrix3.transform(
-          parent.matrixCache,
+    _scope._updateTransform = function() {
+      this._currentParentPropsUpdateId = this._parent.propsUpdateId;
+      this._currentPropsUpdateId       = this.props.updateId;
+      ++this.propsUpdateId;
 
-          props.x,
-          props.y,
+      AGL.Matrix3.transform(
+        this._parent.matrixCache,
 
-          props.sinRotation,
-          props.cosRotation,
+        this.props.x,
+        this.props.y,
 
-          props.anchorX,
-          props.anchorY,
+        this.props.sinRotationA,
+        this.props.cosRotationA,
+        this.props.sinRotationB,
+        this.props.cosRotationB,
 
-          props.scaledWidth,
-          props.scaledHeight,
+        this.props.anchorX,
+        this.props.anchorY,
 
-          this.matrixCache
-        );
+        this.props.scaledWidth,
+        this.props.scaledHeight,
 
-        return true;
-      }
-
-      return false;
+        this.matrixCache
+      );
     }
   }
 );

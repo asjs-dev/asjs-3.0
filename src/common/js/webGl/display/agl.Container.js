@@ -10,8 +10,7 @@ AGL.Container = helpers.createPrototypeClass(
 
     this.children = [];
 
-    this.worldPropsUpdateId =
-    this.worldColorUpdateId = 0;
+    this.parentColorUpdateId = 0;
 
     this.colorCache = [1, 1, 1, 1];
   },
@@ -90,37 +89,33 @@ AGL.Container = helpers.createPrototypeClass(
       var childBounds;
       for (i = 0; i < l; ++i) {
         childBounds = this.children[i].getBounds();
-        if (this._bounds.x      > childBounds.x)      this._bounds.x      = childBounds.x;
-        if (this._bounds.y      > childBounds.y)      this._bounds.y      = childBounds.y;
-        if (this._bounds.width  < childBounds.width)  this._bounds.width  = childBounds.width;
-        if (this._bounds.height < childBounds.height) this._bounds.height = childBounds.height;
+        this._bounds.x      = Math.min(this._bounds.x,      childBounds.x);
+        this._bounds.y      = Math.min(this._bounds.y,      childBounds.y);
+        this._bounds.width  = Math.max(this._bounds.width,  childBounds.width);
+        this._bounds.height = Math.max(this._bounds.height, childBounds.height);
       }
 
       return this._bounds;
     }
 
-    _scope.update = function(renderTime, parent) {
-      this._updateProps(parent);
-      this._updateColor(parent);
+    _scope.update = function(renderTime) {
+      this._updateProps();
+      this._updateColor();
     }
 
-    _scope._updateProps = function(parent) {
-      _super._updateProps.call(this, parent) && ++this.worldPropsUpdateId;
-    }
+    _scope._updateColor = function() {
+      if (
+        this._currentParentColorUpdateId < this._parent.colorUpdateId ||
+        this._currentColorUpdateId < this.color.updateId
+      ) {
+        this._currentColorUpdateId       = this.color.updateId;
+        this._currentParentColorUpdateId = this._parent.colorUpdateId;
+        ++this.colorUpdateId;
 
-    _scope._updateColor = function(parent) {
-      var props = this.color;
-      if (parent && this._currentWorldColorUpdateId < parent.worldColorUpdateId || this._currentColorUpdateId < props.updateId) {
-        this._currentColorUpdateId = props.updateId;
-        this._currentWorldColorUpdateId = parent.worldColorUpdateId;
-        ++this.worldColorUpdateId;
-
-        var parentColor = parent.colorCache;
-
-        this.colorCache[0] = parentColor[0] * props.r;
-        this.colorCache[1] = parentColor[1] * props.g;
-        this.colorCache[2] = parentColor[2] * props.b;
-        this.colorCache[3] = parentColor[3] * props.a;
+        this.colorCache[0] = this._parent.colorCache[0] * this.color.r;
+        this.colorCache[1] = this._parent.colorCache[1] * this.color.g;
+        this.colorCache[2] = this._parent.colorCache[2] * this.color.b;
+        this.colorCache[3] = this._parent.colorCache[3] * this.color.a;
       }
     }
   }

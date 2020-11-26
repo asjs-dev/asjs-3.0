@@ -6,15 +6,15 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
   function SimpleRenderer(config) {
     config.vertexShader   = config.vertexShader   || AGL.SimpleRenderer.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.SimpleRenderer.createFragmentShader;
-    config.locations      = Object.assign(config.locations, {
-      "aTexId" : "getAttribLocation",
-    });
+    config.locations      = config.locations.concat([
+      "aTexId"
+    ]);
 
     AGL.BaseRenderer.call(this, config);
   },
   function(_scope, _super) {
-    _scope._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
-      _super._setBufferData.call(this, item, parent, textureMapIndex, matId, quadId);
+    _scope._setBufferData = function(item, textureMapIndex, matId, quadId) {
+      _super._setBufferData.call(this, item, textureMapIndex, matId, quadId);
       this._textureIdData[this._batchItems] = textureMapIndex;
     }
 
@@ -74,6 +74,6 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
   AGL.RendererHelper.createGetTextureFunction(maxTextureImageUnits) +
 
   "void main(void){" +
-    AGL.RendererHelper.createGetTexColor() +
+    AGL.RendererHelper.getTexColor +
   "}";
 };

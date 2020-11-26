@@ -8,30 +8,30 @@ AGL.CreateConfig = function(options) {
   var attributes = options.contextAttributes || {};
 
   return {
-    "canvas"         : options.canvas,
+    canvas         : options.canvas,
 
-    "locations"      : options.locations || {},
+    locations      : options.locations || [],
 
-    "lightNum"       : options.lightNum,
-    "isLightEnabled" : options.lightNum > 0,
+    lightNum       : options.lightNum,
+    isLightEnabled : options.lightNum > 0,
 
-    "isMaskEnabled"  : options.isMaskEnabled,
+    isMaskEnabled  : options.isMaskEnabled,
 
-    "vertexShader"   : options.vertexShader,
-    "fragmentShader" : options.fragmentShader,
+    vertexShader   : options.vertexShader,
+    fragmentShader : options.fragmentShader,
 
-    "precision"      : options.precision || AGL.RendererHelper.Precisons.HIGH,
+    precision      : options.precision || AGL.RendererHelper.Precisons.HIGH,
 
-    "maxBatchItems"  : options.maxBatchItems || 1e4,
+    maxBatchItems  : options.maxBatchItems || 1e4,
 
-    "contextAttributes" : {
-      "alpha"                 : attributes.alpha || false,
-      "antialias"             : attributes.antialias || false,
-      "depth"                 : attributes.depth || false,
-      "stencil"               : attributes.stencil || false,
-      "premultipliedAlpha"    : attributes.premultipliedAlpha || false,
-      "powerPreference"       : attributes.powerPreference || "high-performance",
-      "preserveDrawingBuffer" : attributes.preserveDrawingBuffer || false,
+    contextAttributes : {
+      alpha                 : attributes.alpha || false,
+      antialias             : attributes.antialias || false,
+      depth                 : attributes.depth || false,
+      stencil               : attributes.stencil || false,
+      premultipliedAlpha    : attributes.premultipliedAlpha || false,
+      powerPreference       : attributes.powerPreference || "high-performance",
+      preserveDrawingBuffer : attributes.preserveDrawingBuffer || false,
     }
   };
 };

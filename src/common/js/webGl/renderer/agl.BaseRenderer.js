@@ -14,13 +14,13 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     config.vertexShader   = config.vertexShader   || AGL.BaseRenderer.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.BaseRenderer.createFragmentShader;
-    config.locations      = Object.assign(config.locations, {
-      "aPos"     : "getAttribLocation",
-      "aMat"     : "getAttribLocation",
-      "aTexMat"  : "getAttribLocation",
-      "aTexCrop" : "getAttribLocation",
-      "uTex"     : "getUniformLocation",
-    });
+    config.locations      = config.locations.concat([
+      "aPos",
+      "aMat",
+      "aTexMat",
+      "aTexCrop",
+      "uTex"
+    ]);
 
     this._MAX_BATCH_ITEMS = config.maxBatchItems;
 
@@ -77,10 +77,10 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._batchItems > 0 && this._batchDraw();
     }
 
-    _scope._drawItem = function(item, parent) {
+    _scope._drawItem = function(item) {
       if (item.renderable) {
-        item.update(this._renderTime, parent);
-        this._drawFunctionMap[item.TYPE](item, parent);
+        item.update(this._renderTime);
+        this._drawFunctionMap[item.TYPE](item);
       }
     }
 
@@ -88,23 +88,22 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       var children = container.children;
       var i;
       var l = children.length;
-      for (i = 0; i < l; ++i) this._drawItem(children[i], container);
+      for (i = 0; i < l; ++i) this._drawItem(children[i]);
     }
 
-    _scope._setBufferData = function(item, parent, textureMapIndex, matId, quadId) {
+    _scope._setBufferData = function(item, textureMapIndex, matId, quadId) {
       helpers.arraySet(this._matrixData,        item.matrixCache,        matId);
       helpers.arraySet(this._textureMatrixData, item.textureMatrixCache, matId);
       helpers.arraySet(this._textureCropData,   item.textureCropCache,   quadId);
     }
 
-    _scope._drawImage = function(item, parent) {
+    _scope._drawImage = function(item) {
       this._setBlendMode(item.blendMode);
 
       var textureMapIndex = this._drawTexture(item.texture, false);
 
       this._setBufferData(
         item,
-        parent,
         textureMapIndex,
         this._batchItems * 9,
         this._batchItems * 4
@@ -203,7 +202,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       if (this._resizeCanvas()) {
         AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
 
-        ++this.worldPropsUpdateId;
+        ++this.propsUpdateId;
 
         return true;
       }
@@ -222,7 +221,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
         AGL.Const.STATIC_DRAW
       );
 
-      this._gl.uniform1iv(this._locations["uTex"], this._textureIds);
+      this._gl.uniform1iv(this._locations.uTex, this._textureIds);
 
       this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
   		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",     9, 3, 3, AGL.Const.FLOAT, 4);

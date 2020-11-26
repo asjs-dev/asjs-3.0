@@ -12,7 +12,7 @@ require("../NameSpace.js");
       this.loadFragmentShader = this.loadShader.bind(this, "FRAGMENT_SHADER");
 
       this.info = {
-        "isWebGl2Supported": false
+        isWebGl2Supported : false
       };
 
       var canvas = document.createElement("canvas");
@@ -109,9 +109,13 @@ require("../NameSpace.js");
       }
 
       _scope.getLocationsFor = function(gl, program, locationsDescriptor) {
+        var locationTypes = {
+          a : "Attrib",
+          u : "Uniform"
+        }
         var locations = {};
-        helpers.map(locationsDescriptor, function(key, shaderLocationType) {
-          locations[key] = gl[shaderLocationType](program, key);
+        helpers.map(locationsDescriptor, function(key, name) {
+          locations[name] = gl["get" + locationTypes[name[0]] + "Location"](program, name);
         });
         return locations;
       }

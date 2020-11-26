@@ -6,18 +6,19 @@ AGL.PostProcessing = helpers.createPrototypeClass(
   function PostProcessing(config) {
     helpers.BasePrototypeClass.call(this);
 
+    var almafa = 0.1;
     config.vertexShader   = config.vertexShader   || AGL.PostProcessing.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.PostProcessing.createFragmentShader;
-    config.locations      = Object.assign(config.locations, {
-      "aPos"    : "getAttribLocation",
-      "uTex"    : "getUniformLocation",
-      "uDspTex" : "getUniformLocation",
-      "uFlpY"   : "getUniformLocation",
-      "uFtrT"   : "getUniformLocation",
-      "uFtrST"  : "getUniformLocation",
-      "uFtrVal" : "getUniformLocation",
-      "uFtrKer" : "getUniformLocation",
-    });
+    config.locations      = config.locations.concat([
+      "aPos",
+      "uTex",
+      "uDspTex",
+      "uFlpY",
+      "uFtrT",
+      "uFtrST",
+      "uFtrVal",
+      "uFtrKer"
+    ]);
 
     this.filters = [];
 
@@ -34,7 +35,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
     _scope._render = function() {
       this.texture.isNeedToDraw(this._gl, this._renderTime);
       AGL.Utils.useTexture(this._gl, 0, this.texture);
-      this._gl.uniform1f(this._locations["uFlpY"], 1);
+      this._gl.uniform1f(this._locations.uFlpY, 1);
 
       this.clear();
 
@@ -64,19 +65,19 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
         if (isLast) {
           this._gl.bindFramebuffer(AGL.Const.FRAMEBUFFER, null);
-          this._gl.uniform1f(this._locations["uFlpY"], 1);
+          this._gl.uniform1f(this._locations.uFlpY, 1);
         } else if (useFilter) {
           framebuffer = this._frameBuffers[i & 1];
           framebuffer.isNeedToDraw(this._gl, this._renderTime);
           this._gl.bindFramebuffer(AGL.Const.FRAMEBUFFER, framebuffer.framebuffer);
-          this._gl.uniform1f(this._locations["uFlpY"],    -1);
+          this._gl.uniform1f(this._locations.uFlpY, -1);
         }
 
         if (useFilter) {
-          this._gl.uniform1fv(this._locations["uFtrVal"], filter.values);
-          this._gl.uniform1fv(this._locations["uFtrKer"], filter.kernels);
-          this._gl.uniform1i(this._locations["uFtrT"],    filter.TYPE);
-          this._gl.uniform1i(this._locations["uFtrST"],   filter.SUB_TYPE);
+          this._gl.uniform1fv(this._locations.uFtrVal, filter.values);
+          this._gl.uniform1fv(this._locations.uFtrKer, filter.kernels);
+          this._gl.uniform1i(this._locations.uFtrT,    filter.TYPE);
+          this._gl.uniform1i(this._locations.uFtrST,   filter.SUB_TYPE);
         }
 
         (useFilter || isLast) && this._gl.drawArrays(AGL.Const.TRIANGLE_FAN, 0, 6);
@@ -120,8 +121,8 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         new AGL.Framebuffer()
       ];
 
-      this._gl.uniform1i(this._locations["uTex"],    0);
-      this._gl.uniform1i(this._locations["uDspTex"], 1);
+      this._gl.uniform1i(this._locations.uTex,    0);
+      this._gl.uniform1i(this._locations.uDspTex, 1);
     }
   }
 );

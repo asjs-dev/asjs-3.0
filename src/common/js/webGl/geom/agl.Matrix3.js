@@ -25,30 +25,32 @@ AGL.Matrix3 = {
   },
   transformLocal: function(
     x, y,
-    sinRotation, cosRotation,
+    sinRotationA, cosRotationA,
+    sinRotationB, cosRotationB,
     anchorX, anchorY,
     scaleX, scaleY,
     destinationMatrix
   ) {
-    destinationMatrix[0] =   cosRotation * scaleX;
-    destinationMatrix[1] =   sinRotation * scaleX;
-    destinationMatrix[3] = - sinRotation * scaleY;
-    destinationMatrix[4] =   cosRotation * scaleY;
+    destinationMatrix[0] =   cosRotationA * scaleX;
+    destinationMatrix[1] =   sinRotationA * scaleX;
+    destinationMatrix[3] = - sinRotationB * scaleY;
+    destinationMatrix[4] =   cosRotationB * scaleY;
     destinationMatrix[6] =   x - anchorX * destinationMatrix[0] - anchorY * destinationMatrix[3];
     destinationMatrix[7] =   y - anchorX * destinationMatrix[1] - anchorY * destinationMatrix[4];
   },
   transform: function(
     matrix,
     x, y,
-    sinRotation, cosRotation,
+    sinRotationA, cosRotationA,
+    sinRotationB, cosRotationB,
     anchorX, anchorY,
     scaleX, scaleY,
     destinationMatrix
   ) {
-    destinationMatrix[0] = (cosRotation * matrix[0] + sinRotation * matrix[3]) * scaleX;
-    destinationMatrix[1] = (cosRotation * matrix[1] + sinRotation * matrix[4]) * scaleX;
-    destinationMatrix[3] = (cosRotation * matrix[3] - sinRotation * matrix[0]) * scaleY;
-    destinationMatrix[4] = (cosRotation * matrix[4] - sinRotation * matrix[1]) * scaleY;
+    destinationMatrix[0] = (cosRotationA * matrix[0] + sinRotationA * matrix[3]) * scaleX;
+    destinationMatrix[1] = (cosRotationA * matrix[1] + sinRotationA * matrix[4]) * scaleX;
+    destinationMatrix[3] = (cosRotationB * matrix[3] - sinRotationB * matrix[0]) * scaleY;
+    destinationMatrix[4] = (cosRotationB * matrix[4] - sinRotationB * matrix[1]) * scaleY;
 
     destinationMatrix[6] = - anchorX * destinationMatrix[0]
                            - anchorY * destinationMatrix[3]

@@ -181,8 +181,8 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
       ]),
       AGL.Const.STATIC_DRAW
     );
-    this._gl.vertexAttribPointer(this._locations["aPos"], 2, AGL.Const.FLOAT, false, 0, 0);
-    this._gl.enableVertexAttribArray(this._locations["aPos"]);
+    this._gl.vertexAttribPointer(this._locations.aPos, 2, AGL.Const.FLOAT, false, 0, 0);
+    this._gl.enableVertexAttribArray(this._locations.aPos);
 
     this._initCustom();
   }
@@ -206,10 +206,10 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
 AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
   var func =
-  "vec4 gtTexCol(float id,vec2 crd){";
+  "vec4 gtTexCol(float i,vec2 c){";
 
   for (var i = 0; i < maxTextureImageUnits; ++i) func +=
-    (i > 0 ? "else " : "") + "if(id<" + (i + 1) + ".)return texture(uTex[" + i + "],crd);";
+    (i > 0 ? "else " : "") + "if(i<" + (i + 1) + ".)return texture(uTex[" + i + "],c);";
 
   func +=
     "return vec4(0);" +
@@ -217,12 +217,10 @@ AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
   return func;
 };
 
-AGL.RendererHelper.createGetTexColor = function() {
-  return "fgCol=gtTexCol(vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));";
-}
+AGL.RendererHelper.getTexColor = "fgCol=gtTexCol(vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));";
 
 AGL.RendererHelper.Precisons = {
-  "HIGH"   : "highp",
-  "MEDIUM" : "mediump",
-  "LOW"    : "lowp"
+  HIGH   : "highp",
+  MEDIUM : "mediump",
+  LOW    : "lowp"
 };
