@@ -65,9 +65,9 @@ helpers.createSingletonClass(ASJSUtils, "URLParser", helpers.BaseClass, function
       _latestUrl = decodeURIComponent(location.href);
 
       _params = {
-        "base"  : "",
-        "hash"  : {},
-        "query" : {}
+        base  : "",
+        hash  : {},
+        query : {}
       };
 
       var type = "base";
