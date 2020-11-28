@@ -62,28 +62,38 @@ AGL.Light = helpers.createPrototypeClass(
 
     _scope._updateTransform = function() {
       _super._updateTransform.call(this);
-      AGL.Matrix3.inverse(this.matrixCache, this._inverseMatrixCache);
 
-      this._lightPositions[this._tripId]     = this._inverseMatrixCache[4];
-      this._lightPositions[this._tripId + 1] = this._inverseMatrixCache[5];
-      this._lightPositions[this._tripId + 2] = this.props.z;
+      var inverseMatrixCache = this._inverseMatrixCache;
+      var lightPositions     = this._lightPositions;
+      var lightVolumes       = this._lightVolumes;
 
-      this._lightVolumes[this._quadId]     = this._inverseMatrixCache[0];
-      this._lightVolumes[this._quadId + 1] = this._inverseMatrixCache[1];
-      this._lightVolumes[this._quadId + 2] = this._inverseMatrixCache[2];
-      this._lightVolumes[this._quadId + 3] = this._inverseMatrixCache[3];
+      AGL.Matrix3.inverse(this.matrixCache, inverseMatrixCache);
+
+      lightPositions[this._tripId]     = inverseMatrixCache[4];
+      lightPositions[this._tripId + 1] = inverseMatrixCache[5];
+      lightPositions[this._tripId + 2] = this.props.z;
+
+      lightVolumes[this._quadId]     = inverseMatrixCache[0];
+      lightVolumes[this._quadId + 1] = inverseMatrixCache[1];
+      lightVolumes[this._quadId + 2] = inverseMatrixCache[2];
+      lightVolumes[this._quadId + 3] = inverseMatrixCache[3];
     }
 
     _scope._updateColor = function() {
-      if (this._currentColorUpdateId < this.color.updateId) {
-        this._currentColorUpdateId = this.color.updateId;
+      var color = this.color;
 
-        this.colorCache[3] = this._parent.colorCache[3] * this.color.a;
-        this.colorCache[0] = this._parent.colorCache[0] * this.color.r * this.colorCache[3];
-        this.colorCache[1] = this._parent.colorCache[1] * this.color.g * this.colorCache[3];
-        this.colorCache[2] = this._parent.colorCache[2] * this.color.b * this.colorCache[3];
+      if (this._currentColorUpdateId < color.updateId) {
+        this._currentColorUpdateId = color.updateId;
 
-        helpers.arraySet(this._lightColors,  this.colorCache,  this._quadId);
+        var colorCache       = this.colorCache;
+        var parentColorCache = this._parent.colorCache;
+
+        colorCache[3] = parentColorCache[3] * color.a;
+        colorCache[0] = parentColorCache[0] * color.r * colorCache[3];
+        colorCache[1] = parentColorCache[1] * color.g * colorCache[3];
+        colorCache[2] = parentColorCache[2] * color.b * colorCache[3];
+
+        helpers.arraySet(this._lightColors, colorCache, this._quadId);
       }
     }
   }

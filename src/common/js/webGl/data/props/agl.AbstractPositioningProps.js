@@ -9,8 +9,8 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
     this._rotationUpdateId        =
     this._currentRotationUpdateId =
 
-    this._sinRotationA =
-    this._sinRotationB =
+    this.sinRotationA =
+    this.sinRotationB =
 
     this._x        =
     this._y        =
@@ -21,30 +21,10 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
     this._skewX    =
     this._skewY    = 0;
 
-    this._cosRotationA =
-    this._cosRotationB = 1;
+    this.cosRotationA =
+    this.cosRotationB = 1;
   },
   function(_scope) {
-    helpers.get(_scope, "sinRotationA", function() {
-      this._updateRotations();
-      return this._sinRotationA;
-    });
-
-    helpers.get(_scope, "cosRotationA", function() {
-      this._updateRotations();
-      return this._cosRotationA;
-    });
-
-    helpers.get(_scope, "sinRotationB", function() {
-      this._updateRotations();
-      return this._sinRotationB;
-    });
-
-    helpers.get(_scope, "cosRotationB", function() {
-      this._updateRotations();
-      return this._cosRotationB;
-    });
-
     helpers.property(_scope, "x", {
       get: function() { return this._x; },
       set: function(v) {
@@ -128,13 +108,16 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       }
     });
 
-    _scope._updateRotations = function() {
+    _scope.updateRotations = function() {
       if (this._currentRotationUpdateId < this._rotationUpdateId) {
         this._currentRotationUpdateId = this._rotationUpdateId;
-        this._sinRotationA = Math.sin(this._rotation + this._skewY);
-        this._cosRotationA = Math.cos(this._rotation + this._skewY);
-        this._sinRotationB = Math.sin(this._rotation - this._skewX);
-        this._cosRotationB = Math.cos(this._rotation - this._skewX);
+        
+        var rotSkewX = this._rotation - this._skewX;
+        var rotSkewY = this._rotation + this._skewY;
+        this.sinRotationA = Math.sin(rotSkewY);
+        this.cosRotationA = Math.cos(rotSkewY);
+        this.sinRotationB = Math.sin(rotSkewX);
+        this.cosRotationB = Math.cos(rotSkewX);
       }
     }
   }

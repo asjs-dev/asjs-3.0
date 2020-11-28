@@ -27,31 +27,32 @@ AGL.AbstractDrawable = helpers.createPrototypeClass(
     }
 
     _scope._calcBounds = function() {
-      AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage);
-
-      this._bounds.x = Math.min(
-        this._corners[0].x,
-        this._corners[1].x,
-        this._corners[2].x,
-        this._corners[3].x
+      var corners = this._corners;
+      AGL.Matrix3.calcCorners(this.matrixCache, corners, this.stage);
+      var bounds = this._bounds;
+      bounds.x = Math.min(
+        corners[0].x,
+        corners[1].x,
+        corners[2].x,
+        corners[3].x
       );
-      this._bounds.y = Math.min(
-        this._corners[0].y,
-        this._corners[1].y,
-        this._corners[2].y,
-        this._corners[3].y
+      bounds.y = Math.min(
+        corners[0].y,
+        corners[1].y,
+        corners[2].y,
+        corners[3].y
       );
-      this._bounds.width = Math.max(
-        this._corners[0].x,
-        this._corners[1].x,
-        this._corners[2].x,
-        this._corners[3].x
+      bounds.width = Math.max(
+        corners[0].x,
+        corners[1].x,
+        corners[2].x,
+        corners[3].x
       );
-      this._bounds.height = Math.max(
-        this._corners[0].y,
-        this._corners[1].y,
-        this._corners[2].y,
-        this._corners[3].y
+      bounds.height = Math.max(
+        corners[0].y,
+        corners[1].y,
+        corners[2].y,
+        corners[3].y
       );
     }
 

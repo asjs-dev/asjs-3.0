@@ -79,23 +79,25 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope.getBounds = function() {
-      this._bounds.x      =  1/0;
-      this._bounds.y      =  1/0;
-      this._bounds.width  = -1/0;
-      this._bounds.height = -1/0;
+      var bounds = this._bounds;
+
+      bounds.x      =  1/0;
+      bounds.y      =  1/0;
+      bounds.width  = -1/0;
+      bounds.height = -1/0;
 
       var i;
       var l = this.children.length;
       var childBounds;
       for (i = 0; i < l; ++i) {
         childBounds = this.children[i].getBounds();
-        this._bounds.x      = Math.min(this._bounds.x,      childBounds.x);
-        this._bounds.y      = Math.min(this._bounds.y,      childBounds.y);
-        this._bounds.width  = Math.max(this._bounds.width,  childBounds.width);
-        this._bounds.height = Math.max(this._bounds.height, childBounds.height);
+        bounds.x      = Math.min(bounds.x,      childBounds.x);
+        bounds.y      = Math.min(bounds.y,      childBounds.y);
+        bounds.width  = Math.max(bounds.width,  childBounds.width);
+        bounds.height = Math.max(bounds.height, childBounds.height);
       }
 
-      return this._bounds;
+      return bounds;
     }
 
     _scope.update = function(renderTime) {
@@ -104,18 +106,24 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope._updateColor = function() {
+      var parent = this._parent;
+      var color  = this.color;
+
       if (
-        this._currentParentColorUpdateId < this._parent.colorUpdateId ||
-        this._currentColorUpdateId < this.color.updateId
+        this._currentParentColorUpdateId < parent.colorUpdateId ||
+        this._currentColorUpdateId < color.updateId
       ) {
-        this._currentColorUpdateId       = this.color.updateId;
-        this._currentParentColorUpdateId = this._parent.colorUpdateId;
+        this._currentColorUpdateId       = color.updateId;
+        this._currentParentColorUpdateId = parent.colorUpdateId;
         ++this.colorUpdateId;
 
-        this.colorCache[0] = this._parent.colorCache[0] * this.color.r;
-        this.colorCache[1] = this._parent.colorCache[1] * this.color.g;
-        this.colorCache[2] = this._parent.colorCache[2] * this.color.b;
-        this.colorCache[3] = this._parent.colorCache[3] * this.color.a;
+        var colorCache       = this.colorCache;
+        var parentColorCache = parent.colorCache;
+
+        colorCache[0] = parentColorCache[0] * color.r;
+        colorCache[1] = parentColorCache[1] * color.g;
+        colorCache[2] = parentColorCache[2] * color.b;
+        colorCache[3] = parentColorCache[3] * color.a;
       }
     }
   }

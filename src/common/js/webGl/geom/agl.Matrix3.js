@@ -24,43 +24,39 @@ AGL.Matrix3 = {
     destinationMatrix[8] = 1;
   },
   transformLocal: function(
-    x, y,
-    sinRotationA, cosRotationA,
-    sinRotationB, cosRotationB,
-    anchorX, anchorY,
-    scaleX, scaleY,
+    props,
     destinationMatrix
   ) {
-    destinationMatrix[0] =   cosRotationA * scaleX;
-    destinationMatrix[1] =   sinRotationA * scaleX;
-    destinationMatrix[3] = - sinRotationB * scaleY;
-    destinationMatrix[4] =   cosRotationB * scaleY;
-    destinationMatrix[6] =   x - anchorX * destinationMatrix[0] - anchorY * destinationMatrix[3];
-    destinationMatrix[7] =   y - anchorX * destinationMatrix[1] - anchorY * destinationMatrix[4];
+    destinationMatrix[0] =   props.cosRotationA * props.scaledWidth;
+    destinationMatrix[1] =   props.sinRotationA * props.scaledWidth;
+    destinationMatrix[3] = - props.sinRotationB * props.scaledHeight;
+    destinationMatrix[4] =   props.cosRotationB * props.scaledHeight;
+    destinationMatrix[6] =   props.x -
+                             props.anchorX * props.destinationMatrix[0] -
+                             props.anchorY * props.destinationMatrix[3];
+    destinationMatrix[7] =   props.y -
+                             props.anchorX * props.destinationMatrix[1] -
+                             props.anchorY * props.destinationMatrix[4];
   },
   transform: function(
     matrix,
-    x, y,
-    sinRotationA, cosRotationA,
-    sinRotationB, cosRotationB,
-    anchorX, anchorY,
-    scaleX, scaleY,
+    props,
     destinationMatrix
   ) {
-    destinationMatrix[0] = (cosRotationA * matrix[0] + sinRotationA * matrix[3]) * scaleX;
-    destinationMatrix[1] = (cosRotationA * matrix[1] + sinRotationA * matrix[4]) * scaleX;
-    destinationMatrix[3] = (cosRotationB * matrix[3] - sinRotationB * matrix[0]) * scaleY;
-    destinationMatrix[4] = (cosRotationB * matrix[4] - sinRotationB * matrix[1]) * scaleY;
+    destinationMatrix[0] = (props.cosRotationA * matrix[0] + props.sinRotationA * matrix[3]) * props.scaledWidth;
+    destinationMatrix[1] = (props.cosRotationA * matrix[1] + props.sinRotationA * matrix[4]) * props.scaledWidth;
+    destinationMatrix[3] = (props.cosRotationB * matrix[3] - props.sinRotationB * matrix[0]) * props.scaledHeight;
+    destinationMatrix[4] = (props.cosRotationB * matrix[4] - props.sinRotationB * matrix[1]) * props.scaledHeight;
 
-    destinationMatrix[6] = - anchorX * destinationMatrix[0]
-                           - anchorY * destinationMatrix[3]
-                           + x * matrix[0]
-                           + y * matrix[3]
+    destinationMatrix[6] = - props.anchorX * destinationMatrix[0]
+                           - props.anchorY * destinationMatrix[3]
+                           + props.x * matrix[0]
+                           + props.y * matrix[3]
                            + matrix[6];
-    destinationMatrix[7] = - anchorX * destinationMatrix[1]
-                           - anchorY * destinationMatrix[4]
-                           + x * matrix[1]
-                           + y * matrix[4]
+    destinationMatrix[7] = - props.anchorX * destinationMatrix[1]
+                           - props.anchorY * destinationMatrix[4]
+                           + props.x * matrix[1]
+                           + props.y * matrix[4]
                            + matrix[7];
   },
   inverse: function(matrix, destinationMatrix) {

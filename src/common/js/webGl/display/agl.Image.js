@@ -41,24 +41,15 @@ AGL.Image = helpers.createPrototypeClass(
     }
 
     _scope._updateTexture = function() {
-      if (this._currentTexturePropsUpdateId < this.textureProps.updateId) {
-        this._currentTexturePropsUpdateId = this.textureProps.updateId;
+      var props = this.textureProps;
+
+      if (this._currentTexturePropsUpdateId < props.updateId) {
+        this._currentTexturePropsUpdateId = props.updateId;
+
+        props.updateRotations();
 
         AGL.Matrix3.transformLocal(
-          this.textureProps.x,
-          this.textureProps.y,
-
-          this.textureProps.sinRotationA,
-          this.textureProps.cosRotationA,
-          this.textureProps.sinRotationB,
-          this.textureProps.cosRotationB,
-
-          this.textureProps.anchorX,
-          this.textureProps.anchorY,
-
-          this.textureProps.scaledWidth,
-          this.textureProps.scaledHeight,
-
+          props,
           this.textureMatrixCache
         );
       }
