@@ -165,7 +165,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._setBufferData(
         item,
         textureMapIndex,
-        this._batchItems * 9,
+        this._batchItems * 6,
         this._batchItems * 4,
         effectPosition,
         this._batchItems * 2
@@ -215,8 +215,8 @@ AGL.Stage2D.createVertexShader = function(config) {
   "#version 300 es\n" +
 
   "in vec2 aPos;" +
-  "in mat3 aMat;" +
-  "in mat3 aTexMat;" +
+  "in mat2x3 aMt;" +
+  "in mat2x3 aTexMt;" +
   "in vec4 aTexCrop;" +
   "in vec4 aWrlCol;" +
   "in vec4 aTintCol;" +
@@ -242,13 +242,9 @@ AGL.Stage2D.createVertexShader = function(config) {
   ) +
 
   "void main(void){" +
-    "vec3 pos=vec3(aPos,1);" +
-    "gl_Position=vec4((aMat*pos).xy,0,1);" +
+    AGL.RendererHelper.calcGlPositions +
     "vGlPos=gl_Position.xy;" +
-    "vTexCrd=(aTexMat*pos).xy;" +
-    "vMskCrd=(gl_Position.xy+vec2(1,-1))/vec2(2,-2);" +
-    "vTexCrop=aTexCrop.xy;" +
-    "vTexCropSize=aTexCrop.zw;" +
+    "vMskCrd=(vGlPos+vec2(1,-1))/vec2(2,-2);" +
     "vWrlCol=aWrlCol;" +
     "vTintCol=vec4(aTintCol.rgb*aTintCol.a,1.-aTintCol.a);" +
     "vAlpCol=aAlpCol.x*aAlpCol.y;" +
@@ -335,6 +331,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
     ) +
 
     AGL.RendererHelper.getTexColor +
+
     "fgCol.a*=vAlpCol" +
     (
       config.isMaskEnabled
@@ -342,40 +339,40 @@ AGL.Stage2D.createFragmentShader = function(config) {
         : ""
     ) +
     ";" +
-    "if(fgCol.a>0.){" +
 
-      "if(vTintType>0.){" +
-        "vec3 col=vTintCol.rgb+fgCol.rgb*vTintCol.a;" +
-        "if(vTintType<2.||(vTintType<3.&&fgCol.r==fgCol.g&&fgCol.r==fgCol.b))" +
-          "fgCol.rgb*=col;" +
-        "else if(vTintType<4.) " +
-          "fgCol.rgb=col;" +
-      "}" +
+    "if(fgCol.a==0.)discard;" +
 
-      "vec4 lghtCol=vec4(0);";
-
-      if (config.isLightEnabled) {
-        var i;
-        for (i = 0; i < maxLightSources; ++i) {
-          shader +=
-          "if(uLghtCol[" + i + "].a>0.&&uLghtPos[" + i + "].z>vZIndex)" +
-            "lghtCol+=lghtVal(" +
-              "uLghtPos[" + i + "].xy," +
-              "uLghtVol[" + i + "]," +
-              "uLghtCol[" + i + "]," +
-              "uLghtFX[" + i + "]" +
-            ");";
-        }
-      }
-
-      shader +=
-      "float colLghtMult=max(0.,uFog.a-lghtCol.a);" +
-      "fgCol.rgb*=max(0.,1.-colLghtMult);" +
-      "vec4 fogCol=vec4(uFog.rgb*colLghtMult,0);" +
-      "vec4 fillCol=vWrlCol+lghtCol;" +
-
-      "fgCol=(fgCol*fillCol)+fogCol;" +
+    "if(vTintType>0.){" +
+      "vec3 col=vTintCol.rgb+fgCol.rgb*vTintCol.a;" +
+      "if(vTintType<2.||(vTintType<3.&&fgCol.r==fgCol.g&&fgCol.r==fgCol.b))" +
+        "fgCol.rgb*=col;" +
+      "else if(vTintType<4.) " +
+        "fgCol.rgb=col;" +
     "}" +
+
+    "vec4 lghtCol=vec4(0);";
+
+    if (config.isLightEnabled) {
+      var i;
+      for (i = 0; i < maxLightSources; ++i) {
+        shader +=
+        "if(uLghtCol[" + i + "].a>0.&&uLghtPos[" + i + "].z>vZIndex)" +
+          "lghtCol+=lghtVal(" +
+            "uLghtPos[" + i + "].xy," +
+            "uLghtVol[" + i + "]," +
+            "uLghtCol[" + i + "]," +
+            "uLghtFX[" + i + "]" +
+          ");";
+      }
+    }
+
+    shader +=
+    "float colLghtMult=max(0.,uFog.a-lghtCol.a);" +
+    "fgCol.rgb*=max(0.,1.-colLghtMult);" +
+    "vec4 fogCol=vec4(uFog.rgb*colLghtMult,0);" +
+    "vec4 fillCol=vWrlCol+lghtCol;" +
+
+    "fgCol=(fgCol*fillCol)+fogCol;" +
   "}";
 
   return shader;

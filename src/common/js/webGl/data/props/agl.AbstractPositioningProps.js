@@ -61,7 +61,6 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
         if (this._rotation !== v) {
           this._rotation = v;
           ++this._rotationUpdateId;
-          ++this.updateId;
         }
       }
     });
@@ -92,7 +91,6 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
         if (this._skewX !== v) {
           this._skewX = v;
           ++this._rotationUpdateId;
-          ++this.updateId;
         }
       }
     });
@@ -103,15 +101,15 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
         if (this._skewY !== v) {
           this._skewY = v;
           ++this._rotationUpdateId;
-          ++this.updateId;
         }
       }
     });
 
-    _scope.updateRotations = function() {
+    _scope.updateRotation = function() {
       if (this._currentRotationUpdateId < this._rotationUpdateId) {
         this._currentRotationUpdateId = this._rotationUpdateId;
-        
+        ++this.updateId;
+
         var rotSkewX = this._rotation - this._skewX;
         var rotSkewY = this._rotation + this._skewY;
         this.sinRotationA = Math.sin(rotSkewY);

@@ -6,14 +6,11 @@ AGL.ItemProps = helpers.createPrototypeClass(
   function ItemProps() {
     AGL.AbstractPositioningProps.call(this);
 
-    this._scaledWidthUpdateId         =
-    this._currentScaledWidthUpdateId  =
+    this._scaleUpdateId         =
+    this._currentScaleUpdateId  = 0;
 
-    this._scaledHeightUpdateId        =
-    this._currentScaledHeightUpdateId = 0;
-
-    this._scaledWidth  =
-    this._scaledHeight =
+    this.scaledWidth  =
+    this.scaledHeight =
 
     this._scaleX =
     this._scaleY =
@@ -22,29 +19,12 @@ AGL.ItemProps = helpers.createPrototypeClass(
     this.alpha   = 1;
   },
   function(_scope) {
-    helpers.get(_scope, "scaledWidth", function() {
-      if (this._currentScaledWidthUpdateId < this._scaledWidthUpdateId) {
-        this._currentScaledWidthUpdateId = this._scaledWidthUpdateId;
-        this._scaledWidth = this._width * this._scaleX;
-      }
-      return this._scaledWidth;
-    });
-
-    helpers.get(_scope, "scaledHeight", function() {
-      if (this._currentScaledHeightUpdateId < this._scaledHeightUpdateId) {
-        this._currentScaledHeightUpdateId = this._scaledHeightUpdateId;
-        this._scaledHeight = this._height * this._scaleY;
-      }
-      return this._scaledHeight;
-    });
-
     helpers.property(_scope, "scaleX", {
       get: function() { return this._scaleX; },
       set: function(v) {
         if (this._scaleX !== v) {
           this._scaleX = v;
-          ++this._scaledWidthUpdateId;
-          ++this.updateId;
+          ++this._scaleUpdateId;
         }
       }
     });
@@ -54,8 +34,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._scaleY !== v) {
           this._scaleY = v;
-          ++this._scaledHeightUpdateId;
-          ++this.updateId;
+          ++this._scaleUpdateId;
         }
       }
     });
@@ -65,8 +44,7 @@ AGL.ItemProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._width !== v) {
           this._width = v;
-          ++this._scaledWidthUpdateId;
-          ++this.updateId;
+          ++this._scaleUpdateId;
         }
       }
     });
@@ -76,10 +54,19 @@ AGL.ItemProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._height !== v) {
           this._height = v;
-          ++this._scaledHeightUpdateId;
-          ++this.updateId;
+          ++this._scaleUpdateId;
         }
       }
     });
+
+    _scope.updateScale = function() {
+      if (this._currentScaleUpdateId < this._scaleUpdateId) {
+        this._currentScaleUpdateId = this._scaleUpdateId;
+        ++this.updateId;
+
+        this.scaledWidth  = this._width  * this._scaleX;
+        this.scaledHeight = this._height * this._scaleY;
+      }
+    }
   }
 );

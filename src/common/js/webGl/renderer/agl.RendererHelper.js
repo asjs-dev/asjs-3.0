@@ -219,6 +219,15 @@ AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
 
 AGL.RendererHelper.getTexColor = "fgCol=gtTexCol(vTexId,vTexCrop+vTexCropSize*mod(vTexCrd,1.));";
 
+AGL.RendererHelper.calcGlPositions =
+  "mat3 mat=mat3(aMt[0][0],aMt[0][1],0,aMt[0][2],aMt[1][0],0,aMt[1][1],aMt[1][2],1);" +
+  "mat3 tMat=mat3(aTexMt[0][0],aTexMt[0][1],0,aTexMt[0][2],aTexMt[1][0],0,aTexMt[1][1],aTexMt[1][2],1);" +
+  "vec3 pos=vec3(aPos,1);" +
+  "gl_Position=vec4((mat*pos).xy,0,1);" +
+  "vTexCrd=(tMat*pos).xy;" +
+  "vTexCrop=aTexCrop.xy;" +
+  "vTexCropSize=aTexCrop.zw;";
+
 AGL.RendererHelper.Precisons = {
   HIGH   : "highp",
   MEDIUM : "mediump",

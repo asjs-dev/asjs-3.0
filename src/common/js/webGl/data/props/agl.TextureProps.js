@@ -6,18 +6,17 @@ AGL.TextureProps = helpers.createPrototypeClass(
   function TextureProps() {
     AGL.AbstractPositioningProps.call(this);
 
-    this._width  =
-    this._height = 1;
+    this._width       =
+    this._height      =
+    this.scaledWidth  =
+    this.scaledHeight = 1;
   },
   function(_scope) {
-    helpers.get(_scope, "scaledWidth", function() { return this._width; });
-    helpers.get(_scope, "scaledHeight", function() { return this._height; });
-
     helpers.property(_scope, "width", {
       get: function() { return this._width; },
       set: function(v) {
         if (this._width !== v) {
-          this._width = v;
+          this.scaledWidth = this._width = v;
           ++this.updateId;
         }
       }
@@ -27,7 +26,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       get: function() { return this._height; },
       set: function(v) {
         if (this._height !== v) {
-          this._height = v;
+          this.scaledHeight = this._height = v;
           ++this.updateId;
         }
       }

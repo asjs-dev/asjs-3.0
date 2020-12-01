@@ -60,8 +60,8 @@ AGL.Light = helpers.createPrototypeClass(
       this._lightEffects[this._duoId + 1] = this.props.alpha;
     }
 
-    _scope._updateTransform = function() {
-      _super._updateTransform.call(this);
+    _scope._updateTransform = function(props, parent) {
+      _super._updateTransform.call(this, props, parent);
 
       var inverseMatrixCache = this._inverseMatrixCache;
       var lightPositions     = this._lightPositions;

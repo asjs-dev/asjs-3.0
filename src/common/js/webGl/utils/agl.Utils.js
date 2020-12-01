@@ -25,6 +25,8 @@ require("../NameSpace.js");
       }
       gl     =
       canvas = null;
+
+      window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
     },
     function(_scope) {
       _scope.useTexture = function(gl, index, textureInfo) {
@@ -136,6 +138,14 @@ require("../NameSpace.js");
 
       _scope.isPowerOf2 = function(value) {
         return (value & (value - 1)) == 0;
+      }
+
+      _scope.onBeforeUnload = function() {
+        this.loadVertexShader   =
+        this.loadFragmentShader =
+        this.info               = null;
+
+        this.destruct();
       }
     }
   );

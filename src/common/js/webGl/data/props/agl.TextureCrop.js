@@ -6,6 +6,8 @@ AGL.TextureCrop = helpers.createPrototypeClass(
   function TextureCrop() {
     AGL.AbstractProps.call(this);
 
+    this._currentUpdateId = 0;
+
     this.items = [0, 0, 1, 1];
 
     this._width  =
@@ -17,7 +19,6 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[0] !== v) {
           this.items[0] = v;
-          this._calcWidth();
           ++this.updateId;
         }
       }
@@ -28,7 +29,6 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[1] !== v) {
           this.items[1] = v;
-          this._calcHeight();
           ++this.updateId;
         }
       }
@@ -39,7 +39,6 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this._width !== v) {
           this._width = v;
-          this._calcWidth();
           ++this.updateId;
         }
       }
@@ -50,18 +49,18 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this._height !== v) {
           this._height = v;
-          this._calcHeight();
           ++this.updateId;
         }
       }
     });
 
-    _scope._calcWidth = function() {
-      this.items[2] = this._width - this.items[0];
-    }
+    _scope.updateCrop = function() {
+      if (this._currentUpdateId < this.updateId) {
+        this._currentUpdateId = this.updateId;
 
-    _scope._calcHeight = function() {
-      this.items[3] = this._height - this.items[1];
+        this.items[2] = this._width  - this.items[0];
+        this.items[3] = this._height - this.items[1];
+      }
     }
   }
 );

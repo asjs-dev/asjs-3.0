@@ -59,21 +59,21 @@ AGL.Item = helpers.createPrototypeClass(
     }
 
     _scope._updateProps = function() {
-      if (
-        this._currentParentPropsUpdateId < this._parent.propsUpdateId ||
-        this._currentPropsUpdateId < this.props.updateId
-      ) this._updateTransform();
-    }
-
-    _scope._updateTransform = function() {
       var props  = this.props;
+          props.updateRotation();
+          props.updateScale();
       var parent = this._parent;
 
+      if (
+        this._currentParentPropsUpdateId < parent.propsUpdateId ||
+        this._currentPropsUpdateId < props.updateId
+      ) this._updateTransform(props, parent);
+    }
+
+    _scope._updateTransform = function(props, parent) {
       this._currentParentPropsUpdateId = parent.propsUpdateId;
       this._currentPropsUpdateId       = props.updateId;
       ++this.propsUpdateId;
-
-      props.updateRotations();
 
       AGL.Matrix3.transform(
         parent.matrixCache,

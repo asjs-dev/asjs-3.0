@@ -16,8 +16,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     config.fragmentShader = config.fragmentShader || AGL.BaseRenderer.createFragmentShader;
     config.locations      = config.locations.concat([
       "aPos",
-      "aMat",
-      "aTexMat",
+      "aMt",
+      "aTexMt",
       "aTexCrop",
       "uTex"
     ]);
@@ -87,7 +87,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     _scope._drawContainer = function(container) {
       var children = container.children;
       var i;
-      var l = children.length;
+      var l = container.length;
       for (i = 0; i < l; ++i) this._drawItem(children[i]);
     }
 
@@ -105,7 +105,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._setBufferData(
         item,
         textureMapIndex,
-        this._batchItems * 9,
+        this._batchItems * 6,
         this._batchItems * 4
       );
 
@@ -172,6 +172,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
               this._batchDraw();
               this._textureMap.length = 0;
             }
+
             this._textureMap.push(textureInfo);
             textureMapIndex = this._textureMap.length - 1;
           }
@@ -223,10 +224,10 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
       this._gl.uniform1iv(this._locations.uTex, this._textureIds);
 
-      this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-  		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMat",     9, 3, 3, AGL.Const.FLOAT, 4);
-      this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 9);
-      this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "aTexMat",  9, 3, 3, AGL.Const.FLOAT, 4);
+      this._matrixData          = new Float32Array(this._MAX_BATCH_ITEMS * 6);
+  		this._matrixBuffer        = this._createArrayBuffer(this._matrixData,        "aMt",      6, 2, 3, AGL.Const.FLOAT, 4);
+      this._textureMatrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 6);
+      this._textureMatrixBuffer = this._createArrayBuffer(this._textureMatrixData, "aTexMt",   6, 2, 3, AGL.Const.FLOAT, 4);
       this._textureCropData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
       this._textureCropBuffer   = this._createArrayBuffer(this._textureCropData,   "aTexCrop", 4, 1, 4, AGL.Const.FLOAT, 4);
     }
@@ -237,8 +238,8 @@ AGL.BaseRenderer.createVertexShader = function() {
   "#version 300 es\n" +
 
   "in vec2 aPos;" +
-  "in mat3 aMat;" +
-  "in mat3 aTexMat;" +
+  "in mat2x3 aMt;" +
+  "in mat2x3 aTexMt;" +
   "in vec4 aTexCrop;" +
 
   "out vec2 vTexCrd;" +
@@ -246,11 +247,7 @@ AGL.BaseRenderer.createVertexShader = function() {
   "out vec2 vTexCropSize;" +
 
   "void main(void){" +
-    "vec3 pos=vec3(aPos,1);" +
-    "gl_Position=vec4((aMat*pos).xy,0,1);" +
-    "vTexCrd=(aTexMat*pos).xy;" +
-    "vTexCrop=aTexCrop.xy;" +
-    "vTexCropSize=aTexCrop.zw;" +
+    AGL.RendererHelper.calcGlPositions +
   "}";
 };
 AGL.BaseRenderer.createFragmentShader = function(config) {

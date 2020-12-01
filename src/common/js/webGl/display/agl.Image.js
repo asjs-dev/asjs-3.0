@@ -23,6 +23,7 @@ AGL.Image = helpers.createPrototypeClass(
     this.textureProps = new AGL.TextureProps();
     this.textureCrop  = new AGL.TextureCrop();
 
+    this._currentTextureCropUpdateId  =
     this._currentTexturePropsUpdateId = 0;
 
     this.textureCropCache = this.textureCrop.items;
@@ -33,6 +34,7 @@ AGL.Image = helpers.createPrototypeClass(
     _scope.update = function(renderTime) {
       this._updateProps();
       this._updateTexture();
+      this.textureCrop.updateCrop();
     }
 
     _scope.isContainsPoint = function(point) {
@@ -42,11 +44,10 @@ AGL.Image = helpers.createPrototypeClass(
 
     _scope._updateTexture = function() {
       var props = this.textureProps;
+          props.updateRotation();
 
       if (this._currentTexturePropsUpdateId < props.updateId) {
         this._currentTexturePropsUpdateId = props.updateId;
-
-        props.updateRotations();
 
         AGL.Matrix3.transformLocal(
           props,

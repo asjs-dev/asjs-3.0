@@ -13,6 +13,8 @@ AGL.Container = helpers.createPrototypeClass(
     this.parentColorUpdateId = 0;
 
     this.colorCache = [1, 1, 1, 1];
+
+    this.length = 0;
   },
   function(_scope, _super) {
     _scope.destruct = function() {
@@ -37,6 +39,7 @@ AGL.Container = helpers.createPrototypeClass(
       if (child) {
         child.parent && child.parent.removeChild(child);
         this.children.push(child);
+        this.length = this.children.length;
         this.setChildIndex(child, index);
         child.parent = this;
       }
@@ -46,6 +49,7 @@ AGL.Container = helpers.createPrototypeClass(
     _scope.removeChild = function(child) {
       if (!child || !this.contains(child)) return null;
       helpers.removeFromArray(this.children, child);
+      this.length = this.children.length;
       child.parent = null;
       return child;
     }
@@ -87,7 +91,7 @@ AGL.Container = helpers.createPrototypeClass(
       bounds.height = -1/0;
 
       var i;
-      var l = this.children.length;
+      var l = this.length;
       var childBounds;
       for (i = 0; i < l; ++i) {
         childBounds = this.children[i].getBounds();
