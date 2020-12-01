@@ -6,7 +6,6 @@ AGL.PostProcessing = helpers.createPrototypeClass(
   function PostProcessing(config) {
     helpers.BasePrototypeClass.call(this);
 
-    var almafa = 0.1;
     config.vertexShader   = config.vertexShader   || AGL.PostProcessing.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.PostProcessing.createFragmentShader;
     config.locations      = config.locations.concat([

@@ -165,7 +165,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._setBufferData(
         item,
         textureMapIndex,
-        this._batchItems * 6,
+        this._batchItems * 16,
         this._batchItems * 4,
         effectPosition,
         this._batchItems * 2
@@ -215,9 +215,7 @@ AGL.Stage2D.createVertexShader = function(config) {
   "#version 300 es\n" +
 
   "in vec2 aPos;" +
-  "in mat2x3 aMt;" +
-  "in mat2x3 aTexMt;" +
-  "in vec4 aTexCrop;" +
+  "in mat4 aMt;" +
   "in vec4 aWrlCol;" +
   "in vec4 aTintCol;" +
   "in vec2 aAlpCol;" +
@@ -225,8 +223,7 @@ AGL.Stage2D.createVertexShader = function(config) {
 
   "out vec2 vTexCrd;" +
   "out vec2 vMskCrd;" +
-  "out vec2 vTexCrop;" +
-  "out vec2 vTexCropSize;" +
+  "out vec4 vTexCrop;" +
   "out vec4 vWrlCol;" +
   "out vec4 vTintCol;" +
   "out float vAlpCol;" +
@@ -271,8 +268,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
   "in vec2 vMskCrd;" +
   "in vec2 vTexCrd;" +
-  "in vec2 vTexCrop;" +
-  "in vec2 vTexCropSize;" +
+  "in vec4 vTexCrop;" +
   "in vec4 vWrlCol;" +
   "in vec4 vTintCol;" +
   "in float vAlpCol;" +
@@ -308,8 +304,9 @@ AGL.Stage2D.createFragmentShader = function(config) {
       ? "vec4 lghtVal(vec2 lp,vec4 lv,vec4 lc,vec2 lf){" +
           "vec2 p=pow(abs(vGlPos*lv.xw+vGlPos.yx*lv.zy+lp),vec2(2.));" +
           "float dst=sqrt(p.x+p.y);" +
-          "if(dst>1.||dst<0.)return vec4(0);" +
-          "return lc*max(0.,(1.-dst)*lf.x)*lf.y;" +
+          "return dst>1.||dst<0." +
+            "?vec4(0)" +
+            ":lc*max(0.,(1.-dst)*lf.x)*lf.y;" +
         "}"
       : ""
   ) +
@@ -368,11 +365,8 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
     shader +=
     "float colLghtMult=max(0.,uFog.a-lghtCol.a);" +
-    "fgCol.rgb*=max(0.,1.-colLghtMult);" +
-    "vec4 fogCol=vec4(uFog.rgb*colLghtMult,0);" +
-    "vec4 fillCol=vWrlCol+lghtCol;" +
-
-    "fgCol=(fgCol*fillCol)+fogCol;" +
+    "fgCol.rgb*=1.-colLghtMult;" +
+    "fgCol=(fgCol*(vWrlCol+lghtCol))+vec4(uFog.rgb*colLghtMult,0);" +
   "}";
 
   return shader;

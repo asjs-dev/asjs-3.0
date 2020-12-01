@@ -36,14 +36,11 @@ AGL.SimpleRenderer.createVertexShader = function() {
   "#version 300 es\n" +
 
   "in vec2 aPos;" +
-  "in mat2x3 aMt;" +
-  "in mat2x3 aTexMt;" +
-  "in vec4 aTexCrop;" +
+  "in mat4 aMt;" +
   "in float aTexId;" +
 
   "out vec2 vTexCrd;" +
-  "out vec2 vTexCrop;" +
-  "out vec2 vTexCropSize;" +
+  "out vec4 vTexCrop;" +
   "out float vTexId;" +
 
   "void main(void){" +
@@ -59,8 +56,7 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
   "precision " + config.precision + " float;" +
 
   "in vec2 vTexCrd;" +
-  "in vec2 vTexCrop;" +
-  "in vec2 vTexCropSize;" +
+  "in vec4 vTexCrop;" +
   "in float vTexId;" +
 
   "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
