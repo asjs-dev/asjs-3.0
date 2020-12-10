@@ -299,7 +299,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
           "float dst=p.x+p.y;" +
           "return dst>1.||dst<0." +
             "?vec4(0)" +
-            ":lc*max(0.,(1.-sqrt(dst))*lf.x)*lf.y;" +
+            ":lc*clamp((1.-sqrt(dst))*lf.x,0.,1.)*lf.y;" +
         "}"
       : ""
   ) +

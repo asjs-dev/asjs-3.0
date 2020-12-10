@@ -159,7 +159,6 @@ AGL.PostProcessing.createFragmentShader = function(config) {
 
   "void main(void){" +
     "fgCol=texture(uTex,vTexCrd);" +
-    "if(fgCol.a==0.)discard;" +
     // FILTERS
     "if(uFtrT>0){" +
       "float[] fvl=uFtrVal;" +
