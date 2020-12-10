@@ -10,8 +10,6 @@ AGL.Container = helpers.createPrototypeClass(
 
     this.children = [];
 
-    this.parentColorUpdateId = 0;
-
     this.colorCache = [1, 1, 1, 1];
 
     this.length = 0;
@@ -90,10 +88,9 @@ AGL.Container = helpers.createPrototypeClass(
       bounds.width  = -1/0;
       bounds.height = -1/0;
 
-      var i;
       var l = this.length;
       var childBounds;
-      for (i = 0; i < l; ++i) {
+      for (var i = 0; i < l; ++i) {
         childBounds = this.children[i].getBounds();
         bounds.x      = Math.min(bounds.x,      childBounds.x);
         bounds.y      = Math.min(bounds.y,      childBounds.y);
@@ -105,7 +102,7 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope.update = function(renderTime) {
-      this._updateProps();
+      this._updateProps(renderTime);
       this._updateColor();
     }
 

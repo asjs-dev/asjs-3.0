@@ -26,6 +26,8 @@ AGL.Item = helpers.createPrototypeClass(
 
     this.colorCache = this.color.items;
 
+    this._callback = helpers.emptyFunction;
+
     this._parent = null;
 
     this._bounds = AGL.Rect.create();
@@ -45,6 +47,13 @@ AGL.Item = helpers.createPrototypeClass(
       }
     });
 
+    helpers.property(_scope, "callback", {
+      get: function() { return this._callback; },
+      set: function(v) {
+        if (this._callback !== v) this._callback = v || helpers.emptyFunction;
+      }
+    });
+
     _scope.getBounds = function() {
       return this._bounds;
     }
@@ -55,10 +64,12 @@ AGL.Item = helpers.createPrototypeClass(
     }
 
     _scope.update = function(renderTime) {
-      this._updateProps();
+      this._updateProps(renderTime);
     }
 
-    _scope._updateProps = function() {
+    _scope._updateProps = function(renderTime) {
+      this._callback.call(this, renderTime);
+
       var props  = this.props;
           props.updateRotation();
           props.updateScale();

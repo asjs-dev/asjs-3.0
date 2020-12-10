@@ -14,8 +14,7 @@ AGL.Light = helpers.createPrototypeClass(
 
     this.transition = 1;
 
-    this.color.a                     =
-    this._currentParentPropsUpdateId = 0;
+    this.color.a = 0;
 
     this._duoId  = id * 2;
     this._tripId = id * 3;

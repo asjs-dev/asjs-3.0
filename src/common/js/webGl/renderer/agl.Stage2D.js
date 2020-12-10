@@ -13,10 +13,10 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "aTintCol",
       "aAlpCol",
       "aFx",
-      "uLghtPos",
-      "uLghtVol",
-      "uLghtCol",
-      "uLghtFX",
+      "uLgPos",
+      "uLgVol",
+      "uLgCol",
+      "uLgFX",
       "uFog",
       "uMskTp"
     ]);
@@ -27,9 +27,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this.fog.a = 0;
 
     this.colorCache = this.color.items;
-
-    this._DEFAULT_DUO  = [0, 0];
-    this._DEFAULT_QUAD = [0, 0, 0, 0];
 
     this._zCounter    =
     this._maskType    =
@@ -49,9 +46,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._lightColors    = new Float32Array(config.lightNum * 4);
       this._lightEffects   = new Float32Array(config.lightNum * 2);
 
-      var i;
       var l = config.lightNum;
-      for (i = 0; i < l; ++i)
+      for (var i = 0; i < l; ++i)
         this._lights.push(new AGL.Light(
           i,
           this._lightPositions,
@@ -115,18 +111,16 @@ AGL.Stage2D = helpers.createPrototypeClass(
     }
 
     _scope._collectLights = function() {
-      this._gl.uniform3fv(this._locations.uLghtPos, this._lightPositions);
-      this._gl.uniform4fv(this._locations.uLghtVol, this._lightVolumes);
-      this._gl.uniform4fv(this._locations.uLghtCol, this._lightColors);
-      this._gl.uniform2fv(this._locations.uLghtFX,  this._lightEffects);
+      this._gl.uniform3fv(this._locations.uLgPos, this._lightPositions);
+      this._gl.uniform4fv(this._locations.uLgVol, this._lightVolumes);
+      this._gl.uniform4fv(this._locations.uLgCol, this._lightColors);
+      this._gl.uniform2fv(this._locations.uLgFX,  this._lightEffects);
     }
 
     _scope._drawItem = function(item) {
-      if (item.renderable) {
-        item.props.z = ++this._zCounter;
-        item.update(this._renderTime);
-        this._drawFunctionMap[item.TYPE](item);
-      }
+      item.props.z = ++this._zCounter;
+      item.update(this._renderTime);
+      this._drawFunctionMap[item.TYPE](item);
     }
 
     _scope._setMaskData = function(item, position) {
@@ -192,9 +186,9 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._parentColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
       this._parentColorBuffer = this._createArrayBuffer(this._parentColorData, "aWrlCol",  4, 1, 4, AGL.Const.FLOAT, 4);
       this._tintColorData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
-      this._tintColorBuffer   = this._createArrayBuffer(this._tintColorData,  "aTintCol", 4, 1, 4, AGL.Const.FLOAT, 4);
+      this._tintColorBuffer   = this._createArrayBuffer(this._tintColorData,   "aTintCol", 4, 1, 4, AGL.Const.FLOAT, 4);
       this._alphaData         = new Float32Array(this._MAX_BATCH_ITEMS * 2);
-      this._alphaBuffer       = this._createArrayBuffer(this._alphaData,      "aAlpCol",  2, 1, 2, AGL.Const.FLOAT, 4);
+      this._alphaBuffer       = this._createArrayBuffer(this._alphaData,       "aAlpCol",  2, 1, 2, AGL.Const.FLOAT, 4);
 
       this._effectLength = (this._config.isMaskEnabled ? 4 : 3);
       this._effectData   = new Float32Array(this._MAX_BATCH_ITEMS * this._effectLength);
@@ -209,7 +203,6 @@ AGL.Stage2D.MASK_TYPES = {
   ALPHA : 3,
   AVG   : 4,
 };
-AGL.Stage2D.MAX_LIGHT_SOURCES = 16;
 AGL.Stage2D.createVertexShader = function(config) {
   return
   "#version 300 es\n" +
@@ -222,7 +215,7 @@ AGL.Stage2D.createVertexShader = function(config) {
   "in vec" + (config.isMaskEnabled ? "4" : "3") + " aFx;" +
 
   "out vec2 vTexCrd;" +
-  "out vec2 vMskCrd;" +
+  (config.isMaskEnabled ? "out vec2 vMskCrd;" : "") +
   "out vec4 vTexCrop;" +
   "out vec4 vWrlCol;" +
   "out vec4 vTintCol;" +
@@ -241,7 +234,6 @@ AGL.Stage2D.createVertexShader = function(config) {
   "void main(void){" +
     AGL.RendererHelper.calcGlPositions +
     "vGlPos=gl_Position.xy;" +
-    "vMskCrd=(vGlPos+vec2(1,-1))/vec2(2,-2);" +
     "vWrlCol=aWrlCol;" +
     "vTintCol=vec4(aTintCol.rgb*aTintCol.a,1.-aTintCol.a);" +
     "vAlpCol=aAlpCol.x*aAlpCol.y;" +
@@ -252,7 +244,8 @@ AGL.Stage2D.createVertexShader = function(config) {
 
     (
       config.isMaskEnabled
-        ? "vMskTexId=aFx.w;"
+        ? "vMskTexId=aFx.w;" +
+          "vMskCrd=(vGlPos+vec2(1,-1))/vec2(2,-2);"
         : ""
     ) +
 
@@ -266,7 +259,7 @@ AGL.Stage2D.createFragmentShader = function(config) {
   "#version 300 es\n" +
   "precision " + config.precision + " float;" +
 
-  "in vec2 vMskCrd;" +
+  (config.isMaskEnabled ? "in vec2 vMskCrd;" : "") +
   "in vec2 vTexCrd;" +
   "in vec4 vTexCrop;" +
   "in vec4 vWrlCol;" +
@@ -288,10 +281,10 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
   (
     config.isLightEnabled
-      ? "uniform vec3 uLghtPos[" + maxLightSources + "];" +
-        "uniform vec4 uLghtVol[" + maxLightSources + "];" +
-        "uniform vec4 uLghtCol[" + maxLightSources + "];" +
-        "uniform vec2 uLghtFX[" + maxLightSources + "];"
+      ? "uniform vec3 uLgPos[" + maxLightSources + "];" +
+        "uniform vec4 uLgVol[" + maxLightSources + "];" +
+        "uniform vec4 uLgCol[" + maxLightSources + "];" +
+        "uniform vec2 uLgFX[" + maxLightSources + "];"
       : ""
   ) +
 
@@ -301,12 +294,12 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
   (
     config.isLightEnabled
-      ? "vec4 lghtVal(vec2 lp,vec4 lv,vec4 lc,vec2 lf){" +
+      ? "vec4 lgVal(vec2 lp,vec4 lv,vec4 lc,vec2 lf){" +
           "vec2 p=pow(abs(vGlPos*lv.xw+vGlPos.yx*lv.zy+lp),vec2(2.));" +
-          "float dst=sqrt(p.x+p.y);" +
+          "float dst=p.x+p.y;" +
           "return dst>1.||dst<0." +
             "?vec4(0)" +
-            ":lc*max(0.,(1.-dst)*lf.x)*lf.y;" +
+            ":lc*max(0.,(1.-sqrt(dst))*lf.x)*lf.y;" +
         "}"
       : ""
   ) +
@@ -314,6 +307,8 @@ AGL.Stage2D.createFragmentShader = function(config) {
   AGL.RendererHelper.createGetTextureFunction(maxTextureImageUnits) +
 
   "void main(void){" +
+    AGL.RendererHelper.getTexColor +
+    "if(vAlpCol==0.||fgCol.a==0.)discard;" +
 
     (
       config.isMaskEnabled
@@ -326,8 +321,6 @@ AGL.Stage2D.createFragmentShader = function(config) {
           "}"
         : ""
     ) +
-
-    AGL.RendererHelper.getTexColor +
 
     "fgCol.a*=vAlpCol" +
     (
@@ -347,26 +340,25 @@ AGL.Stage2D.createFragmentShader = function(config) {
         "fgCol.rgb=col;" +
     "}" +
 
-    "vec4 lghtCol=vec4(0);";
+    "vec4 lgCol=vec4(0);";
 
     if (config.isLightEnabled) {
-      var i;
-      for (i = 0; i < maxLightSources; ++i) {
+      for (var i = 0; i < maxLightSources; ++i) {
         shader +=
-        "if(uLghtCol[" + i + "].a>0.&&uLghtPos[" + i + "].z>vZIndex)" +
-          "lghtCol+=lghtVal(" +
-            "uLghtPos[" + i + "].xy," +
-            "uLghtVol[" + i + "]," +
-            "uLghtCol[" + i + "]," +
-            "uLghtFX[" + i + "]" +
+        "if(uLgCol[" + i + "].a>0.&&uLgPos[" + i + "].z>vZIndex)" +
+          "lgCol+=lgVal(" +
+            "uLgPos[" + i + "].xy," +
+            "uLgVol[" + i + "]," +
+            "uLgCol[" + i + "]," +
+            "uLgFX[" + i + "]" +
           ");";
       }
     }
 
     shader +=
-    "float colLghtMult=max(0.,uFog.a-lghtCol.a);" +
-    "fgCol.rgb*=1.-colLghtMult;" +
-    "fgCol=(fgCol*(vWrlCol+lghtCol))+vec4(uFog.rgb*colLghtMult,0);" +
+    "float colLgMult=clamp(uFog.a-lgCol.a,0.,1.);" +
+    "fgCol.rgb*=1.-colLgMult;" +
+    "fgCol=(fgCol*(vWrlCol+lgCol))+vec4(uFog.rgb*colLgMult,0);" +
   "}";
 
   return shader;

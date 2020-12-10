@@ -32,7 +32,7 @@ AGL.Image = helpers.createPrototypeClass(
   },
   function(_scope) {
     _scope.update = function(renderTime) {
-      this._updateProps();
+      this._updateProps(renderTime);
       this._updateTexture();
       this.textureCrop.updateCrop();
     }

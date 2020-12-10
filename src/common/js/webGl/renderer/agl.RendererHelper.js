@@ -131,10 +131,6 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._locations      =
     this._config         =
     this._canvas         =
-    this._loseContextExt =
-    this._vertexShader   =
-    this._fragmentShader =
-    this._program        =
     this._context        = null;
   }
   /*
@@ -223,7 +219,7 @@ AGL.RendererHelper.calcGlPositions =
   "mat3 mt=mat3(aMt[0][0],aMt[0][1],0,aMt[0][2],aMt[0][3],0,aMt[1][0],aMt[1][1],1);" +
   "mat3 tMt=mat3(aMt[1][2],aMt[1][3],0,aMt[2][0],aMt[2][1],0,aMt[2][2],aMt[2][3],1);" +
   "vec3 pos=vec3(aPos,1);" +
-  "gl_Position=vec4((mt*pos).xy,0,1);" +
+  "gl_Position=vec4(mt*pos,1);" +
   "vTexCrd=(tMt*pos).xy;" +
   "vTexCrop=aMt[3];";
 

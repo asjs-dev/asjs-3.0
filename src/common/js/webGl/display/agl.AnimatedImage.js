@@ -8,7 +8,6 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
 
     this.frameLength = 120;
     this.frames      = [];
-    this.isPlaying   = false;
 
     this.frame              =
     this._currentRenderTime = 0;
@@ -17,6 +16,8 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
     this.stop();
   },
   function(_scope, _super) {
+    helpers.get(_scope, "isPlaying", function() { return this.updateAnimation === this._updateAnimation; });
+
     _scope.gotoAndStop = function(frame) {
       this.stop();
       this.frame = frame;
@@ -29,25 +30,23 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
     }
 
     _scope.stop = function() {
-      this.isPlaying = false;
       this.updateAnimation = helpers.emptyFunction;
     }
 
     _scope.play = function() {
-      this.isPlaying = true;
       this.updateAnimation = this._updateAnimation;
     }
 
     _scope.update = function(renderTime) {
-      this.updateAnimation(renderTime);
       _super.update.call(this, renderTime);
+      this.updateAnimation(renderTime);
     }
 
     _scope._updateAnimation = function(renderTime) {
       var ellapsedTime = renderTime - this._currentRenderTime;
       if (ellapsedTime > this.frameLength) {
         this._currentRenderTime = renderTime;
-        this.frame += Math.floor(ellapsedTime / this.frameLength);
+        this.frame += ~~(ellapsedTime / this.frameLength);
         this.frame >= this.frames.length && (this.frame = 0);
 
         this._useTextureFrame();

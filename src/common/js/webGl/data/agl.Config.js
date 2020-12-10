@@ -2,9 +2,6 @@ require("../NameSpace.js");
 require("../utils/agl.Utils.js");
 
 AGL.CreateConfig = function(options) {
-  if (options.lightNum === undefined) options.lightNum = 0;
-  else if (options.lightNum > AGL.Stage2D.MAX_LIGHT_SOURCES) options.lightNum = AGL.Stage2D.MAX_LIGHT_SOURCES;
-
   var attributes = options.contextAttributes || {};
 
   return {
@@ -12,7 +9,7 @@ AGL.CreateConfig = function(options) {
 
     locations      : options.locations || [],
 
-    lightNum       : options.lightNum,
+    lightNum       : options.lightNum || 0,
     isLightEnabled : options.lightNum > 0,
 
     isMaskEnabled  : options.isMaskEnabled,

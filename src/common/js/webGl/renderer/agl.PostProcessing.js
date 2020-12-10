@@ -38,14 +38,13 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
       this.clear();
 
-      var i;
       var l = this.filters.length || 1;
       var minL = l - 2;
       var filter;
       var isLast;
       var framebuffer;
       var useFilter;
-      for (i = 0; i < l; ++i) {
+      for (var i = 0; i < l; ++i) {
         filter    = this.filters[i];
         useFilter = filter && filter.on;
 
@@ -66,7 +65,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
           this._gl.bindFramebuffer(AGL.Const.FRAMEBUFFER, null);
           this._gl.uniform1f(this._locations.uFlpY, 1);
         } else if (useFilter) {
-          framebuffer = this._frameBuffers[i & 1];
+          framebuffer = this._framebuffers[i & 1];
           framebuffer.isNeedToDraw(this._gl, this._renderTime);
           this._gl.bindFramebuffer(AGL.Const.FRAMEBUFFER, framebuffer.framebuffer);
           this._gl.uniform1f(this._locations.uFlpY, -1);
@@ -86,8 +85,8 @@ AGL.PostProcessing = helpers.createPrototypeClass(
     }
 
     _scope.destruct = function() {
-      this._frameBuffers[0].destruct();
-      this._frameBuffers[1].destruct();
+      this._framebuffers[0].destruct();
+      this._framebuffers[1].destruct();
 
       this._destructRenderer();
 
@@ -96,12 +95,9 @@ AGL.PostProcessing = helpers.createPrototypeClass(
 
     _scope._resize = function() {
       if (this._resizeCanvas()) {
-        this._frameBuffers[0].setSize(this._width, this._height);
-        this._frameBuffers[1].setSize(this._width, this._height);
-
-        return true;
+        this._framebuffers[0].setSize(this._width, this._height);
+        this._framebuffers[1].setSize(this._width, this._height);
       }
-      return false;
     }
 
     _scope._initCustom = function() {
@@ -115,7 +111,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         ]), AGL.Const.STATIC_DRAW
       );
 
-      this._frameBuffers = [
+      this._framebuffers = [
         new AGL.Framebuffer(),
         new AGL.Framebuffer()
       ];
@@ -163,6 +159,7 @@ AGL.PostProcessing.createFragmentShader = function(config) {
 
   "void main(void){" +
     "fgCol=texture(uTex,vTexCrd);" +
+    "if(fgCol.a==0.)discard;" +
     // FILTERS
     "if(uFtrT>0){" +
       "float[] fvl=uFtrVal;" +
@@ -214,7 +211,7 @@ AGL.PostProcessing.createFragmentShader = function(config) {
         // VignetteFilter
         "else if(uFtrST<7){" +
           "vec2 pv=pow(abs(vCrd*fvl[0]),vec2(fvl[1]));" +
-          "float v=max(0.,min(1.,(1.-sqrt(pv.x+pv.y))*fvl[5]));" +
+          "float v=clamp(min(1.,(1.-sqrt(pv.x+pv.y))*fvl[5]),0.,1.);" +
           "fgCol*=vec4(vec3(v),fgCol.a);" +
           "fgCol+=vec4(vec3(fvl[2],fvl[3],fvl[4])*(1.-v),0);" +
         "}" +
