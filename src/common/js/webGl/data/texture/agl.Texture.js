@@ -89,7 +89,7 @@ AGL.Texture = helpers.createPrototypeClass(
       this._updateMipmapMinFilter();
 
       this._loaded = this._getSourceType() === "canvas" || (this.width > 0 && this.height > 0);
-      this._loaded && ++this._updateId;
+      this._loaded && (this._updateId = AGL.CurrentTime);
     }
 
     _scope._getSourceType = function() {

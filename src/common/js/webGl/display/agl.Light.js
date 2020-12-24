@@ -5,10 +5,7 @@ AGL.Light = helpers.createPrototypeClass(
   AGL.AbstractDrawable,
   function Light(
     id,
-    lightPositions,
-    lightVolumes,
-    lightColors,
-    lightEffects
+    lightData
   ) {
     AGL.AbstractDrawable.call(this);
 
@@ -16,66 +13,57 @@ AGL.Light = helpers.createPrototypeClass(
 
     this.color.a = 0;
 
-    this._duoId  = id * 2;
-    this._tripId = id * 3;
-    this._quadId = id * 4;
+    this._matId = id * 16;
 
-    this._lightPositions = lightPositions;
-    this._lightVolumes   = lightVolumes;
-    this._lightColors    = lightColors;
-    this._lightEffects   = lightEffects;
+    this._lightData = lightData;
 
-    this.colorCache = [1, 1, 1, 1];
-
-    this.update;
     this.on = false;
   },
   function(_scope, _super) {
     helpers.property(_scope, "on", {
-      get: function() { return this._on && this.stage; },
-      set: function(v) {
-        if (this._on !== v) {
-          this._on = v;
-          if (this._on) this.update = this._update;
-          else {
-            this.update = helpers.emptyFunction;
-            this._lightColors[this._quadId + 3] = 0;
-          }
-        }
-      }
+      get: function() { return this._on && this.stage !== null; },
+      set: function(v) { this._on = v; }
     });
 
     _scope._updateAdditionalData = function() {
-      if (this.stage && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
+      if (this.on && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
         this._currentAdditionalPropsUpdateId = this.propsUpdateId;
         this._calcBounds();
       }
     }
 
-    _scope._update = function(renderTime) {
-      this._updateProps();
-      this._updateColor();
-      this._lightEffects[this._duoId]     = this.transition;
-      this._lightEffects[this._duoId + 1] = this.props.alpha;
+    _scope.update = function(renderTime) {
+      var lightData = this._lightData;
+      var matId     = this._matId + 3;
+
+      if (this.on) {
+        this._updateProps();
+        this._updateColor();
+
+        lightData[matId]      = lightData[matId + 8] > 0 ? 1 : 0;
+        lightData[matId + 9]  = this.transition;
+        lightData[matId + 10] = this.props.alpha;
+      } else lightData[matId] = 0;
     }
 
     _scope._updateTransform = function(props, parent) {
       _super._updateTransform.call(this, props, parent);
 
       var inverseMatrixCache = this._inverseMatrixCache;
-      var lightPositions     = this._lightPositions;
-      var lightVolumes       = this._lightVolumes;
 
       AGL.Matrix3.inverse(this.matrixCache, inverseMatrixCache);
 
-      lightPositions[this._tripId]     = inverseMatrixCache[4];
-      lightPositions[this._tripId + 1] = inverseMatrixCache[5];
-      lightPositions[this._tripId + 2] = this.props.z;
+      var lightData = this._lightData;
+      var matId     = this._matId;
 
-      lightVolumes[this._quadId]     = inverseMatrixCache[0];
-      lightVolumes[this._quadId + 1] = inverseMatrixCache[1];
-      lightVolumes[this._quadId + 2] = inverseMatrixCache[2];
-      lightVolumes[this._quadId + 3] = inverseMatrixCache[3];
+      lightData[matId]     = inverseMatrixCache[4];
+      lightData[matId + 1] = inverseMatrixCache[5];
+      lightData[matId + 2] = this.props.z;
+
+      lightData[matId + 4] = inverseMatrixCache[0];
+      lightData[matId + 5] = inverseMatrixCache[1];
+      lightData[matId + 6] = inverseMatrixCache[2];
+      lightData[matId + 7] = inverseMatrixCache[3];
     }
 
     _scope._updateColor = function() {
@@ -84,15 +72,14 @@ AGL.Light = helpers.createPrototypeClass(
       if (this._currentColorUpdateId < color.updateId) {
         this._currentColorUpdateId = color.updateId;
 
-        var colorCache       = this.colorCache;
+        var lightData        = this._lightData;
         var parentColorCache = this._parent.colorCache;
+        var matId            = this._matId + 8;
 
-        colorCache[3] = parentColorCache[3] * color.a;
-        colorCache[0] = parentColorCache[0] * color.r * colorCache[3];
-        colorCache[1] = parentColorCache[1] * color.g * colorCache[3];
-        colorCache[2] = parentColorCache[2] * color.b * colorCache[3];
-
-        helpers.arraySet(this._lightColors, colorCache, this._quadId);
+        lightData[matId + 3] = parentColorCache[3] * color.a;
+        lightData[matId]     = parentColorCache[0] * color.r * lightData[matId + 3];
+        lightData[matId + 1] = parentColorCache[1] * color.g * lightData[matId + 3];
+        lightData[matId + 2] = parentColorCache[2] * color.b * lightData[matId + 3];
       }
     }
   }

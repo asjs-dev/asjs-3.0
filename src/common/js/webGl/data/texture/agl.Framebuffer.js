@@ -19,7 +19,7 @@ AGL.Framebuffer = helpers.createPrototypeClass(
       set: function(v) {
         if (this._width !== v && v > 0) {
           this._width = v;
-          ++this._sizeUpdateId;
+          this._sizeUpdateId = AGL.CurrentTime;
         }
       }
     });
@@ -29,7 +29,7 @@ AGL.Framebuffer = helpers.createPrototypeClass(
       set: function(v) {
         if (this._height !== v && v > 0) {
           this._height = v;
-          ++this._sizeUpdateId;
+          this._sizeUpdateId = AGL.CurrentTime;
         }
       }
     });

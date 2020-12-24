@@ -30,7 +30,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._x !== v) {
           this._x = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -40,7 +40,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._y !== v) {
           this._y = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -50,7 +50,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._z !== v) {
           this._z = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -60,7 +60,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._rotation !== v) {
           this._rotation = v;
-          ++this._rotationUpdateId;
+          this._rotationUpdateId = AGL.CurrentTime;
         }
       }
     });
@@ -70,7 +70,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._anchorX !== v) {
           this._anchorX = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -80,7 +80,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._anchorY !== v) {
           this._anchorY = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -90,7 +90,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._skewX !== v) {
           this._skewX = v;
-          ++this._rotationUpdateId;
+          this._rotationUpdateId = AGL.CurrentTime;
         }
       }
     });
@@ -100,7 +100,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._skewY !== v) {
           this._skewY = v;
-          ++this._rotationUpdateId;
+          this._rotationUpdateId = AGL.CurrentTime;
         }
       }
     });
@@ -108,7 +108,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
     _scope.updateRotation = function() {
       if (this._currentRotationUpdateId < this._rotationUpdateId) {
         this._currentRotationUpdateId = this._rotationUpdateId;
-        ++this.updateId;
+        this.updateId = AGL.CurrentTime;
 
         var rotSkewX = this._rotation - this._skewX;
         var rotSkewY = this._rotation + this._skewY;

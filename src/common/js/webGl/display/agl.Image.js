@@ -14,6 +14,7 @@ AGL.Image = helpers.createPrototypeClass(
     this.textureMatrixCache = AGL.Matrix3.identity();
 
     this.mask = null;
+    this.maskType = AGL.Image.MaskType.ALPHA;
 
     this.interactive = false;
 
@@ -27,6 +28,8 @@ AGL.Image = helpers.createPrototypeClass(
     this._currentTexturePropsUpdateId = 0;
 
     this.textureCropCache = this.textureCrop.items;
+
+    this.colorCache = this.color.items;
 
     this.texture = texture;
   },
@@ -63,4 +66,11 @@ AGL.Image.TintType = {
   NORMAL    : 1,
   GRAYSCALE : 2,
   OVERRIDE  : 3,
+};
+AGL.Image.MaskType = {
+  RED   : 0,
+  GREEN : 1,
+  BLUE  : 2,
+  ALPHA : 3,
+  AVG   : 4,
 };

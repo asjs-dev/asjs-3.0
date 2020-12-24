@@ -23,7 +23,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._MAX_BATCH_ITEMS = config.maxBatchItems;
 
     this._clearBound = this.clear.bind(this);
-    this._clearBeforeRenderFunc = this._clearBound;
+    this._clearBeforeRenderFunc = helpers.emptyFunction;
 
     this._currentBlendMode;
 
@@ -152,12 +152,14 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._gl.drawElementsInstanced(AGL.Const.TRIANGLE_FAN, 6, AGL.Const.UNSIGNED_SHORT, 0, this._batchItems);
 
       this._batchItems = 0;
+
+      this._gl.flush();
     }
 
     _scope._drawTexture = function(textureInfo, isMask) {
       if (textureInfo) {
-        var textureMapIndex = this._textureMap.indexOf(textureInfo);
-        var isTextureNotMapped = textureMapIndex < 0;
+        var textureIndex = this._textureMap.indexOf(textureInfo);
+        var isTextureNotMapped = textureIndex < 0;
         if (isTextureNotMapped || textureInfo.isNeedToDraw(this._gl, this._renderTime)) {
           if (isTextureNotMapped) {
             if (this._textureMap.length === this._textureNum - isMask) {
@@ -166,13 +168,13 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
             }
 
             this._textureMap.push(textureInfo);
-            textureMapIndex = this._textureMap.length - 1;
+            textureIndex = this._textureMap.length - 1;
           }
 
-          AGL.Utils.useTexture(this._gl, textureMapIndex, textureInfo);
+          AGL.Utils.useTexture(this._gl, textureIndex, textureInfo);
         }
 
-        return textureMapIndex;
+        return textureIndex;
       }
 
       return -1;
@@ -194,13 +196,12 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     _scope._resize = function() {
       if (this._resizeCanvas()) {
         AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
-        ++this.propsUpdateId;
+        this.propsUpdateId = AGL.CurrentTime;
       }
     }
 
     _scope._initCustom = function() {
-      var indexBuffer = this._gl.createBuffer();
-      this._gl.bindBuffer(AGL.Const.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      this._gl.bindBuffer(AGL.Const.ELEMENT_ARRAY_BUFFER, this._gl.createBuffer());
       this._gl.bufferData(
         AGL.Const.ELEMENT_ARRAY_BUFFER,
         new Uint16Array([

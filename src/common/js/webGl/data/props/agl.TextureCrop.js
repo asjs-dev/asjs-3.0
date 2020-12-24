@@ -19,7 +19,7 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[0] !== v) {
           this.items[0] = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -29,7 +29,7 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this.items[1] !== v) {
           this.items[1] = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -39,7 +39,7 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this._width !== v) {
           this._width = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -49,7 +49,7 @@ AGL.TextureCrop = helpers.createPrototypeClass(
       set: function(v) {
         if (this._height !== v) {
           this._height = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });

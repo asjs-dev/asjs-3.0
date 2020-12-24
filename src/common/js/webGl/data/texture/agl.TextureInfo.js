@@ -58,11 +58,10 @@ AGL.TextureInfo = helpers.createPrototypeClass(
         return true;
       }
 
-      if (this.shouldUpdate) {
-        var shouldUpdate = this._currentRenderTime < renderTime;
+      if (this.shouldUpdate && this._currentRenderTime < renderTime) {
         this._currentRenderTime = renderTime;
 
-        return shouldUpdate;
+        return true;
       }
 
       if (this._currentUpdateId < this._updateId) {

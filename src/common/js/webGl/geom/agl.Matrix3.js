@@ -29,11 +29,11 @@ AGL.Matrix3 = {
     destinationMatrix[2] = - props.sinRotationB * props.scaledHeight;
     destinationMatrix[3] =   props.cosRotationB * props.scaledHeight;
     destinationMatrix[4] =   props.x -
-                             props.anchorX * props.destinationMatrix[0] -
-                             props.anchorY * props.destinationMatrix[2];
+                             props.anchorX * destinationMatrix[0] -
+                             props.anchorY * destinationMatrix[2];
     destinationMatrix[5] =   props.y -
-                             props.anchorX * props.destinationMatrix[1] -
-                             props.anchorY * props.destinationMatrix[3];
+                             props.anchorX * destinationMatrix[1] -
+                             props.anchorY * destinationMatrix[3];
   },
   transform: function(
     matrix,

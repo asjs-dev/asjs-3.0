@@ -4,6 +4,7 @@ require("../helpers/arraySet.js");
 require("../helpers/constant.js");
 require("../helpers/property.js");
 require("../helpers/map.js");
+require("../helpers/clone.js");
 require("../helpers/emptyFunction.js");
 require("../helpers/iterateOver.js");
 require("../helpers/destructObjectFlat.js");
@@ -42,6 +43,7 @@ require("./display/agl.Image.js");
 require("./renderer/agl.RendererHelper.js");
 require("./renderer/agl.BaseRenderer.js");
 require("./renderer/agl.PostProcessing.js");
+require("./renderer/agl.ShadowRenderer.js");
 require("./renderer/agl.SimpleRenderer.js");
 require("./renderer/agl.Stage2D.js");
 

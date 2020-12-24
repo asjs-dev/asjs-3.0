@@ -11,7 +11,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
     config.locations      = config.locations.concat([
       "aPos",
       "uTex",
-      "uDspTex",
+      "uFTex",
       "uFlpY",
       "uFtrT",
       "uFtrST",
@@ -116,8 +116,8 @@ AGL.PostProcessing = helpers.createPrototypeClass(
         new AGL.Framebuffer()
       ];
 
-      this._gl.uniform1i(this._locations.uTex,    0);
-      this._gl.uniform1i(this._locations.uDspTex, 1);
+      this._gl.uniform1i(this._locations.uTex,  0);
+      this._gl.uniform1i(this._locations.uFTex, 1);
     }
   }
 );
@@ -133,7 +133,7 @@ AGL.PostProcessing.createVertexShader = function() {
   "out vec2 vTexCrd;" +
 
   "void main(void){" +
-    "gl_Position=vec4(aPos.xy,0,1);" +
+    "gl_Position=vec4(aPos,0,1);" +
     "gl_Position.y*=uFlpY;" +
     "vCrd=aPos;" +
     "vTexCrd=(aPos+vec2(1,-1))/vec2(2,-2);" +
@@ -145,7 +145,7 @@ AGL.PostProcessing.createFragmentShader = function(config) {
   "precision " + config.precision + " float;" +
 
   "uniform sampler2D uTex;" +
-  "uniform sampler2D uDspTex;" +
+  "uniform sampler2D uFTex;" +
 
   "uniform int uFtrT;" +
   "uniform int uFtrST;" +
@@ -241,8 +241,8 @@ AGL.PostProcessing.createFragmentShader = function(config) {
           // BlurFilter
           "for(float i=-1.;i<2.;++i){" +
             "for(float j=-1.;j<2.;++j){" +
-              "m=abs(i*j);" +
-              "im=1.-m;" +
+              "m=abs(i)+abs(j);" +
+              "im=1.-(m*.25);" +
               "tCol=i==0.&&j==0." +
                 "?fgCol" +
                 ":texture(uTex,vTexCrd+(wh*vec2(i,j)));" +
@@ -255,14 +255,14 @@ AGL.PostProcessing.createFragmentShader = function(config) {
           "float oAvg=uFtrST==2?(fgCol.r+fgCol.g+fgCol.b+fgCol.a)/4.:0.;" +
           "for(float i=-1.;i<2.;++i){" +
             "for(float j=-1.;j<2.;++j){" +
-              "m=abs(i*j);" +
-              "im=1.-m;" +
+              "m=abs(i)+abs(j);" +
+              "im=1.-(m*.25);" +
               "tCol=i==0.&&j==0." +
                 "?fgCol" +
                 ":texture(uTex,vTexCrd+(wh*vec2(i,j)));" +
               "avg=(tCol.r+tCol.g+tCol.b+tCol.a)/4.;" +
               "if(avg-oAvg>=fvl[3]*m){" +
-                "col+=tCol*im;" +
+                "col+=tCol*im*(2.-fvl[3]);" +
                 "c+=im;" +
               "}" +
             "}" +
@@ -277,7 +277,7 @@ AGL.PostProcessing.createFragmentShader = function(config) {
       "else if(uFtrT<6){" +
         "vec2 flp=vec2(1,-1);" +
         "vec2 dspMd=flp*(texture(" +
-          "uDspTex," +
+          "uFTex," +
           "mod(flp*(vCrd*.5+.5)+vec2(fvl[1],fvl[2]),1.)" +
         ").rg-.5)*2.*vol;" +
         "vec2 mdPs=vTexCrd+dspMd;" +

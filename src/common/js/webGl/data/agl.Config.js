@@ -28,7 +28,7 @@ AGL.CreateConfig = function(options) {
       stencil               : attributes.stencil || false,
       premultipliedAlpha    : attributes.premultipliedAlpha || false,
       powerPreference       : attributes.powerPreference || "high-performance",
-      preserveDrawingBuffer : attributes.preserveDrawingBuffer || false,
+      preserveDrawingBuffer : attributes.preserveDrawingBuffer || true,
     }
   };
 };

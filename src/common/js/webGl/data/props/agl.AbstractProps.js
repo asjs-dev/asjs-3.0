@@ -3,7 +3,7 @@ require("../../NameSpace.js");
 AGL.AbstractProps = helpers.createPrototypeClass(
   Object,
   function AbstractProps() {
-    this.updateId = 0;
+    this.updateId = AGL.CurrentTime;
   },
   function() {}
 );

@@ -27,8 +27,14 @@ require("../NameSpace.js");
       canvas = null;
 
       window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
+
+      AGL.CurrentTime = Date.now();
     },
     function(_scope) {
+      _scope.updateTime = function() {
+        AGL.CurrentTime = Date.now();
+      }
+
       _scope.useTexture = function(gl, index, textureInfo) {
         this.bindTexture(gl, index, textureInfo);
 
@@ -46,10 +52,7 @@ require("../NameSpace.js");
 
         gl.texParameteri(textureInfo.target, AGL.Const.TEXTURE_MAX_LEVEL, textureInfo.maxLevel);
 
-        if (textureInfo.generateMipmap) {
-          gl.generateMipmap(textureInfo.target);
-          gl.flush();
-        }
+        textureInfo.generateMipmap && gl.generateMipmap(textureInfo.target);
       }
 
       _scope.bindTexture = function(gl, index, textureInfo) {
@@ -104,8 +107,6 @@ require("../NameSpace.js");
             gl.deleteProgram(program);
             return null;
         }
-
-        gl.flush();
 
         return program;
       }

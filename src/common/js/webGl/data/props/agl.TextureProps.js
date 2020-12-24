@@ -17,7 +17,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._width !== v) {
           this.scaledWidth = this._width = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });
@@ -27,7 +27,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._height !== v) {
           this.scaledHeight = this._height = v;
-          ++this.updateId;
+          this.updateId = AGL.CurrentTime;
         }
       }
     });

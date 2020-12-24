@@ -116,7 +116,7 @@ AGL.Container = helpers.createPrototypeClass(
       ) {
         this._currentColorUpdateId       = color.updateId;
         this._currentParentColorUpdateId = parent.colorUpdateId;
-        ++this.colorUpdateId;
+        this.colorUpdateId = AGL.CurrentTime;
 
         var colorCache       = this.colorCache;
         var parentColorCache = parent.colorCache;

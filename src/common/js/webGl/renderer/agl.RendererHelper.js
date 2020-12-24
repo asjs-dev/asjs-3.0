@@ -55,7 +55,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     set: function(v) {
       if (this._width !== v) {
         this._width = v;
-        ++this._sizeUpdateId;
+        this._sizeUpdateId = AGL.CurrentTime;
       }
     }
   });
@@ -65,7 +65,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     set: function(v) {
       if (this._height !== v) {
         this._height = v;
-        ++this._sizeUpdateId;
+        this._sizeUpdateId = AGL.CurrentTime;
       }
     }
   });
@@ -90,7 +90,8 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   }
 
   _scope._preRender = function() {
-    this._renderTime = Date.now();
+    AGL.Utils.updateTime();
+    this._renderTime = AGL.CurrentTime;
     this._resize();
   }
 

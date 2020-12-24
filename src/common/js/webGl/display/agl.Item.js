@@ -24,8 +24,6 @@ AGL.Item = helpers.createPrototypeClass(
     this._currentAdditionalPropsUpdateId =
     this.propsUpdateId                   = 0;
 
-    this.colorCache = this.color.items;
-
     this._callback = helpers.emptyFunction;
 
     this._parent = null;
@@ -84,7 +82,7 @@ AGL.Item = helpers.createPrototypeClass(
     _scope._updateTransform = function(props, parent) {
       this._currentParentPropsUpdateId = parent.propsUpdateId;
       this._currentPropsUpdateId       = props.updateId;
-      ++this.propsUpdateId;
+      this.propsUpdateId = AGL.CurrentTime;
 
       AGL.Matrix3.transform(
         parent.matrixCache,
