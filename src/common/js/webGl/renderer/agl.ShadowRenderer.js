@@ -3,11 +3,12 @@ require("./agl.RendererHelper.js");
 
 AGL.ShadowRenderer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function ShadowRenderer(config, stage2D) {
+  function ShadowRenderer(config) {
     helpers.BasePrototypeClass.call(this);
 
-    config.lightNum       = stage2D._config.lightNum;
-    config.isLightEnabled = stage2D._config.isLightEnabled;
+    config.contextAttributes       = config.contextAttributes || {};
+    config.contextAttributes.alpha = true;
+
     config.vertexShader   = config.vertexShader   || AGL.ShadowRenderer.createVertexShader;
     config.fragmentShader = config.fragmentShader || AGL.ShadowRenderer.createFragmentShader;
     config.locations      = config.locations.concat([
@@ -18,21 +19,27 @@ AGL.ShadowRenderer = helpers.createPrototypeClass(
 
     AGL.RendererHelper.initRenderer.call(this, config);
 
-    this.texture               =
+    this.texture = null;
+
     this._currentFilterTexture = null;
 
-    this._stage2D = stage2D;
+    this._lightData = new Float32Array(config.lightNum * 16);
 
-    this._resize();
+    this._lights = [];
+
+    var l = config.lightNum;
+    for (var i = 0; i < l; ++i) this._lights.push(new AGL.Light(i, this._lightData));
   },
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
 
-    _scope._render = function() {
-      this.texture.isNeedToDraw(this._gl, this._renderTime);
-      AGL.Utils.useTexture(this._gl, 0, this.texture);
+    helpers.get(_scope, "stage",  function() { return this; });
 
-      this._gl.uniformMatrix4fv(this._locations.uLg, false, this._stage2D._lightData);
+    _scope._render = function() {
+      this._gl.uniformMatrix4fv(this._locations.uLg, false, this._lightData);
+
+      if (this.texture && this.texture.isNeedToDraw(this._gl, this._renderTime))
+        AGL.Utils.useTexture(this._gl, 0, this.texture);
 
       this._gl.drawArrays(AGL.Const.TRIANGLE_FAN, 0, 6);
     }
@@ -43,8 +50,14 @@ AGL.ShadowRenderer = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
+    _scope.getLight = function(id) {
+      return this._lights[id];
+    }
+
     _scope._initCustom = function() {
-      this._gl.bufferData(AGL.Const.ARRAY_BUFFER, new Float32Array([
+      this._gl.bufferData(
+        AGL.Const.ARRAY_BUFFER,
+        new Float32Array([
           -1, -1,
            1, -1,
           -1,  1,
@@ -95,56 +108,55 @@ var maxLightSources = config.lightNum;
 
   (
     config.isLightEnabled
-      ? "float lgVal(mat4 lg,vec2 oPx){" +
+      ? "vec4 lgVal(mat4 lg,vec2 pxp,bool hTex){" +
           "vec2 a=vGlPos*lg[1].xw+vGlPos.yx*lg[1].zy+lg[0].xy;" +
           "vec2 aa=a*a;" +
           "float dstA=aa.x+aa.y;" +
-          "vec2 b=(((lg[0].xy*vec2(-1,1))/lg[1].xw)+1.)/2.;" +
-          "float dst=distance(vTexCrd,b);" +
-          "vec2 m=(vTexCrd-b)/dst;" +
-          "vec4 c;" +
-          "vec2 p;" +
-          "vec2 pr=vec2(-1);" +
-          "vec2 s;" +
-          "vec2 sp;" +
-          "for(float i=0.;i<dst;i+=0.01){" +
-            "s=i*m;" +
-            "sp=floor(s/oPx);" +
-            "if(sp==pr)continue;" +
-            "pr=sp;" +
-            "p=b+s;" +
-            "if(p.x<0.||p.y<0.||p.x>1.||p.y>1.)continue;" +
-            "c=texture(uTex,p);" +
-            "if(c.a>0.){" +
-              "return 0.;" +
-              "break;" +
+          "if(dstA>1.)return vec4(0,0,0,1);" +
+          "vec3 rgb=lg[2].rgb;" +
+          "if(hTex){" +
+            "float c=0.;" +
+            "vec2 b=(((lg[0].xy*vec2(-1,1))/lg[1].xw)+1.)/2.;" +
+            "float dst=distance(vTexCrd,b);" +
+            "vec2 m=(vTexCrd-b)/dst;" +
+            "vec2 p;" +
+            "vec2 pr=vec2(-1);" +
+            "vec2 s;" +
+            "vec2 sp;" +
+            "for(float i=0.;i<dst;i+=.005){" +
+              "s=i*m;" +
+              "sp=floor(s/pxp)*pxp;" +
+              "if(sp==pr)continue;" +
+              "pr=sp;" +
+              "p=b+sp;" +
+              "if(p.x>=0.&&p.y>=0.&&p.x<=1.&&p.y<=1.){;" +
+                "c+=texture(uTex,p).a;" +
+                "if(c>=1.)return vec4(0,0,0,1);" +
+              "}" +
             "}" +
+            "rgb*=1.-c;" +
           "}" +
-          "return clamp(1.-abs(dstA),0.,1.);" +
+          "return vec4(rgb*(clamp((1.-sqrt(dstA))*lg[3].x,0.,1.)*lg[3].y),lg[2].a*lg[3].y);" +
         "}"
       : ""
   ) +
 
   "void main(void){" +
-    "vec2 oPx=1./vec2(textureSize(uTex,0));" +
-    "fgCol=vec4(0);" +
-    "float lgv;" +
-    "float a=1.;" +
-    "float c=0.;";
+    "vec2 pxp=1./vec2(textureSize(uTex,0));" +
+    "bool hTex=pxp.x<1.&&pxp.y<1.;" +
+    "fgCol=vec4(0);";
 
     if (config.isLightEnabled) {
       for (var i = 0; i < maxLightSources; ++i) {
         shader +=
-        "if(uLg[" + i + "][0].w>0.){" +
-          "lgv=lgVal(uLg[" + i + "],oPx);" +
-          "a-=lgv;" +
-          "if(lgv<1.)++c;" +
-        "}";
+        "if(uLg[" + i + "][0].w>0.)fgCol+=lgVal(uLg[" + i + "],pxp,hTex);";
       }
     }
 
     shader +=
-    "fgCol.a=a;" +
+    "fgCol=clamp(fgCol,0.,1.);" +
+    "float colDst=(fgCol.r+fgCol.g+fgCol.b)/3.;" +
+    "fgCol.a=(1.-colDst)+(colDst/2.);" +
   "}";
 
   return shader;

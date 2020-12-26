@@ -107,7 +107,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
       this.widthHalf  = this._width  * .5;
       this.heightHalf = this._height * .5;
 
-      this._gl.viewport(0, 0, this._gl.drawingBufferWidth, this._gl.drawingBufferHeight);
+      this._gl.viewport(0, 0, this._width, this._height);
 
       return true;
     }

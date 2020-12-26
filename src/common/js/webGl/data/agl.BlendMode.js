@@ -46,6 +46,7 @@ require("../utils/agl.Utils.js");
       AGL.Const.ONE,
       AGL.Const.ONE
     ]),
+
     SRC_IN : createBlendMode([
       AGL.Const.DST_ALPHA,
       AGL.Const.ZERO

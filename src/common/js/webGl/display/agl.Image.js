@@ -65,12 +65,12 @@ AGL.Image.TintType = {
   NONE      : 0,
   NORMAL    : 1,
   GRAYSCALE : 2,
-  OVERRIDE  : 3,
+  OVERRIDE  : 3
 };
 AGL.Image.MaskType = {
   RED   : 0,
   GREEN : 1,
   BLUE  : 2,
   ALPHA : 3,
-  AVG   : 4,
+  AVG   : 4
 };

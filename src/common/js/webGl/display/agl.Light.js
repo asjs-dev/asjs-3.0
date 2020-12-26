@@ -37,7 +37,7 @@ AGL.Light = helpers.createPrototypeClass(
       var matId     = this._matId + 3;
 
       if (this.on) {
-        this._updateProps();
+        this._updateProps(renderTime);
         this._updateColor();
 
         lightData[matId]      = lightData[matId + 8] > 0 ? 1 : 0;

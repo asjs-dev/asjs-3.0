@@ -101,7 +101,9 @@ AGL.PostProcessing = helpers.createPrototypeClass(
     }
 
     _scope._initCustom = function() {
-      this._gl.bufferData(AGL.Const.ARRAY_BUFFER, new Float32Array([
+      this._gl.bufferData(
+        AGL.Const.ARRAY_BUFFER,
+        new Float32Array([
           -1, -1,
            1, -1,
           -1,  1,
