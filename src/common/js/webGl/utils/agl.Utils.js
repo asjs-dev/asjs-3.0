@@ -27,14 +27,8 @@ require("../NameSpace.js");
       canvas = null;
 
       window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
-
-      AGL.CurrentTime = Date.now();
     },
     function(_scope) {
-      _scope.updateTime = function() {
-        AGL.CurrentTime = Date.now();
-      }
-
       _scope.useTexture = function(gl, index, textureInfo) {
         this.bindTexture(gl, index, textureInfo);
 

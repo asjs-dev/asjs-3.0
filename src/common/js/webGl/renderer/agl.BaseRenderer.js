@@ -72,17 +72,14 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     _scope._drawItem = function(item) {
       item.update(this._renderTime);
-      this._drawFunctionMap[item.TYPE](item);
+      item.callback && item.callback.call(item, this._renderTime);
+      item.renderable && this._drawFunctionMap[item.TYPE](item);
     }
 
     _scope._drawContainer = function(container) {
       var children = container.children;
-      var child;
-      var l = container.length;
-      for (var i = 0; i < l; ++i) {
-        child = children[i];
-        child.renderable && this._drawItem(child);
-      }
+      var l = children.length;
+      for (var i = 0; i < l; ++i) this._drawItem(children[i]);
     }
 
     _scope._setBufferData = function(item, textureMapIndex, matId, quadId) {
@@ -196,7 +193,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     _scope._resize = function() {
       if (this._resizeCanvas()) {
         AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
-        this.propsUpdateId = AGL.CurrentTime;
+        ++this.propsUpdateId;
       }
     }
 

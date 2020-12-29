@@ -3,7 +3,7 @@ require("./agl.RendererHelper.js");
 
 AGL.PostProcessing = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function PostProcessing(config) {
+  function PostProcessing(config, texture, filters) {
     helpers.BasePrototypeClass.call(this);
 
     config.vertexShader   = config.vertexShader   || AGL.PostProcessing.createVertexShader;
@@ -19,11 +19,12 @@ AGL.PostProcessing = helpers.createPrototypeClass(
       "uFtrKer"
     ]);
 
-    this.filters = [];
+    this.filters = filters || [];
 
     AGL.RendererHelper.initRenderer.call(this, config);
 
-    this.texture               =
+    this.texture = texture;
+
     this._currentFilterTexture = null;
 
     this._resize();

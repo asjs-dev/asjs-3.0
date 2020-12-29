@@ -26,10 +26,14 @@ AGL.AbstractDrawable = helpers.createPrototypeClass(
       return this._bounds;
     }
 
-    _scope._calcBounds = function() {
-      var corners = this._corners;
-      AGL.Matrix3.calcCorners(this.matrixCache, corners, this.stage);
+    _scope._calcCorners = function() {
+      AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage);
+    }
 
+    _scope._calcBounds = function() {
+      this._calcCorners();
+      
+      var corners = this._corners;
       var bounds = this._bounds;
 
       var a = corners[0];

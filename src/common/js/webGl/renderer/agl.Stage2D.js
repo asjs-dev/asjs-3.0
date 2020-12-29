@@ -55,11 +55,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this.pickerPoint.y = (point.y - this.heightHalf) * this.matrixCache[4];
     }
 
-    _scope._drawItem = function(item) {
-      item.update(this._renderTime);
-      this._drawFunctionMap[item.TYPE](item);
-    }
-
     _scope._setMaskData = function(item, duoId) {
       this._maskData[duoId]     = this._drawTexture(item.mask, true);
       this._maskData[duoId + 1] = item.maskType;

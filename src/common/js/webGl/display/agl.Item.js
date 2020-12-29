@@ -26,8 +26,6 @@ AGL.Item = helpers.createPrototypeClass(
 
     this._callback = helpers.emptyFunction;
 
-    this._parent = null;
-
     this._bounds = AGL.Rect.create();
   },
   function(_scope, _super) {
@@ -66,8 +64,6 @@ AGL.Item = helpers.createPrototypeClass(
     }
 
     _scope._updateProps = function(renderTime) {
-      this._callback.call(this, renderTime);
-
       var props  = this.props;
           props.updateRotation();
           props.updateScale();
@@ -82,7 +78,7 @@ AGL.Item = helpers.createPrototypeClass(
     _scope._updateTransform = function(props, parent) {
       this._currentParentPropsUpdateId = parent.propsUpdateId;
       this._currentPropsUpdateId       = props.updateId;
-      this.propsUpdateId = AGL.CurrentTime;
+      ++this.propsUpdateId;
 
       AGL.Matrix3.transform(
         parent.matrixCache,

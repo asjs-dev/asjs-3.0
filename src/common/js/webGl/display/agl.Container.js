@@ -11,8 +11,6 @@ AGL.Container = helpers.createPrototypeClass(
     this.children = [];
 
     this.colorCache = [1, 1, 1, 1];
-
-    this.length = 0;
   },
   function(_scope, _super) {
     _scope.destruct = function() {
@@ -37,7 +35,6 @@ AGL.Container = helpers.createPrototypeClass(
       if (child) {
         child.parent && child.parent.removeChild(child);
         this.children.push(child);
-        this.length = this.children.length;
         this.setChildIndex(child, index);
         child.parent = this;
       }
@@ -47,7 +44,6 @@ AGL.Container = helpers.createPrototypeClass(
     _scope.removeChild = function(child) {
       if (!child || !this.contains(child)) return null;
       helpers.removeFromArray(this.children, child);
-      this.length = this.children.length;
       child.parent = null;
       return child;
     }
@@ -88,7 +84,7 @@ AGL.Container = helpers.createPrototypeClass(
       bounds.width  = -1/0;
       bounds.height = -1/0;
 
-      var l = this.length;
+      var l = this.children.length;
       var childBounds;
       for (var i = 0; i < l; ++i) {
         childBounds = this.children[i].getBounds();
@@ -116,7 +112,7 @@ AGL.Container = helpers.createPrototypeClass(
       ) {
         this._currentColorUpdateId       = color.updateId;
         this._currentParentColorUpdateId = parent.colorUpdateId;
-        this.colorUpdateId = AGL.CurrentTime;
+        ++this.colorUpdateId;
 
         var colorCache       = this.colorCache;
         var parentColorCache = parent.colorCache;
