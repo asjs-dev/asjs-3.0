@@ -31,6 +31,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     );
 
     this.image = new AGL.Image(new AGL.Texture(canvasB, true));
+    this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     this.scale = scale || 1;
     this.blur  = blur  || 3;
@@ -80,7 +81,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       this._blurFilter.destruct();
       this.image.destruct();
 
-      _super.destruct();
+      _super.destruct.call(this);
     }
 
     _scope._resize = function() {

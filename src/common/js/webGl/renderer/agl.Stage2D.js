@@ -55,22 +55,26 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this.pickerPoint.y = (point.y - this.heightHalf) * this.matrixCache[4];
     }
 
-    _scope._setMaskData = function(item, duoId) {
-      this._maskData[duoId]     = this._drawTexture(item.mask, true);
-      this._maskData[duoId + 1] = item.maskType;
+    _scope._setMaskData = function(item) {
+      var id = this._batchItems * 2;
+      this._maskData[id]     = this._drawTexture(item.mask, true);
+      this._maskData[id + 1] = item.maskType;
     }
 
-    _scope._setBufferData = function(item, textureMapIndex, matId, quadId, effectId, douId) {
-      _super._setBufferData.call(this, item, textureMapIndex, matId, quadId);
+    _scope._setBufferData = function(item, textureMapIndex) {
+      _super._setBufferData.call(this, item, textureMapIndex);
+
+      var quadId = this._batchItems * 4;
+      var duoId  = this._batchItems * 2;
 
       helpers.arraySet(this._parentColorData, item.parent.colorCache, quadId);
       helpers.arraySet(this._tintColorData,   item.colorCache,        quadId);
 
-      this._alphaData[douId]     = item.props.alpha;
-      this._alphaData[douId + 1] = item.parent.props.alpha;
+      this._alphaData[duoId]     = item.props.alpha;
+      this._alphaData[duoId + 1] = item.parent.props.alpha;
 
-      this._effectData[effectId]     = textureMapIndex;
-      this._effectData[effectId + 1] = item.tintType;
+      this._effectData[duoId]     = textureMapIndex;
+      this._effectData[duoId + 1] = item.tintType;
     }
 
     _scope._drawImage = function(item) {
@@ -82,19 +86,11 @@ AGL.Stage2D = helpers.createPrototypeClass(
         item.isContainsPoint(this.pickerPoint)
       ) this.picked = item;
 
-      var duoId = this._batchItems * 2;
-      this._setMaskDataFunc(item, duoId);
+      this._setMaskDataFunc(item);
 
       var textureMapIndex = this._drawTexture(item.texture, false);
 
-      this._setBufferData(
-        item,
-        textureMapIndex,
-        this._batchItems * 16,
-        this._batchItems * 4,
-        this._batchItems * 2,
-        duoId
-      );
+      this._setBufferData(item, textureMapIndex);
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }

@@ -13,8 +13,8 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
     AGL.BaseRenderer.call(this, config);
   },
   function(_scope, _super) {
-    _scope._setBufferData = function(item, textureMapIndex, matId, quadId) {
-      _super._setBufferData.call(this, item, textureMapIndex, matId, quadId);
+    _scope._setBufferData = function(item, textureMapIndex) {
+      _super._setBufferData.call(this, item, textureMapIndex);
       this._textureIdData[this._batchItems] = textureMapIndex;
     }
 

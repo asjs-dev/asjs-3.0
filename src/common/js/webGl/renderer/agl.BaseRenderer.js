@@ -82,7 +82,9 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       for (var i = 0; i < l; ++i) this._drawItem(children[i]);
     }
 
-    _scope._setBufferData = function(item, textureMapIndex, matId, quadId) {
+    _scope._setBufferData = function(item, textureMapIndex) {
+      var matId  = this._batchItems * 16;
+
       helpers.arraySet(this._matrixData, item.matrixCache,        matId);
       helpers.arraySet(this._matrixData, item.textureMatrixCache, matId + 6);
       helpers.arraySet(this._matrixData, item.textureCropCache,   matId + 12);
@@ -93,12 +95,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
       var textureMapIndex = this._drawTexture(item.texture, false);
 
-      this._setBufferData(
-        item,
-        textureMapIndex,
-        this._batchItems * 16,
-        this._batchItems * 4
-      );
+      this._setBufferData(item, textureMapIndex);
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
@@ -181,6 +178,12 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       if (this._currentBlendMode !== blendMode) {
         this._currentBlendMode = blendMode;
         this._batchDraw();
+
+        this._gl[blendMode.eqName](
+          blendMode.eqs[0],
+          blendMode.eqs[1]
+        );
+
         this._gl[blendMode.funcName](
           blendMode.funcs[0],
           blendMode.funcs[1],
