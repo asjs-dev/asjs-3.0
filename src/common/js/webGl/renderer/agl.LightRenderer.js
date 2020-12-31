@@ -6,14 +6,12 @@ AGL.LightRenderer = helpers.createPrototypeClass(
   function LightRenderer(config, shadowMap) {
     helpers.BasePrototypeClass.call(this);
 
+    config = AGL.RendererHelper.initConfig(config, AGL.LightRenderer);
+
     config.contextAttributes       = config.contextAttributes || {};
     config.contextAttributes.alpha = true;
 
-    config.vertexShader   = config.vertexShader   || AGL.LightRenderer.createVertexShader;
-    config.fragmentShader = config.fragmentShader || AGL.LightRenderer.createFragmentShader;
-    config.locations      = config.locations.concat([
-      "aPos",
-      "uTex",
+    config.locations = config.locations.concat([
       "uLg",
       "uAlp"
     ]);

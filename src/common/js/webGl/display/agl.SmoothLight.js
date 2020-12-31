@@ -5,32 +5,27 @@ AGL.SmoothLight = helpers.createPrototypeClass(
   function SmoothLight(lightNum, scale, blur, shadowMap) {
     helpers.BasePrototypeClass.call(this);
 
-    var canvasA = document.createElement("canvas");
-    var canvasB = document.createElement("canvas");
-
     this.renderer = new AGL.LightRenderer(
-      AGL.CreateConfig({
-        canvas : canvasA,
+      {
         lightNum : lightNum || 1
-      }),
+      },
       shadowMap
     );
 
     this._blurFilter = new AGL.BlurFilter(0, 0);
     this._postProcessingRenderer = new AGL.PostProcessing(
-      AGL.CreateConfig({
-        canvas : canvasB,
+      {
         contextAttributes : {
           alpha: true
         }
-      }),
-      new AGL.Texture(canvasA, true),
+      },
+      new AGL.Texture(this.renderer.canvas, true),
       [
         this._blurFilter
       ]
     );
 
-    this.image = new AGL.Image(new AGL.Texture(canvasB, true));
+    this.image = new AGL.Image(new AGL.Texture(this._postProcessingRenderer.canvas, true));
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     this.scale = scale || 1;

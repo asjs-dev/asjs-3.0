@@ -6,11 +6,9 @@ AGL.PostProcessing = helpers.createPrototypeClass(
   function PostProcessing(config, texture, filters) {
     helpers.BasePrototypeClass.call(this);
 
-    config.vertexShader   = config.vertexShader   || AGL.PostProcessing.createVertexShader;
-    config.fragmentShader = config.fragmentShader || AGL.PostProcessing.createFragmentShader;
-    config.locations      = config.locations.concat([
-      "aPos",
-      "uTex",
+    config = AGL.RendererHelper.initConfig(config, AGL.PostProcessing);
+    
+    config.locations = config.locations.concat([
       "uFTex",
       "uFlpY",
       "uFtrT",

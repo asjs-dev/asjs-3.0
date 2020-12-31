@@ -4,9 +4,9 @@ require("./agl.BaseRenderer.js");
 AGL.SimpleRenderer = helpers.createPrototypeClass(
   AGL.BaseRenderer,
   function SimpleRenderer(config) {
-    config.vertexShader   = config.vertexShader   || AGL.SimpleRenderer.createVertexShader;
-    config.fragmentShader = config.fragmentShader || AGL.SimpleRenderer.createFragmentShader;
-    config.locations      = config.locations.concat([
+    config = AGL.RendererHelper.initConfig(config, AGL.SimpleRenderer);
+
+    config.locations = config.locations.concat([
       "aTexId"
     ]);
 

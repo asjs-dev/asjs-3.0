@@ -33,6 +33,20 @@ AGL.RendererHelper.initRenderer = function(config) {
   this._init();
 };
 
+AGL.RendererHelper.initConfig = function(config, target) {
+  config = AGL.CreateConfig(config);
+
+  config.vertexShader   = config.vertexShader   || target.createVertexShader;
+  config.fragmentShader = config.fragmentShader || target.createFragmentShader;
+
+  config.locations = config.locations.concat([
+    "aPos",
+    "uTex"
+  ]);
+
+  return config;
+}
+
 AGL.RendererHelper.createRendererBody = function(_scope) {
   helpers.get(_scope, "canvas", function() { return this._canvas; });
   helpers.get(_scope, "isContextLost", function() {

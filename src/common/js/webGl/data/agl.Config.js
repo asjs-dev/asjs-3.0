@@ -2,10 +2,12 @@ require("../NameSpace.js");
 require("../utils/agl.Utils.js");
 
 AGL.CreateConfig = function(options) {
+  options = options || {};
+  
   var attributes = options.contextAttributes || {};
 
   return {
-    canvas         : options.canvas,
+    canvas         : options.canvas || document.createElement("canvas"),
 
     locations      : options.locations || [],
 

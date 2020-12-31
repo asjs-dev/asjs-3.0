@@ -6,8 +6,7 @@ require("../geom/agl.Matrix3.js");
 AGL.Stage2D = helpers.createPrototypeClass(
   AGL.BaseRenderer,
   function Stage2DRenderer(config) {
-    config.vertexShader   = config.vertexShader   || AGL.Stage2D.createVertexShader;
-    config.fragmentShader = config.fragmentShader || AGL.Stage2D.createFragmentShader;
+    config = AGL.RendererHelper.initConfig(config, AGL.Stage2D);
 
     var locations = [
       "aWrlCol",

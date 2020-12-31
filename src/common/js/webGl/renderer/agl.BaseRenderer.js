@@ -12,12 +12,10 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
   function BaseRenderer(config) {
     AGL.Container.call(this);
 
-    config.vertexShader   = config.vertexShader   || AGL.BaseRenderer.createVertexShader;
-    config.fragmentShader = config.fragmentShader || AGL.BaseRenderer.createFragmentShader;
-    config.locations      = config.locations.concat([
-      "aPos",
-      "aMt",
-      "uTex"
+    config = AGL.RendererHelper.initConfig(config, AGL.BaseRenderer);
+
+    config.locations = config.locations.concat([
+      "aMt"
     ]);
 
     this._MAX_BATCH_ITEMS = config.maxBatchItems;
