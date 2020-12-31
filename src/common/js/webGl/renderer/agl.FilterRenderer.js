@@ -1,13 +1,13 @@
 require("../NameSpace.js");
 require("./agl.RendererHelper.js");
 
-AGL.PostProcessing = helpers.createPrototypeClass(
+AGL.FilterRenderer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function PostProcessing(config, texture, filters) {
+  function FilterRenderer(config, texture, filters) {
     helpers.BasePrototypeClass.call(this);
 
-    config = AGL.RendererHelper.initConfig(config, AGL.PostProcessing);
-    
+    config = AGL.RendererHelper.initConfig(config, AGL.FilterRenderer);
+
     config.locations = config.locations.concat([
       "uFTex",
       "uFlpY",
@@ -122,7 +122,7 @@ AGL.PostProcessing = helpers.createPrototypeClass(
     }
   }
 );
-AGL.PostProcessing.createVertexShader = function() {
+AGL.FilterRenderer.createVertexShader = function() {
   return
   "#version 300 es\n" +
 
@@ -140,7 +140,7 @@ AGL.PostProcessing.createVertexShader = function() {
     "vTexCrd=(aPos+vec2(1,-1))/vec2(2,-2);" +
   "}";
 };
-AGL.PostProcessing.createFragmentShader = function(config) {
+AGL.FilterRenderer.createFragmentShader = function(config) {
   return
   "#version 300 es\n" +
   "precision " + config.precision + " float;" +

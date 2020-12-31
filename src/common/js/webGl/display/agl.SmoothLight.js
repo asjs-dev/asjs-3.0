@@ -13,7 +13,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     );
 
     this._blurFilter = new AGL.BlurFilter(0, 0);
-    this._postProcessingRenderer = new AGL.PostProcessing(
+    this._filterRenderer = new AGL.FilterRenderer(
       {
         contextAttributes : {
           alpha: true
@@ -25,7 +25,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       ]
     );
 
-    this.image = new AGL.Image(new AGL.Texture(this._postProcessingRenderer.canvas, true));
+    this.image = new AGL.Image(new AGL.Texture(this._filterRenderer.canvas, true));
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     this.scale = scale || 1;
@@ -55,12 +55,12 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     });
 
     helpers.get(_scope, "isContextLost", function() {
-      return this.renderer.isContextLost || this._postProcessingRenderer.isContextLost;
+      return this.renderer.isContextLost || this._filterRenderer.isContextLost;
     });
 
     _scope.render = function() {
       this.renderer.render();
-      this._postProcessingRenderer.render();
+      this._filterRenderer.render();
     }
 
     _scope.setSize = function(w, h) {
@@ -72,7 +72,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
 
     _scope.destruct = function() {
       this.renderer.destruct();
-      this._postProcessingRenderer.destruct();
+      this._filterRenderer.destruct();
       this._blurFilter.destruct();
       this.image.destruct();
 
@@ -84,7 +84,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       var scaledHeight = this._height * this._scale;
 
       this.renderer.setSize(scaledWidth, scaledHeight);
-      this._postProcessingRenderer.setSize(scaledWidth, scaledHeight);
+      this._filterRenderer.setSize(scaledWidth, scaledHeight);
     }
   }
 );
