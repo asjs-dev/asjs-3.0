@@ -120,15 +120,16 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "if(pxp.x<1.&&pxp.y<1.){" +
       "vec4 tc;" +
       "vec4 c=vec4(0);" +
-      "vec2 m=(vTexCrd-vCrd.zw)/dst;" +
+      "float dstTex=distance(vTexCrd,vCrd.zw);" +
+      "vec2 m=(vTexCrd-vCrd.zw)/dstTex;" +
       "vec2 p;" +
       "vec2 s;" +
-      "for(float i=0.;i<dst;i+=.005){" +
+      "for(float i=0.;i<dstTex;i+=.005){" +
         "s=i*m;" +
         "p=vCrd.zw+s;" +
         "if(p.x>=0.&&p.y>=0.&&p.x<=1.&&p.y<=1.){" +
           "tc=texture(uTex,p);" +
-          "c=vec4(c.rgb*(1.-tc.a)+tc.rgb*tc.a,c.a+tc.a*tc.a);" +
+          "c=vec4(c.rgb+rgb*tc.rgb,c.a+tc.a*tc.a);" +
           "if(c.a>=1.)discard;" +
         "}" +
       "}" +
