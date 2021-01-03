@@ -107,13 +107,15 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._batchDraw = function() {
-      this._bindBuffers();
+      if (this._batchItems > 0) {
+        this._bindBuffers();
 
-      this._gl.drawElementsInstanced(AGL.Const.TRIANGLE_FAN, 6, AGL.Const.UNSIGNED_SHORT, 0, this._batchItems);
+        this._gl.drawElementsInstanced(AGL.Const.TRIANGLE_FAN, 6, AGL.Const.UNSIGNED_SHORT, 0, this._batchItems);
 
-      this._batchItems = 0;
+        this._batchItems = 0;
 
-      this._gl.flush();
+        this._gl.flush();
+      }
     }
 
     _scope._drawTexture = function(textureInfo, isMask) {
