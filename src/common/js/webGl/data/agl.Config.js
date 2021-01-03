@@ -6,7 +6,7 @@ AGL.CreateConfig = function(options) {
 
   var attributes = options.contextAttributes || {};
 
-  var config = {
+  return {
     canvas         : options.canvas || document.createElement("canvas"),
     locations      : options.locations || [],
     lightNum       : Math.max(0, options.lightNum || 0),
@@ -26,8 +26,4 @@ AGL.CreateConfig = function(options) {
       preserveDrawingBuffer : attributes.preserveDrawingBuffer || true,
     }
   };
-
-  config.isLightEnabled = config.lightNum > 0;
-
-  return config;
 };

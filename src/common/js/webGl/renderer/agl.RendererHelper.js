@@ -110,6 +110,20 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
   _scope._render = helpers.emptyFunction;
 
+  _scope._useBlendMode = function(blendMode) {
+    this._gl[blendMode.eqName](
+      blendMode.eqs[0],
+      blendMode.eqs[1]
+    );
+
+    this._gl[blendMode.funcName](
+      blendMode.funcs[0],
+      blendMode.funcs[1],
+      blendMode.funcs[2],
+      blendMode.funcs[3]
+    );
+  }
+
   _scope._resizeCanvas = function() {
     if (this._currentSizeUpdateId < this._sizeUpdateId) {
       this._currentSizeUpdateId = this._sizeUpdateId;
@@ -165,6 +179,42 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._gl.detachShader(this._program, this._fragmentShader);
     this._gl.deleteShader(this._fragmentShader);
     this._gl.deleteProgram(this._program);
+  }
+
+  _scope._createArrayBuffer = function(data, locationId, length, num, size, type, bytes) {
+    var buffer = this._gl.createBuffer();
+
+    this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, buffer);
+		this._gl.bufferData(AGL.Const.ARRAY_BUFFER, data.byteLength, AGL.Const.DYNAMIC_DRAW);
+
+    this._attachArrayBuffer(this._locations[locationId], buffer, data, length, num, size, type, bytes);
+
+    return buffer;
+  }
+
+  _scope._attachArrayBuffer = function(location, buffer, data, length, num, size, type, bytes) {
+    this._bindArrayBuffer(buffer, data);
+
+		var stride = bytes * length;
+    var i = num + 1;
+    while (--i) {
+			var loc = location + (num - i);
+			this._gl.enableVertexAttribArray(loc);
+
+      this._gl[
+        "vertexAttrib" + (
+          type === AGL.Const.FLOAT
+          ? ""
+          : "I"
+        ) + "Pointer"
+      ](loc, size, type, false, stride, (num - i) * bytes * size);
+			this._gl.vertexAttribDivisor(loc, 1);
+		}
+	}
+
+  _scope._bindArrayBuffer = function(buffer, data) {
+    this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, buffer);
+		this._gl.bufferSubData(AGL.Const.ARRAY_BUFFER, 0, data);
   }
 
   _scope._init = function() {
@@ -230,8 +280,8 @@ AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
 AGL.RendererHelper.getTexColor = "fgCol=gtTexCol(vTexId,vTexCrop.xy+vTexCrop.zw*mod(vTexCrd,1.));";
 
 AGL.RendererHelper.calcGlPositions =
-  "mat3 mt=mat3(aMt[0][0],aMt[0][1],0,aMt[0][2],aMt[0][3],0,aMt[1][0],aMt[1][1],1);" +
-  "mat3 tMt=mat3(aMt[1][2],aMt[1][3],0,aMt[2][0],aMt[2][1],0,aMt[2][2],aMt[2][3],1);" +
+  "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+  "mat3 tMt=mat3(aMt[1].zw,0,aMt[2].xy,0,aMt[2].zw,1);" +
   "vec3 pos=vec3(aPos,1);" +
   "gl_Position=vec4(mt*pos,1);" +
   "vTexCrd=(tMt*pos).xy;" +

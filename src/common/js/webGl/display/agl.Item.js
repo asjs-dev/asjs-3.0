@@ -2,17 +2,16 @@ require("../NameSpace.js");
 require("../data/props/agl.ItemProps.js");
 require("../data/props/agl.ColorProps.js");
 require("../geom/agl.Rect.js");
+require("./agl.BaseItem.js");
 
 AGL.Item = helpers.createPrototypeClass(
-  helpers.BasePrototypeClass,
+  AGL.BaseItem,
   function Item() {
-    helpers.BasePrototypeClass.call(this);
+    AGL.BaseItem.call(this);
 
     this.TYPE = AGL.Item.TYPE;
 
     this.renderable = true;
-
-    this.matrixCache = AGL.Matrix3.identity();
 
     this.props = new AGL.ItemProps();
     this.color = new AGL.ColorProps();
@@ -21,8 +20,7 @@ AGL.Item = helpers.createPrototypeClass(
     this._currentColorUpdateId           =
     this._currentParentPropsUpdateId     =
     this._currentParentColorUpdateId     =
-    this._currentAdditionalPropsUpdateId =
-    this.propsUpdateId                   = 0;
+    this._currentAdditionalPropsUpdateId = 0;
 
     this._callback = helpers.emptyFunction;
 

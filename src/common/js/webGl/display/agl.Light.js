@@ -50,38 +50,22 @@ AGL.Light = helpers.createPrototypeClass(
 
     _scope.update = function(renderTime) {
       var lightData = this._lightData;
-      var matId     = this._matId + 3;
+      var matId     = this._matId + 12;
 
       if (this.on) {
         this._updateProps(renderTime);
         this._updateColor();
 
-        lightData[matId]      = lightData[matId + 8] > 0 ? 1 : 0;
-        lightData[matId + 9]  = this.transition;
-        lightData[matId + 10] = this.props.alpha;
+        lightData[matId]     = lightData[matId - 1] > 0 ? 1 : 0;
+        lightData[matId + 1] = this.transition;
+        lightData[matId + 2] = this.props.alpha;
       } else lightData[matId] = 0;
     }
 
     _scope._updateTransform = function(props, parent) {
       _super._updateTransform.call(this, props, parent);
 
-      var inverseMatrixCache = this._inverseMatrixCache;
-
-      AGL.Matrix3.inverse(this.matrixCache, inverseMatrixCache);
-
-      var lightData = this._lightData;
-      var matId     = this._matId;
-
-      lightData[matId]     = inverseMatrixCache[4];
-      lightData[matId + 1] = inverseMatrixCache[5];
-
-      lightData[matId + 4] = inverseMatrixCache[0];
-      lightData[matId + 5] = inverseMatrixCache[1];
-      lightData[matId + 6] = inverseMatrixCache[2];
-      lightData[matId + 7] = inverseMatrixCache[3];
-
-      lightData[matId + 14] = ((-lightData[matId] / lightData[matId + 4]) + 1) / 2;
-      lightData[matId + 15] = ((lightData[matId + 1] / lightData[matId + 7]) + 1) / 2;
+      helpers.arraySet(this._lightData, this.matrixCache, this._matId);
     }
 
     _scope._updateColor = function() {

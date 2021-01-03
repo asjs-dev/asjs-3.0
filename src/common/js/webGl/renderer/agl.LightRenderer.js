@@ -8,17 +8,13 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     config = AGL.RendererHelper.initConfig(config, AGL.LightRenderer);
 
-    config.contextAttributes       = config.contextAttributes || {};
-    config.contextAttributes.alpha = true;
+    config.contextAttributes                    = config.contextAttributes || {};
+    config.contextAttributes.alpha              = true;
+    config.contextAttributes.premultipliedAlpha = false;
 
     config.locations = config.locations.concat([
-      "uLg",
-      "uAlp"
+      "aMt"
     ]);
-
-    AGL.RendererHelper.initRenderer.call(this, config);
-
-    this.alpha = 1;
 
     this.shadowMap = shadowMap;
 
@@ -28,6 +24,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     var l = config.lightNum;
     for (var i = 0; i < l; ++i) this._lights.push(new AGL.Light(i, this._lightData));
+
+    AGL.RendererHelper.initRenderer.call(this, config);
   },
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
@@ -35,13 +33,15 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     helpers.get(_scope, "stage",  function() { return this; });
 
     _scope._render = function() {
-      this._gl.uniformMatrix4fv(this._locations.uLg, false, this._lightData);
-      this._gl.uniform1f(this._locations.uAlp, this.alpha);
+      this._gl.clear(AGL.Const.COLOR_BUFFER_BIT);
 
       if (this.shadowMap && this.shadowMap.isNeedToDraw(this._gl, this._renderTime))
         AGL.Utils.useTexture(this._gl, 0, this.shadowMap);
 
-      this._gl.drawArrays(AGL.Const.TRIANGLE_FAN, 0, 6);
+      this._bindArrayBuffer(this._lightBuffer, this._lightData);
+      this._gl.drawElementsInstanced(AGL.Const.TRIANGLE_FAN, 6, AGL.Const.UNSIGNED_SHORT, 0, this._lights.length);
+
+      this._gl.flush();
     }
 
     _scope.destruct = function() {
@@ -55,19 +55,23 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     }
 
     _scope._initCustom = function() {
+      this._gl.bindBuffer(AGL.Const.ELEMENT_ARRAY_BUFFER, this._gl.createBuffer());
       this._gl.bufferData(
-        AGL.Const.ARRAY_BUFFER,
-        new Float32Array([
-          -1, -1,
-           1, -1,
-          -1,  1,
-          -1,  1,
-           1,  1,
-           1, -1
-        ]), AGL.Const.STATIC_DRAW
+        AGL.Const.ELEMENT_ARRAY_BUFFER,
+        new Uint16Array([
+          0, 1, 2,
+          0, 2, 3
+        ]),
+        AGL.Const.STATIC_DRAW
       );
 
       this._gl.uniform1i(this._locations.uTex, 0);
+
+  		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, AGL.Const.FLOAT, 4);
+
+      this._useBlendMode(AGL.BlendMode.ADD);
+
+      this._gl.clearColor(0, 0, 0, 1);
     }
   }
 );
@@ -76,84 +80,61 @@ AGL.LightRenderer.createVertexShader = function() {
   "#version 300 es\n" +
 
   "in vec2 aPos;" +
+  "in mat4 aMt;" +
 
   "out vec2 vTexCrd;" +
-  "out vec2 vGlPos;" +
+  "out vec4 vCrd;" +
+  "out vec4 vCol;" +
+  "out vec4 vDat;" +
 
   "void main(void){" +
-    "gl_Position=vec4(aPos,0,1);" +
-    "vGlPos=aPos;" +
-    "vTexCrd=(aPos+vec2(1,-1))/vec2(2,-2);" +
+    "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+    "vec3 pos=vec3(aPos*2.-1.,1);" +
+    "vCrd.xy=pos.xy;" +
+    "gl_Position=vec4(mt*pos,1);" +
+    "vTexCrd=(gl_Position.xy+vec2(1,-1))/vec2(2,-2);" +
+    "vCrd.zw=((mt*vec3(0,0,1)).xy+vec2(1,-1))/vec2(2,-2);" +
+    "vCol=aMt[2];" +
+    "vDat=aMt[3];" +
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
-var maxLightSources = config.lightNum;
-
   var shader =
   "#version 300 es\n" +
   "precision " + config.precision + " float;" +
 
   "in vec2 vTexCrd;" +
-  "in vec2 vGlPos;" +
-
-  (
-    config.isLightEnabled
-      ? "uniform mat4 uLg[" + maxLightSources + "];"
-      : ""
-  ) +
+  "in vec4 vCrd;" +
+  "in vec4 vCol;" +
+  "in vec4 vDat;" +
 
   "uniform sampler2D uTex;" +
 
-  "uniform float uAlp;" +
-
   "out vec4 fgCol;" +
 
-  (
-    config.isLightEnabled
-      ? "vec3 lgVal(mat4 lg,bool hTex){" +
-          "float dstA=distance(vec2(0),vGlPos*lg[1].xw+vGlPos.yx*lg[1].zy+lg[0].xy);" +
-          "if(dstA>1.)return vec3(0);" +
-          "vec3 rgb=lg[2].rgb;" +
-          "if(hTex){" +
-            "vec4 tc;" +
-            "vec4 c=vec4(0);" +
-            "vec2 b=lg[3].zw;" +
-            "vec2 m=(vTexCrd-b)/dstA;" +
-            "vec2 p;" +
-            "vec2 s;" +
-            "for(float i=0.;i<dstA;i+=.005){" +
-              "s=i*m;" +
-              "p=b+s;" +
-              "if(p.x>=0.&&p.y>=0.&&p.x<=1.&&p.y<=1.){" +
-                "tc=texture(uTex,p);" +
-                "c=vec4(c.rgb*(1.-tc.a)+tc.rgb*tc.a,c.a+tc.a*tc.a);" +
-                "if(c.a>=1.)return vec3(0);" +
-              "}" +
-            "}" +
-            "rgb=rgb*(1.-c.a)+c.rgb;" +
-          "}" +
-          "return vec3(rgb*(clamp((1.-dstA)*lg[3].x,0.,1.)*lg[3].y));" +
-        "}"
-      : ""
-  ) +
-
   "void main(void){" +
-    "vec2 texS=vec2(textureSize(uTex,0));" +
-    "vec2 pxp=1./texS;" +
-    "bool hTex=pxp.x<1.&&pxp.y<1.;" +
-    "float oMA=1.-uAlp;" +
-    "fgCol=vec4(oMA);";
-
-    if (config.isLightEnabled) {
-      for (var i = 0; i < maxLightSources; ++i) {
-        shader +=
-        "if(uLg[" + i + "][0].w>0.)fgCol.rgb+=lgVal(uLg[" + i + "],hTex);";
-      }
-    }
-
-    shader +=
-    "fgCol=clamp(fgCol,0.,1.);" +
-    "fgCol.a=1.-((abs(fgCol.r-oMA)+abs(fgCol.g-oMA)+abs(fgCol.b-oMA))/3.);" +
+    "float dst=distance(vec2(0),vCrd.xy);" +
+    "if(dst>1.||vDat.x==0.)discard;" +
+    "vec2 pxp=1./vec2(textureSize(uTex,0));" +
+    "vec3 rgb=vCol.rgb;" +
+    "if(pxp.x<1.&&pxp.y<1.){" +
+      "vec4 tc;" +
+      "vec4 c=vec4(0);" +
+      "vec2 m=(vTexCrd-vCrd.zw)/dst;" +
+      "vec2 p;" +
+      "vec2 s;" +
+      "for(float i=0.;i<dst;i+=.005){" +
+        "s=i*m;" +
+        "p=vCrd.zw+s;" +
+        "if(p.x>=0.&&p.y>=0.&&p.x<=1.&&p.y<=1.){" +
+          "tc=texture(uTex,p);" +
+          "c=vec4(c.rgb*(1.-tc.a)+tc.rgb*tc.a,c.a+tc.a*tc.a);" +
+          "if(c.a>=1.)discard;" +
+        "}" +
+      "}" +
+      "rgb=rgb*(1.-c.a)+c.rgb;" +
+    "}" +
+    "fgCol=vec4(rgb*clamp((1.-dst)*vDat.y,0.,1.)*vDat.z,1);" +
   "}";
 
   return shader;

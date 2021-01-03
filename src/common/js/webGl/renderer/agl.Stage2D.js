@@ -31,16 +31,12 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this._setMaskDataFunc = config.isMaskEnabled
       ? this._setMaskData.bind(this)
       : helpers.emptyFunction;
-
-    this._resize();
   },
   function(_scope, _super) {
     _scope.render = function() {
       this._preRender();
 
       this.picked = null;
-
-      this.colorUpdateId = this.color.updateId;
 
       this._render();
 

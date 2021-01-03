@@ -9,8 +9,6 @@ AGL.Container = helpers.createPrototypeClass(
     this.TYPE = AGL.Container.TYPE;
 
     this.children = [];
-
-    this.colorCache = [1, 1, 1, 1];
   },
   function(_scope, _super) {
     _scope.destruct = function() {

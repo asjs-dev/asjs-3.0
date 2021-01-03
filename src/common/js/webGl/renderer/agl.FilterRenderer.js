@@ -77,7 +77,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           this._gl.uniform1i(this._locations.uFtrST,   filter.SUB_TYPE);
         }
 
-        (useFilter || isLast) && this._gl.drawArrays(AGL.Const.TRIANGLE_FAN, 0, 6);
+        (useFilter || isLast) && this._gl.drawArrays(AGL.Const.TRIANGLE_FAN, 0, 4);
 
         framebuffer && AGL.Utils.bindTexture(this._gl, 0, framebuffer);
       }
@@ -105,10 +105,8 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
         new Float32Array([
           -1, -1,
            1, -1,
-          -1,  1,
-          -1,  1,
            1,  1,
-           1, -1
+          -1,  1
         ]), AGL.Const.STATIC_DRAW
       );
 

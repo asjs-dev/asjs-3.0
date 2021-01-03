@@ -33,6 +33,7 @@ require("./geom/agl.Matrix3.js");
 require("./geom/agl.Point.js");
 require("./geom/agl.Rect.js");
 
+require("./display/agl.BaseItem.js");
 require("./display/agl.Item.js");
 require("./display/agl.AbstractDrawable.js");
 require("./display/agl.Light.js");

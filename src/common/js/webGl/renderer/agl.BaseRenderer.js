@@ -37,13 +37,17 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._drawFunctionMap[AGL.Image.TYPE]     = this._drawImage.bind(this);
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
-    this.update       =
-    this._updateProps = helpers.emptyFunction;
+    this._parent = new AGL.BaseItem();
 
     this._resize();
   },
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
+
+    helpers.property(_scope, "parent", {
+      get: function() { return this._parent; },
+      set: function(v) {}
+    });
 
     helpers.property(_scope, "clearBeforeRender", {
       get: function() { return this._clearBeforeRenderFunc === this._clearBound; },
@@ -64,7 +68,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     _scope._render = function() {
       this._clearBeforeRenderFunc();
-      this._drawContainer(this);
+      this._drawItem(this);
       this._batchItems > 0 && this._batchDraw();
     }
 
@@ -96,42 +100,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._setBufferData(item, textureMapIndex);
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
-    }
-
-    _scope._createArrayBuffer = function(data, locationId, length, num, size, type, bytes) {
-      var buffer = this._gl.createBuffer();
-
-      this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, buffer);
-  		this._gl.bufferData(AGL.Const.ARRAY_BUFFER, data.byteLength, AGL.Const.DYNAMIC_DRAW);
-
-      this._attachArrayBuffer(this._locations[locationId], buffer, data, length, num, size, type, bytes);
-
-      return buffer;
-    }
-
-    _scope._attachArrayBuffer = function(location, buffer, data, length, num, size, type, bytes) {
-      this._bindArrayBuffer(buffer, data);
-
-  		var stride = bytes * length;
-      var i = num + 1;
-      while (--i) {
-  			var loc = location + (num - i);
-  			this._gl.enableVertexAttribArray(loc);
-
-        this._gl[
-          "vertexAttrib" + (
-            type === AGL.Const.FLOAT
-            ? ""
-            : "I"
-          ) + "Pointer"
-        ](loc, size, type, false, stride, (num - i) * bytes * size);
-  			this._gl.vertexAttribDivisor(loc, 1);
-  		}
-  	}
-
-    _scope._bindArrayBuffer = function(buffer, data) {
-      this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, buffer);
-  		this._gl.bufferSubData(AGL.Const.ARRAY_BUFFER, 0, data);
     }
 
     _scope._bindBuffers = function() {
@@ -176,25 +144,14 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       if (this._currentBlendMode !== blendMode) {
         this._currentBlendMode = blendMode;
         this._batchDraw();
-
-        this._gl[blendMode.eqName](
-          blendMode.eqs[0],
-          blendMode.eqs[1]
-        );
-
-        this._gl[blendMode.funcName](
-          blendMode.funcs[0],
-          blendMode.funcs[1],
-          blendMode.funcs[2],
-          blendMode.funcs[3]
-        );
+        this._useBlendMode(blendMode);
       }
     }
 
     _scope._resize = function() {
       if (this._resizeCanvas()) {
-        AGL.Matrix3.projection(this._width, this._height, this.matrixCache);
-        ++this.propsUpdateId;
+        AGL.Matrix3.projection(this._width, this._height, this._parent.matrixCache);
+        ++this.parent.propsUpdateId;
       }
     }
 
