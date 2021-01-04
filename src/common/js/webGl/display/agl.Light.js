@@ -9,6 +9,7 @@ AGL.Light = helpers.createPrototypeClass(
   ) {
     AGL.AbstractDrawable.call(this);
 
+    this.angle      =
     this.transition = 1;
 
     this.color.a = 0;
@@ -59,6 +60,7 @@ AGL.Light = helpers.createPrototypeClass(
         lightData[matId]     = lightData[matId - 1] > 0 ? 1 : 0;
         lightData[matId + 1] = this.transition;
         lightData[matId + 2] = this.props.alpha;
+        lightData[matId + 3] = this.angle;
       } else lightData[matId] = 0;
     }
 

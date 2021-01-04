@@ -101,6 +101,8 @@ AGL.LightRenderer.createVertexShader = function() {
 AGL.LightRenderer.createFragmentShader = function(config) {
   var shader =
   "#version 300 es\n" +
+  "#define PI 3.1415926538\n" +
+
   "precision " + config.precision + " float;" +
 
   "in vec2 vTexCrd;" +
@@ -114,7 +116,8 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   "void main(void){" +
     "float dst=distance(vec2(0),vCrd.xy);" +
-    "if(dst>1.||vDat.x==0.)discard;" +
+    "float ang=((atan(vCrd.y,vCrd.x)/PI)+1.)/2.;" +
+    "if(dst>1.||vDat.x==0.||ang>vDat.w)discard;" +
     "vec2 pxp=1./vec2(textureSize(uTex,0));" +
     "vec3 rgb=vCol.rgb;" +
     "if(pxp.x<1.&&pxp.y<1.){" +
