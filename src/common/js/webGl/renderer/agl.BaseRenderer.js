@@ -74,7 +74,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     _scope._drawItem = function(item) {
       item.update(this._renderTime);
-      item.callback && item.callback.call(item, this._renderTime);
+      item.callback(item, this._renderTime);
       item.renderable && this._drawFunctionMap[item.TYPE](item);
     }
 
