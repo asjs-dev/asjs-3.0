@@ -235,7 +235,6 @@ AGL.FilterRenderer.createFragmentShader = function(config) {
         "float m;" +
         "float im;" +
         "vec4 tCol;" +
-        "float avg;" +
         "if(uFtrST<2)" +
           // BlurFilter
           "for(float i=-1.;i<2.;++i){" +
@@ -259,7 +258,7 @@ AGL.FilterRenderer.createFragmentShader = function(config) {
               "tCol=i==0.&&j==0." +
                 "?fgCol" +
                 ":texture(uTex,vTexCrd+(wh*vec2(i,j)));" +
-              "avg=(tCol.r+tCol.g+tCol.b+tCol.a)/4.;" +
+              "float avg=(tCol.r+tCol.g+tCol.b+tCol.a)/4.;" +
               "if(avg-oAvg>=fvl[3]*m){" +
                 "col+=tCol*im*(2.-fvl[3]);" +
                 "c+=im;" +

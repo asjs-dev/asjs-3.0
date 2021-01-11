@@ -2,14 +2,17 @@ require("../NameSpace.js");
 
 AGL.SmoothLight = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function SmoothLight(lightNum, scale, blur, shadowMap) {
+  function SmoothLight(lightNum, scale, blur, shadowMap, heightMap, shadowStart, shadowLength) {
     helpers.BasePrototypeClass.call(this);
 
     this.renderer = new AGL.LightRenderer(
       {
         lightNum : lightNum || 1
       },
-      shadowMap
+      shadowMap,
+      heightMap,
+      shadowStart,
+      shadowLength,
     );
 
     this._blurFilter = new AGL.BlurFilter(0, 0);
