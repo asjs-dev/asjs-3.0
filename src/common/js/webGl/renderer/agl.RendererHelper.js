@@ -21,7 +21,7 @@ AGL.RendererHelper.initRenderer = function(config) {
   this._config = config;
   this._canvas = config.canvas;
 
-  this._loseContextExt =
+  //this._loseContextExt =
   this._vertexShader   =
   this._fragmentShader =
   this._program        =
@@ -146,13 +146,13 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   _scope._destructRenderer = function() {
     //this._removeListeners();
 
-    this._loseContextExt && this._loseContextExt.loseContext();
+    //this._loseContextExt && this._loseContextExt.loseContext();
 
     this._destructContext();
 
     this.clearColor      =
     this._gl             =
-    this._loseContextExt =
+    //this._loseContextExt =
     this._vertexShader   =
     this._fragmentShader =
     this._program        =
@@ -219,7 +219,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
   _scope._init = function() {
     this._gl = this.context;
-    this._loseContextExt = this._gl.getExtension('WEBGL_lose_context');
+    //this._loseContextExt = this._gl.getExtension('WEBGL_lose_context');
     this._gl.pixelStorei(AGL.Const.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     this._gl.enable(AGL.Const.BLEND);
 

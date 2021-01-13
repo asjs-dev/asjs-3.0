@@ -3,7 +3,7 @@ require("./agl.RendererHelper.js");
 
 AGL.LightRenderer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function LightRenderer(config, shadowMap, heightMap, shadowStart, shadowLength) {
+  function LightRenderer(config, shadowMap, heightMap, shadowStart, shadowLength, precision, allowTransparency) {
     helpers.BasePrototypeClass.call(this);
 
     config = AGL.RendererHelper.initConfig(config, AGL.LightRenderer);
@@ -16,11 +16,15 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "aMt",
       "uHTex",
       "uDHS",
-      "uDHL"
+      "uDHL",
+      "uP",
+      "uAT"
     ]);
 
-    this._shadowStart  = 0;
-    this._shadowLength = 1;
+    this._shadowStart;
+    this._shadowLength;
+    this._precision;
+    this._allowTransparency;
 
     this.shadowMap = shadowMap;
     this.heightMap = heightMap;
@@ -34,8 +38,10 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     AGL.RendererHelper.initRenderer.call(this, config);
 
-    this.shadowStart  = shadowStart  || 0;
-    this.shadowLength = shadowLength || 1;
+    this.shadowStart       = shadowStart  || 0;
+    this.shadowLength      = shadowLength || 1;
+    this.precision         = precision    || 1;
+    this.allowTransparency = allowTransparency;
   },
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
@@ -45,7 +51,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     helpers.property(_scope, "shadowStart", {
       get: function() { return this._shadowStart; },
       set: function(v) {
-        v = 1 - (v || 0);
+        v = Math.max(0, Math.min(1, v || 0));
         if (this._shadowStart !== v) {
           this._shadowStart = v;
           this._gl.uniform1f(this._locations.uDHS, v);
@@ -56,10 +62,31 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     helpers.property(_scope, "shadowLength", {
       get: function() { return this._shadowLength; },
       set: function(v) {
-        v = 1 - (v || 1);
+        v = Math.max(0, Math.min(1, v || 1));
         if (this._shadowLength !== v) {
           this._shadowLength = v;
           this._gl.uniform1f(this._locations.uDHL, v);
+        }
+      }
+    });
+
+    helpers.property(_scope, "precision", {
+      get: function() { return this._precision; },
+      set: function(v) {
+        v = Math.max(1, Math.min(5, v));
+        if (this._precision !== v) {
+          this._precision = v;
+          this._gl.uniform1f(this._locations.uP, v);
+        }
+      }
+    });
+
+    helpers.property(_scope, "allowTransparency", {
+      get: function() { return this._allowTransparency; },
+      set: function(v) {
+        if (this._allowTransparency !== v) {
+          this._allowTransparency = v;
+          this._gl.uniform1f(this._locations.uAT, v ? 1 : 0);
         }
       }
     });
@@ -122,6 +149,7 @@ AGL.LightRenderer.createVertexShader = function() {
   "out vec4 vCrd;" +
   "out vec4 vCol;" +
   "out vec4 vDat;" +
+  "out mat4 vQ;" +
 
   "void main(void){" +
     "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
@@ -135,22 +163,48 @@ AGL.LightRenderer.createVertexShader = function() {
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
-  var loop = "for(float i=0.;i<dstTex;i+=.0025){" +
-    "vec2 p=vCrd.zw+i*m;" +
-    "ivec2 npxp=ivec2(p*ts);" +
-    "if(npxp!=ppxp&&p.x>=0.&&p.y>=0.&&p.x<=1.&&p.y<=1.){";
+  var calcColor = "if(texture(uTex,p).a>0.)discard;";
 
-  var calcColor = "ppxp=npxp;" +
-  "float pc=i/dstTex;" +
-  "if(sl.x>pc&&sl.y<pc){" +
-    "vec4 tc=texture(uTex,p);" +
-    "c=vec4(c.rgb+rgb*tc.rgb,c.a+tc.a*tc.a);" +
-    "if(c.a>=1.)discard;" +
-  "}";
+  var calcColorAllowTransparency =
+  "vec4 tc=texture(uTex,p);" +
+  "c=vec4(c.rgb+rgb*tc.rgb*tc.a,c.a+(c.a<tc.a?tc.a:0.));" +
+  "if(c.a>=1.)discard;";
+
+  function createHeightMapCheck(core) {
+    return
+    "float pc=i/dstTex;" +
+    "if(sl.x<pc&&sl.y>pc){" +
+      core +
+    "}";
+  }
+
+  function createLoop(core) {
+    return "for(float i=0.;i<dstTex;i+=uP){" +
+      "p-=m;" +
+      core +
+    "}";
+  }
+
+  function createLoops(core) {
+    return
+    "if(pxph.x<1.&&pxph.y<1.){" +
+      createLoop(
+        "vec4 shc=texture(uHTex,p);" +
+        "sl=shc.b>0.?shc.rg:udh;" +
+        createHeightMapCheck(core)
+      ) +
+    "}else{" +
+      "if(uDHS>0.||uDHL<1.){" +
+        createLoop(createHeightMapCheck(core)) +
+      "}else{" +
+        createLoop(core) +
+      "}" +
+    "}";
+  }
 
   return
   "#version 300 es\n" +
-  "#define PI 3.1415926538\n" +
+  "#define PI radians(180.)\n" +
 
   "precision " + config.precision + " float;" +
 
@@ -164,6 +218,8 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   "uniform float uDHS;" +
   "uniform float uDHL;" +
+  "uniform float uP;" +
+  "uniform float uAT;" +
 
   "out vec4 fgCol;" +
 
@@ -174,28 +230,20 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "vec2 pxp=1./ts;" +
     "vec3 rgb=vCol.rgb;" +
     "if(pxp.x<1.&&pxp.y<1.){" +
-      "vec2 r=pxp.x<pxp.y?vec2(1,pxp.x/pxp.y):vec2(pxp.x/pxp.y,1);" +
-      "vec2 tCrd=vTexCrd*r;" +
-      "vec2 tCnt=vCrd.zw*r;" +
-      "vec2 pxph=1./vec2(textureSize(uHTex,0));" +
+      "vec2 tCrd=vTexCrd*ts;" +
+      "vec2 tCnt=vCrd.zw*ts;" +
+      "vec2 tsh=vec2(textureSize(uHTex,0));" +
+      "vec2 pxph=1./tsh;" +
       "vec4 c=vec4(0);" +
       "float dstTex=distance(tCnt,tCrd);" +
-      "vec2 m=((tCrd-tCnt)/dstTex)/r;" +
+      "vec2 m=((tCrd-tCnt)/dstTex)*pxp*uP;" +
       "vec2 udh=vec2(uDHS,uDHL);" +
       "vec2 sl=udh;" +
-      "ivec2 ppxp=ivec2(vCrd.zw*ts);" +
-      "if(pxph.x<1.&&pxph.y<1.){" +
-        loop +
-            "vec3 shc=texture(uHTex,p).rgb;" +
-            "sl=shc.b>0.?shc.rg:udh;" +
-            calcColor +
-          "}" +
-        "}" +
+      "vec2 p=vTexCrd;" +
+      "if(uAT==1.){" +
+        createLoops(calcColorAllowTransparency) +
       "}else{" +
-        loop +
-            calcColor +
-          "}" +
-        "}" +
+        createLoops(calcColor) +
       "}" +
       "rgb=rgb*(1.-c.a)+c.rgb;" +
     "}" +
