@@ -173,7 +173,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   function createHeightMapCheck(core) {
     return
     "float pc=i/dstTex;" +
-    "if(sl.x<pc&&sl.y>pc){" +
+    "if(i==0.||sl.x<pc&&sl.y>pc){" +
       core +
     "}";
   }
@@ -189,8 +189,10 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     return
     "if(pxph.x<1.&&pxph.y<1.){" +
       createLoop(
-        "vec4 shc=texture(uHTex,p);" +
-        "sl=shc.b>0.?shc.rg:udh;" +
+        "if(i>0.){" +
+          "vec4 shc=texture(uHTex,p);" +
+          "sl=shc.b>0.?shc.rg:udh;" +
+        "}" +
         createHeightMapCheck(core)
       ) +
     "}else{" +
