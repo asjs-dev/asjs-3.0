@@ -152,12 +152,13 @@ AGL.LightRenderer.createVertexShader = function() {
   "out mat4 vQ;" +
 
   "void main(void){" +
+    "vec4 h=vec4(1,-1,2,-2);" +
     "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
     "vec3 pos=vec3(aPos*2.-1.,1);" +
-    "vCrd.xy=pos.xy;" +
     "gl_Position=vec4(mt*pos,1);" +
-    "vTexCrd=(gl_Position.xy+vec2(1,-1))/vec2(2,-2);" +
-    "vCrd.zw=((mt*vec3(0,0,1)).xy+vec2(1,-1))/vec2(2,-2);" +
+    "vTexCrd=(gl_Position.xy+h.xy)/h.zw;" +
+    "vCrd.xy=pos.xy;" +
+    "vCrd.zw=((mt*vec3(0,0,1)).xy+h.xy)/h.zw;" +
     "vCol=aMt[2];" +
     "vDat=aMt[3];" +
   "}";
@@ -173,26 +174,28 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   function createHeightMapCheck(core) {
     return
     "float pc=i/dstTex;" +
-    "if(i==0.||sl.x<pc&&sl.y>pc){" +
+    "if(sl.x<pc&&sl.y>pc){" +
       core +
     "}";
   }
 
+  function createZeroCheck(core) {
+    return core + "p-=m;";
+  }
+
   function createLoop(core) {
-    return "for(float i=0.;i<dstTex;i+=uP){" +
+    return "for(float i=uP;i<dstTex-uP;i+=uP){" +
       "p-=m;" +
       core +
     "}";
   }
 
   function createLoops(core) {
-    return
+    return createZeroCheck(core) +
     "if(pxph.x<1.&&pxph.y<1.){" +
       createLoop(
-        "if(i>0.){" +
-          "vec4 shc=texture(uHTex,p);" +
-          "sl=shc.b>0.?shc.rg:udh;" +
-        "}" +
+        "vec4 shc=texture(uHTex,p);" +
+        "sl=shc.b>0.?shc.rg:udh;" +
         createHeightMapCheck(core)
       ) +
     "}else{" +
@@ -227,27 +230,28 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   "void main(void){" +
     "float dst=distance(vec2(0),vCrd.xy);" +
-    "if(dst>1.||vDat.x==0.||(((atan(vCrd.y,vCrd.x)/PI)+1.)/2.)>vDat.w)discard;" +
+    "if(dst>1.||vDat.x==0.||((atan(vCrd.y,vCrd.x)/PI)+1.)/2.>vDat.w)discard;" +
     "vec2 ts=vec2(textureSize(uTex,0));" +
     "vec2 pxp=1./ts;" +
     "vec3 rgb=vCol.rgb;" +
     "if(pxp.x<1.&&pxp.y<1.){" +
       "vec2 tCrd=vTexCrd*ts;" +
       "vec2 tCnt=vCrd.zw*ts;" +
-      "vec2 tsh=vec2(textureSize(uHTex,0));" +
-      "vec2 pxph=1./tsh;" +
-      "vec4 c=vec4(0);" +
       "float dstTex=distance(tCnt,tCrd);" +
-      "vec2 m=((tCrd-tCnt)/dstTex)*pxp*uP;" +
-      "vec2 udh=vec2(uDHS,uDHL);" +
-      "vec2 sl=udh;" +
-      "vec2 p=vTexCrd;" +
-      "if(uAT==1.){" +
-        createLoops(calcColorAllowTransparency) +
-      "}else{" +
-        createLoops(calcColor) +
+      "if(dstTex>uP){" +
+        "vec2 pxph=1./vec2(textureSize(uHTex,0));" +
+        "vec2 m=((tCrd-tCnt)/dstTex)*pxp*uP;" +
+        "vec2 udh=vec2(uDHS,uDHL);" +
+        "vec2 sl=udh;" +
+        "vec2 p=vTexCrd;" +
+        "vec4 c=vec4(0);" +
+        "if(uAT==1.){" +
+          createLoops(calcColorAllowTransparency) +
+        "}else{" +
+          createLoops(calcColor) +
+        "}" +
+        "rgb=rgb*(1.-c.a)+c.rgb;" +
       "}" +
-      "rgb=rgb*(1.-c.a)+c.rgb;" +
     "}" +
     "fgCol=vec4(rgb*clamp((1.-dst)*vDat.y,0.,1.)*vDat.z,1);" +
   "}";
