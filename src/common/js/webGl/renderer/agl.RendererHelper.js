@@ -90,7 +90,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
       this._currentClearColorUpdateId = clearColorProps.updateId;
       this._gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearColor.a);
     }
-    this._gl.clear(AGL.Const.COLOR_BUFFER_BIT);
+    this._gl.clear(AGLC.COLOR_BUFFER_BIT);
   }
 
   _scope.setSize = function(width, height) {
@@ -184,8 +184,8 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   _scope._createArrayBuffer = function(data, locationId, length, num, size, type, bytes) {
     var buffer = this._gl.createBuffer();
 
-    this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, buffer);
-		this._gl.bufferData(AGL.Const.ARRAY_BUFFER, data.byteLength, AGL.Const.DYNAMIC_DRAW);
+    this._gl.bindBuffer(AGLC.ARRAY_BUFFER, buffer);
+		this._gl.bufferData(AGLC.ARRAY_BUFFER, data.byteLength, AGLC.DYNAMIC_DRAW);
 
     this._attachArrayBuffer(this._locations[locationId], buffer, data, length, num, size, type, bytes);
 
@@ -203,7 +203,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
       this._gl[
         "vertexAttrib" + (
-          type === AGL.Const.FLOAT
+          type === AGLC.FLOAT
           ? ""
           : "I"
         ) + "Pointer"
@@ -213,15 +213,15 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 	}
 
   _scope._bindArrayBuffer = function(buffer, data) {
-    this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, buffer);
-		this._gl.bufferSubData(AGL.Const.ARRAY_BUFFER, 0, data);
+    this._gl.bindBuffer(AGLC.ARRAY_BUFFER, buffer);
+		this._gl.bufferSubData(AGLC.ARRAY_BUFFER, 0, data);
   }
 
   _scope._init = function() {
     this._gl = this.context;
     //this._loseContextExt = this._gl.getExtension('WEBGL_lose_context');
-    this._gl.pixelStorei(AGL.Const.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    this._gl.enable(AGL.Const.BLEND);
+    this._gl.pixelStorei(AGLC.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    this._gl.enable(AGLC.BLEND);
 
     this._vertexShader   = AGL.Utils.loadVertexShader(this._gl,   this._config.vertexShader(this._config));
     this._fragmentShader = AGL.Utils.loadFragmentShader(this._gl, this._config.fragmentShader(this._config));
@@ -230,18 +230,18 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._gl.useProgram(this._program);
 
     var positionBuffer = this._gl.createBuffer();
-    this._gl.bindBuffer(AGL.Const.ARRAY_BUFFER, positionBuffer);
+    this._gl.bindBuffer(AGLC.ARRAY_BUFFER, positionBuffer);
     this._gl.bufferData(
-      AGL.Const.ARRAY_BUFFER,
+      AGLC.ARRAY_BUFFER,
       new Float32Array([
         0, 0,
         1, 0,
         1, 1,
         0, 1
       ]),
-      AGL.Const.STATIC_DRAW
+      AGLC.STATIC_DRAW
     );
-    this._gl.vertexAttribPointer(this._locations.aPos, 2, AGL.Const.FLOAT, false, 0, 0);
+    this._gl.vertexAttribPointer(this._locations.aPos, 2, AGLC.FLOAT, false, 0, 0);
     this._gl.enableVertexAttribArray(this._locations.aPos);
 
     this._initCustom();
@@ -264,6 +264,10 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   */
 };
 
+AGL.RendererHelper.createVersion = function(precision) {
+  return "#version 300 es\nprecision " + precision + " float;\n";
+}
+
 AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
   var func =
   "vec4 gtTexCol(float i,vec2 c){";
@@ -277,14 +281,14 @@ AGL.RendererHelper.createGetTextureFunction = function(maxTextureImageUnits) {
   return func;
 };
 
-AGL.RendererHelper.getTexColor = "fgCol=gtTexCol(vTexId,vTexCrop.xy+vTexCrop.zw*mod(vTexCrd,1.));";
+AGL.RendererHelper.getTexColor = "fgCol=gtTexCol(vTexId,vTexCrop.xy+vTexCrop.zw*mod(vTCrd,1.));";
 
 AGL.RendererHelper.calcGlPositions =
   "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
   "mat3 tMt=mat3(aMt[1].zw,0,aMt[2].xy,0,aMt[2].zw,1);" +
   "vec3 pos=vec3(aPos,1);" +
   "gl_Position=vec4(mt*pos,1);" +
-  "vTexCrd=(tMt*pos).xy;" +
+  "vTCrd=(tMt*pos).xy;" +
   "vTexCrop=aMt[3];";
 
 AGL.RendererHelper.Precisons = {

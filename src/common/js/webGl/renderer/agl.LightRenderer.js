@@ -92,7 +92,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     });
 
     _scope._render = function() {
-      this._gl.clear(AGL.Const.COLOR_BUFFER_BIT);
+      this._gl.clear(AGLC.COLOR_BUFFER_BIT);
 
       this.shadowMap && this.shadowMap.isNeedToDraw(this._gl, this._renderTime) &&
         AGL.Utils.useTexture(this._gl, 0, this.shadowMap);
@@ -101,7 +101,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         AGL.Utils.useTexture(this._gl, 1, this.heightMap);
 
       this._bindArrayBuffer(this._lightBuffer, this._lightData);
-      this._gl.drawElementsInstanced(AGL.Const.TRIANGLE_FAN, 6, AGL.Const.UNSIGNED_SHORT, 0, this._lights.length);
+      this._gl.drawElementsInstanced(AGLC.TRIANGLE_FAN, 6, AGLC.UNSIGNED_SHORT, 0, this._lights.length);
 
       this._gl.flush();
     }
@@ -117,20 +117,20 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     }
 
     _scope._initCustom = function() {
-      this._gl.bindBuffer(AGL.Const.ELEMENT_ARRAY_BUFFER, this._gl.createBuffer());
+      this._gl.bindBuffer(AGLC.ELEMENT_ARRAY_BUFFER, this._gl.createBuffer());
       this._gl.bufferData(
-        AGL.Const.ELEMENT_ARRAY_BUFFER,
+        AGLC.ELEMENT_ARRAY_BUFFER,
         new Uint16Array([
           0, 1, 2,
           0, 2, 3
         ]),
-        AGL.Const.STATIC_DRAW
+        AGLC.STATIC_DRAW
       );
 
       this._gl.uniform1i(this._locations.uTex, 0);
       this._gl.uniform1i(this._locations.uHTex, 1);
 
-  		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, AGL.Const.FLOAT, 4);
+  		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, AGLC.FLOAT, 4);
 
       this._useBlendMode(AGL.BlendMode.ADD);
 
@@ -138,14 +138,13 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     }
   }
 );
-AGL.LightRenderer.createVertexShader = function() {
-  return
-  "#version 300 es\n" +
+AGL.LightRenderer.createVertexShader = function(config) {
+  return AGL.RendererHelper.createVersion(config.precision) +
 
   "in vec2 aPos;" +
   "in mat4 aMt;" +
 
-  "out vec2 vTexCrd;" +
+  "out vec2 vTCrd;" +
   "out vec4 vCrd;" +
   "out vec4 vCol;" +
   "out vec4 vDat;" +
@@ -156,7 +155,7 @@ AGL.LightRenderer.createVertexShader = function() {
     "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
     "vec3 pos=vec3(aPos*2.-1.,1);" +
     "gl_Position=vec4(mt*pos,1);" +
-    "vTexCrd=(gl_Position.xy+h.xy)/h.zw;" +
+    "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
     "vCrd.xy=pos.xy;" +
     "vCrd.zw=((mt*vec3(0,0,1)).xy+h.xy)/h.zw;" +
     "vCol=aMt[2];" +
@@ -207,13 +206,12 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "}";
   }
 
-  return
-  "#version 300 es\n" +
+  return AGL.RendererHelper.createVersion(config.precision) +
   "#define PI radians(180.)\n" +
 
   "precision " + config.precision + " float;" +
 
-  "in vec2 vTexCrd;" +
+  "in vec2 vTCrd;" +
   "in vec4 vCrd;" +
   "in vec4 vCol;" +
   "in vec4 vDat;" +
@@ -235,7 +233,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "vec2 pxp=1./ts;" +
     "vec3 rgb=vCol.rgb;" +
     "if(pxp.x<1.&&pxp.y<1.){" +
-      "vec2 tCrd=vTexCrd*ts;" +
+      "vec2 tCrd=vTCrd*ts;" +
       "vec2 tCnt=vCrd.zw*ts;" +
       "float dstTex=distance(tCnt,tCrd);" +
       "if(dstTex>uP){" +
@@ -243,7 +241,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
         "vec2 m=((tCrd-tCnt)/dstTex)*pxp*uP;" +
         "vec2 udh=vec2(uDHS,uDHL);" +
         "vec2 sl=udh;" +
-        "vec2 p=vTexCrd;" +
+        "vec2 p=vTCrd;" +
         "vec4 c=vec4(0);" +
         "if(uAT==1.){" +
           createLoops(calcColorAllowTransparency) +

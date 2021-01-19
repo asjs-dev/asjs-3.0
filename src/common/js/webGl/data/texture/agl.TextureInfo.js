@@ -5,7 +5,7 @@ AGL.TextureInfo = helpers.createPrototypeClass(
   function TextureInfo(shouldUpdate) {
     helpers.BasePrototypeClass.call(this);
 
-    this.target = AGL.Const.TEXTURE_2D;
+    this.target = AGLC.TEXTURE_2D;
 
     this.maxLevel = 0;
 
@@ -21,14 +21,14 @@ AGL.TextureInfo = helpers.createPrototypeClass(
     this.gl          = null;
 
     this.wrapS =
-    this.wrapT = AGL.Const.CLAMP_TO_EDGE;
+    this.wrapT = AGLC.CLAMP_TO_EDGE;
 
     this.internalFormat =
-    this.format         = AGL.Const.RGBA;
+    this.format         = AGLC.RGBA;
 
     this._minFilter       =
     this._mipmapMinFilter =
-    this.magFilter        = AGL.Const.NEAREST;
+    this.magFilter        = AGLC.NEAREST;
 
     this._width             =
     this._height            =

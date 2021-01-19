@@ -27,19 +27,18 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
       _super._initCustom.call(this);
 
       this._textureIdData   = new Float32Array(this._MAX_BATCH_ITEMS);
-      this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, AGL.Const.FLOAT, 4);
+      this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, AGLC.FLOAT, 4);
     }
   }
 );
-AGL.SimpleRenderer.createVertexShader = function() {
-  return
-  "#version 300 es\n" +
+AGL.SimpleRenderer.createVertexShader = function(config) {
+  return AGL.RendererHelper.createVersion(config.precision) +
 
   "in vec2 aPos;" +
   "in mat4 aMt;" +
   "in float aTexId;" +
 
-  "out vec2 vTexCrd;" +
+  "out vec2 vTCrd;" +
   "out vec4 vTexCrop;" +
   "out float vTexId;" +
 
@@ -51,11 +50,9 @@ AGL.SimpleRenderer.createVertexShader = function() {
 AGL.SimpleRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = AGL.Utils.info.maxTextureImageUnits;
 
-  return
-  "#version 300 es\n" +
-  "precision " + config.precision + " float;" +
+  return AGL.RendererHelper.createVersion(config.precision) +
 
-  "in vec2 vTexCrd;" +
+  "in vec2 vTCrd;" +
   "in vec4 vTexCrop;" +
   "in float vTexId;" +
 

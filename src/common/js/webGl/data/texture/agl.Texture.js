@@ -98,9 +98,9 @@ AGL.Texture = helpers.createPrototypeClass(
 
     _scope._updateMipmapMinFilter = function() {
       this._mipmapMinFilter = this.generateMipmap
-        ? (this._minFilter === AGL.Const.LINEAR
-          ? AGL.Const.LINEAR_MIPMAP_LINEAR
-          : AGL.Const.NEAREST_MIPMAP_NEAREST)
+        ? (this._minFilter === AGLC.LINEAR
+          ? AGLC.LINEAR_MIPMAP_LINEAR
+          : AGLC.NEAREST_MIPMAP_NEAREST)
         : this._minFilter;
     }
 
