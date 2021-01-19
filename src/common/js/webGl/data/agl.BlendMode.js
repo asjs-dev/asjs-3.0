@@ -14,7 +14,7 @@ AGL.createBlendMode = function(funcs, eqs) {
       ? ""
       : "Separate"
     ),
-    eqs: eqs || [AGLC.FUNC_ADD]
+    eqs: eqs || [{{AGL.Const.FUNC_ADD}}]
   };
 };
 
@@ -25,94 +25,94 @@ AGL.BlendMode = {
   ]),
 
   NORMAL_PM : AGL.createBlendMode([
-    AGLC.ONE,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
   ADD_PM : AGL.createBlendMode([
-    AGLC.ONE,
-    AGLC.ONE
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE}}
   ]),
   MULTIPLY_PM : AGL.createBlendMode([
-    AGLC.DST_COLOR,
-    AGLC.ONE_MINUS_SRC_ALPHA,
-    AGLC.ONE,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.DST_COLOR}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}},
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
   SCREEN_PM : AGL.createBlendMode([
-    AGLC.ONE,
-    AGLC.ONE_MINUS_SRC_COLOR,
-    AGLC.ONE,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE_MINUS_SRC_COLOR}},
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
 
   ADD_NPM : AGL.createBlendMode([
-    AGLC.SRC_ALPHA,
-    AGLC.ONE,
-    AGLC.ONE,
-    AGLC.ONE
+    {{AGL.Const.SRC_ALPHA}},
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE}}
   ]),
 
   SRC_IN : AGL.createBlendMode([
-    AGLC.DST_ALPHA,
-    AGLC.ZERO
+    {{AGL.Const.DST_ALPHA}},
+    {{AGL.Const.ZERO}}
   ]),
   SRC_OUT : AGL.createBlendMode([
-    AGLC.ONE_MINUS_DST_ALPHA,
-    AGLC.ZERO
+    {{AGL.Const.ONE_MINUS_DST_ALPHA}},
+    {{AGL.Const.ZERO}}
   ]),
   SRC_ATOP : AGL.createBlendMode([
-    AGLC.DST_ALPHA,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.DST_ALPHA}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
   DST_OVER : AGL.createBlendMode([
-    AGLC.ONE_MINUS_DST_ALPHA,
-    AGLC.ONE
+    {{AGL.Const.ONE_MINUS_DST_ALPHA}},
+    {{AGL.Const.ONE}}
   ]),
   DST_IN : AGL.createBlendMode([
-    AGLC.ZERO,
-    AGLC.SRC_ALPHA
+    {{AGL.Const.ZERO}},
+    {{AGL.Const.SRC_ALPHA}}
   ]),
   DST_OUT : AGL.createBlendMode([
-    AGLC.ZERO,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.ZERO}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
   DST_ATOP : AGL.createBlendMode([
-    AGLC.ONE_MINUS_DST_ALPHA,
-    AGLC.SRC_ALPHA
+    {{AGL.Const.ONE_MINUS_DST_ALPHA}},
+    {{AGL.Const.SRC_ALPHA}}
   ]),
   XOR : AGL.createBlendMode([
-    AGLC.ONE_MINUS_DST_ALPHA,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.ONE_MINUS_DST_ALPHA}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
 
   NORMAL : AGL.createBlendMode([
-    AGLC.SRC_ALPHA,
-    AGLC.ONE_MINUS_SRC_ALPHA,
-    AGLC.ONE,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.SRC_ALPHA}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}},
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
   ADD : AGL.createBlendMode([
-    AGLC.SRC_ALPHA,
-    AGLC.DST_ALPHA,
-    AGLC.ONE,
-    AGLC.DST_ALPHA
+    {{AGL.Const.SRC_ALPHA}},
+    {{AGL.Const.DST_ALPHA}},
+    {{AGL.Const.ONE}},
+    {{AGL.Const.DST_ALPHA}}
   ]),
   MULTIPLY : AGL.createBlendMode([
-    AGLC.DST_COLOR,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.DST_COLOR}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
   SCREEN : AGL.createBlendMode([
-    AGLC.SRC_ALPHA,
-    AGLC.ONE_MINUS_SRC_COLOR,
-    AGLC.ONE,
-    AGLC.ONE_MINUS_SRC_COLOR
+    {{AGL.Const.SRC_ALPHA}},
+    {{AGL.Const.ONE_MINUS_SRC_COLOR}},
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE_MINUS_SRC_COLOR}}
   ]),
   OVERLAY : AGL.createBlendMode([
-    AGLC.ONE,
-    AGLC.ONE_MINUS_SRC_ALPHA
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE_MINUS_SRC_ALPHA}}
   ]),
   EXCLUSION : AGL.createBlendMode([
-    AGLC.ONE_MINUS_DST_COLOR,
-    AGLC.ONE_MINUS_SRC_COLOR
+    {{AGL.Const.ONE_MINUS_DST_COLOR}},
+    {{AGL.Const.ONE_MINUS_SRC_COLOR}}
   ])
 };

@@ -56,11 +56,11 @@ AGL.Framebuffer = helpers.createPrototypeClass(
 
         this._destroyFramebuffer();
         this.framebuffer = gl.createFramebuffer();
-        gl.bindFramebuffer(AGLC.FRAMEBUFFER, this.framebuffer);
+        gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, this.framebuffer);
         gl.framebufferTexture2D(
-          AGLC.FRAMEBUFFER,
-          AGLC.COLOR_ATTACHMENT0,
-          AGLC.TEXTURE_2D,
+          {{AGL.Const.FRAMEBUFFER}},
+          {{AGL.Const.COLOR_ATTACHMENT0}},
+          {{AGL.Const.TEXTURE_2D}},
           this.baseTexture,
           0
         );

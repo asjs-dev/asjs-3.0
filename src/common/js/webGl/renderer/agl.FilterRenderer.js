@@ -61,12 +61,12 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
         }
 
         if (isLast) {
-          this._gl.bindFramebuffer(AGLC.FRAMEBUFFER, null);
+          this._gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, null);
           this._gl.uniform1f(this._locations.uFlpY, 1);
         } else if (useFilter) {
           framebuffer = this._framebuffers[i & 1];
           framebuffer.isNeedToDraw(this._gl, this._renderTime);
-          this._gl.bindFramebuffer(AGLC.FRAMEBUFFER, framebuffer.framebuffer);
+          this._gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, framebuffer.framebuffer);
           this._gl.uniform1f(this._locations.uFlpY, -1);
         }
 
@@ -77,7 +77,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           this._gl.uniform1i(this._locations.uFtrST, filter.SUB_TYPE);
         }
 
-        (useFilter || isLast) && this._gl.drawArrays(AGLC.TRIANGLE_FAN, 0, 4);
+        (useFilter || isLast) && this._gl.drawArrays({{AGL.Const.TRIANGLE_FAN}}, 0, 4);
 
         framebuffer && AGL.Utils.bindTexture(this._gl, 0, framebuffer);
       }
@@ -101,13 +101,13 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
     _scope._initCustom = function() {
       this._gl.bufferData(
-        AGLC.ARRAY_BUFFER,
+        {{AGL.Const.ARRAY_BUFFER}},
         new Float32Array([
           -1, -1,
            1, -1,
            1,  1,
           -1,  1
-        ]), AGLC.STATIC_DRAW
+        ]), {{AGL.Const.STATIC_DRAW}}
       );
 
       this._framebuffers = [

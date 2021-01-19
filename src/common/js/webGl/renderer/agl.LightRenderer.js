@@ -92,7 +92,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     });
 
     _scope._render = function() {
-      this._gl.clear(AGLC.COLOR_BUFFER_BIT);
+      this._gl.clear({{AGL.Const.COLOR_BUFFER_BIT}});
 
       this.shadowMap && this.shadowMap.isNeedToDraw(this._gl, this._renderTime) &&
         AGL.Utils.useTexture(this._gl, 0, this.shadowMap);
@@ -101,7 +101,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         AGL.Utils.useTexture(this._gl, 1, this.heightMap);
 
       this._bindArrayBuffer(this._lightBuffer, this._lightData);
-      this._gl.drawElementsInstanced(AGLC.TRIANGLE_FAN, 6, AGLC.UNSIGNED_SHORT, 0, this._lights.length);
+      this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._lights.length);
 
       this._gl.flush();
     }
@@ -117,20 +117,20 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     }
 
     _scope._initCustom = function() {
-      this._gl.bindBuffer(AGLC.ELEMENT_ARRAY_BUFFER, this._gl.createBuffer());
+      this._gl.bindBuffer({{AGL.Const.ELEMENT_ARRAY_BUFFER}}, this._gl.createBuffer());
       this._gl.bufferData(
-        AGLC.ELEMENT_ARRAY_BUFFER,
+        {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
         new Uint16Array([
           0, 1, 2,
           0, 2, 3
         ]),
-        AGLC.STATIC_DRAW
+        {{AGL.Const.STATIC_DRAW}}
       );
 
       this._gl.uniform1i(this._locations.uTex, 0);
       this._gl.uniform1i(this._locations.uHTex, 1);
 
-  		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, AGLC.FLOAT, 4);
+  		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
 
       this._useBlendMode(AGL.BlendMode.ADD);
 

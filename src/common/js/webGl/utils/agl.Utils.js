@@ -17,10 +17,10 @@ var Utils = helpers.createPrototypeClass(
     var canvas = document.createElement("canvas");
     var gl;
     if (gl = canvas.getContext("webgl2")) {
-      for (var key in gl) helpers.typeIs(gl[key], "number") && (AGL.Const[key] = gl[key]);
+      for (var key in gl) key === key.toUpperCase() && helpers.typeIs(gl[key], "number") && (AGL.Const[key] = gl[key]);
 
       this.info.isWebGl2Supported    = true;
-      this.info.maxTextureImageUnits = gl.getParameter(AGL.Const.MAX_TEXTURE_IMAGE_UNITS);
+      this.info.maxTextureImageUnits = gl.getParameter({{AGL.Const.MAX_TEXTURE_IMAGE_UNITS}});
     }
     gl     =
     canvas = null;
@@ -39,23 +39,23 @@ var Utils = helpers.createPrototypeClass(
         textureInfo.height,
         0,
         textureInfo.format,
-        AGLC.UNSIGNED_BYTE,
+        {{AGL.Const.UNSIGNED_BYTE}},
         textureInfo.source
       );
 
-      gl.texParameteri(textureInfo.target, AGLC.TEXTURE_MAX_LEVEL, textureInfo.maxLevel);
+      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MAX_LEVEL}}, textureInfo.maxLevel);
 
       textureInfo.generateMipmap && gl.generateMipmap(textureInfo.target);
     }
 
     _scope.bindTexture = function(gl, index, textureInfo) {
-      gl.activeTexture(AGLC.TEXTURE0 + index);
+      gl.activeTexture({{AGL.Const.TEXTURE0}} + index);
       gl.bindTexture(textureInfo.target, textureInfo.baseTexture);
 
-      gl.texParameteri(textureInfo.target, AGLC.TEXTURE_WRAP_S,     textureInfo.wrapS);
-      gl.texParameteri(textureInfo.target, AGLC.TEXTURE_WRAP_T,     textureInfo.wrapT);
-      gl.texParameteri(textureInfo.target, AGLC.TEXTURE_MIN_FILTER, textureInfo.mipmapMinFilter);
-      gl.texParameteri(textureInfo.target, AGLC.TEXTURE_MAG_FILTER, textureInfo.magFilter);
+      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_WRAP_S}},     textureInfo.wrapS);
+      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_WRAP_T}},     textureInfo.wrapT);
+      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MIN_FILTER}}, textureInfo.mipmapMinFilter);
+      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MAG_FILTER}}, textureInfo.magFilter);
     }
 
     _scope.loadShader = function(shaderType, gl, shaderSource) {
@@ -64,7 +64,7 @@ var Utils = helpers.createPrototypeClass(
       gl.shaderSource(shader, shaderSource);
       gl.compileShader(shader);
 
-      var compiled = gl.getShaderParameter(shader, AGLC.COMPILE_STATUS);
+      var compiled = gl.getShaderParameter(shader, {{AGL.Const.COMPILE_STATUS}});
       if (!compiled) {
         var lastError = gl.getShaderInfoLog(shader);
         console.log("Error compiling shader " + shaderType + ": " + lastError);
@@ -93,7 +93,7 @@ var Utils = helpers.createPrototypeClass(
       }
       gl.linkProgram(program);
 
-      var linked = gl.getProgramParameter(program, AGLC.LINK_STATUS);
+      var linked = gl.getProgramParameter(program, {{AGL.Const.LINK_STATUS}});
       if (!linked) {
           var lastError = gl.getProgramInfoLog(program);
           console.log("Error in program linking: " + lastError);
@@ -125,7 +125,7 @@ var Utils = helpers.createPrototypeClass(
 
     _scope.destroyFramebuffer = function(gl, framebuffer) {
       if (gl && framebuffer) {
-        gl.bindFramebuffer(AGLC.FRAMEBUFFER, null);
+        gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, null);
         gl.deleteFramebuffer(framebuffer);
       }
     }
@@ -146,4 +146,3 @@ var Utils = helpers.createPrototypeClass(
 
 AGL.Const = {};
 AGL.Utils = new Utils();
-var AGLC = AGL.Const;

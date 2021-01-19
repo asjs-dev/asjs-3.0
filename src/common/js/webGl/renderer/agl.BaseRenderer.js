@@ -110,7 +110,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       if (this._batchItems > 0) {
         this._bindBuffers();
 
-        this._gl.drawElementsInstanced(AGLC.TRIANGLE_FAN, 6, AGLC.UNSIGNED_SHORT, 0, this._batchItems);
+        this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._batchItems);
 
         this._batchItems = 0;
 
@@ -158,14 +158,14 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._initCustom = function() {
-      this._gl.bindBuffer(AGLC.ELEMENT_ARRAY_BUFFER, this._gl.createBuffer());
+      this._gl.bindBuffer({{AGL.Const.ELEMENT_ARRAY_BUFFER}}, this._gl.createBuffer());
       this._gl.bufferData(
-        AGLC.ELEMENT_ARRAY_BUFFER,
+        {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
         new Uint16Array([
           0, 1, 2,
           0, 2, 3
         ]),
-        AGLC.STATIC_DRAW
+        {{AGL.Const.STATIC_DRAW}}
       );
 
       var textureIds = new Uint16Array(this._textureNum);
@@ -174,7 +174,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._gl.uniform1iv(this._locations.uTex, textureIds);
 
       this._matrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 16);
-  		this._matrixBuffer = this._createArrayBuffer(this._matrixData, "aMt", 16, 4, 4, AGLC.FLOAT, 4);
+  		this._matrixBuffer = this._createArrayBuffer(this._matrixData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
     }
   }
 );
