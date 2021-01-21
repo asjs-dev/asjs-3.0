@@ -21,11 +21,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "uAT"
     ]);
 
-    this._shadowStart;
-    this._shadowLength;
-    this._precision;
-    this._allowTransparency;
-
     this.shadowMap = shadowMap;
     this.heightMap = heightMap;
 
@@ -127,7 +122,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         {{AGL.Const.STATIC_DRAW}}
       );
 
-      this._gl.uniform1i(this._locations.uTex, 0);
+      this._gl.uniform1i(this._locations.uTex,  0);
       this._gl.uniform1i(this._locations.uHTex, 1);
 
   		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
@@ -163,13 +158,6 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
-  var calcColor = "if(texture(uTex,p).a>0.)discard;";
-
-  var calcColorAllowTransparency =
-  "vec4 tc=texture(uTex,p);" +
-  "c=vec4(c.rgb+rgb*tc.rgb*tc.a,c.a+(c.a<tc.a?tc.a:0.));" +
-  "if(c.a>=1.)discard;";
-
   function createHeightMapCheck(core) {
     return
     "float pc=i/dstTex;" +
@@ -178,19 +166,24 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "}";
   }
 
-  function createZeroCheck(core) {
-    return core + "p-=m;";
-  }
-
   function createLoop(core) {
-    return "for(float i=uP;i<dstTex-uP;i+=uP){" +
+    return
+    "for(float i=uP;i<dstTex;i+=uP){" +
       "p-=m;" +
-      core +
+      "tc=texture(uTex,p);" +
+      "if(tc.a>0.){" +
+        core +
+      "}" +
     "}";
   }
 
   function createLoops(core) {
-    return createZeroCheck(core) +
+    return
+    "vec2 p=vTCrd;" +
+    "vec4 tc=texture(uTex,p);" +
+    "if(tc.a>0.){" +
+      core +
+    "}" +
     "if(pxph.x<1.&&pxph.y<1.){" +
       createLoop(
         "vec4 shc=texture(uHTex,p);" +
@@ -241,12 +234,14 @@ AGL.LightRenderer.createFragmentShader = function(config) {
         "vec2 m=((tCrd-tCnt)/dstTex)*pxp*uP;" +
         "vec2 udh=vec2(uDHS,uDHL);" +
         "vec2 sl=udh;" +
-        "vec2 p=vTCrd;" +
         "vec4 c=vec4(0);" +
         "if(uAT==1.){" +
-          createLoops(calcColorAllowTransparency) +
+          createLoops(
+            "c=vec4(c.rgb+rgb*tc.rgb*tc.a,c.a+(c.a<tc.a?tc.a:0.));" +
+            "if(c.a>=1.)discard;"
+          ) +
         "}else{" +
-          createLoops(calcColor) +
+          createLoops("discard;") +
         "}" +
         "rgb=rgb*(1.-c.a)+c.rgb;" +
       "}" +

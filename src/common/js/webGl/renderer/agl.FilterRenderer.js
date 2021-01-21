@@ -100,16 +100,6 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
     }
 
     _scope._initCustom = function() {
-      this._gl.bufferData(
-        {{AGL.Const.ARRAY_BUFFER}},
-        new Float32Array([
-          -1, -1,
-           1, -1,
-           1,  1,
-          -1,  1
-        ]), {{AGL.Const.STATIC_DRAW}}
-      );
-
       this._framebuffers = [
         new AGL.Framebuffer(),
         new AGL.Framebuffer()
@@ -131,10 +121,11 @@ AGL.FilterRenderer.createVertexShader = function(config) {
   "out vec2 vTCrd;" +
 
   "void main(void){" +
-    "gl_Position=vec4(aPos,0,1);" +
+    "vec3 pos=vec3(aPos*2.-1.,1);" +
+    "gl_Position=vec4(pos,1);" +
     "gl_Position.y*=uFlpY;" +
-    "vCrd=aPos;" +
-    "vTCrd=(aPos+vec2(1,-1))/vec2(2,-2);" +
+    "vCrd=pos.xy;" +
+    "vTCrd=(pos.xy+vec2(1,-1))/vec2(2,-2);" +
   "}";
 };
 AGL.FilterRenderer.createFragmentShader = function(config) {
