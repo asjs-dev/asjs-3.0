@@ -10,6 +10,7 @@ require("../helpers/iterateOver.js");
 require("../helpers/destructObjectFlat.js");
 require("../helpers/createPrototypeClass.js");
 require("../helpers/BasePrototypeClass.js");
+require("../helpers/isEmpty.js");
 
 require("./NameSpace.js");
 
