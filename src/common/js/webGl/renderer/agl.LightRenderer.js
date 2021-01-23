@@ -143,6 +143,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "out vec4 vCrd;" +
   "out vec4 vCol;" +
   "out vec4 vDat;" +
+  "out vec2 vExt;" +
   "out mat4 vQ;" +
 
   "void main(void){" +
@@ -153,6 +154,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
     "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
     "vCrd.xy=pos.xy;" +
     "vCrd.zw=((mt*vec3(0,0,1)).xy+h.xy)/h.zw;" +
+    "vExt=aMt[1].zw;" +
     "vCol=aMt[2];" +
     "vDat=aMt[3];" +
   "}";
@@ -167,9 +169,10 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   function createHeightMapCheck(core) {
     return
-    "float pc=i/dstTex;" +
+    "float pc=1.-(i/dstTex);" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
+      "if(c.a>=1.)i=sl.y*dstTex;" +
     "}";
   }
 
@@ -177,7 +180,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     return
     "float x=uP;" +
     "for(float i=uP;i<dstTex;i+=x){" +
-      "vec2 p=vTCrd-i*m;" +
+      "vec2 p=vCrd.zw+i*m;" +
       "tc=texture(uTex,p);" +
       "x+=.01;" +
       coreWrapper(core) +
@@ -186,8 +189,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   function createLoops(core) {
     return
-    "vec4 tc=texture(uTex,vTCrd);" +
-    coreWrapper(core) +
+    "vec4 tc;" +
     "if(pxph.x<1.&&pxph.y<1.){" +
       createLoop(
         "vec4 shc=texture(uHTex,p);" +
@@ -200,16 +202,20 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "}else{" +
         createLoop(core) +
       "}" +
-    "}";
+    "}" +
+    "tc=texture(uTex,vTCrd);" +
+    coreWrapper(core);
   }
 
   return AGL.RendererHelper.createVersion(config.precision) +
   "#define PI radians(180.)\n" +
+  "#define THETA PI/180.\n" +
 
   "in vec2 vTCrd;" +
   "in vec4 vCrd;" +
   "in vec4 vCol;" +
   "in vec4 vDat;" +
+  "in vec2 vExt;" +
 
   "uniform sampler2D uTex;" +
   "uniform sampler2D uHTex;" +
@@ -223,11 +229,11 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   "void main(void){" +
     "float dst=distance(vec2(0),vCrd.xy);" +
-    "if(vDat.x==0.||dst>1.||((atan(vCrd.y,vCrd.x)/PI)+1.)/2.>vDat.w)discard;" +
+    "if(vDat.x==0.||dst>1.||(((atan(vCrd.y,vCrd.x)/PI)+1.)/2.)*360.>vDat.w)discard;" +
     "vec2 ts=vec2(textureSize(uTex,0));" +
     "vec2 pxp=1./ts;" +
     "vec3 rgb=vCol.rgb;" +
-    "if(pxp.x<1.&&pxp.y<1.){" +
+    "if(vExt.x==1.&&pxp.x<1.&&pxp.y<1.){" +
       "vec2 tCrd=vTCrd*ts;" +
       "vec2 tCnt=vCrd.zw*ts;" +
       "float dstTex=distance(tCnt,tCrd);" +
@@ -239,8 +245,9 @@ AGL.LightRenderer.createFragmentShader = function(config) {
         "vec4 c=vec4(0);" +
         "if(uAT==1.){" +
           createLoops(
-            "c=vec4(c.rgb+rgb*tc.rgb*tc.a,c.a+(c.a<tc.a?tc.a:0.));" +
-            "if(c.a>=1.)discard;"
+            "c.a+=c.a<tc.a?tc.a:0.;" +
+            "if(c.a>=1.)discard;" +
+            "c.rgb+=rgb*tc.rgb*tc.a;"
           ) +
         "}else{" +
           createLoops("discard;") +

@@ -9,12 +9,17 @@ AGL.Light = helpers.createPrototypeClass(
   ) {
     AGL.AbstractDrawable.call(this);
 
-    this.angle      =
+    this.angle      = 360;
     this.transition = 1;
 
     this.color.a = 0;
 
     this._matId = id * 16;
+    this._extId = this._matId + 6;
+    this._colId = this._matId + 8;
+    this._datId = this._matId + 12;
+
+    this.castShadow = true;
 
     this._lightData = lightData;
   },
@@ -51,17 +56,21 @@ AGL.Light = helpers.createPrototypeClass(
 
     _scope.update = function(renderTime) {
       var lightData = this._lightData;
-      var matId     = this._matId + 12;
+
+      var extId = this._extId;
+      var datId = this._datId;
 
       if (this.on) {
         this._updateProps(renderTime);
         this._updateColor();
 
-        lightData[matId]     = lightData[matId - 1] > 0 ? 1 : 0;
-        lightData[matId + 1] = this.transition;
-        lightData[matId + 2] = this.props.alpha;
-        lightData[matId + 3] = this.angle;
-      } else lightData[matId] = 0;
+        lightData[datId]     = lightData[datId - 1] > 0 ? 1 : 0;
+        lightData[datId + 1] = this.transition;
+        lightData[datId + 2] = this.props.alpha;
+        lightData[datId + 3] = this.angle;
+
+        lightData[extId] = this.castShadow ? 1 : 0;
+      } else lightData[datId] = 0;
     }
 
     _scope._updateTransform = function(props, parent) {
@@ -78,12 +87,15 @@ AGL.Light = helpers.createPrototypeClass(
 
         var lightData        = this._lightData;
         var parentColorCache = this._parent.colorCache;
-        var matId            = this._matId + 8;
 
-        lightData[matId + 3] = parentColorCache[3] * color.a;
-        lightData[matId]     = parentColorCache[0] * color.r * lightData[matId + 3];
-        lightData[matId + 1] = parentColorCache[1] * color.g * lightData[matId + 3];
-        lightData[matId + 2] = parentColorCache[2] * color.b * lightData[matId + 3];
+        var colId = this._colId;
+
+        var premultipliedAlpha = parentColorCache[3] * color.a;
+
+        lightData[colId]     = parentColorCache[0] * color.r * premultipliedAlpha;
+        lightData[colId + 1] = parentColorCache[1] * color.g * premultipliedAlpha;
+        lightData[colId + 2] = parentColorCache[2] * color.b * premultipliedAlpha;
+        lightData[colId + 3] = premultipliedAlpha;
       }
     }
   }
