@@ -109,14 +109,13 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
       if (this._currentRotationUpdateId < this._rotationUpdateId) {
         this._currentRotationUpdateId = this._rotationUpdateId;
         ++this.updateId;
-        /*
+
         if (this._skewX === 0 && this._skewY === 0) {
           this.sinRotationA =
           this.sinRotationB = Math.sin(this._rotation);
           this.cosRotationA =
           this.cosRotationB = Math.cos(this._rotation);
         } else {
-        */
           var rotSkewX = this._rotation - this._skewX;
           var rotSkewY = this._rotation + this._skewY;
 
@@ -124,7 +123,7 @@ AGL.AbstractPositioningProps = helpers.createPrototypeClass(
           this.cosRotationA = Math.cos(rotSkewY);
           this.sinRotationB = Math.sin(rotSkewX);
           this.cosRotationB = Math.cos(rotSkewX);
-        //}
+        }
       }
     }
   }

@@ -1,35 +1,38 @@
 require("../NameSpace.js");
-require("./agl.BaseRenderer.js");
+require("./agl.BatchRendererBase.js");
 require("../display/agl.Item.js");
 require("../geom/agl.Matrix3.js");
 
 AGL.Stage2D = helpers.createPrototypeClass(
-  AGL.BaseRenderer,
-  function Stage2DRenderer(config) {
-    config = AGL.RendererHelper.initConfig(config, AGL.Stage2D);
+  AGL.BatchRendererBase,
+  function Stage2DRenderer(options) {
+    options = options || {};
+
+    options.config               = AGL.RendererHelper.initConfig(options.config, AGL.Stage2D);
+    options.config.isMaskEnabled = options.isMaskEnabled;
 
     var locations = [
       "aWrlCol",
       "aTintCol",
       "aAlpCol",
-      "aFx",
-      "uLg"
+      "aFx"
     ];
-    config.isMaskEnabled && locations.push("aMsk");
+    options.isMaskEnabled && locations.push("aMsk");
 
-    config.locations = config.locations.concat(locations);
+    options.config.locations = options.config.locations.concat(locations);
 
-    AGL.BaseRenderer.call(this, config);
+    AGL.BatchRendererBase.call(this, options);
 
     this.colorCache = this.color.items;
 
     this.picked;
+
     this._isPickerSet = false;
 
     this.pickerPoint = AGL.Point.create();
 
-    this._setMaskDataFunc = config.isMaskEnabled
-      ? this._setMaskData.bind(this)
+    this._setMaskDataFunc = options.isMaskEnabled
+      ? this._setMaskData
       : helpers.emptyFunction;
   },
   function(_scope, _super) {
@@ -52,8 +55,10 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     _scope._setMaskData = function(item) {
       var id = this._batchItems * 2;
-      this._maskData[id]     = this._drawTexture(item.mask, true);
-      this._maskData[id + 1] = item.maskType;
+      if (item.mask) {
+        this._maskData[id]     = this._drawTexture(item.mask, true);
+        this._maskData[id + 1] = item.maskType;
+      } else this._maskData[id] = -1;
     }
 
     _scope._setBufferData = function(item, textureMapIndex) {
@@ -87,7 +92,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       this._setBufferData(item, textureMapIndex);
 
-      ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
+      ++this._batchItems === this._maxBatchItems && this._batchDraw();
     }
 
     _scope._bindBuffers = function() {
@@ -96,28 +101,29 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._bindArrayBuffer(this._tintColorBuffer,   this._tintColorData);
       this._bindArrayBuffer(this._alphaBuffer,       this._alphaData);
       this._bindArrayBuffer(this._effectBuffer,      this._effectData);
-      this._bindMaskBufferFunc();
+      
+      this._bindMaskBufferFunc(this._maskBuffer, this._maskData);
     }
 
     _scope._initCustom = function() {
       _super._initCustom.call(this);
 
-      this._parentColorData   = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+      this._parentColorData   = new Float32Array(this._maxBatchItems * 4);
       this._parentColorBuffer = this._createArrayBuffer(this._parentColorData, "aWrlCol",  4, 1, 4, {{AGL.Const.FLOAT}}, 4);
-      this._tintColorData     = new Float32Array(this._MAX_BATCH_ITEMS * 4);
+      this._tintColorData     = new Float32Array(this._maxBatchItems * 4);
       this._tintColorBuffer   = this._createArrayBuffer(this._tintColorData,   "aTintCol", 4, 1, 4, {{AGL.Const.FLOAT}}, 4);
-      this._alphaData         = new Float32Array(this._MAX_BATCH_ITEMS * 2);
+      this._alphaData         = new Float32Array(this._maxBatchItems * 2);
       this._alphaBuffer       = this._createArrayBuffer(this._alphaData,       "aAlpCol",  2, 1, 2, {{AGL.Const.FLOAT}}, 4);
-      this._effectData        = new Float32Array(this._MAX_BATCH_ITEMS * 2);
+      this._effectData        = new Float32Array(this._maxBatchItems * 2);
       this._effectBuffer      = this._createArrayBuffer(this._effectData,      "aFx",      2, 1, 2, {{AGL.Const.FLOAT}}, 4);
 
       if (this._config.isMaskEnabled) {
-        this._maskData        = new Float32Array(this._MAX_BATCH_ITEMS * 2);
+        this._maskData        = new Float32Array(this._maxBatchItems * 2);
         this._maskBuffer      = this._createArrayBuffer(this._maskData,        "aMsk",     2, 1, 2, {{AGL.Const.FLOAT}}, 4);
       }
 
       this._bindMaskBufferFunc = this._config.isMaskEnabled
-        ? this._bindArrayBuffer.bind(this, this._maskBuffer, this._maskData)
+        ? this._bindArrayBuffer
         : helpers.emptyFunction;
     }
   }

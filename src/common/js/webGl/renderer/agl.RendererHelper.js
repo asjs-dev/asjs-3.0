@@ -5,12 +5,10 @@ require("../data/props/agl.ColorProps.js");
 AGL.RendererHelper = {};
 
 AGL.RendererHelper.initRenderer = function(config) {
-  helpers.deepFreeze(config);
-
   this.clearColor = new AGL.ColorProps();
 
-  this._width                     =
-  this._height                    =
+  this.width                      =
+  this.height                     =
   this.widthHalf                  =
   this.heightHalf                 =
   this._sizeUpdateId              =
@@ -34,17 +32,30 @@ AGL.RendererHelper.initRenderer = function(config) {
 };
 
 AGL.RendererHelper.initConfig = function(config, target) {
-  config = AGL.CreateConfig(config);
+  config = config || {};
 
-  config.vertexShader   = config.vertexShader   || target.createVertexShader;
-  config.fragmentShader = config.fragmentShader || target.createFragmentShader;
+  var attributes = config.contextAttributes || {};
 
-  config.locations = config.locations.concat([
-    "aPos",
-    "uTex"
-  ]);
+  return {
+    canvas    : config.canvas || document.createElement("canvas"),
+    locations : (config.locations || []).concat([
+      "aPos",
+      "uTex"
+    ]),
+    vertexShader   : config.vertexShader   || target.createVertexShader,
+    fragmentShader : config.fragmentShader || target.createFragmentShader,
+    precision      : config.precision || AGL.RendererHelper.Precisons.HIGH,
 
-  return config;
+    contextAttributes : {
+      alpha                 : attributes.alpha || false,
+      antialias             : attributes.antialias || false,
+      depth                 : attributes.depth || false,
+      stencil               : attributes.stencil || false,
+      premultipliedAlpha    : attributes.premultipliedAlpha || false,
+      powerPreference       : attributes.powerPreference || "high-performance",
+      preserveDrawingBuffer : attributes.preserveDrawingBuffer || true,
+    }
+  };
 }
 
 AGL.RendererHelper.createRendererBody = function(_scope) {

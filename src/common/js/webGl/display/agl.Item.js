@@ -22,7 +22,7 @@ AGL.Item = helpers.createPrototypeClass(
     this._currentParentColorUpdateId     =
     this._currentAdditionalPropsUpdateId = 0;
 
-    this._callback = helpers.emptyFunction;
+    this.callback = helpers.emptyFunction;
 
     this._bounds = AGL.Rect.create();
   },

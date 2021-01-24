@@ -7,20 +7,19 @@ require("../utils/agl.Utils.js");
 require("../geom/agl.Matrix3.js");
 require("./agl.RendererHelper.js");
 
-AGL.BaseRenderer = helpers.createPrototypeClass(
+AGL.BatchRendererBase = helpers.createPrototypeClass(
   AGL.Container,
-  function BaseRenderer(config) {
+  function BatchRendererBase(options) {
+    if (!options) throw "Renderer Error";
+
     AGL.Container.call(this);
 
-    config = AGL.RendererHelper.initConfig(config, AGL.BaseRenderer);
-
-    config.locations = config.locations.concat([
+    options.config.locations = options.config.locations.concat([
       "aMt"
     ]);
 
-    this._MAX_BATCH_ITEMS = config.maxBatchItems;
+    this.maxBatchItems = options.maxBatchItems;
 
-    this._clearBound = this.clear.bind(this);
     this._clearBeforeRenderFunc = helpers.emptyFunction;
 
     this._currentBlendMode;
@@ -30,7 +29,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._textureNum = AGL.Utils.info.maxTextureImageUnits;
     this._textureMap = [];
 
-    AGL.RendererHelper.initRenderer.call(this, config);
+    AGL.RendererHelper.initRenderer.call(this, options.config);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE]      = helpers.emptyFunction;
@@ -44,16 +43,21 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
 
+    helpers.property(_scope, "maxBatchItems", {
+      get: function() { return this._maxBatchItems; },
+      set: function(v) { this._maxBatchItems = Math.max(1, v || 1e4); }
+    });
+
     helpers.property(_scope, "parent", {
       get: function() { return this._parent; },
       set: function(v) {}
     });
 
     helpers.property(_scope, "clearBeforeRender", {
-      get: function() { return this._clearBeforeRenderFunc === this._clearBound; },
+      get: function() { return this._clearBeforeRenderFunc === this.clear; },
       set: function(v) {
         this._clearBeforeRenderFunc = v
-          ? this._clearBound
+          ? this.clear
           : helpers.emptyFunction;
       }
     });
@@ -99,7 +103,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
       this._setBufferData(item, textureMapIndex);
 
-      ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
+      ++this._batchItems === this._maxBatchItems && this._batchDraw();
     }
 
     _scope._bindBuffers = function() {
@@ -173,33 +177,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       for (var i = 0; i < l; ++i) textureIds[i] = i;
       this._gl.uniform1iv(this._locations.uTex, textureIds);
 
-      this._matrixData   = new Float32Array(this._MAX_BATCH_ITEMS * 16);
+      this._matrixData   = new Float32Array(this._maxBatchItems * 16);
   		this._matrixBuffer = this._createArrayBuffer(this._matrixData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
     }
   }
 );
-AGL.BaseRenderer.createVertexShader = function(config) {
-  return AGL.RendererHelper.createVersion(config.precision) +
-
-  "in vec2 aPos;" +
-  "in mat4 aMt;" +
-
-  "out vec2 vTCrd;" +
-  "out vec4 vTexCrop;" +
-
-  "void main(void){" +
-    AGL.RendererHelper.calcGlPositions +
-  "}";
-};
-AGL.BaseRenderer.createFragmentShader = function(config) {
-  return AGL.RendererHelper.createVersion(config.precision) +
-
-  "in vec2 vTCrd;" +
-  "in vec4 vTexCrop;" +
-
-  "out vec4 fgCol;" +
-
-  "void main(void){" +
-    "fgCol=vec4(1);" +
-  "}";
-};

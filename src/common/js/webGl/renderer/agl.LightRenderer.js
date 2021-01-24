@@ -3,40 +3,44 @@ require("./agl.RendererHelper.js");
 
 AGL.LightRenderer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function LightRenderer(config, shadowMap, heightMap, shadowStart, shadowLength, precision, allowTransparency) {
+  function LightRenderer(options) {
+    options = options || {};
+
     helpers.BasePrototypeClass.call(this);
 
-    config = AGL.RendererHelper.initConfig(config, AGL.LightRenderer);
+    var config = AGL.RendererHelper.initConfig({
+      contextAttributes : {
+        alpha              : true,
+        premultipliedAlpha : false
+      },
+      locations : [
+        "aMt",
+        "uHTex",
+        "uDHS",
+        "uDHL",
+        "uP",
+        "uAT"
+      ]
+    }, AGL.LightRenderer);
 
-    config.contextAttributes                    = config.contextAttributes || {};
-    config.contextAttributes.alpha              = true;
-    config.contextAttributes.premultipliedAlpha = false;
+    options.lightNum = Math.max(0, options.lightNum || 1);
 
-    config.locations = config.locations.concat([
-      "aMt",
-      "uHTex",
-      "uDHS",
-      "uDHL",
-      "uP",
-      "uAT"
-    ]);
+    this.shadowMap = options.shadowMap;
+    this.heightMap = options.heightMap;
 
-    this.shadowMap = shadowMap;
-    this.heightMap = heightMap;
-
-    this._lightData = new Float32Array(config.lightNum * 16);
+    this._lightData = new Float32Array(options.lightNum * 16);
 
     this._lights = [];
 
-    var l = config.lightNum;
+    var l = options.lightNum;
     for (var i = 0; i < l; ++i) this._lights.push(new AGL.Light(i, this._lightData));
 
     AGL.RendererHelper.initRenderer.call(this, config);
 
-    this.shadowStart       = helpers.isEmpty(shadowStart)  ? 0 : shadowStart;
-    this.shadowLength      = helpers.isEmpty(shadowLength) ? 1 : shadowLength;
-    this.precision         = helpers.isEmpty(precision)    ? 1 : precision;
-    this.allowTransparency = allowTransparency === true;
+    this.shadowStart       = helpers.isEmpty(options.shadowStart)  ? 0 : options.shadowStart;
+    this.shadowLength      = helpers.isEmpty(options.shadowLength) ? 1 : options.shadowLength;
+    this.precision         = helpers.isEmpty(options.precision)    ? 1 : options.precision;
+    this.allowTransparency = options.allowTransparency === true;
   },
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
@@ -160,8 +164,9 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
-  function coreWrapper(core) {
+  function coreWrapper(core, pos) {
     return
+    "tc=texture(uTex," + pos + ");" +
     "if(tc.a>0.){" +
       core +
     "}";
@@ -172,18 +177,17 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "float pc=1.-(i/dstTex);" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
-      "if(c.a>=1.)i=sl.y*dstTex;" +
+      "if(c.a>=1.)i+=sl.y*dstTex;" +
     "}";
   }
 
   function createLoop(core) {
     return
     "float x=uP;" +
-    "for(float i=uP;i<dstTex;i+=x){" +
+    "for(float i=uP;i<dstTex-uP;i+=x){" +
       "vec2 p=vCrd.zw+i*m;" +
-      "tc=texture(uTex,p);" +
-      "x+=.01;" +
-      coreWrapper(core) +
+      "x+=.025;" +
+      coreWrapper(core, "p") +
     "}";
   }
 
@@ -203,8 +207,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
         createLoop(core) +
       "}" +
     "}" +
-    "tc=texture(uTex,vTCrd);" +
-    coreWrapper(core);
+    coreWrapper(core, "vTCrd");
   }
 
   return AGL.RendererHelper.createVersion(config.precision) +

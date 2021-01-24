@@ -1,16 +1,18 @@
 require("../NameSpace.js");
-require("./agl.BaseRenderer.js");
+require("./agl.BatchRendererBase.js");
 
 AGL.SimpleRenderer = helpers.createPrototypeClass(
-  AGL.BaseRenderer,
-  function SimpleRenderer(config) {
-    config = AGL.RendererHelper.initConfig(config, AGL.SimpleRenderer);
+  AGL.BatchRendererBase,
+  function SimpleRenderer(options) {
+    options = options || {};
 
-    config.locations = config.locations.concat([
+    options.config = AGL.RendererHelper.initConfig(options.config, AGL.SimpleRenderer);
+
+    options.config.locations = options.config.locations.concat([
       "aTexId"
     ]);
 
-    AGL.BaseRenderer.call(this, config);
+    AGL.BatchRendererBase.call(this, options);
   },
   function(_scope, _super) {
     _scope._setBufferData = function(item, textureMapIndex) {
@@ -26,7 +28,7 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
     _scope._initCustom = function() {
       _super._initCustom.call(this);
 
-      this._textureIdData   = new Float32Array(this._MAX_BATCH_ITEMS);
+      this._textureIdData   = new Float32Array(this._maxBatchItems);
       this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, {{AGL.Const.FLOAT}}, 4);
     }
   }

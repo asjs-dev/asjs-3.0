@@ -14,7 +14,6 @@ require("../helpers/isEmpty.js");
 
 require("./NameSpace.js");
 
-require("./data/agl.Config.js");
 require("./data/agl.BlendMode.js");
 
 require("./data/props/agl.AbstractProps.js");
@@ -44,7 +43,7 @@ require("./display/agl.Image.js");
 require("./display/agl.SmoothLight.js");
 
 require("./renderer/agl.RendererHelper.js");
-require("./renderer/agl.BaseRenderer.js");
+require("./renderer/agl.BatchRendererBase.js");
 require("./renderer/agl.FilterRenderer.js");
 require("./renderer/agl.LightRenderer.js");
 require("./renderer/agl.SimpleRenderer.js");

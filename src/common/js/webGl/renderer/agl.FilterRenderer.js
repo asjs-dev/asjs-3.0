@@ -3,12 +3,14 @@ require("./agl.RendererHelper.js");
 
 AGL.FilterRenderer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function FilterRenderer(config, texture, filters) {
+  function FilterRenderer(options) {
+    options = options || {};
+
     helpers.BasePrototypeClass.call(this);
 
-    config = AGL.RendererHelper.initConfig(config, AGL.FilterRenderer);
+    options.config = AGL.RendererHelper.initConfig(options.config, AGL.FilterRenderer);
 
-    config.locations = config.locations.concat([
+    options.config.locations = options.config.locations.concat([
       "uFTex",
       "uFlpY",
       "uFtrT",
@@ -17,11 +19,11 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
       "uFtrK"
     ]);
 
-    this.filters = filters || [];
+    this.filters = options.filters || [];
 
-    AGL.RendererHelper.initRenderer.call(this, config);
+    AGL.RendererHelper.initRenderer.call(this, options.config);
 
-    this.texture = texture;
+    this.texture = options.texture;
 
     this._currentFilterTexture = null;
 

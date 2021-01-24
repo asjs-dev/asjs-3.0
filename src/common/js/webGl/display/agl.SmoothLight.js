@@ -2,39 +2,31 @@ require("../NameSpace.js");
 
 AGL.SmoothLight = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function SmoothLight(lightNum, scale, blur, shadowMap, heightMap, shadowStart, shadowLength, precision, allowTransparency) {
+  function SmoothLight(options) {
+    options = options || {};
+
     helpers.BasePrototypeClass.call(this);
 
-    this.renderer = new AGL.LightRenderer(
-      {
-        lightNum : lightNum || 1
-      },
-      shadowMap,
-      heightMap,
-      shadowStart,
-      shadowLength,
-      precision,
-      allowTransparency
-    );
+    this.renderer = new AGL.LightRenderer(options);
 
     this._blurFilter = new AGL.BlurFilter(0, 0);
-    this._filterRenderer = new AGL.FilterRenderer(
-      {
+    this._filterRenderer = new AGL.FilterRenderer({
+      config : {
         contextAttributes : {
           alpha: true
         }
       },
-      new AGL.Texture(this.renderer.canvas, true),
-      [
+      texture : new AGL.Texture(this.renderer.canvas, true),
+      filters : [
         this._blurFilter
       ]
-    );
+    });
 
     this.image = new AGL.Image(new AGL.Texture(this._filterRenderer.canvas, true));
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
-    this.scale = scale || 1;
-    this.blur  = blur  || 3;
+    this.scale = options.scale || 1;
+    this.blur  = helpers.isEmpty(options.blur) ? 1 : options.blur;
   },
   function(_scope, _super) {
     helpers.property(_scope, "scale", {
