@@ -24,6 +24,10 @@ AGL.BlendMode = {
     0
   ]),
 
+  SIMPLE : AGL.createBlendMode([
+    {{AGL.Const.ONE}},
+    {{AGL.Const.ONE}}
+  ]),
   NORMAL_PM : AGL.createBlendMode([
     {{AGL.Const.ONE}},
     {{AGL.Const.ONE_MINUS_SRC_ALPHA}}

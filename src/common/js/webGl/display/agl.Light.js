@@ -9,10 +9,12 @@ AGL.Light = helpers.createPrototypeClass(
   ) {
     AGL.AbstractDrawable.call(this);
 
-    this.angle      = 360;
+    this.angle      = 360 * Math.PI / 180;
     this.transition = 1;
 
     this.color.a = 0;
+    
+    this.on = false;
 
     this._matId = id * 16;
     this._extId = this._matId + 6;
@@ -22,8 +24,20 @@ AGL.Light = helpers.createPrototypeClass(
     this.castShadow = true;
 
     this._lightData = lightData;
+
+    this.type = AGL.Light.Type.SPOT;
   },
   function(_scope, _super) {
+    helpers.property(_scope, "type", {
+      get: function() { return this._type; },
+      set: function(v) {
+        if (this._type !== v) {
+          this._type = v;
+          this._lightData[this._extId + 1] = v;
+        }
+      }
+    });
+
     helpers.property(_scope, "on", {
       get: function() { return this.renderable && this.stage !== null; },
       set: function(v) { this.renderable = v; }
@@ -69,7 +83,7 @@ AGL.Light = helpers.createPrototypeClass(
         lightData[datId + 2] = this.props.alpha;
         lightData[datId + 3] = this.angle;
 
-        lightData[extId] = this.castShadow ? 1 : 0;
+        lightData[extId] = this.castShadow;
       } else lightData[datId] = 0;
     }
 
@@ -100,3 +114,7 @@ AGL.Light = helpers.createPrototypeClass(
     }
   }
 );
+AGL.Light.Type = {
+  SPOT    : 0,
+  AMBIENT : 1
+};

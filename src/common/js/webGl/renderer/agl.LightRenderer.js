@@ -18,7 +18,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "uHTex",
         "uDHS",
         "uDHL",
-        "uP",
         "uAT"
       ]
     }, AGL.LightRenderer);
@@ -39,7 +38,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     this.shadowStart       = helpers.isEmpty(options.shadowStart)  ? 0 : options.shadowStart;
     this.shadowLength      = helpers.isEmpty(options.shadowLength) ? 1 : options.shadowLength;
-    this.precision         = helpers.isEmpty(options.precision)    ? 1 : options.precision;
     this.allowTransparency = options.allowTransparency === true;
   },
   function(_scope, _super) {
@@ -65,17 +63,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         if (this._shadowLength !== v) {
           this._shadowLength = v;
           this._gl.uniform1f(this._locations.uDHL, v);
-        }
-      }
-    });
-
-    helpers.property(_scope, "precision", {
-      get: function() { return this._precision; },
-      set: function(v) {
-        v = Math.max(1, Math.min(5, v));
-        if (this._precision !== v) {
-          this._precision = v;
-          this._gl.uniform1f(this._locations.uP, v);
         }
       }
     });
@@ -131,14 +118,15 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
   		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
 
-      this._useBlendMode(AGL.BlendMode.ADD);
-
       this._gl.clearColor(0, 0, 0, 1);
+
+      this._useBlendMode(AGL.BlendMode.ADD);
     }
   }
 );
 AGL.LightRenderer.createVertexShader = function(config) {
   return AGL.RendererHelper.createVersion(config.precision) +
+  "#define PI radians(180.)\n" +
 
   "in vec2 aPos;" +
   "in mat4 aMt;" +
@@ -151,25 +139,39 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "out mat4 vQ;" +
 
   "void main(void){" +
-    "vec4 h=vec4(1,-1,2,-2);" +
-    "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
     "vec3 pos=vec3(aPos*2.-1.,1);" +
-    "gl_Position=vec4(mt*pos,1);" +
-    "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
-    "vCrd.xy=pos.xy;" +
-    "vCrd.zw=((mt*vec3(0,0,1)).xy+h.xy)/h.zw;" +
+    "vec4 h=vec4(1,-1,2,-2);" +
     "vExt=aMt[1].zw;" +
     "vCol=aMt[2];" +
     "vDat=aMt[3];" +
+    "vCrd.xy=pos.xy;" +
+    "if(vExt.y<1.){" +
+      "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+      "gl_Position=vec4(mt*pos,1);" +
+      "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
+      "vCrd.zw=((mt*vec3(0,0,1)).xy+h.xy)/h.zw;" +
+    "}else{" +
+      "gl_Position=vec4(pos,1);" +
+      "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
+      "vec2 sc=vec2(sin(vDat.w),cos(vDat.w));" +
+      "vCrd.zw=vTCrd+vec2(aMt[0].x*sc.y,aMt[0].x*sc.x);" +
+    "}" +
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
-  function coreWrapper(core, pos) {
+  function coreWrapper(core, pos, bo) {
     return
     "tc=texture(uTex," + pos + ");" +
     "if(tc.a>0.){" +
       core +
-    "}";
+    "}" +
+    (bo
+      ? "else{" +
+        "i+=2.;" +
+        "continue;" +
+      "}"
+      : ""
+    );
   }
 
   function createHeightMapCheck(core) {
@@ -177,17 +179,16 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "float pc=1.-(i/dstTex);" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
-      "if(c.a>=1.)i+=sl.y*dstTex;" +
     "}";
   }
 
   function createLoop(core) {
     return
-    "float x=uP;" +
-    "for(float i=uP;i<dstTex-uP;i+=x){" +
+    "float x=1.5;" +
+    "for(float i=1.;i<dstTex-1.;i+=x){" +
       "vec2 p=vCrd.zw+i*m;" +
       "x+=.025;" +
-      coreWrapper(core, "p") +
+      coreWrapper(core, "p", true) +
     "}";
   }
 
@@ -212,7 +213,6 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   return AGL.RendererHelper.createVersion(config.precision) +
   "#define PI radians(180.)\n" +
-  "#define THETA PI/180.\n" +
 
   "in vec2 vTCrd;" +
   "in vec4 vCrd;" +
@@ -225,14 +225,18 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   "uniform float uDHS;" +
   "uniform float uDHL;" +
-  "uniform float uP;" +
   "uniform float uAT;" +
 
   "out vec4 fgCol;" +
 
   "void main(void){" +
-    "float dst=distance(vec2(0),vCrd.xy);" +
-    "if(vDat.x==0.||dst>1.||(((atan(vCrd.y,vCrd.x)/PI)+1.)/2.)*360.>vDat.w)discard;" +
+    "if(vDat.x==0.)discard;" +
+    "bool isl=vExt.y<1.;" +
+    "float dst;" +
+    "if(isl){" +
+      "dst=distance(vec2(0),vCrd.xy);" +
+      "if(dst>1.||atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
+    "}" +
     "vec2 ts=vec2(textureSize(uTex,0));" +
     "vec2 pxp=1./ts;" +
     "vec3 rgb=vCol.rgb;" +
@@ -240,24 +244,23 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "vec2 tCrd=vTCrd*ts;" +
       "vec2 tCnt=vCrd.zw*ts;" +
       "float dstTex=distance(tCnt,tCrd);" +
-      "if(dstTex>uP){" +
-        "vec2 pxph=1./vec2(textureSize(uHTex,0));" +
-        "vec2 m=((tCrd-tCnt)/dstTex)*pxp;" +
-        "vec2 udh=vec2(uDHS,uDHL);" +
-        "vec2 sl=udh;" +
-        "vec4 c=vec4(0);" +
-        "if(uAT==1.){" +
-          createLoops(
-            "c.a+=c.a<tc.a?tc.a:0.;" +
-            "if(c.a>=1.)discard;" +
-            "c.rgb+=rgb*tc.rgb*tc.a;"
-          ) +
-        "}else{" +
-          createLoops("discard;") +
-        "}" +
-        "rgb=rgb*(1.-c.a)+c.rgb;" +
+      "vec2 pxph=1./vec2(textureSize(uHTex,0));" +
+      "vec2 m=((tCrd-tCnt)/dstTex)*pxp;" +
+      "vec2 udh=vec2(uDHS,uDHL);" +
+      "vec2 sl=udh;" +
+      "vec4 c=vec4(0);" +
+      "if(uAT==1.){" +
+        createLoops(
+          "c.a+=c.a<tc.a?tc.a:0.;" +
+          "if(c.a>=1.)discard;" +
+          "c.rgb+=rgb*tc.rgb*tc.a;"
+        ) +
+      "}else{" +
+        createLoops("discard;") +
       "}" +
+      "rgb=rgb*(1.-c.a)+c.rgb;" +
     "}" +
-    "fgCol=vec4(rgb*clamp((1.-dst)*vDat.y,0.,1.)*vDat.z,1);" +
+    "float mp=isl?clamp((1.-dst)*vDat.y,0.,1.):1.;" +
+    "fgCol=vec4(rgb*mp*vDat.z,1);" +
   "}";
 };
