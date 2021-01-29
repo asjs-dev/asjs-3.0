@@ -18,7 +18,10 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "uHTex",
         "uDHS",
         "uDHL",
-        "uAT"
+        "uAT",
+        "uS",
+        "uP",
+        "uTE"
       ]
     }, AGL.LightRenderer);
 
@@ -38,6 +41,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     this.shadowStart       = helpers.isEmpty(options.shadowStart)  ? 0 : options.shadowStart;
     this.shadowLength      = helpers.isEmpty(options.shadowLength) ? 1 : options.shadowLength;
+    this.precision         = helpers.isEmpty(options.precision)    ? 1 : options.precision;
     this.allowTransparency = options.allowTransparency === true;
   },
   function(_scope, _super) {
@@ -77,16 +81,37 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       }
     });
 
+    helpers.property(_scope, "precision", {
+      get: function() { return this._precision; },
+      set: function(v) {
+        v = Math.max(1, Math.min(10, v));
+        if (this._precision !== v) {
+          this._precision = v;
+          this._gl.uniform1f(this._locations.uP, 1810 / v);
+        }
+      }
+    });
+
+    _scope._useShadowTexture = function(texture, id) {
+      texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useTexture(this._gl, id, texture);
+      this._texturesEnabled[id] = 1;
+    }
+
     _scope._render = function() {
-      this._gl.clear({{AGL.Const.COLOR_BUFFER_BIT}});
+      if (this.shadowMap) {
+        this._useShadowTexture(this.shadowMap, 0);
 
-      this.shadowMap && this.shadowMap.isNeedToDraw(this._gl, this._renderTime) &&
-        AGL.Utils.useTexture(this._gl, 0, this.shadowMap);
+        this.heightMap
+          ? this._useShadowTexture(this.heightMap, 1)
+          : this._texturesEnabled[1] = 0;
 
-      this.heightMap && this.heightMap.isNeedToDraw(this._gl, this._renderTime) &&
-        AGL.Utils.useTexture(this._gl, 1, this.heightMap);
+      } else this._texturesEnabled[0] = this._texturesEnabled[1] = 0;
+
+      this._gl.uniform2fv(this._locations.uTE, this._texturesEnabled);
 
       this._bindArrayBuffer(this._lightBuffer, this._lightData);
+
+      this._gl.clear({{AGL.Const.COLOR_BUFFER_BIT}});
       this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._lights.length);
 
       this._gl.flush();
@@ -100,6 +125,10 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     _scope.getLight = function(id) {
       return this._lights[id];
+    }
+
+    _scope._resize = function() {
+      this._resizeCanvas() && this._gl.uniform4f(this._locations.uS, this._width, this._height, 1 / this._width, 1 / this._height);
     }
 
     _scope._initCustom = function() {
@@ -116,10 +145,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       this._gl.uniform1i(this._locations.uTex,  0);
       this._gl.uniform1i(this._locations.uHTex, 1);
 
+      this._texturesEnabled = [0, 0];
+
   		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
 
       this._gl.clearColor(0, 0, 0, 1);
-
       this._useBlendMode(AGL.BlendMode.ADD);
     }
   }
@@ -131,12 +161,17 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "in vec2 aPos;" +
   "in mat4 aMt;" +
 
+  "uniform vec4 uS;" +
+  "uniform float uP;" +
+
   "out vec2 vTCrd;" +
   "out vec4 vCrd;" +
   "out vec4 vCol;" +
   "out vec4 vDat;" +
   "out vec2 vExt;" +
   "out mat4 vQ;" +
+  "out vec4 vS;" +
+  "out float vRS;" +
 
   "void main(void){" +
     "vec3 pos=vec3(aPos*2.-1.,1);" +
@@ -145,6 +180,8 @@ AGL.LightRenderer.createVertexShader = function(config) {
     "vCol=aMt[2];" +
     "vDat=aMt[3];" +
     "vCrd.xy=pos.xy;" +
+    "vS=uS;" +
+    "vRS=max(1.,distance(vec2(0),vS.xy)/uP);" +
     "if(vExt.y<1.){" +
       "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
       "gl_Position=vec4(mt*pos,1);" +
@@ -167,16 +204,16 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "}" +
     (bo
       ? "else{" +
-        "i+=2.;" +
-        "continue;" +
-      "}"
+          "i+=vRS;" +
+          "continue;" +
+        "}"
       : ""
     );
   }
 
   function createHeightMapCheck(core) {
     return
-    "float pc=1.-(i/dstTex);" +
+    "float pc=i/dstTex;" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
     "}";
@@ -184,10 +221,8 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   function createLoop(core) {
     return
-    "float x=1.5;" +
-    "for(float i=1.;i<dstTex-1.;i+=x){" +
-      "vec2 p=vCrd.zw+i*m;" +
-      "x+=.025;" +
+    "for(float i=3.;i<dstTex-1.;i+=vRS){" +
+      "vec2 p=vTCrd-i*m;" +
       coreWrapper(core, "p", true) +
     "}";
   }
@@ -195,7 +230,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   function createLoops(core) {
     return
     "vec4 tc;" +
-    "if(pxph.x<1.&&pxph.y<1.){" +
+    "if(uTE.y>0.){" +
       createLoop(
         "vec4 shc=texture(uHTex,p);" +
         "sl=shc.b>0.?shc.rg:udh;" +
@@ -219,6 +254,8 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   "in vec4 vCol;" +
   "in vec4 vDat;" +
   "in vec2 vExt;" +
+  "in vec4 vS;" +
+  "in float vRS;" +
 
   "uniform sampler2D uTex;" +
   "uniform sampler2D uHTex;" +
@@ -226,6 +263,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   "uniform float uDHS;" +
   "uniform float uDHL;" +
   "uniform float uAT;" +
+  "uniform vec2 uTE;" +
 
   "out vec4 fgCol;" +
 
@@ -237,15 +275,16 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "dst=distance(vec2(0),vCrd.xy);" +
       "if(dst>1.||atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
     "}" +
-    "vec2 ts=vec2(textureSize(uTex,0));" +
-    "vec2 pxp=1./ts;" +
     "vec3 rgb=vCol.rgb;" +
-    "if(vExt.x==1.&&pxp.x<1.&&pxp.y<1.){" +
-      "vec2 tCrd=vTCrd*ts;" +
-      "vec2 tCnt=vCrd.zw*ts;" +
-      "float dstTex=distance(tCnt,tCrd);" +
-      "vec2 pxph=1./vec2(textureSize(uHTex,0));" +
-      "vec2 m=((tCrd-tCnt)/dstTex)*pxp;" +
+    "if(vExt.x==1.&&uTE.x>0.){" +
+      "vec2 tCrd=vTCrd*vS.xy;" +
+      "vec2 tCnt=vCrd.zw*vS.xy;" +
+
+      "vec2 dsth=tCrd-tCnt;" +
+      "vec2 adsth=abs(dsth);" +
+      "float dstTex=max(adsth.x,adsth.y);" +
+      "vec2 m=(dsth/dstTex)*vS.zw;" +
+
       "vec2 udh=vec2(uDHS,uDHL);" +
       "vec2 sl=udh;" +
       "vec4 c=vec4(0);" +

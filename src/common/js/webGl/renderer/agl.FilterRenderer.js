@@ -227,8 +227,8 @@ AGL.FilterRenderer.createFragmentShader = function(config) {
         "vec4 tCol;" +
         "if(uFtrST<2)" +
           // BlurFilter
-          "for(float i=-1.;i<2.;++i){" +
-            "for(float j=-1.;j<2.;++j){" +
+          "for(float i=-2.;i<3.;++i){" +
+            "for(float j=-2.;j<3.;++j){" +
               "m=abs(i)+abs(j);" +
               "im=1.-(m*.25);" +
               "tCol=i==0.&&j==0." +
@@ -241,8 +241,8 @@ AGL.FilterRenderer.createFragmentShader = function(config) {
         "else{" +
           // GlowFilter
           "float oAvg=uFtrST==2?(fgCol.r+fgCol.g+fgCol.b+fgCol.a)/4.:0.;" +
-          "for(float i=-1.;i<2.;++i){" +
-            "for(float j=-1.;j<2.;++j){" +
+          "for(float i=-2.;i<3.;++i){" +
+            "for(float j=-2.;j<3.;++j){" +
               "m=abs(i)+abs(j);" +
               "im=1.-(m*.25);" +
               "tCol=i==0.&&j==0." +

@@ -139,17 +139,21 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     if (this._currentSizeUpdateId < this._sizeUpdateId) {
       this._currentSizeUpdateId = this._sizeUpdateId;
 
-      this._canvas.width  = this._width;
-      this._canvas.height = this._height;
-
       this.widthHalf  = this._width  * .5;
       this.heightHalf = this._height * .5;
 
-      this._gl.viewport(0, 0, this._width, this._height);
+      this._setCanvasSize(this._width, this._height);
 
       return true;
     }
     return false;
+  }
+
+  _scope._setCanvasSize = function(width, height) {
+    this._canvas.width  = width;
+    this._canvas.height = height;
+
+    this._gl.viewport(0, 0, width, height);
   }
 
   _scope._resize = _scope._resizeCanvas;

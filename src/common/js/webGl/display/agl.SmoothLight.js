@@ -79,7 +79,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     _scope._resize = function() {
       var scaledWidth  = this._width  * this._scale;
       var scaledHeight = this._height * this._scale;
-
+      
       this.renderer.setSize(scaledWidth, scaledHeight);
       this._filterRenderer.setSize(scaledWidth, scaledHeight);
     }
