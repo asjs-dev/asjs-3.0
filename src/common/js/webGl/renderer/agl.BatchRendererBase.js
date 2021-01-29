@@ -26,7 +26,8 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
 
     this._batchItems = 0;
 
-    this._textureNum = AGL.Utils.info.maxTextureImageUnits;
+    this._TEXTURE_NUM = AGL.Utils.info.maxTextureImageUnits;
+    
     this._textureMap = [];
 
     AGL.RendererHelper.initRenderer.call(this, options.config);
@@ -128,7 +129,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
         var isTextureNotMapped = textureIndex < 0;
         if (isTextureNotMapped || textureInfo.isNeedToDraw(this._gl, this._renderTime)) {
           if (isTextureNotMapped) {
-            if (this._textureMap.length === this._textureNum - isMask) {
+            if (this._textureMap.length === this._TEXTURE_NUM - isMask) {
               this._batchDraw();
               this._textureMap.length = 0;
             }
@@ -172,8 +173,8 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
         {{AGL.Const.STATIC_DRAW}}
       );
 
-      var textureIds = new Uint16Array(this._textureNum);
-      var l = this._textureNum;
+      var textureIds = new Uint16Array(this._TEXTURE_NUM);
+      var l = this._TEXTURE_NUM;
       for (var i = 0; i < l; ++i) textureIds[i] = i;
       this._gl.uniform1iv(this._locations.uTex, textureIds);
 

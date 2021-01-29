@@ -1,8 +1,6 @@
 require("../NameSpace.js");
 
-AGL.Const = {};
-
-var Utils = helpers.createPrototypeClass(
+AGL.Utils = new (helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
   function Utils() {
     helpers.BasePrototypeClass.call(this);
@@ -14,20 +12,29 @@ var Utils = helpers.createPrototypeClass(
       isWebGl2Supported : false
     };
 
-    var canvas = document.createElement("canvas");
-    var gl;
-    if (gl = canvas.getContext("webgl2")) {
-      for (var key in gl) key === key.toUpperCase() && helpers.typeIs(gl[key], "number") && (AGL.Const[key] = gl[key]);
-
-      this.info.isWebGl2Supported    = true;
-      this.info.maxTextureImageUnits = gl.getParameter({{AGL.Const.MAX_TEXTURE_IMAGE_UNITS}});
-    }
-    gl     =
-    canvas = null;
-
     window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
   },
   function(_scope) {
+    _scope.initApplication = function(callback) {
+      function checkCanvas(inited) {
+        if (document.readyState === "complete") {
+          document.addEventListener("readystatechange", checkCanvasBound);
+
+          var gl = document.createElement("canvas").getContext("webgl2");
+          if (gl) {
+            this.info.isWebGl2Supported    = true;
+            this.info.maxTextureImageUnits = gl.getParameter({{AGL.Const.MAX_TEXTURE_IMAGE_UNITS}});
+          }
+          gl = null;
+
+          callback(this.info.isWebGl2Supported);
+        } else if (!inited) document.addEventListener("readystatechange", checkCanvasBound);
+      }
+
+      var checkCanvasBound = checkCanvas.bind(this, true);
+      checkCanvas();
+    }
+
     _scope.useTexture = function(gl, index, textureInfo) {
       this.bindTexture(gl, index, textureInfo);
 
@@ -142,7 +149,4 @@ var Utils = helpers.createPrototypeClass(
       this.destruct();
     }
   }
-);
-
-AGL.Const = {};
-AGL.Utils = new Utils();
+))();
