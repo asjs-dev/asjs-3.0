@@ -5,19 +5,18 @@ AGL.TextureInfo = helpers.createPrototypeClass(
   function TextureInfo(shouldUpdate) {
     helpers.BasePrototypeClass.call(this);
 
+    /*
+    this._loaded     = false;
+    this.baseTexture =
+    this.gl          = null;
+    */
+
     this.target = {{AGL.Const.TEXTURE_2D}};
 
     this.shouldUpdate = shouldUpdate;
 
     this._updateId        =
     this._currentUpdateId = 0;
-
-    /*
-    this._loaded     = false;
-
-    this.baseTexture =
-    this.gl          = null;
-    */
 
     this.wrapS =
     this.wrapT = {{AGL.Const.CLAMP_TO_EDGE}};

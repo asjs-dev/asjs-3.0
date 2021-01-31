@@ -114,7 +114,7 @@ AGL.Light = helpers.createPrototypeClass(
     }
   }
 );
-AGL.Light.Type = {
+AGL.Light.Type = helpers.deepFreeze({
   SPOT    : 0,
   AMBIENT : 1
-};
+});

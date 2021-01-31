@@ -18,7 +18,7 @@ AGL.createBlendMode = function(funcs, eqs) {
   };
 };
 
-AGL.BlendMode = {
+AGL.BlendMode = helpers.deepFreeze({
   NONE : AGL.createBlendMode([
     0,
     0
@@ -119,4 +119,4 @@ AGL.BlendMode = {
     {{AGL.Const.ONE_MINUS_DST_COLOR}},
     {{AGL.Const.ONE_MINUS_SRC_COLOR}}
   ])
-};
+});

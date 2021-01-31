@@ -5,11 +5,18 @@ require("../data/props/agl.ColorProps.js");
 AGL.RendererHelper = {};
 
 AGL.RendererHelper.initRenderer = function(config) {
+  /*
+  this._vertexShader   =
+  this._fragmentShader =
+  this._program        =
+  this._context        = null;
+  */
+
   this.clearColor = new AGL.ColorProps();
 
   this.width                      =
   this.height                     = 1;
-  
+
   this.widthHalf                  =
   this.heightHalf                 =
   this._sizeUpdateId              =
@@ -20,17 +27,6 @@ AGL.RendererHelper.initRenderer = function(config) {
   this._config = config;
   this._canvas = config.canvas;
 
-  //this._loseContextExt =
-  /*
-  this._vertexShader   =
-  this._fragmentShader =
-  this._program        =
-  this._context        = null;
-  */
-  /*
-  this._onContextLostBind     = this._onContextLost.bind(this);
-  this._onContextRestoredBind = this._onContextRestored.bind(this);
-  */
   this._init();
 };
 
@@ -68,13 +64,8 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   });
 
   helpers.get(_scope, "context", function() {
-    if (!this._context || this.isContextLost) {
-      /*
-      this._removeListeners();
-      this._addListeners();
-      */
+    if (!this._context || this.isContextLost)
       this._context = this._canvas.getContext("webgl2", this._config.contextAttributes);
-    }
     return this._context;
   });
 
@@ -162,15 +153,10 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   _scope._resize = _scope._resizeCanvas;
 
   _scope._destructRenderer = function() {
-    //this._removeListeners();
-
-    //this._loseContextExt && this._loseContextExt.loseContext();
-
     this._destructContext();
 
     this.clearColor      =
     this._gl             =
-    //this._loseContextExt =
     this._vertexShader   =
     this._fragmentShader =
     this._program        =
@@ -179,17 +165,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._canvas         =
     this._context        = null;
   }
-  /*
-  _scope._addListeners = function() {
-    this._canvas.addEventListener("webglcontextlost",        this._onContextLostBind);
-    this._canvas.addEventListener("webglcontextrestored",    this._onContextRestoredBind);
-  }
 
-  _scope._removeListeners = function() {
-    this._canvas.removeEventListener("webglcontextlost",     this._onContextLostBind);
-    this._canvas.removeEventListener("webglcontextrestored", this._onContextRestoredBind);
-  }
-  */
   _scope._destructContext = function() {
     this._gl.useProgram(null);
     this._gl.detachShader(this._program, this._vertexShader);
@@ -197,6 +173,8 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._gl.detachShader(this._program, this._fragmentShader);
     this._gl.deleteShader(this._fragmentShader);
     this._gl.deleteProgram(this._program);
+
+    this._loseContextExt && this._loseContextExt.loseContext();
   }
 
   _scope._createArrayBuffer = function(data, locationId, length, num, size, type, bytes) {
@@ -237,7 +215,9 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
   _scope._init = function() {
     this._gl = this.context;
-    //this._loseContextExt = this._gl.getExtension('WEBGL_lose_context');
+
+    this._loseContextExt = this._gl.getExtension('WEBGL_lose_context');
+
     this._gl.pixelStorei({{AGL.Const.UNPACK_PREMULTIPLY_ALPHA_WEBGL}}, true);
     this._gl.enable({{AGL.Const.BLEND}});
 
@@ -266,20 +246,6 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   }
 
   _scope._initCustom = helpers.emptyFunction;
-  /*
-  _scope._onContextLost = function(event) {
-    event.preventDefault();
-
-    requestAnimationFrame(function() {
-      this._loseContextExt && this._loseContextExt.restoreContext();
-    }.bind(this));
-
-  }
-
-  _scope._onContextRestored = function(event) {
-    this._init();
-  }
-  */
 };
 
 AGL.RendererHelper.createVersion = function(precision) {
@@ -309,8 +275,8 @@ AGL.RendererHelper.calcGlPositions =
   "vTCrd=(tMt*pos).xy;" +
   "vTexCrop=aMt[3];";
 
-AGL.RendererHelper.Precisons = {
+AGL.RendererHelper.Precisons = helpers.deepFreeze({
   HIGH   : "highp",
   MEDIUM : "mediump",
   LOW    : "lowp"
-};
+});

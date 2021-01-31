@@ -6,6 +6,7 @@ require("../helpers/emptyFunction.js");
 require("../helpers/createPrototypeClass.js");
 require("../helpers/BasePrototypeClass.js");
 require("../helpers/isEmpty.js");
+require("../helpers/deepFreeze.js");
 
 require("./NameSpace.js");
 

@@ -9,14 +9,14 @@ AGL.Image = helpers.createPrototypeClass(
   function Image(texture) {
     AGL.AbstractDrawable.call(this);
 
+    //this.mask = null;
+    //this.interactive = false;
+
     this.TYPE = AGL.Image.TYPE;
 
     this.textureMatrixCache = AGL.Matrix3.identity();
 
-    //this.mask = null;
     this.maskType = AGL.Image.MaskType.ALPHA;
-
-    //this.interactive = false;
 
     this.tintType  = AGL.Image.TintType.NONE;
     this.blendMode = AGL.BlendMode.NORMAL;
@@ -61,16 +61,16 @@ AGL.Image = helpers.createPrototypeClass(
   }
 );
 AGL.Image.TYPE     = "drawable";
-AGL.Image.TintType = {
+AGL.Image.TintType = helpers.deepFreeze({
   NONE      : 0,
   NORMAL    : 1,
   GRAYSCALE : 2,
   OVERRIDE  : 3
-};
-AGL.Image.MaskType = {
+});
+AGL.Image.MaskType = helpers.deepFreeze({
   RED   : 0,
   GREEN : 1,
   BLUE  : 2,
   ALPHA : 3,
   AVG   : 4
-};
+});

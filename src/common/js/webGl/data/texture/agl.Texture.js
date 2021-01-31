@@ -6,11 +6,12 @@ AGL.Texture = helpers.createPrototypeClass(
   function Texture(source, shouldUpdate) {
     AGL.TextureInfo.call(this, shouldUpdate);
 
+    /*
+    this._source = null;
+    this.isVideo = false;
+    */
+
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
-
-    //this._source = null;
-
-    //this.isVideo = false;
 
     this.source = source;
 

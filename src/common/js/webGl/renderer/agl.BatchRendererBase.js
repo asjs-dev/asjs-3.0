@@ -14,6 +14,8 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
 
     AGL.Container.call(this);
 
+    //this._currentBlendMode;
+
     options.config.locations = options.config.locations.concat([
       "aMt"
     ]);
@@ -21,8 +23,6 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
     this.maxBatchItems = options.maxBatchItems;
 
     this._clearBeforeRenderFunc = helpers.emptyFunction;
-
-    this._currentBlendMode;
 
     this._batchItems = 0;
 
