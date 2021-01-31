@@ -93,7 +93,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     });
 
     _scope._useShadowTexture = function(texture, id) {
-      texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useTexture(this._gl, id, texture);
+      texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useActiveTexture(this._gl, texture, id);
       this._texturesEnabled[id] = 1;
     }
 

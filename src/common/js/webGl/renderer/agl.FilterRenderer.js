@@ -25,7 +25,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
     this.texture = options.texture;
 
-    this._currentFilterTexture = null;
+    //this._currentFilterTexture = null;
 
     this._resize();
   },
@@ -34,24 +34,20 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
     _scope._render = function() {
       this.texture.isNeedToDraw(this._gl, this._renderTime);
-      AGL.Utils.useTexture(this._gl, 0, this.texture);
+      AGL.Utils.useActiveTexture(this._gl, this.texture, 0);
       this._gl.uniform1f(this._locations.uFlpY, 1);
 
       this.clear();
 
       var l = this.filters.length || 1;
       var minL = l - 2;
-      var filter;
-      var isLast;
-      var framebuffer;
-      var useFilter;
       for (var i = 0; i < l; ++i) {
-        filter    = this.filters[i];
-        useFilter = filter && filter.on;
+        var filter    = this.filters[i];
+        var useFilter = filter && filter.on;
 
-        framebuffer = null;
+        var framebuffer = null;
 
-        isLast = i > minL;
+        var isLast = i > minL;
 
         if (
           useFilter &&
@@ -59,7 +55,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           (filter.texture.isNeedToDraw(this._gl, this._renderTime) || this._currentFilterTexture !== filter.texture)
         ) {
           this._currentFilterTexture = filter.texture;
-          AGL.Utils.useTexture(this._gl, 1, filter.texture);
+          AGL.Utils.useActiveTexture(this._gl, filter.texture, 1);
         }
 
         if (isLast) {
@@ -81,7 +77,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
         (useFilter || isLast) && this._gl.drawArrays({{AGL.Const.TRIANGLE_FAN}}, 0, 4);
 
-        framebuffer && AGL.Utils.bindTexture(this._gl, 0, framebuffer);
+        framebuffer && AGL.Utils.bindActiveTexture(this._gl, framebuffer, 0);
       }
     }
 

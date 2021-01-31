@@ -83,9 +83,8 @@ AGL.Container = helpers.createPrototypeClass(
       bounds.height = -1/0;
 
       var l = this.children.length;
-      var childBounds;
       for (var i = 0; i < l; ++i) {
-        childBounds = this.children[i].getBounds();
+        var childBounds = this.children[i].getBounds();
         bounds.x      = Math.min(bounds.x,      childBounds.x);
         bounds.y      = Math.min(bounds.y,      childBounds.y);
         bounds.width  = Math.max(bounds.width,  childBounds.width);

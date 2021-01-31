@@ -7,18 +7,17 @@ AGL.TextureInfo = helpers.createPrototypeClass(
 
     this.target = {{AGL.Const.TEXTURE_2D}};
 
-    this.maxLevel = 0;
-
     this.shouldUpdate = shouldUpdate;
 
     this._updateId        =
     this._currentUpdateId = 0;
 
-    this._loaded        =
-    this.generateMipmap = false;
+    /*
+    this._loaded     = false;
 
     this.baseTexture =
     this.gl          = null;
+    */
 
     this.wrapS =
     this.wrapT = {{AGL.Const.CLAMP_TO_EDGE}};
@@ -26,12 +25,11 @@ AGL.TextureInfo = helpers.createPrototypeClass(
     this.internalFormat =
     this.format         = {{AGL.Const.RGBA}};
 
-    this._minFilter       =
-    this._mipmapMinFilter =
-    this.magFilter        = {{AGL.Const.NEAREST}};
+    this.minFilter =
+    this.magFilter = {{AGL.Const.NEAREST}};
 
     this._width             =
-    this._height            =
+    this._height            = 1;
     this._currentRenderTime = 0;
   },
   function(_scope, _super) {
@@ -39,14 +37,19 @@ AGL.TextureInfo = helpers.createPrototypeClass(
     helpers.get(_scope, "width",  function() { return this._width; });
     helpers.get(_scope, "height", function() { return this._height; });
 
-    helpers.get(_scope, "mipmapMinFilter", function() { return this._mipmapMinFilter; });
+    helpers.get(_scope, "minMipmapFilter", function() { return this._minMipmapFilter; });
 
     helpers.property(_scope, "minFilter", {
       get: function() { return this._minFilter; },
-      set: function(v) { this._minFilter = v; }
+      set: function(v) {
+        if (this._minFilter !== v) {
+          this._minFilter = v;
+          this._minMipmapFilter = this._minFilter === {{AGL.Const.LINEAR}}
+              ? {{AGL.Const.LINEAR_MIPMAP_LINEAR}}
+              : {{AGL.Const.NEAREST_MIPMAP_NEAREST}};
+        }
+      }
     });
-
-    helpers.get(_scope, "source", function() { return null; });
 
     _scope.isNeedToDraw = function(gl, renderTime) {
       if (this.gl !== gl) {

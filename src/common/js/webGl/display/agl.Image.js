@@ -13,10 +13,10 @@ AGL.Image = helpers.createPrototypeClass(
 
     this.textureMatrixCache = AGL.Matrix3.identity();
 
-    this.mask = null;
+    //this.mask = null;
     this.maskType = AGL.Image.MaskType.ALPHA;
 
-    this.interactive = false;
+    //this.interactive = false;
 
     this.tintType  = AGL.Image.TintType.NONE;
     this.blendMode = AGL.BlendMode.NORMAL;

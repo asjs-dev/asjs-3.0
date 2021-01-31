@@ -8,7 +8,8 @@ AGL.RendererHelper.initRenderer = function(config) {
   this.clearColor = new AGL.ColorProps();
 
   this.width                      =
-  this.height                     =
+  this.height                     = 1;
+  
   this.widthHalf                  =
   this.heightHalf                 =
   this._sizeUpdateId              =
@@ -20,10 +21,12 @@ AGL.RendererHelper.initRenderer = function(config) {
   this._canvas = config.canvas;
 
   //this._loseContextExt =
+  /*
   this._vertexShader   =
   this._fragmentShader =
   this._program        =
   this._context        = null;
+  */
   /*
   this._onContextLostBind     = this._onContextLost.bind(this);
   this._onContextRestoredBind = this._onContextRestored.bind(this);
@@ -37,7 +40,7 @@ AGL.RendererHelper.initConfig = function(config, target) {
   var attributes = config.contextAttributes || {};
 
   return {
-    canvas    : config.canvas || document.createElement("canvas"),
+    canvas    : config.canvas || AGL.Utils.createCanvas(config.isOffscreen),
     locations : (config.locations || []).concat([
       "aPos",
       "uTex"

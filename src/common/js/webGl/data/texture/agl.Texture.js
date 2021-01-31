@@ -8,53 +8,45 @@ AGL.Texture = helpers.createPrototypeClass(
 
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
 
-    this._source = null;
+    //this._source = null;
 
-    this.isVideo = false;
+    //this.isVideo = false;
 
     this.source = source;
 
-    this._sourceWidthProperty  = "width";
-    this._sourceHeightProperty = "height";
     this._eventType;
   },
   function(_scope, _super) {
-    helpers.get(_scope, "width",  function() { return this._source[this._sourceWidthProperty]; });
-    helpers.get(_scope, "height", function() { return this._source[this._sourceHeightProperty]; });
+    helpers.get(_scope, "width",  function() { return this._source[this._sourceWidthProperty] || 1; });
+    helpers.get(_scope, "height", function() { return this._source[this._sourceHeightProperty] || 1; });
 
-    helpers.property(_scope, "minFilter", {
-      get: function() { return this._minFilter; },
-      set: function(v) {
-        if (this._minFilter !== v) {
-          this._minFilter = v;
-          this._updateMipmapMinFilter();
-        }
-      }
-    });
+    helpers.get(_scope, "renderSource", function() { return this._renderSource; });
 
     helpers.property(_scope, "source", {
       get: function() { return this._source; },
       set: function(v) {
-        this._loaded = false;
+        if (v) {
+          this._loaded = false;
 
-        this._source && this._source.removeEventListener(
-          this._eventType,
-          this._onTextureLoadedBind
-        );
+          this._source && this._source.removeEventListener(
+            this._eventType,
+            this._onTextureLoadedBind
+          );
 
-        this._source = v;
+          this._source = v;
 
-        this.isVideo = this._getSourceType() === "video";
-        this._eventType = this.isVideo
-          ? "canplay"
-          : "load";
+          this.isVideo = this._getSourceType() === "video";
+          this._eventType = this.isVideo
+            ? "canplay"
+            : "load";
 
-        this._parseTextureSize();
+          this._parseTextureSize();
 
-        this._source.addEventListener(
-          this._eventType,
-          this._onTextureLoadedBind
-        );
+          this._source.addEventListener(
+            this._eventType,
+            this._onTextureLoadedBind
+          );
+        }
       }
     });
 
@@ -85,23 +77,15 @@ AGL.Texture = helpers.createPrototypeClass(
         this._sourceHeightProperty = "height";
       }
 
-      this.generateMipmap = AGL.Utils.isPowerOf2(this.width) && AGL.Utils.isPowerOf2(this.height);
-      this._updateMipmapMinFilter();
-
-      this._loaded = this._getSourceType() === "canvas" || (this.width > 0 && this.height > 0);
-      this._loaded && ++this._updateId;
+      this._loaded = this._source[this._sourceWidthProperty] > 0 && this._source[this._sourceHeightProperty] > 0;
+      if (this._loaded) {
+        this._renderSource = this._source;
+        ++this._updateId;
+      } else this._renderSource = null;
     }
 
     _scope._getSourceType = function() {
-      return this._source.tagName ? this._source.tagName.toLowerCase() : "canvas";
-    }
-
-    _scope._updateMipmapMinFilter = function() {
-      this._mipmapMinFilter = this.generateMipmap
-        ? (this._minFilter === {{AGL.Const.LINEAR}}
-          ? {{AGL.Const.LINEAR_MIPMAP_LINEAR}}
-          : {{AGL.Const.NEAREST_MIPMAP_NEAREST}})
-        : this._minFilter;
+      return this._source.tagName ? this._source.tagName.toLowerCase() : "";
     }
 
     _scope._onTextureLoaded = _scope._parseTextureSize;

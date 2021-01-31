@@ -27,7 +27,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     this.picked;
 
-    this._isPickerSet = false;
+    //this._isPickerSet = false;
 
     this.pickerPoint = AGL.Point.create();
 
@@ -101,7 +101,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._bindArrayBuffer(this._tintColorBuffer,   this._tintColorData);
       this._bindArrayBuffer(this._alphaBuffer,       this._alphaData);
       this._bindArrayBuffer(this._effectBuffer,      this._effectData);
-      
+
       this._bindMaskBufferFunc(this._maskBuffer, this._maskData);
     }
 

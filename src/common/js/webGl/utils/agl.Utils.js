@@ -15,12 +15,18 @@ AGL.Utils = new (helpers.createPrototypeClass(
     window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
   },
   function(_scope) {
+    _scope.createCanvas = function(isOffscreenCanvas) {
+      return isOffscreenCanvas && window.OffscreenCanvas
+        ? new window.OffscreenCanvas(1, 1)
+        : document.createElement("canvas");
+    }
+
     _scope.initApplication = function(callback) {
       function checkCanvas(inited) {
         if (document.readyState === "complete") {
           document.addEventListener("readystatechange", checkCanvasBound);
 
-          var gl = document.createElement("canvas").getContext("webgl2");
+          var gl = this.createCanvas(true).getContext("webgl2");
           if (gl) {
             this.info.isWebGl2Supported    = true;
             this.info.maxTextureImageUnits = gl.getParameter({{AGL.Const.MAX_TEXTURE_IMAGE_UNITS}});
@@ -35,9 +41,22 @@ AGL.Utils = new (helpers.createPrototypeClass(
       checkCanvas();
     }
 
-    _scope.useTexture = function(gl, index, textureInfo) {
-      this.bindTexture(gl, index, textureInfo);
+    _scope.useActiveTexture = function(gl, textureInfo, index) {
+      gl.activeTexture({{AGL.Const.TEXTURE0}} + index);
+      this.useTexture(gl, textureInfo);
+    }
 
+    _scope.bindActiveTexture = function(gl, textureInfo, index) {
+      gl.activeTexture({{AGL.Const.TEXTURE0}} + index);
+      this.bindTexture(gl, textureInfo);
+    }
+
+    _scope.useTexture = function(gl, textureInfo) {
+      this.bindTexture(gl, textureInfo);
+      this.uploadTexture(gl, textureInfo);
+    }
+
+    _scope.uploadTexture = function(gl, textureInfo) {
       gl.texImage2D(
         textureInfo.target,
         0,
@@ -47,21 +66,19 @@ AGL.Utils = new (helpers.createPrototypeClass(
         0,
         textureInfo.format,
         {{AGL.Const.UNSIGNED_BYTE}},
-        textureInfo.source
+        textureInfo.renderSource
       );
 
-      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MAX_LEVEL}}, textureInfo.maxLevel);
-
-      textureInfo.generateMipmap && gl.generateMipmap(textureInfo.target);
+      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MAX_LEVEL}}, 0);
+      gl.generateMipmap(textureInfo.target);
     }
 
-    _scope.bindTexture = function(gl, index, textureInfo) {
-      gl.activeTexture({{AGL.Const.TEXTURE0}} + index);
+    _scope.bindTexture = function(gl, textureInfo) {
       gl.bindTexture(textureInfo.target, textureInfo.baseTexture);
 
       gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_WRAP_S}},     textureInfo.wrapS);
       gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_WRAP_T}},     textureInfo.wrapT);
-      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MIN_FILTER}}, textureInfo.mipmapMinFilter);
+      gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MIN_FILTER}}, textureInfo.minMipmapFilter);
       gl.texParameteri(textureInfo.target, {{AGL.Const.TEXTURE_MAG_FILTER}}, textureInfo.magFilter);
     }
 

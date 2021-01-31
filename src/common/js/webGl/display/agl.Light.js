@@ -13,8 +13,8 @@ AGL.Light = helpers.createPrototypeClass(
     this.transition = 1;
 
     this.color.a = 0;
-    
-    this.on = false;
+
+    //this.on = false;
 
     this._matId = id * 16;
     this._extId = this._matId + 6;

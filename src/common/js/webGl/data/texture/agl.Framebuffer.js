@@ -6,12 +6,10 @@ AGL.Framebuffer = helpers.createPrototypeClass(
   function Framebuffer(shouldUpdate) {
     AGL.TextureInfo.call(this, shouldUpdate);
 
-    this.framebuffer = null;
+    //this.framebuffer = null;
 
     this._sizeUpdateId         =
     this._currentSizeUpdatedId = 0;
-
-    this._loaded = true;
   },
   function(_scope, _super) {
     helpers.property(_scope, "width", {
@@ -52,7 +50,7 @@ AGL.Framebuffer = helpers.createPrototypeClass(
         this._destroyTexture();
         this.baseTexture = gl.createTexture();
 
-        AGL.Utils.useTexture(gl, 0, this);
+        AGL.Utils.useTexture(gl, this);
 
         this._destroyFramebuffer();
         this.framebuffer = gl.createFramebuffer();
@@ -66,6 +64,8 @@ AGL.Framebuffer = helpers.createPrototypeClass(
         );
 
         this.gl = gl;
+
+        this._loaded = true;
 
         return true;
       }
