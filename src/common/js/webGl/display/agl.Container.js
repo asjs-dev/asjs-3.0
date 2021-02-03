@@ -40,9 +40,10 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope.removeChild = function(child) {
-      if (!child || !this.contains(child)) return null;
-      helpers.removeFromArray(this.children, child);
-      child.parent = null;
+      if (child) {
+        helpers.removeFromArray(this.children, child);
+        child.parent = null;
+      }
       return child;
     }
 
@@ -55,7 +56,6 @@ AGL.Container = helpers.createPrototypeClass(
     }
 
     _scope.setChildIndex = function(child, index) {
-      if (!child || index < 0) return null;
       helpers.removeFromArray(this.children, child);
       this.children.splice(index, 0, child);
       return child;

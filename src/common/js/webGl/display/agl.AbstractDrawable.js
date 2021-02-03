@@ -32,7 +32,7 @@ AGL.AbstractDrawable = helpers.createPrototypeClass(
 
     _scope._calcBounds = function() {
       this._calcCorners();
-      
+
       var corners = this._corners;
       var bounds = this._bounds;
 
@@ -48,7 +48,7 @@ AGL.AbstractDrawable = helpers.createPrototypeClass(
     }
 
     _scope._updateAdditionalData = function() {
-      if (this.stage && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
+      if (this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
         this._currentAdditionalPropsUpdateId = this.propsUpdateId;
         AGL.Matrix3.inverse(this.matrixCache, this._inverseMatrixCache);
         this._calcBounds();

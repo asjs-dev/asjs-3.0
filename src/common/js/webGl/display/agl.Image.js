@@ -24,7 +24,6 @@ AGL.Image = helpers.createPrototypeClass(
     this.textureProps = new AGL.TextureProps();
     this.textureCrop  = new AGL.TextureCrop();
 
-    this._currentTextureCropUpdateId  =
     this._currentTexturePropsUpdateId = 0;
 
     this.textureCropCache = this.textureCrop.items;

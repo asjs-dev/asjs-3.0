@@ -15,8 +15,9 @@ AGL.TextureInfo = helpers.createPrototypeClass(
 
     this.shouldUpdate = shouldUpdate;
 
-    this._updateId        =
-    this._currentUpdateId = 0;
+    this._updateId          =
+    this._currentUpdateId   =
+    this._currentRenderTime = 0;
 
     this.wrapS =
     this.wrapT = {{AGL.Const.CLAMP_TO_EDGE}};
@@ -27,9 +28,8 @@ AGL.TextureInfo = helpers.createPrototypeClass(
     this.minFilter =
     this.magFilter = {{AGL.Const.NEAREST}};
 
-    this._width             =
-    this._height            = 1;
-    this._currentRenderTime = 0;
+    this._width  =
+    this._height = 1;
   },
   function(_scope, _super) {
     helpers.get(_scope, "loaded", function() { return this._loaded; });
@@ -62,7 +62,6 @@ AGL.TextureInfo = helpers.createPrototypeClass(
 
       if (this.shouldUpdate && this._currentRenderTime < renderTime) {
         this._currentRenderTime = renderTime;
-
         return true;
       }
 

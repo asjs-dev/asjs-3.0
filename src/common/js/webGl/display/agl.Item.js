@@ -67,10 +67,8 @@ AGL.Item = helpers.createPrototypeClass(
           props.updateScale();
       var parent = this._parent;
 
-      if (
-        this._currentParentPropsUpdateId < parent.propsUpdateId ||
-        this._currentPropsUpdateId < props.updateId
-      ) this._updateTransform(props, parent);
+      (this._currentParentPropsUpdateId < parent.propsUpdateId || this._currentPropsUpdateId < props.updateId) &&
+        this._updateTransform(props, parent);
     }
 
     _scope._updateTransform = function(props, parent) {
