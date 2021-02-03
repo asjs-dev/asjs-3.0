@@ -43,7 +43,7 @@ AGL.RendererHelper.initConfig = function(config, target) {
     ]),
     vertexShader   : config.vertexShader   || target.createVertexShader,
     fragmentShader : config.fragmentShader || target.createFragmentShader,
-    precision      : config.precision || AGL.RendererHelper.Precisons.HIGH,
+    precision      : config.precision || "lowp", /* lowp mediump highp */
 
     contextAttributes : {
       alpha                 : attributes.alpha || false,
@@ -104,28 +104,25 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
   }
 
   _scope.render = function() {
-    this._preRender();
+    this._renderTime = Date.now();
+    this._resize();
     this._render();
   }
 
-  _scope._preRender = function() {
-    this._renderTime = Date.now();
-    this._resize();
-  }
-
-  _scope._render = helpers.emptyFunction;
-
   _scope._useBlendMode = function(blendMode) {
+    var eqs   = blendMode.eqs;
+    var funcs = blendMode.funcs;
+
     this._gl[blendMode.eqName](
-      blendMode.eqs[0],
-      blendMode.eqs[1]
+      eqs[0],
+      eqs[1]
     );
 
     this._gl[blendMode.funcName](
-      blendMode.funcs[0],
-      blendMode.funcs[1],
-      blendMode.funcs[2],
-      blendMode.funcs[3]
+      funcs[0],
+      funcs[1],
+      funcs[2],
+      funcs[3]
     );
   }
 
@@ -244,9 +241,12 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
     this._initCustom();
   }
-
-  _scope._initCustom = helpers.emptyFunction;
 };
+
+AGL.RendererHelper.pointsOrder = new Uint16Array([
+  0, 1, 2,
+  0, 2, 3
+]);
 
 AGL.RendererHelper.createVersion = function(precision) {
   return "#version 300 es\nprecision " + precision + " float;\n";
@@ -274,9 +274,3 @@ AGL.RendererHelper.calcGlPositions =
   "gl_Position=vec4(mt*pos,1);" +
   "vTCrd=(tMt*pos).xy;" +
   "vTexCrop=aMt[3];";
-
-AGL.RendererHelper.Precisons = helpers.deepFreeze({
-  HIGH   : "highp",
-  MEDIUM : "mediump",
-  LOW    : "lowp"
-});

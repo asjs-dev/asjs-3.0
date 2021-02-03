@@ -22,12 +22,11 @@ AGL.Stage2D = helpers.createPrototypeClass(
     options.config.locations = options.config.locations.concat(locations);
 
     AGL.BatchRendererBase.call(this, options);
-
-    this.colorCache = this.color.items;
-
+    /*
     this.picked;
-
-    //this._isPickerSet = false;
+    this._isPickerSet = false;
+    */
+    this.colorCache = this.color.items;
 
     this.pickerPoint = AGL.Point.create();
 
@@ -37,11 +36,9 @@ AGL.Stage2D = helpers.createPrototypeClass(
   },
   function(_scope, _super) {
     _scope.render = function() {
-      this._preRender();
-
       this.picked = null;
 
-      this._render();
+      _super.render.call(this);
 
       this._isPickerSet = false;
     }

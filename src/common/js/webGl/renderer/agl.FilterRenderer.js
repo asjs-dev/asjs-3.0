@@ -19,15 +19,13 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
       "uFtrK"
     ]);
 
+    //this._currentFilterTexture = null;
+
     this.filters = options.filters || [];
 
     AGL.RendererHelper.initRenderer.call(this, options.config);
 
     this.texture = options.texture;
-
-    //this._currentFilterTexture = null;
-
-    this._resize();
   },
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);

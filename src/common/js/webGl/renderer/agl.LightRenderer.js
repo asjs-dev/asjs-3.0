@@ -135,10 +135,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       this._gl.bindBuffer({{AGL.Const.ELEMENT_ARRAY_BUFFER}}, this._gl.createBuffer());
       this._gl.bufferData(
         {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
-        new Uint16Array([
-          0, 1, 2,
-          0, 2, 3
-        ]),
+        AGL.RendererHelper.pointsOrder,
         {{AGL.Const.STATIC_DRAW}}
       );
 

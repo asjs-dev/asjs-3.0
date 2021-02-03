@@ -62,7 +62,7 @@ AGL.Item = helpers.createPrototypeClass(
     }
 
     _scope._updateProps = function(renderTime) {
-      var props  = this.props;
+      var props = this.props;
           props.updateRotation();
           props.updateScale();
       var parent = this._parent;

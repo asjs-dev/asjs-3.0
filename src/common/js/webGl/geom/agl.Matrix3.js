@@ -24,36 +24,52 @@ AGL.Matrix3 = {
     props,
     destinationMatrix
   ) {
-    destinationMatrix[0] =   props.cosRotationA * props.scaledWidth;
-    destinationMatrix[1] =   props.sinRotationA * props.scaledWidth;
-    destinationMatrix[2] = - props.sinRotationB * props.scaledHeight;
-    destinationMatrix[3] =   props.cosRotationB * props.scaledHeight;
+    var anchorX = props.anchorX;
+    var anchorY = props.anchorY;
+    var scaledWidth  = props.scaledWidth;
+    var scaledHeight = props.scaledHeight;
+
+    destinationMatrix[0] =   props.cosRotationA * scaledWidth;
+    destinationMatrix[1] =   props.sinRotationA * scaledWidth;
+    destinationMatrix[2] = - props.sinRotationB * scaledHeight;
+    destinationMatrix[3] =   props.cosRotationB * scaledHeight;
     destinationMatrix[4] =   props.x -
-                             props.anchorX * destinationMatrix[0] -
-                             props.anchorY * destinationMatrix[2];
+                             anchorX * destinationMatrix[0] -
+                             anchorY * destinationMatrix[2];
     destinationMatrix[5] =   props.y -
-                             props.anchorX * destinationMatrix[1] -
-                             props.anchorY * destinationMatrix[3];
+                             anchorX * destinationMatrix[1] -
+                             anchorY * destinationMatrix[3];
   },
   transform: function(
     matrix,
     props,
     destinationMatrix
   ) {
-    destinationMatrix[0] = (props.cosRotationA * matrix[0] + props.sinRotationA * matrix[2]) * props.scaledWidth;
-    destinationMatrix[1] = (props.cosRotationA * matrix[1] + props.sinRotationA * matrix[3]) * props.scaledWidth;
-    destinationMatrix[2] = (props.cosRotationB * matrix[2] - props.sinRotationB * matrix[0]) * props.scaledHeight;
-    destinationMatrix[3] = (props.cosRotationB * matrix[3] - props.sinRotationB * matrix[1]) * props.scaledHeight;
+    var x = props.x;
+    var y = props.y;
+    var anchorX = props.anchorX;
+    var anchorY = props.anchorY;
+    var sinRotationA = props.sinRotationA;
+    var sinRotationB = props.sinRotationB;
+    var cosRotationA = props.cosRotationA;
+    var cosRotationB = props.cosRotationB;
+    var scaledWidth  = props.scaledWidth;
+    var scaledHeight = props.scaledHeight;
 
-    destinationMatrix[4] = - props.anchorX * destinationMatrix[0]
-                           - props.anchorY * destinationMatrix[2]
-                           + props.x * matrix[0]
-                           + props.y * matrix[2]
+    destinationMatrix[0] = (cosRotationA * matrix[0] + sinRotationA * matrix[2]) * scaledWidth;
+    destinationMatrix[1] = (cosRotationA * matrix[1] + sinRotationA * matrix[3]) * scaledWidth;
+    destinationMatrix[2] = (cosRotationB * matrix[2] - sinRotationB * matrix[0]) * scaledHeight;
+    destinationMatrix[3] = (cosRotationB * matrix[3] - sinRotationB * matrix[1]) * scaledHeight;
+
+    destinationMatrix[4] = - anchorX * destinationMatrix[0]
+                           - anchorY * destinationMatrix[2]
+                           + x * matrix[0]
+                           + y * matrix[2]
                            + matrix[4];
-    destinationMatrix[5] = - props.anchorX * destinationMatrix[1]
-                           - props.anchorY * destinationMatrix[3]
-                           + props.x * matrix[1]
-                           + props.y * matrix[3]
+    destinationMatrix[5] = - anchorX * destinationMatrix[1]
+                           - anchorY * destinationMatrix[3]
+                           + x * matrix[1]
+                           + y * matrix[3]
                            + matrix[5];
   },
   inverse: function(matrix, destinationMatrix) {
@@ -73,13 +89,16 @@ AGL.Matrix3 = {
     return x >= 0 && x <= 1 && y >= 0 && y <= 1;
   },
   calcCorners: function(matrix, corners, resolution) {
-    corners[0].x = resolution.widthHalf + matrix[4] * resolution.widthHalf;
-    corners[0].y = resolution.height - (resolution.heightHalf + matrix[5] * resolution.heightHalf);
-    corners[1].x = corners[0].x + (matrix[0] + matrix[2]) * resolution.widthHalf;
-    corners[1].y = corners[0].y - (matrix[1] + matrix[3]) * resolution.heightHalf;
-    corners[2].x = corners[0].x + (matrix[0] + resolution.widthHalf * matrix[2]);
-    corners[2].y = corners[0].y - (matrix[1] + resolution.heightHalf * matrix[3]);
-    corners[3].x = corners[0].x + (resolution.widthHalf * matrix[0] + matrix[2]);
-    corners[3].y = corners[0].y - (resolution.heightHalf * matrix[1] + matrix[3]);
+    var widthHalf  = resolution.widthHalf;
+    var heightHalf = resolution.heightHalf;
+
+    corners[0].x = widthHalf + matrix[4] * widthHalf;
+    corners[0].y = resolution.height - (heightHalf + matrix[5] * heightHalf);
+    corners[1].x = corners[0].x + (matrix[0] + matrix[2]) * widthHalf;
+    corners[1].y = corners[0].y - (matrix[1] + matrix[3]) * heightHalf;
+    corners[2].x = corners[0].x + (matrix[0] + widthHalf * matrix[2]);
+    corners[2].y = corners[0].y - (matrix[1] + heightHalf * matrix[3]);
+    corners[3].x = corners[0].x + (widthHalf * matrix[0] + matrix[2]);
+    corners[3].y = corners[0].y - (heightHalf * matrix[1] + matrix[3]);
   }
 };

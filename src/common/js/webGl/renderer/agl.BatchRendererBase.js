@@ -38,20 +38,16 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
     this._parent = new AGL.BaseItem();
-
-    this._resize();
   },
   function(_scope, _super) {
     AGL.RendererHelper.createRendererBody.call(_scope, _scope);
 
+    helpers.get(_scope, "stage",  function() { return this; });
+    helpers.get(_scope, "parent", function() { return this._parent; });
+
     helpers.property(_scope, "maxBatchItems", {
       get: function() { return this._maxBatchItems; },
       set: function(v) { this._maxBatchItems = Math.max(1, v || 1e4); }
-    });
-
-    helpers.property(_scope, "parent", {
-      get: function() { return this._parent; },
-      set: function(v) {}
     });
 
     helpers.property(_scope, "clearBeforeRender", {
@@ -63,8 +59,6 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
       }
     });
 
-    helpers.get(_scope, "stage",  function() { return this; });
-
     _scope.destruct = function() {
       this._destructRenderer();
 
@@ -74,7 +68,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
     _scope._render = function() {
       this._clearBeforeRenderFunc();
       this._drawItem(this);
-      this._batchItems > 0 && this._batchDraw();
+      this._batchDraw();
     }
 
     _scope._drawItem = function(item) {
@@ -166,10 +160,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
       this._gl.bindBuffer({{AGL.Const.ELEMENT_ARRAY_BUFFER}}, this._gl.createBuffer());
       this._gl.bufferData(
         {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
-        new Uint16Array([
-          0, 1, 2,
-          0, 2, 3
-        ]),
+        AGL.RendererHelper.pointsOrder,
         {{AGL.Const.STATIC_DRAW}}
       );
 
