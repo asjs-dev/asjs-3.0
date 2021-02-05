@@ -23,12 +23,12 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
     this.filters = options.filters || [];
 
-    AGL.RendererHelper.initRenderer.call(this, options.config);
+    AGL.RendererHelper.constructor.call(this, options.config);
 
     this.texture = options.texture;
   },
   function(_scope, _super) {
-    AGL.RendererHelper.createRendererBody.call(_scope, _scope);
+    AGL.RendererHelper.body.call(_scope, _scope);
 
     _scope._render = function() {
       this.texture.isNeedToDraw(this._gl, this._renderTime);
@@ -91,7 +91,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
     var _superResize = _scope._resize;
     _scope._resize = function() {
       _superResize.call(this);
-      
+
       this._framebuffers[0].setSize(this._width, this._height);
       this._framebuffers[1].setSize(this._width, this._height);
     }

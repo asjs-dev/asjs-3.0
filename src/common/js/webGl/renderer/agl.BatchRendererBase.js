@@ -10,8 +10,6 @@ require("./agl.RendererHelper.js");
 AGL.BatchRendererBase = helpers.createPrototypeClass(
   AGL.Container,
   function BatchRendererBase(options) {
-    if (!options) throw "Renderer Error";
-
     AGL.Container.call(this);
 
     //this._currentBlendMode;
@@ -30,7 +28,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
 
     this._textureMap = [];
 
-    AGL.RendererHelper.initRenderer.call(this, options.config);
+    AGL.RendererHelper.constructor.call(this, options.config);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE]      = helpers.emptyFunction;
@@ -40,7 +38,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
     this._parent = new AGL.BaseItem();
   },
   function(_scope, _super) {
-    AGL.RendererHelper.createRendererBody.call(_scope, _scope);
+    AGL.RendererHelper.body.call(_scope, _scope);
 
     helpers.get(_scope, "stage",  function() { return this; });
     helpers.get(_scope, "parent", function() { return this._parent; });
@@ -152,7 +150,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
     var _superResize = _scope._resize;
     _scope._resize = function() {
       _superResize.call(this);
-      
+
       AGL.Matrix3.projection(this._width, this._height, this._parent.matrixCache);
       ++this.parent.propsUpdateId;
     }

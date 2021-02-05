@@ -4,7 +4,7 @@ require("../data/props/agl.ColorProps.js");
 
 AGL.RendererHelper = {};
 
-AGL.RendererHelper.initRenderer = function(config) {
+AGL.RendererHelper.constructor = function(config) {
   /*
   this._vertexShader   =
   this._fragmentShader =
@@ -26,38 +26,11 @@ AGL.RendererHelper.initRenderer = function(config) {
 
   this._config = config;
   this._canvas = config.canvas;
-
+  
   this._init();
 };
 
-AGL.RendererHelper.initConfig = function(config, target) {
-  config = config || {};
-
-  var attributes = config.contextAttributes || {};
-
-  return {
-    canvas    : config.canvas || AGL.Utils.createCanvas(config.isOffscreen),
-    locations : (config.locations || []).concat([
-      "aPos",
-      "uTex"
-    ]),
-    vertexShader   : config.vertexShader   || target.createVertexShader,
-    fragmentShader : config.fragmentShader || target.createFragmentShader,
-    precision      : config.precision || "lowp", /* lowp mediump highp */
-
-    contextAttributes : {
-      alpha                 : attributes.alpha || false,
-      antialias             : attributes.antialias || false,
-      depth                 : attributes.depth || false,
-      stencil               : attributes.stencil || false,
-      premultipliedAlpha    : attributes.premultipliedAlpha || false,
-      powerPreference       : attributes.powerPreference || "high-performance",
-      preserveDrawingBuffer : attributes.preserveDrawingBuffer || true,
-    }
-  };
-}
-
-AGL.RendererHelper.createRendererBody = function(_scope) {
+AGL.RendererHelper.body = function(_scope) {
   helpers.get(_scope, "canvas", function() { return this._canvas; });
   helpers.get(_scope, "isContextLost", function() {
     return this._context && this._context.isContextLost && this._context.isContextLost();
@@ -235,6 +208,33 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._initCustom();
   }
 };
+
+AGL.RendererHelper.initConfig = function(config, target) {
+  config = config || {};
+
+  var attributes = config.contextAttributes || {};
+
+  return {
+    canvas    : config.canvas || AGL.Utils.createCanvas(config.isOffscreen),
+    locations : (config.locations || []).concat([
+      "aPos",
+      "uTex"
+    ]),
+    vertexShader   : config.vertexShader   || target.createVertexShader,
+    fragmentShader : config.fragmentShader || target.createFragmentShader,
+    precision      : config.precision || "lowp", /* lowp mediump highp */
+
+    contextAttributes : {
+      alpha                 : attributes.alpha || false,
+      antialias             : attributes.antialias || false,
+      depth                 : attributes.depth || false,
+      stencil               : attributes.stencil || false,
+      premultipliedAlpha    : attributes.premultipliedAlpha || false,
+      powerPreference       : attributes.powerPreference || "high-performance",
+      preserveDrawingBuffer : attributes.preserveDrawingBuffer || true,
+    }
+  };
+}
 
 AGL.RendererHelper.pointsOrder = new Uint16Array([
   0, 1, 2,

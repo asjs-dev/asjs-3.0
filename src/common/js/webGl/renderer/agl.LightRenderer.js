@@ -37,7 +37,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     var l = options.lightNum;
     for (var i = 0; i < l; ++i) this._lights.push(new AGL.Light(i, this._lightData));
 
-    AGL.RendererHelper.initRenderer.call(this, config);
+    AGL.RendererHelper.constructor.call(this, config);
 
     this.shadowStart       = helpers.isEmpty(options.shadowStart)  ? 0 : options.shadowStart;
     this.shadowLength      = helpers.isEmpty(options.shadowLength) ? 1 : options.shadowLength;
@@ -45,7 +45,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     this.allowTransparency = options.allowTransparency === true;
   },
   function(_scope, _super) {
-    AGL.RendererHelper.createRendererBody.call(_scope, _scope);
+    AGL.RendererHelper.body.call(_scope, _scope);
 
     helpers.get(_scope, "stage",  function() { return this; });
 
@@ -130,7 +130,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     var _superResize = _scope._resize;
     _scope._resize = function() {
       _superResize.call(this);
-      
+
       this._gl.uniform4f(this._locations.uS, this._width, this._height, 1 / this._width, 1 / this._height);
     }
 
