@@ -28,7 +28,7 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
     _scope._initCustom = function() {
       _super._initCustom.call(this);
 
-      this._textureIdData   = new Float32Array(this._maxBatchItems);
+      this._textureIdData   = new F32A(this._maxBatchItems);
       this._textureIdBuffer = this._createArrayBuffer(this._textureIdData, "aTexId", 1, 1, 1, {{AGL.Const.FLOAT}}, 4);
     }
   }

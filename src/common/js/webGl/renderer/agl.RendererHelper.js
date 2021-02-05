@@ -19,10 +19,10 @@ AGL.RendererHelper.initRenderer = function(config) {
 
   this.widthHalf                  =
   this.heightHalf                 =
-  this._sizeUpdateId              =
-  this._currentSizeUpdateId       =
   this._renderTime                =
   this._currentClearColorUpdateId = 0;
+
+  this._resizeFunc = this._resize;
 
   this._config = config;
   this._canvas = config.canvas;
@@ -74,7 +74,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     set: function(v) {
       if (this._width !== v) {
         this._width = v;
-        ++this._sizeUpdateId;
+        this._resizeFunc = this._resize;
       }
     }
   });
@@ -84,7 +84,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     set: function(v) {
       if (this._height !== v) {
         this._height = v;
-        ++this._sizeUpdateId;
+        this._resizeFunc = this._resize;
       }
     }
   });
@@ -105,7 +105,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
   _scope.render = function() {
     this._renderTime = Date.now();
-    this._resize();
+    this._resizeFunc();
     this._render();
   }
 
@@ -126,18 +126,13 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     );
   }
 
-  _scope._resizeCanvas = function() {
-    if (this._currentSizeUpdateId < this._sizeUpdateId) {
-      this._currentSizeUpdateId = this._sizeUpdateId;
+  _scope._resize = function() {
+    this._resizeFunc = helpers.emptyFunction;
 
-      this.widthHalf  = this._width  * .5;
-      this.heightHalf = this._height * .5;
+    this.widthHalf  = this._width  * .5;
+    this.heightHalf = this._height * .5;
 
-      this._setCanvasSize(this._width, this._height);
-
-      return true;
-    }
-    return false;
+    this._setCanvasSize(this._width, this._height);
   }
 
   _scope._setCanvasSize = function(width, height) {
@@ -146,8 +141,6 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
 
     this._gl.viewport(0, 0, width, height);
   }
-
-  _scope._resize = _scope._resizeCanvas;
 
   _scope._destructRenderer = function() {
     this._destructContext();
@@ -228,7 +221,7 @@ AGL.RendererHelper.createRendererBody = function(_scope) {
     this._gl.bindBuffer({{AGL.Const.ARRAY_BUFFER}}, positionBuffer);
     this._gl.bufferData(
       {{AGL.Const.ARRAY_BUFFER}},
-      new Float32Array([
+      new F32A([
         0, 0,
         1, 0,
         1, 1,

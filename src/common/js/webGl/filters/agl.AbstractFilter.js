@@ -9,9 +9,9 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
     this.SUB_TYPE = subType;
     this.on       = true;
 
-    this.v = new Float32Array(9);
+    this.v = new F32A(9);
 
-    this.kernels = new Float32Array(9);
+    this.kernels = new F32A(9);
 
     this.intensity = intensity;
   },

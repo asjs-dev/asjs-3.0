@@ -6,7 +6,7 @@ AGL.AbstractDrawable = helpers.createPrototypeClass(
   function AbstractDrawable(texture) {
     AGL.Item.call(this);
 
-    this._inverseMatrixCache = new Float32Array(6);
+    this._inverseMatrixCache = new F32A(6);
 
     this._corners = [
       AGL.Point.create(),

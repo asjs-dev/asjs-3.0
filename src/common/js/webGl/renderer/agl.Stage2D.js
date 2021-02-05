@@ -105,17 +105,17 @@ AGL.Stage2D = helpers.createPrototypeClass(
     _scope._initCustom = function() {
       _super._initCustom.call(this);
 
-      this._parentColorData   = new Float32Array(this._maxBatchItems * 4);
+      this._parentColorData   = new F32A(this._maxBatchItems * 4);
       this._parentColorBuffer = this._createArrayBuffer(this._parentColorData, "aWrlCol",  4, 1, 4, {{AGL.Const.FLOAT}}, 4);
-      this._tintColorData     = new Float32Array(this._maxBatchItems * 4);
+      this._tintColorData     = new F32A(this._maxBatchItems * 4);
       this._tintColorBuffer   = this._createArrayBuffer(this._tintColorData,   "aTintCol", 4, 1, 4, {{AGL.Const.FLOAT}}, 4);
-      this._alphaData         = new Float32Array(this._maxBatchItems * 2);
+      this._alphaData         = new F32A(this._maxBatchItems * 2);
       this._alphaBuffer       = this._createArrayBuffer(this._alphaData,       "aAlpCol",  2, 1, 2, {{AGL.Const.FLOAT}}, 4);
-      this._effectData        = new Float32Array(this._maxBatchItems * 2);
+      this._effectData        = new F32A(this._maxBatchItems * 2);
       this._effectBuffer      = this._createArrayBuffer(this._effectData,      "aFx",      2, 1, 2, {{AGL.Const.FLOAT}}, 4);
 
       if (this._config.isMaskEnabled) {
-        this._maskData        = new Float32Array(this._maxBatchItems * 2);
+        this._maskData        = new F32A(this._maxBatchItems * 2);
         this._maskBuffer      = this._createArrayBuffer(this._maskData,        "aMsk",     2, 1, 2, {{AGL.Const.FLOAT}}, 4);
       }
 

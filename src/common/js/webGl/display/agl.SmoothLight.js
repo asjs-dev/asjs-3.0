@@ -34,7 +34,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       set: function(v) {
         if (this._scale !== v) {
           this._scale = v;
-          this._resize();
+          this._resizeFunc = this._resize;
         }
       }
     });
@@ -56,6 +56,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     });
 
     _scope.render = function() {
+      this._resizeFunc();
       this.renderer.render();
       this._filterRenderer.render();
     }
@@ -64,7 +65,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       this._width  = w;
       this._height = h;
 
-      this._resize();
+      this._resizeFunc = this._resize;
     }
 
     _scope.destruct = function() {
@@ -77,9 +78,11 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     }
 
     _scope._resize = function() {
+      this._resizeFunc = helpers.emptyFunction;
+
       var scaledWidth  = this._width  * this._scale;
       var scaledHeight = this._height * this._scale;
-      
+
       this.renderer.setSize(scaledWidth, scaledHeight);
       this._filterRenderer.setSize(scaledWidth, scaledHeight);
     }

@@ -2,7 +2,7 @@ require("../NameSpace.js");
 
 AGL.Matrix3 = {
   identity: function() {
-    return new Float32Array([
+    return new F32A([
       1, 0,
       0, 1,
       0, 0

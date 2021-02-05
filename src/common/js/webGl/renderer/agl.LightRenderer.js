@@ -30,7 +30,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     this.shadowMap = options.shadowMap;
     this.heightMap = options.heightMap;
 
-    this._lightData = new Float32Array(options.lightNum * 16);
+    this._lightData = new F32A(options.lightNum * 16);
 
     this._lights = [];
 
@@ -127,8 +127,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       return this._lights[id];
     }
 
+    var _superResize = _scope._resize;
     _scope._resize = function() {
-      this._resizeCanvas() && this._gl.uniform4f(this._locations.uS, this._width, this._height, 1 / this._width, 1 / this._height);
+      _superResize.call(this);
+      
+      this._gl.uniform4f(this._locations.uS, this._width, this._height, 1 / this._width, 1 / this._height);
     }
 
     _scope._initCustom = function() {

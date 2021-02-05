@@ -149,11 +149,12 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
       }
     }
 
+    var _superResize = _scope._resize;
     _scope._resize = function() {
-      if (this._resizeCanvas()) {
-        AGL.Matrix3.projection(this._width, this._height, this._parent.matrixCache);
-        ++this.parent.propsUpdateId;
-      }
+      _superResize.call(this);
+      
+      AGL.Matrix3.projection(this._width, this._height, this._parent.matrixCache);
+      ++this.parent.propsUpdateId;
     }
 
     _scope._initCustom = function() {
@@ -169,7 +170,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
       for (var i = 0; i < l; ++i) textureIds[i] = i;
       this._gl.uniform1iv(this._locations.uTex, textureIds);
 
-      this._matrixData   = new Float32Array(this._maxBatchItems * 16);
+      this._matrixData   = new F32A(this._maxBatchItems * 16);
   		this._matrixBuffer = this._createArrayBuffer(this._matrixData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
     }
   }

@@ -88,11 +88,12 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
+    var _superResize = _scope._resize;
     _scope._resize = function() {
-      if (this._resizeCanvas()) {
-        this._framebuffers[0].setSize(this._width, this._height);
-        this._framebuffers[1].setSize(this._width, this._height);
-      }
+      _superResize.call(this);
+      
+      this._framebuffers[0].setSize(this._width, this._height);
+      this._framebuffers[1].setSize(this._width, this._height);
     }
 
     _scope._initCustom = function() {
