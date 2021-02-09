@@ -5,7 +5,8 @@ AGL.Light = helpers.createPrototypeClass(
   AGL.AbstractDrawable,
   function Light(
     id,
-    lightData
+    lightData,
+    extensionData
   ) {
     AGL.AbstractDrawable.call(this);
 
@@ -14,37 +15,31 @@ AGL.Light = helpers.createPrototypeClass(
 
     this.color.a = 0;
 
-    //this.on = false;
-
+    this._id    = id;
     this._matId = id * 16;
-    this._extId = this._matId + 6;
     this._colId = this._matId + 8;
     this._datId = this._matId + 12;
+    this._extId = id * 4;
 
     this.castShadow = true;
 
-    this._lightData = lightData;
+    this._lightData     = lightData;
+    this._extensionData = extensionData;
 
     this.type = AGL.Light.Type.SPOT;
   },
   function(_scope, _super) {
     helpers.property(_scope, "type", {
-      get: function() { return this._type; },
-      set: function(v) {
-        if (this._type !== v) {
-          this._type = v;
-          this._lightData[this._extId + 1] = v;
-        }
-      }
+      get: function() { return this._extensionData[this._extId]; },
+      set: function(v) { this._extensionData[this._extId] = v; }
     });
 
-    helpers.property(_scope, "on", {
-      get: function() { return this.renderable && this.stage !== null; },
-      set: function(v) { this.renderable = v; }
-    });
+    _scope.isOn = function() {
+      return this.renderable && this.stage !== null;
+    }
 
     _scope._updateAdditionalData = function() {
-      if (this.on && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
+      if (this.isOn() && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
         this._currentAdditionalPropsUpdateId = this.propsUpdateId;
         this._calcBounds();
       }
@@ -71,10 +66,9 @@ AGL.Light = helpers.createPrototypeClass(
     _scope.update = function(renderTime) {
       var lightData = this._lightData;
 
-      var extId = this._extId;
       var datId = this._datId;
 
-      if (this.on) {
+      if (this.isOn()) {
         this._updateProps(renderTime);
         this._updateColor();
 
@@ -83,7 +77,12 @@ AGL.Light = helpers.createPrototypeClass(
         lightData[datId + 2] = this.props.alpha;
         lightData[datId + 3] = this.angle;
 
-        lightData[extId] = this.castShadow;
+        var extId = this._extId;
+
+        var extensionData = this._extensionData;
+
+        extensionData[extId + 1] = this.castShadow;
+        extensionData[extId + 2] = this.props.z;
       } else lightData[datId] = 0;
     }
 

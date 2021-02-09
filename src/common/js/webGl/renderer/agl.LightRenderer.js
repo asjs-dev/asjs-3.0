@@ -15,6 +15,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       },
       locations : [
         "aMt",
+        "aExt",
         "uHTex",
         "uDHS",
         "uDHL",
@@ -25,19 +26,12 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       ]
     }, AGL.LightRenderer);
 
-    options.lightNum = Math.max(0, options.lightNum || 1);
+    config.lightNum = Math.max(0, options.lightNum || 1);
+
+    AGL.RendererHelper.constructor.call(this, config);
 
     this.shadowMap = options.shadowMap;
     this.heightMap = options.heightMap;
-
-    this._lightData = new F32A(options.lightNum * 16);
-
-    this._lights = [];
-
-    var l = options.lightNum;
-    for (var i = 0; i < l; ++i) this._lights.push(new AGL.Light(i, this._lightData));
-
-    AGL.RendererHelper.constructor.call(this, config);
 
     this.shadowStart       = helpers.isEmpty(options.shadowStart)  ? 0 : options.shadowStart;
     this.shadowLength      = helpers.isEmpty(options.shadowLength) ? 1 : options.shadowLength;
@@ -109,7 +103,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       this._gl.uniform2fv(this._locations.uTE, this._texturesEnabled);
 
-      this._bindArrayBuffer(this._lightBuffer, this._lightData);
+      this._bindArrayBuffer(this._lightBuffer,     this._lightData);
+      this._bindArrayBuffer(this._extensionBuffer, this._extensionData);
 
       this._gl.clear({{AGL.Const.COLOR_BUFFER_BIT}});
       this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._lights.length);
@@ -147,7 +142,17 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       this._texturesEnabled = [0, 0];
 
-  		this._lightBuffer = this._createArrayBuffer(this._lightData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);
+      var lightNum = this._config.lightNum;
+
+      this._lightData       = new F32A(lightNum * 16);
+      this._lightBuffer     = this._createArrayBuffer(this._lightData,     "aMt",  16, 4, 4, {{AGL.Const.FLOAT}}, 4);
+      this._extensionData   = new F32A(lightNum * 4);
+      this._extensionBuffer = this._createArrayBuffer(this._extensionData, "aExt",  4, 1, 4, {{AGL.Const.FLOAT}}, 4);
+
+      this._lights = [];
+
+      for (var i = 0; i < lightNum; ++i)
+      this._lights.push(new AGL.Light(i, this._lightData, this._extensionData));
 
       this._gl.clearColor(0, 0, 0, 1);
       this._useBlendMode(AGL.BlendMode.ADD);
@@ -160,6 +165,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
 
   "in vec2 aPos;" +
   "in mat4 aMt;" +
+  "in vec4 aExt;" +
 
   "uniform vec4 uS;" +
   "uniform float uP;" +
@@ -168,7 +174,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "out vec4 vCrd;" +
   "out vec4 vCol;" +
   "out vec4 vDat;" +
-  "out vec2 vExt;" +
+  "out vec4 vExt;" +
   "out mat4 vQ;" +
   "out vec4 vS;" +
   "out float vRS;" +
@@ -176,13 +182,13 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "void main(void){" +
     "vec3 pos=vec3(aPos*2.-1.,1);" +
     "vec4 h=vec4(1,-1,2,-2);" +
-    "vExt=aMt[1].zw;" +
+    "vExt=aExt;" +
     "vCol=aMt[2];" +
     "vDat=aMt[3];" +
     "vCrd.xy=pos.xy;" +
     "vS=uS;" +
     "vRS=max(1.,distance(vec2(0),vS.xy)/uP);" +
-    "if(vExt.y<1.){" +
+    "if(vExt.x<1.){" +
       "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
       "gl_Position=vec4(mt*pos,1);" +
       "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
@@ -213,7 +219,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   function createHeightMapCheck(core) {
     return
-    "float pc=i/dstTex;" +
+    "float pc=i*hs;" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
     "}";
@@ -253,7 +259,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   "in vec4 vCrd;" +
   "in vec4 vCol;" +
   "in vec4 vDat;" +
-  "in vec2 vExt;" +
+  "in vec4 vExt;" +
   "in vec4 vS;" +
   "in float vRS;" +
 
@@ -269,14 +275,14 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   "void main(void){" +
     "if(vDat.x==0.)discard;" +
-    "bool isl=vExt.y<1.;" +
+    "bool isl=vExt.x<1.;" +
     "float dst;" +
     "if(isl){" +
       "dst=distance(vec2(0),vCrd.xy);" +
       "if(dst>1.||atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
     "}" +
     "vec3 rgb=vCol.rgb;" +
-    "if(vExt.x==1.&&uTE.x>0.){" +
+    "if(vExt.y==1.&&uTE.x>0.){" +
       "vec2 tCrd=vTCrd*vS.xy;" +
       "vec2 tCnt=vCrd.zw*vS.xy;" +
 
@@ -284,6 +290,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "vec2 adsth=abs(dsth);" +
       "float dstTex=max(adsth.x,adsth.y);" +
       "vec2 m=(dsth/dstTex)*vS.zw;" +
+      "float hs=max(.001,vExt.z)/dstTex;" +
 
       "vec2 udh=vec2(uDHS,uDHL);" +
       "vec2 sl=udh;" +

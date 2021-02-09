@@ -263,8 +263,7 @@ AGL.FilterRenderer.createFragmentShader = function(config) {
           "uFTex," +
           "mod(flp*(vCrd*.5+.5)+vec2(fvl[1],fvl[2]),1.)" +
         ").rg-.5)*2.*vol;" +
-        "vec2 mdPs=vTCrd+dspMd;" +
-        "fgCol=texture(uTex,mdPs);" +
+        "fgCol=texture(uTex,vTCrd+dspMd);" +
       "}" +
     "}" +
   "}";

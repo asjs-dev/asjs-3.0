@@ -18,7 +18,7 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
       "aMt"
     ]);
 
-    this.maxBatchItems = options.maxBatchItems;
+    this._maxBatchItems = Math.max(1, options.maxBatchItems || 1e4);
 
     this._clearBeforeRenderFunc = helpers.emptyFunction;
 
@@ -42,11 +42,6 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
 
     helpers.get(_scope, "stage",  function() { return this; });
     helpers.get(_scope, "parent", function() { return this._parent; });
-
-    helpers.property(_scope, "maxBatchItems", {
-      get: function() { return this._maxBatchItems; },
-      set: function(v) { this._maxBatchItems = Math.max(1, v || 1e4); }
-    });
 
     helpers.property(_scope, "clearBeforeRender", {
       get: function() { return this._clearBeforeRenderFunc === this.clear; },
