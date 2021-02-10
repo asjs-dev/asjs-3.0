@@ -81,7 +81,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         v = Math.max(1, Math.min(10, v));
         if (this._precision !== v) {
           this._precision = v;
-          this._gl.uniform1f(this._locations.uP, 1810 / v);
+          this._gl.uniform1f(this._locations.uP, v);
         }
       }
     });
@@ -168,7 +168,6 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "in vec4 aExt;" +
 
   "uniform vec4 uS;" +
-  "uniform float uP;" +
 
   "out vec2 vTCrd;" +
   "out vec4 vCrd;" +
@@ -177,7 +176,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "out vec4 vExt;" +
   "out mat4 vQ;" +
   "out vec4 vS;" +
-  "out float vRS;" +
+  "out float vHS;" +
 
   "void main(void){" +
     "vec3 pos=vec3(aPos*2.-1.,1);" +
@@ -187,17 +186,21 @@ AGL.LightRenderer.createVertexShader = function(config) {
     "vDat=aMt[3];" +
     "vCrd.xy=pos.xy;" +
     "vS=uS;" +
-    "vRS=max(1.,distance(vec2(0),vS.xy)/uP);" +
+    "float l=clamp(.01,1.,max(.01,vExt.z)/1024.);" +
     "if(vExt.x<1.){" +
+      "vHS=l;" +
+      "vDat.z*=1.-vHS;" +
       "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+
       "gl_Position=vec4(mt*pos,1);" +
       "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
       "vCrd.zw=((mt*vec3(0,0,1)).xy+h.xy)/h.zw;" +
     "}else{" +
+      "vHS=1.;" +
       "gl_Position=vec4(pos,1);" +
       "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
       "vec2 sc=vec2(sin(vDat.w),cos(vDat.w));" +
-      "vCrd.zw=vTCrd+vec2(aMt[0].x*sc.y,aMt[0].x*sc.x);" +
+      "vCrd.zw=vTCrd+((1.-l)*sc.yx);" +
     "}" +
   "}";
 };
@@ -210,7 +213,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "}" +
     (bo
       ? "else{" +
-          "i+=vRS;" +
+          "i+=uP;" +
           "continue;" +
         "}"
       : ""
@@ -219,7 +222,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   function createHeightMapCheck(core) {
     return
-    "float pc=i*hs;" +
+    "float pc=(i/dstTex)*vHS;" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
     "}";
@@ -227,7 +230,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   function createLoop(core) {
     return
-    "for(float i=3.;i<dstTex-1.;i+=vRS){" +
+    "for(float i=uP;i<dstTex-uP;i+=uP){" +
       "vec2 p=vTCrd-i*m;" +
       coreWrapper(core, "p", true) +
     "}";
@@ -261,11 +264,12 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   "in vec4 vDat;" +
   "in vec4 vExt;" +
   "in vec4 vS;" +
-  "in float vRS;" +
+  "in float vHS;" +
 
   "uniform sampler2D uTex;" +
   "uniform sampler2D uHTex;" +
 
+  "uniform float uP;" +
   "uniform float uDHS;" +
   "uniform float uDHL;" +
   "uniform float uAT;" +
@@ -290,7 +294,6 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "vec2 adsth=abs(dsth);" +
       "float dstTex=max(adsth.x,adsth.y);" +
       "vec2 m=(dsth/dstTex)*vS.zw;" +
-      "float hs=max(.001,vExt.z)/dstTex;" +
 
       "vec2 udh=vec2(uDHS,uDHL);" +
       "vec2 sl=udh;" +
