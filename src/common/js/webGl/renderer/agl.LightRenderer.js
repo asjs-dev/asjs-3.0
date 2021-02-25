@@ -205,7 +205,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
 AGL.LightRenderer.createFragmentShader = function(config) {
   function createHeightMapCheck(core) {
     return
-    "float pc=(i/dstTex)*vHS+ph;" +
+    "float pc=(i/dstTex)*(vHS-ph);" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
     "}";
@@ -213,7 +213,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
 
   function createLoop(core) {
     return
-    "for(float i=uP;i<dstTex-uP;i+=uP){" +
+    "for(float i=1.;i<dstTex;i+=uP){" +
       "vec2 p=vTCrd-i*m;" +
       "tc=texture(uTex,p);" +
       "if(tc.a>0.){" +
@@ -235,7 +235,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "else{" +
         createLoop(
           "shc=texture(uHTex,p);" +
-          "sl=shc.b>0.?shc.rg:udh;" +
+          "sl=(shc.b>0.?shc.rg:udh)-ph;" +
           createHeightMapCheck(core)
         ) +
       "}" +
