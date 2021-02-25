@@ -161,7 +161,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 );
 AGL.LightRenderer.createVertexShader = function(config) {
   return AGL.RendererHelper.createVersion(config.precision) +
-  "#define PI radians(180.)\n" +
+  "#define H vec4(1,-1,2,-2)\n" +
 
   "in vec2 aPos;" +
   "in mat4 aMt;" +
@@ -180,49 +180,32 @@ AGL.LightRenderer.createVertexShader = function(config) {
 
   "void main(void){" +
     "vec3 pos=vec3(aPos*2.-1.,1);" +
-    "vec4 h=vec4(1,-1,2,-2);" +
     "vExt=aExt;" +
     "vCol=aMt[2];" +
     "vDat=aMt[3];" +
     "vCrd.xy=pos.xy;" +
     "vS=uS;" +
-    "float l=clamp(.01,1.,max(.01,vExt.z)/1024.);" +
+    "float l=clamp(.01,1.,vExt.z/1024.);" +
     "if(vExt.x<1.){" +
       "vHS=l;" +
       "vDat.z*=1.-vHS;" +
       "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
-
       "gl_Position=vec4(mt*pos,1);" +
-      "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
-      "vCrd.zw=((mt*vec3(0,0,1)).xy+h.xy)/h.zw;" +
+      "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
+      "vCrd.zw=((mt*vec3(0,0,1)).xy+H.xy)/H.zw;" +
     "}else{" +
       "vHS=1.;" +
       "gl_Position=vec4(pos,1);" +
-      "vTCrd=(gl_Position.xy+h.xy)/h.zw;" +
+      "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
       "vec2 sc=vec2(sin(vDat.w),cos(vDat.w));" +
       "vCrd.zw=vTCrd+((1.-l)*sc.yx);" +
     "}" +
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
-  function coreWrapper(core, pos, bo) {
-    return
-    "tc=texture(uTex," + pos + ");" +
-    "if(tc.a>0.){" +
-      core +
-    "}" +
-    (bo
-      ? "else{" +
-          "i+=uP;" +
-          "continue;" +
-        "}"
-      : ""
-    );
-  }
-
   function createHeightMapCheck(core) {
     return
-    "float pc=(i/dstTex)*vHS;" +
+    "float pc=(i/dstTex)*vHS+ph;" +
     "if(sl.x<pc&&sl.y>pc){" +
       core +
     "}";
@@ -232,27 +215,41 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     return
     "for(float i=uP;i<dstTex-uP;i+=uP){" +
       "vec2 p=vTCrd-i*m;" +
-      coreWrapper(core, "p", true) +
+      "tc=texture(uTex,p);" +
+      "if(tc.a>0.){" +
+        core +
+      "}else i+=uP;" +
     "}";
   }
 
   function createLoops(core) {
     return
-    "vec4 tc;" +
+    "float ph=0.;" +
     "if(uTE.y>0.){" +
-      createLoop(
-        "vec4 shc=texture(uHTex,p);" +
-        "sl=shc.b>0.?shc.rg:udh;" +
-        createHeightMapCheck(core)
-      ) +
+      "vec4 shc;" +
+      "if(texture(uTex,vTCrd).a>0.){" +
+        "shc=texture(uHTex,vTCrd);" +
+        "ph=shc.b>0.?shc.g:udh.y;" +
+      "}" +
+      "if(ph>vHS)discard;" +
+      "else{" +
+        createLoop(
+          "shc=texture(uHTex,p);" +
+          "sl=shc.b>0.?shc.rg:udh;" +
+          createHeightMapCheck(core)
+        ) +
+      "}" +
     "}else{" +
       "if(uDHS>0.||uDHL<1.){" +
-        createLoop(createHeightMapCheck(core)) +
+        "if(texture(uTex,vTCrd).a>0.)ph=1.;" +
+        "if(ph>vHS)discard;" +
+        "else{" +
+          createLoop(createHeightMapCheck(core)) +
+        "}" +
       "}else{" +
         createLoop(core) +
       "}" +
-    "}" +
-    coreWrapper(core, "vTCrd");
+    "}";
   }
 
   return AGL.RendererHelper.createVersion(config.precision) +
@@ -282,7 +279,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "bool isl=vExt.x<1.;" +
     "float dst;" +
     "if(isl){" +
-      "dst=distance(vec2(0),vCrd.xy);" +
+      "dst=length(vCrd.xy);" +
       "if(dst>1.||atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
     "}" +
     "vec3 rgb=vCol.rgb;" +
@@ -298,10 +295,13 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "vec2 udh=vec2(uDHS,uDHL);" +
       "vec2 sl=udh;" +
       "vec4 c=vec4(0);" +
-      "if(uAT==1.){" +
+      "vec4 tc;" +
+      "if(uAT>0.){" +
         createLoops(
-          "c.a+=c.a<tc.a?tc.a:0.;" +
-          "if(c.a>=1.)discard;" +
+          "if(c.a<tc.a){" +
+            "c.a+=tc.a;" +
+            "if(c.a>=1.)discard;" +
+          "}" +
           "c.rgb+=rgb*tc.rgb*tc.a;"
         ) +
       "}else{" +

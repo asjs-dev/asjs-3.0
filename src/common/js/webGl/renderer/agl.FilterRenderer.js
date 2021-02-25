@@ -194,7 +194,7 @@ AGL.FilterRenderer.createFragmentShader = function(config) {
         // VignetteFilter
         "else if(uFtrST<7){" +
           "vec2 pv=pow(abs(vCrd*fvl[0]),vec2(fvl[1]));" +
-          "float v=clamp(min(1.,(1.-distance(vec2(0),pv))*fvl[5]),0.,1.);" +
+          "float v=clamp(min(1.,(1.-length(pv))*fvl[5]),0.,1.);" +
           "fgCol*=vec4(vec3(v),fgCol.a);" +
           "fgCol+=vec4(vec3(fvl[2],fvl[3],fvl[4])*(1.-v),0);" +
         "}" +
