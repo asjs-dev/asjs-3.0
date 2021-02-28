@@ -87,19 +87,15 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     });
 
     _scope._useShadowTexture = function(texture, id) {
-      texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useActiveTexture(this._gl, texture, id);
-      this._texturesEnabled[id] = 1;
+      if (texture) {
+        texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useActiveTexture(this._gl, texture, id);
+        this._texturesEnabled[id] = 1;
+      } else this._texturesEnabled[id] = 0;
     }
 
     _scope._render = function() {
-      if (this.shadowMap) {
-        this._useShadowTexture(this.shadowMap, 0);
-
-        this.heightMap
-          ? this._useShadowTexture(this.heightMap, 1)
-          : this._texturesEnabled[1] = 0;
-
-      } else this._texturesEnabled[0] = this._texturesEnabled[1] = 0;
+      this._useShadowTexture(this.shadowMap, 0);
+      this._useShadowTexture(this.heightMap, 1);
 
       this._gl.uniform2fv(this._locations.uTE, this._texturesEnabled);
 
@@ -188,7 +184,6 @@ AGL.LightRenderer.createVertexShader = function(config) {
     "float l=clamp(.01,1.,vExt.z/1024.);" +
     "if(vExt.x<1.){" +
       "vHS=l;" +
-      "vDat.z*=1.-vHS;" +
       "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
       "gl_Position=vec4(mt*pos,1);" +
       "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
@@ -203,52 +198,36 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
-  function createHeightMapCheck(core) {
-    return
-    "float pc=(i/dstTex)*(vHS-ph);" +
-    "if(sl.x<pc&&sl.y>pc){" +
-      core +
-    "}";
-  }
+  var calcCoord = "vec2 p=vTCrd-i*m;";
+
+  var calcHeight = "float pc=(i/dstTex)*mh;";
+
+  var transparencyCheck =
+  "tc=texture(uTex,p);" +
+  "if(c.a<tc.a){" +
+    "c.a+=tc.a;" +
+    "if(c.a>=1.)discard;" +
+  "}" +
+  "c.rgb+=rgb*tc.rgb*tc.a;";
 
   function createLoop(core) {
-    return
-    "for(float i=1.;i<dstTex;i+=uP){" +
-      "vec2 p=vTCrd-i*m;" +
-      "tc=texture(uTex,p);" +
-      "if(tc.a>0.){" +
-        core +
-      "}else i+=uP;" +
+    return "for(float i=uP;i<dstTex-uP;++i){" +
+      core +
+      "i+=uP;" +
     "}";
   }
 
-  function createLoops(core) {
-    return
-    "float ph=0.;" +
-    "if(uTE.y>0.){" +
-      "vec4 shc;" +
+  function createShadowMapBlock(loopA, loopB) {
+    return "if(sl.y-sl.x<1.){" +
       "if(texture(uTex,vTCrd).a>0.){" +
-        "shc=texture(uHTex,vTCrd);" +
-        "ph=shc.b>0.?shc.g:udh.y;" +
+        "ph=sl.y;" +
+        "mh-=ph;" +
+        "sl-=ph;" +
       "}" +
-      "if(ph>vHS)discard;" +
-      "else{" +
-        createLoop(
-          "shc=texture(uHTex,p);" +
-          "sl=(shc.b>0.?shc.rg:udh)-ph;" +
-          createHeightMapCheck(core)
-        ) +
-      "}" +
+      "dst=distance(vec3(0,0,vHS),vec3(vCrd.xy,ph));" +
+      loopA +
     "}else{" +
-      "if(uDHS>0.||uDHL<1.){" +
-        "if(texture(uTex,vTCrd).a>0.)ph=1.;" +
-        "if(ph>vHS)discard;" +
-        "else{" +
-          createLoop(createHeightMapCheck(core)) +
-        "}" +
-      "}else{" +
-        createLoop(core) +
-      "}" +
+      loopB +
     "}";
   }
 
@@ -283,29 +262,76 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "if(dst>1.||atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
     "}" +
     "vec3 rgb=vCol.rgb;" +
-    "if(vExt.y==1.&&uTE.x>0.){" +
+    "if(vExt.y>0.&&(uTE.x>0.||uTE.y>0.)){" +
       "vec2 tCrd=vTCrd*vS.xy;" +
       "vec2 tCnt=vCrd.zw*vS.xy;" +
 
       "vec2 dsth=tCrd-tCnt;" +
-      "vec2 adsth=abs(dsth);" +
-      "float dstTex=max(adsth.x,adsth.y);" +
+      "float dstTex=distance(tCrd,tCnt);" +
       "vec2 m=(dsth/dstTex)*vS.zw;" +
 
-      "vec2 udh=vec2(uDHS,uDHL);" +
-      "vec2 sl=udh;" +
       "vec4 c=vec4(0);" +
       "vec4 tc;" +
-      "if(uAT>0.){" +
-        createLoops(
-          "if(c.a<tc.a){" +
-            "c.a+=tc.a;" +
-            "if(c.a>=1.)discard;" +
-          "}" +
-          "c.rgb+=rgb*tc.rgb*tc.a;"
-        ) +
+
+      "float mh=vHS;" +
+      "float ph=0.;" +
+      "if(uTE.y>0.){" +
+        "tc=texture(uHTex,vTCrd);" +
+        "ph=tc.b>0.?tc.g:0.;" +
+        "mh-=ph;" +
+        "dst=distance(vec3(0,0,vHS),vec3(vCrd.xy,ph));" +
+        "if(uAT>0.&&uTE.x>0.){" +
+          createLoop(
+            calcCoord +
+            "tc=texture(uHTex,p);" +
+            "if(tc.b>0.){" +
+              "tc.rg-=ph;" +
+              calcHeight +
+              "if(tc.x<=pc&&tc.y>=pc){" +
+                transparencyCheck +
+              "}" +
+            "}"
+          ) +
+        "}else{" +
+          createLoop(
+            calcCoord +
+            "tc=texture(uHTex,p);" +
+            "if(tc.b>0.){" +
+              "tc.rg-=ph;" +
+              calcHeight +
+              "if(tc.x<=pc&&tc.y>=pc)discard;" +
+            "}"
+          ) +
+        "}" +
       "}else{" +
-        createLoops("discard;") +
+        "vec2 sl=vec2(uDHS,uDHL);" +
+        "if(uAT>0.){" +
+          createShadowMapBlock(
+            createLoop(
+              calcHeight +
+              "if(sl.x<=pc&&sl.y>=pc){" +
+                calcCoord +
+                transparencyCheck +
+              "}"
+            ), createLoop(
+              calcCoord +
+              transparencyCheck
+            )
+          ) +
+        "}else{" +
+          createShadowMapBlock(
+            createLoop(
+              calcCoord +
+              "if(texture(uTex,p).a>0.){" +
+                calcHeight +
+                "if(sl.x<=pc&&sl.y>=pc)discard;" +
+              "}"
+            ), createLoop(
+              calcCoord +
+              "if(texture(uTex,p).a>0.)discard;"
+            )
+          ) +
+        "}" +
       "}" +
       "rgb=rgb*(1.-c.a)+c.rgb;" +
     "}" +
