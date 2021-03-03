@@ -181,19 +181,17 @@ AGL.LightRenderer.createVertexShader = function(config) {
     "vDat=aMt[3];" +
     "vCrd.xy=pos.xy;" +
     "vS=uS;" +
-    "float l=clamp(.01,1.,vExt.z/1024.);" +
+    "vHS=clamp(.01,1.,vExt.z/1024.);" +
     "if(vExt.x<1.){" +
-      "vHS=l;" +
       "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
       "gl_Position=vec4(mt*pos,1);" +
       "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
       "vCrd.zw=((mt*vec3(0,0,1)).xy+H.xy)/H.zw;" +
     "}else{" +
-      "vHS=1.;" +
+      "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,-1,1,1);" +
       "gl_Position=vec4(pos,1);" +
       "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
-      "vec2 sc=vec2(sin(vDat.w),cos(vDat.w));" +
-      "vCrd.zw=vTCrd+((1.-l)*sc.yx);" +
+      "vCrd.zw=vTCrd+((mt*vec3(1,1,1)).xy+H.xy)/H.zw;" +
     "}" +
   "}";
 };
@@ -224,7 +222,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
         "mh-=ph;" +
         "sl-=ph;" +
       "}" +
-      "dst=distance(vec3(0,0,vHS),vec3(vCrd.xy,ph));" +
+      "dst=isl?distance(vec3(0,0,vHS),vec3(vCrd.xy,ph)):distance(vec3(vTCrd,vHS),vec3(vCrd.zw,ph));" +
       loopA +
     "}else{" +
       loopB +
@@ -256,7 +254,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   "void main(void){" +
     "if(vDat.x==0.)discard;" +
     "bool isl=vExt.x<1.;" +
-    "float dst;" +
+    "float dst=1.;" +
     "if(isl){" +
       "dst=length(vCrd.xy);" +
       "if(dst>1.||atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
@@ -279,7 +277,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
         "tc=texture(uHTex,vTCrd);" +
         "ph=tc.b>0.?tc.g:0.;" +
         "mh-=ph;" +
-        "dst=distance(vec3(0,0,vHS),vec3(vCrd.xy,ph));" +
+        "dst=isl?distance(vec3(0,0,vHS),vec3(vCrd.xy,ph)):distance(vec3(vTCrd,vHS),vec3(vCrd.zw,ph));" +
         "if(uAT>0.&&uTE.x>0.){" +
           createLoop(
             calcCoord +
@@ -335,7 +333,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "}" +
       "rgb=rgb*(1.-c.a)+c.rgb;" +
     "}" +
-    "float mp=isl?clamp((1.-dst)*vDat.y,0.,1.):1.;" +
+    "float mp=clamp((1.-dst)*vDat.y,0.,100.);" +
     "fgCol=vec4(rgb*mp*vDat.z,1);" +
   "}";
 };
