@@ -10,9 +10,6 @@ AGL.Light = helpers.createPrototypeClass(
   ) {
     AGL.AbstractDrawable.call(this);
 
-    this.angle      = 360 * Math.PI / 180;
-    this.transition = 1;
-
     this.color.a = 0;
 
     this._id    = id;
@@ -21,17 +18,39 @@ AGL.Light = helpers.createPrototypeClass(
     this._datId = this._matId + 12;
     this._extId = id * 4;
 
-    this.castShadow = true;
-
     this._lightData     = lightData;
     this._extensionData = extensionData;
 
-    this.type = AGL.Light.Type.SPOT;
+    this.angle      = 360 * Math.PI / 180;
+    this.castShadow = true;
+    this.type       = AGL.Light.Type.SPOT;
+    this.precision  = 1;
+    this.transition = 1;
   },
   function(_scope, _super) {
     helpers.property(_scope, "type", {
       get: function() { return this._extensionData[this._extId]; },
       set: function(v) { this._extensionData[this._extId] = v; }
+    });
+
+    helpers.property(_scope, "castShadow", {
+      get: function() { return this._extensionData[this._extId + 1]; },
+      set: function(v) { this._extensionData[this._extId + 1] = v; }
+    });
+
+    helpers.property(_scope, "precision", {
+      get: function() { return this._extensionData[this._extId + 3]; },
+      set: function(v) { this._extensionData[this._extId + 3] = Math.max(1, Math.min(10, v)); }
+    });
+
+    helpers.property(_scope, "transition", {
+      get: function() { return this._lightData[this._datId + 1]; },
+      set: function(v) { this._lightData[this._datId + 1] = Math.max(0, v); }
+    });
+
+    helpers.property(_scope, "angle", {
+      get: function() { return this._lightData[this._datId + 3]; },
+      set: function(v) { this._lightData[this._datId + 3] = v; }
     });
 
     _scope.isOn = function() {
@@ -73,16 +92,9 @@ AGL.Light = helpers.createPrototypeClass(
         this._updateColor();
 
         lightData[datId]     = lightData[datId - 1] > 0 ? 1 : 0;
-        lightData[datId + 1] = this.transition;
         lightData[datId + 2] = this.props.alpha;
-        lightData[datId + 3] = this.angle;
 
-        var extId = this._extId;
-
-        var extensionData = this._extensionData;
-
-        extensionData[extId + 1] = this.castShadow;
-        extensionData[extId + 2] = this.props.z;
+        this._extensionData[this._extId + 2] = this.props.z;
       } else lightData[datId] = 0;
     }
 

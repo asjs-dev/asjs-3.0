@@ -105,8 +105,6 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
         this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._batchItems);
 
         this._batchItems = 0;
-
-        this._gl.flush();
       }
     }
 

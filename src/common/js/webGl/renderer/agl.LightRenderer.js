@@ -21,7 +21,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "uDHL",
         "uAT",
         "uS",
-        "uP",
         "uTE"
       ]
     }, AGL.LightRenderer);
@@ -35,7 +34,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     this.shadowStart       = helpers.isEmpty(options.shadowStart)  ? 0 : options.shadowStart;
     this.shadowLength      = helpers.isEmpty(options.shadowLength) ? 1 : options.shadowLength;
-    this.precision         = helpers.isEmpty(options.precision)    ? 1 : options.precision;
     this.allowTransparency = options.allowTransparency === true;
   },
   function(_scope, _super) {
@@ -75,17 +73,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       }
     });
 
-    helpers.property(_scope, "precision", {
-      get: function() { return this._precision; },
-      set: function(v) {
-        v = Math.max(1, Math.min(10, v));
-        if (this._precision !== v) {
-          this._precision = v;
-          this._gl.uniform1f(this._locations.uP, v);
-        }
-      }
-    });
-
     _scope._useShadowTexture = function(texture, id) {
       if (texture) {
         texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useActiveTexture(this._gl, texture, id);
@@ -104,8 +91,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       this._gl.clear({{AGL.Const.COLOR_BUFFER_BIT}});
       this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._lights.length);
-
-      this._gl.flush();
     }
 
     _scope.destruct = function() {
@@ -209,9 +194,12 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   "c.rgb+=rgb*tc.rgb*tc.a;";
 
   function createLoop(core) {
-    return "for(float i=uP;i<dstTex-uP;++i){" +
+    return "float st=vExt.w;" +
+    "float l=dstTex-vExt.w;" +
+    "float umb=vDat.y;" +
+    "for(float i=st;i<l;++i){" +
       core +
-      "i+=uP;" +
+      "i+=st+(i/dstTex)*umb;" +
     "}";
   }
 
@@ -243,7 +231,6 @@ AGL.LightRenderer.createFragmentShader = function(config) {
   "uniform sampler2D uTex;" +
   "uniform sampler2D uHTex;" +
 
-  "uniform float uP;" +
   "uniform float uDHS;" +
   "uniform float uDHL;" +
   "uniform float uAT;" +
@@ -333,7 +320,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
       "}" +
       "rgb=rgb*(1.-c.a)+c.rgb;" +
     "}" +
-    "float mp=clamp((1.-dst)*vDat.y,0.,100.);" +
+    "float mp=clamp(1.-dst,0.,100.);" +
     "fgCol=vec4(rgb*mp*vDat.z,1);" +
   "}";
 };
