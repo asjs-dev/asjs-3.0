@@ -6,7 +6,7 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
   function SimpleRenderer(options) {
     options = options || {};
 
-    options.config = AGL.RendererHelper.initConfig(options.config, AGL.SimpleRenderer);
+    options.config = AGL.Utils.initConfig(options.config, AGL.SimpleRenderer);
 
     options.config.locations = options.config.locations.concat([
       "aTexId"
@@ -34,25 +34,27 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
   }
 );
 AGL.SimpleRenderer.createVertexShader = function(config) {
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
 
   "in vec2 aPos;" +
   "in mat4 aMt;" +
   "in float aTexId;" +
+
+  "uniform float uFlpY;" +
 
   "out vec2 vTCrd;" +
   "out vec4 vTexCrop;" +
   "out float vTexId;" +
 
   "void main(void){" +
-    AGL.RendererHelper.calcGlPositions +
+    AGL.Utils.calcGlPositions +
     "vTexId=aTexId;" +
   "}";
 };
 AGL.SimpleRenderer.createFragmentShader = function(config) {
   var maxTextureImageUnits = AGL.Utils.info.maxTextureImageUnits;
 
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
 
   "in vec2 vTCrd;" +
   "in vec4 vTexCrop;" +
@@ -62,9 +64,9 @@ AGL.SimpleRenderer.createFragmentShader = function(config) {
 
   "out vec4 fgCol;" +
 
-  AGL.RendererHelper.createGetTextureFunction(maxTextureImageUnits) +
+  AGL.Utils.createGetTextureFunction(maxTextureImageUnits) +
 
   "void main(void){" +
-    AGL.RendererHelper.getTexColor +
+    AGL.Utils.getTexColor +
   "}";
 };

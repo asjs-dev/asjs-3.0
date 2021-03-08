@@ -2,21 +2,20 @@ require("../NameSpace.js");
 require("../data/agl.BlendMode.js");
 require("../display/agl.Item.js");
 require("../display/agl.Container.js");
+require("../display/agl.StageContainer.js");
 require("../display/agl.Image.js");
 require("../utils/agl.Utils.js");
 require("../geom/agl.Matrix3.js");
-require("./agl.RendererHelper.js");
+require("./agl.BaseRenderer.js");
 
 AGL.BatchRendererBase = helpers.createPrototypeClass(
-  AGL.Container,
+  AGL.BaseRenderer,
   function BatchRendererBase(options) {
-    AGL.Container.call(this);
-
-    //this._currentBlendMode;
-
     options.config.locations = options.config.locations.concat([
       "aMt"
     ]);
+
+    this._container = new AGL.StageContainer(this);
 
     this._maxBatchItems = Math.max(1, options.maxBatchItems || 1e4);
 
@@ -28,20 +27,15 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
 
     this._textureMap = [];
 
-    AGL.RendererHelper.constructor.call(this, options.config);
+    AGL.BaseRenderer.call(this, options.config);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE]      = helpers.emptyFunction;
     this._drawFunctionMap[AGL.Image.TYPE]     = this._drawImage.bind(this);
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
-
-    this._parent = new AGL.BaseItem();
   },
   function(_scope, _super) {
-    AGL.RendererHelper.body.call(_scope, _scope);
-
-    helpers.get(_scope, "stage",  function() { return this; });
-    helpers.get(_scope, "parent", function() { return this._parent; });
+    helpers.get(_scope, "container", function() { return this._container; });
 
     helpers.property(_scope, "clearBeforeRender", {
       get: function() { return this._clearBeforeRenderFunc === this.clear; },
@@ -52,15 +46,9 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
       }
     });
 
-    _scope.destruct = function() {
-      this._destructRenderer();
-
-      _super.destruct.call(this);
-    }
-
     _scope._render = function() {
       this._clearBeforeRenderFunc();
-      this._drawItem(this);
+      this._drawItem(this._container);
       this._batchDraw();
     }
 
@@ -102,9 +90,13 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
       if (this._batchItems > 0) {
         this._bindBuffers();
 
+        this._gl.uniform1iv(this._locations.uTex, this._textureIds);
+
         this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._batchItems);
 
         this._batchItems = 0;
+
+        this._gl.flush();
       }
     }
 
@@ -116,14 +108,16 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
           if (isTextureNotMapped) {
             if (this._textureMap.length === this._TEXTURE_NUM - isMask) {
               this._batchDraw();
-              this._textureMap.length = 0;
+              this._textureMap.length =
+              this._textureIds.length = 0;
             }
 
             this._textureMap.push(textureInfo);
             textureIndex = this._textureMap.length - 1;
+            this._textureIds[textureIndex] = textureIndex;
           }
 
-          AGL.Utils.useActiveTexture(this._gl, textureInfo, textureIndex);
+          textureInfo.useTexture(textureIndex);
         }
 
         return textureIndex;
@@ -134,32 +128,27 @@ AGL.BatchRendererBase = helpers.createPrototypeClass(
 
     _scope._setBlendMode = function(blendMode) {
       if (this._currentBlendMode !== blendMode) {
-        this._currentBlendMode = blendMode;
         this._batchDraw();
         this._useBlendMode(blendMode);
       }
     }
 
-    var _superResize = _scope._resize;
     _scope._resize = function() {
-      _superResize.call(this);
+      _super._resize.call(this);
 
-      AGL.Matrix3.projection(this._width, this._height, this._parent.matrixCache);
-      ++this.parent.propsUpdateId;
+      AGL.Matrix3.projection(this._width, this._height, this.container.parent.matrixCache);
+      ++this.container.parent.propsUpdateId;
     }
 
     _scope._initCustom = function() {
       this._gl.bindBuffer({{AGL.Const.ELEMENT_ARRAY_BUFFER}}, this._gl.createBuffer());
       this._gl.bufferData(
         {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
-        AGL.RendererHelper.pointsOrder,
+        AGL.Utils.pointsOrder,
         {{AGL.Const.STATIC_DRAW}}
       );
 
-      var textureIds = new Uint16Array(this._TEXTURE_NUM);
-      var l = this._TEXTURE_NUM;
-      for (var i = 0; i < l; ++i) textureIds[i] = i;
-      this._gl.uniform1iv(this._locations.uTex, textureIds);
+      this._textureIds = [];
 
       this._matrixData   = new F32A(this._maxBatchItems * 16);
   		this._matrixBuffer = this._createArrayBuffer(this._matrixData, "aMt", 16, 4, 4, {{AGL.Const.FLOAT}}, 4);

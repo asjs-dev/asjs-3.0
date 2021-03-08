@@ -5,19 +5,18 @@ require("../geom/agl.Matrix3.js");
 
 AGL.Stage2D = helpers.createPrototypeClass(
   AGL.BatchRendererBase,
-  function Stage2DRenderer(options) {
+  function Stage2D(options) {
     options = options || {};
 
-    options.config               = AGL.RendererHelper.initConfig(options.config, AGL.Stage2D);
-    options.config.isMaskEnabled = options.isMaskEnabled;
+    options.config = AGL.Utils.initConfig(options.config, AGL.Stage2D);
 
     var locations = [
       "aWrlCol",
       "aTintCol",
       "aAlpCol",
-      "aFx"
+      "aFx",
+      "aMsk"
     ];
-    options.isMaskEnabled && locations.push("aMsk");
 
     options.config.locations = options.config.locations.concat(locations);
 
@@ -26,13 +25,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this.picked;
     this._isPickerSet = false;
     */
-    this.colorCache = this.color.items;
 
     this.pickerPoint = AGL.Point.create();
-
-    this._setMaskDataFunc = options.isMaskEnabled
-      ? this._setMaskData
-      : helpers.emptyFunction;
   },
   function(_scope, _super) {
     _scope.render = function() {
@@ -83,7 +77,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
         item.isContainsPoint(this.pickerPoint)
       ) this.picked = item;
 
-      this._setMaskDataFunc(item);
+      this._setMaskData(item);
 
       var textureMapIndex = this._drawTexture(item.texture, false);
 
@@ -98,8 +92,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._bindArrayBuffer(this._tintColorBuffer,   this._tintColorData);
       this._bindArrayBuffer(this._alphaBuffer,       this._alphaData);
       this._bindArrayBuffer(this._effectBuffer,      this._effectData);
-
-      this._bindMaskBufferFunc(this._maskBuffer, this._maskData);
+      this._bindArrayBuffer(this._maskBuffer,        this._maskData);
     }
 
     _scope._initCustom = function() {
@@ -115,41 +108,32 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._alphaBuffer       = this._createArrayBuffer(this._alphaData,       "aAlpCol",  2, 1, 2, {{AGL.Const.FLOAT}}, 4);
       this._effectData        = new F32A(maxBatchItems * 2);
       this._effectBuffer      = this._createArrayBuffer(this._effectData,      "aFx",      2, 1, 2, {{AGL.Const.FLOAT}}, 4);
-
-      if (this._config.isMaskEnabled) {
-        this._maskData        = new F32A(maxBatchItems * 2);
-        this._maskBuffer      = this._createArrayBuffer(this._maskData,        "aMsk",     2, 1, 2, {{AGL.Const.FLOAT}}, 4);
-      }
-
-      this._bindMaskBufferFunc = this._config.isMaskEnabled
-        ? this._bindArrayBuffer
-        : helpers.emptyFunction;
+      this._maskData          = new F32A(maxBatchItems * 2);
+      this._maskBuffer        = this._createArrayBuffer(this._maskData,        "aMsk",     2, 1, 2, {{AGL.Const.FLOAT}}, 4);
     }
   }
 );
 AGL.Stage2D.createVertexShader = function(config) {
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
 
   "in vec2 aPos;" +
   "in mat4 aMt;" +
   "in vec4 aWrlCol;" +
   "in vec4 aTintCol;" +
   "in vec2 aAlpCol;" +
-  (
-    config.isMaskEnabled
-    ? "in vec2 aMsk;"
-    : ""
-  ) +
+
+  "in vec2 aMsk;" +
+
   "in vec2 aFx;" +
 
+  "uniform float uFlpY;" +
+
   "out vec2 vTCrd;" +
-  (
-    config.isMaskEnabled
-    ? "out float vMskTexId;" +
-      "flat out int vMskTp;" +
-      "out vec2 vMskCrd;"
-    : ""
-  ) +
+
+  "out float vMskTexId;" +
+  "flat out int vMskTp;" +
+  "out vec2 vMskCrd;" +
+
   "out vec4 vTexCrop;" +
   "out vec4 vWrlCol;" +
   "out vec4 vTintCol;" +
@@ -159,7 +143,7 @@ AGL.Stage2D.createVertexShader = function(config) {
   "out vec2 vGlPos;" +
 
   "void main(void){" +
-    AGL.RendererHelper.calcGlPositions +
+    AGL.Utils.calcGlPositions +
     "vGlPos=gl_Position.xy;" +
     "vWrlCol=aWrlCol;" +
     "vTintCol=vec4(aTintCol.rgb*aTintCol.a,1.-aTintCol.a);" +
@@ -168,28 +152,21 @@ AGL.Stage2D.createVertexShader = function(config) {
     "vTexId=aFx.x;" +
     "vTintTp=aFx.y;" +
 
-    (
-      config.isMaskEnabled
-        ? "vMskTexId=aMsk.x;" +
-          "vMskTp=int(aMsk.y);" +
-          "vMskCrd=(vGlPos+vec2(1,-1))/vec2(2,-2);"
-        : ""
-    ) +
+    "vMskTexId=aMsk.x;" +
+    "vMskTp=int(aMsk.y);" +
+    "vMskCrd=(vGlPos+vec2(1,-1))/vec2(2,-2);" +
 
   "}";
 };
 AGL.Stage2D.createFragmentShader = function(config) {
   var maxTextureImageUnits = AGL.Utils.info.maxTextureImageUnits;
 
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
 
-  (
-    config.isMaskEnabled
-    ? "in float vMskTexId;" +
-      "flat in int vMskTp;" +
-      "in vec2 vMskCrd;"
-    : ""
-  ) +
+  "in float vMskTexId;" +
+  "flat in int vMskTp;" +
+  "in vec2 vMskCrd;" +
+
   "in vec2 vTCrd;" +
   "in vec4 vTexCrop;" +
   "in vec4 vWrlCol;" +
@@ -203,31 +180,21 @@ AGL.Stage2D.createFragmentShader = function(config) {
 
   "out vec4 fgCol;" +
 
-  AGL.RendererHelper.createGetTextureFunction(maxTextureImageUnits) +
+  AGL.Utils.createGetTextureFunction(maxTextureImageUnits) +
 
   "void main(void){" +
-    AGL.RendererHelper.getTexColor +
+    AGL.Utils.getTexColor +
     "if(vAlpCol==0.||fgCol.a==0.)discard;" +
 
-    (
-      config.isMaskEnabled
-        ? "float mskA=1.;" +
-          "if(vMskTexId>-1.){" +
-            "vec4 mskCol=gtTexCol(vMskTexId,vMskCrd);" +
-            "mskA=vMskTp<4" +
-              "?mskCol[vMskTp]" +
-              ":(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
-          "}"
-        : ""
-    ) +
+    "float mskA=1.;" +
+    "if(vMskTexId>-1.){" +
+      "vec4 mskCol=gtTexCol(vMskTexId,vMskCrd);" +
+      "mskA=vMskTp<4" +
+        "?mskCol[vMskTp]" +
+        ":(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
+    "}" +
 
-    "fgCol.a*=vAlpCol" +
-    (
-      config.isMaskEnabled
-        ? "*mskA"
-        : ""
-    ) +
-    ";" +
+    "fgCol.a*=vAlpCol*mskA;" +
 
     "if(fgCol.a==0.)discard;" +
 

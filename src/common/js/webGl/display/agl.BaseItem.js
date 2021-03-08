@@ -9,7 +9,7 @@ AGL.BaseItem = helpers.createPrototypeClass(
 
     this.colorUpdateId =
     this.propsUpdateId = 0;
-    
+
     this.colorCache = [1, 1, 1, 1];
   }
 );

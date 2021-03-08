@@ -7,22 +7,24 @@ AGL.SmoothLight = helpers.createPrototypeClass(
 
     helpers.BasePrototypeClass.call(this);
 
-    this.renderer = new AGL.LightRenderer(options);
+    //this._framebuffer = new AGL.Framebuffer(true);
 
-    this._blurFilter = new AGL.BlurFilter(0, 0);
-    this._filterRenderer = new AGL.FilterRenderer({
-      config : {
-        contextAttributes : {
-          alpha: true
-        }
+    this.lightRenderer = new AGL.LightRenderer(options);
+
+    this._blurFilter = new AGL.BlurFilter();
+
+    this.filterRenderer = new AGL.FilterRenderer({
+      /*config : {
+        canvas : this.lightRenderer.canvas,
       },
-      texture : new AGL.Texture(this.renderer.canvas, true),
+      texture : this._framebuffer,*/
+      texture : new AGL.Texture(this.lightRenderer.canvas, true),
       filters : [
         this._blurFilter
       ]
     });
 
-    this.image = new AGL.Image(new AGL.Texture(this._filterRenderer.canvas, true));
+    this.image = new AGL.Image(new AGL.Texture(this.filterRenderer.canvas, true));
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     this.scale = options.scale || 1;
@@ -52,13 +54,14 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     });
 
     helpers.get(_scope, "isContextLost", function() {
-      return this.renderer.isContextLost || this._filterRenderer.isContextLost;
+      return this.lightRenderer.isContextLost;
     });
 
     _scope.render = function() {
       this._resizeFunc();
-      this.renderer.render();
-      this._filterRenderer.render();
+      //this.lightRenderer.renderToTexture(this._framebuffer);
+      this.lightRenderer.render();
+      this.filterRenderer.render();
     }
 
     _scope.setSize = function(w, h) {
@@ -69,8 +72,8 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     }
 
     _scope.destruct = function() {
-      this.renderer.destruct();
-      this._filterRenderer.destruct();
+      this.lightRenderer.destruct();
+      this.filterRenderer.destruct();
       this._blurFilter.destruct();
       this.image.destruct();
 
@@ -83,8 +86,11 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       var scaledWidth  = this._width  * this._scale;
       var scaledHeight = this._height * this._scale;
 
-      this.renderer.setSize(scaledWidth, scaledHeight);
-      this._filterRenderer.setSize(scaledWidth, scaledHeight);
+      this.image.props.width  = this._width;
+      this.image.props.height = this._height;
+
+      this.lightRenderer.setSize(scaledWidth, scaledHeight);
+      this.filterRenderer.setSize(scaledWidth, scaledHeight);
     }
   }
 );

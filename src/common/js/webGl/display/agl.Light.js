@@ -65,7 +65,7 @@ AGL.Light = helpers.createPrototypeClass(
     }
 
     _scope._calcCorners = function() {
-      AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage);
+      AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage.renderer);
 
       var corners = this._corners;
 

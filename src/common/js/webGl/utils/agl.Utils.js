@@ -15,6 +15,67 @@ AGL.Utils = new (helpers.createPrototypeClass(
     window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
   },
   function(_scope) {
+    _scope.initConfig = function(config, target) {
+      config = config || {};
+
+      var attributes = config.contextAttributes || {};
+
+      return {
+        canvas    : config.canvas || AGL.Utils.createCanvas(config.isOffscreen),
+        locations : (config.locations || []).concat([
+          "uFlpY",
+          "aPos",
+          "uTex"
+        ]),
+        vertexShader   : config.vertexShader   || target.createVertexShader,
+        fragmentShader : config.fragmentShader || target.createFragmentShader,
+        precision      : config.precision      || "lowp", /* lowp mediump highp */
+
+        contextAttributes : {
+          alpha                 : attributes.alpha || false,
+          antialias             : attributes.antialias || false,
+          depth                 : attributes.depth || false,
+          stencil               : attributes.stencil || false,
+          premultipliedAlpha    : attributes.premultipliedAlpha || false,
+          powerPreference       : attributes.powerPreference || "high-performance",
+          preserveDrawingBuffer : attributes.preserveDrawingBuffer || true,
+        }
+      };
+    }
+
+    _scope.pointsOrder = new Uint16Array([
+      0, 1, 2,
+      0, 2, 3
+    ]);
+
+    _scope.createVersion = function(precision) {
+      return "#version 300 es\nprecision " + precision + " float;\n";
+    }
+
+    _scope.createGetTextureFunction = function(maxTextureImageUnits) {
+      var func =
+      "vec4 gtTexCol(float i,vec2 c){";
+
+      for (var i = 0; i < maxTextureImageUnits; ++i) func +=
+        (i > 0 ? "else " : "") + "if(i<" + (i + 1) + ".)return texture(uTex[" + i + "],c);";
+
+      func +=
+        "return vec4(0);" +
+      "}";
+      return func;
+    };
+
+    _scope.getTexColor = "fgCol=gtTexCol(vTexId,vTexCrop.xy+vTexCrop.zw*mod(vTCrd,1.));";
+
+    _scope.calcGlPositions =
+      "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+      "mat3 tMt=mat3(aMt[1].zw,0,aMt[2].xy,0,aMt[2].zw,1);" +
+      "vec3 pos=vec3(aPos,1);" +
+      "gl_Position=vec4(mt*pos,1);" +
+      "gl_Position.y*=uFlpY;" +
+      "vTCrd=(tMt*pos).xy;" +
+      "vTexCrop=aMt[3];";
+
     _scope.createCanvas = function(isOffscreenCanvas) {
       return isOffscreenCanvas && window.OffscreenCanvas
         ? new window.OffscreenCanvas(1, 1)
@@ -49,6 +110,14 @@ AGL.Utils = new (helpers.createPrototypeClass(
     _scope.bindActiveTexture = function(gl, textureInfo, index) {
       gl.activeTexture({{AGL.Const.TEXTURE0}} + index);
       this.bindTexture(gl, textureInfo);
+    }
+
+    _scope.bindFrameBuffer = function(gl, textureInfo) {
+      gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, textureInfo.framebuffer);
+    }
+
+    _scope.unbindFrameBuffer = function(gl) {
+      gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, null);
     }
 
     _scope.useTexture = function(gl, textureInfo) {

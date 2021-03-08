@@ -51,6 +51,10 @@ AGL.Texture = helpers.createPrototypeClass(
       }
     });
 
+    _scope.useTexture = function(id) {
+      AGL.Utils.useActiveTexture(this.gl, this, id);
+    }
+
     _scope.isNeedToDraw = function(gl, renderTime) {
       return _super.isNeedToDraw.call(this, gl, renderTime) || (this.isVideo && !this._source.paused);
     }

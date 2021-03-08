@@ -8,8 +8,7 @@ AGL.Framebuffer = helpers.createPrototypeClass(
 
     //this.framebuffer = null;
 
-    this._sizeUpdateId         =
-    this._currentSizeUpdatedId = 0;
+    this._framebufferTempId = AGL.Utils.info.maxTextureImageUnits - 1;
   },
   function(_scope, _super) {
     helpers.property(_scope, "width", {
@@ -17,7 +16,7 @@ AGL.Framebuffer = helpers.createPrototypeClass(
       set: function(v) {
         if (this._width !== v && v > 0) {
           this._width = v;
-          ++this._sizeUpdateId;
+          ++this._updateId;
         }
       }
     });
@@ -27,7 +26,7 @@ AGL.Framebuffer = helpers.createPrototypeClass(
       set: function(v) {
         if (this._height !== v && v > 0) {
           this._height = v;
-          ++this._sizeUpdateId;
+          ++this._updateId;
         }
       }
     });
@@ -43,18 +42,23 @@ AGL.Framebuffer = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
+    _scope.useTexture = function(id) {
+      AGL.Utils.bindActiveTexture(this.gl, this, id);
+    }
+
     _scope.isNeedToDraw = function(gl, renderTime) {
-      if (this.gl !== gl || this._currentSizeUpdatedId < this._sizeUpdateId) {
-        this._currentSizeUpdatedId = this._sizeUpdateId;
+      if (this.gl !== gl) {
 
         this._destroyTexture();
         this.baseTexture = gl.createTexture();
 
-        AGL.Utils.useTexture(gl, this);
+        AGL.Utils.useActiveTexture(gl, this, this._framebufferTempId);
 
         this._destroyFramebuffer();
         this.framebuffer = gl.createFramebuffer();
+
         gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, this.framebuffer);
+
         gl.framebufferTexture2D(
           {{AGL.Const.FRAMEBUFFER}},
           {{AGL.Const.COLOR_ATTACHMENT0}},
@@ -69,6 +73,18 @@ AGL.Framebuffer = helpers.createPrototypeClass(
 
         return true;
       }
+
+      if (this.shouldUpdate && this._currentRenderTime < renderTime) {
+        this._currentRenderTime = renderTime;
+        return true;
+      }
+
+      if (this._currentUpdateId < this._updateId) {
+        this._currentUpdateId = this._updateId;
+        AGL.Utils.useActiveTexture(gl, this, this._framebufferTempId);
+        return true;
+      }
+
       return false;
     }
 

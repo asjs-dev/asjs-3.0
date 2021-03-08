@@ -1,18 +1,15 @@
 require("../NameSpace.js");
-require("./agl.RendererHelper.js");
+require("./agl.BaseRenderer.js");
 
 AGL.FilterRenderer = helpers.createPrototypeClass(
-  helpers.BasePrototypeClass,
+  AGL.BaseRenderer,
   function FilterRenderer(options) {
     options = options || {};
 
-    helpers.BasePrototypeClass.call(this);
-
-    options.config = AGL.RendererHelper.initConfig(options.config, AGL.FilterRenderer);
+    options.config = AGL.Utils.initConfig(options.config, AGL.FilterRenderer);
 
     options.config.locations = options.config.locations.concat([
       "uFTex",
-      "uFlpY",
       "uFtrT",
       "uFtrST",
       "uFtrV",
@@ -23,17 +20,20 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
     this.filters = options.filters || [];
 
-    AGL.RendererHelper.constructor.call(this, options.config);
+    AGL.BaseRenderer.call(this, options.config);
 
     this.texture = options.texture;
   },
   function(_scope, _super) {
-    AGL.RendererHelper.body.call(_scope, _scope);
+    _scope.renderToTexture = function(framebuffer) {
+      this._gl.useProgram(this._program);
+      this._renderBatch(framebuffer);
+    }
 
-    _scope._render = function() {
-      this.texture.isNeedToDraw(this._gl, this._renderTime);
-      AGL.Utils.useActiveTexture(this._gl, this.texture, 0);
+    _scope._render = function(framebuffer) {
+      this._gl.uniform1i(this._locations.uTex, 0);
       this._gl.uniform1f(this._locations.uFlpY, 1);
+      this.texture.isNeedToDraw(this._gl, this._renderTime) && this.texture.useTexture(0);
 
       this.clear();
 
@@ -43,7 +43,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
         var filter    = this.filters[i];
         var useFilter = filter && filter.on;
 
-        var framebuffer = null;
+        var filterFramebuffer = null;
 
         var isLast = i > minL;
 
@@ -53,17 +53,20 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           (filter.texture.isNeedToDraw(this._gl, this._renderTime) || this._currentFilterTexture !== filter.texture)
         ) {
           this._currentFilterTexture = filter.texture;
-          AGL.Utils.useActiveTexture(this._gl, filter.texture, 1);
+          this._gl.uniform1i(this._locations.uFTex, 1);
+          filter.texture.useTexture(1);
         }
 
         if (isLast) {
-          this._gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, null);
-          this._gl.uniform1f(this._locations.uFlpY, 1);
+          if (framebuffer) {
+            this._attachFramebuffer(framebuffer);
+          } else {
+            AGL.Utils.unbindFrameBuffer(this._gl);
+            this._gl.uniform1f(this._locations.uFlpY, 1);
+          }
         } else if (useFilter) {
-          framebuffer = this._framebuffers[i & 1];
-          framebuffer.isNeedToDraw(this._gl, this._renderTime);
-          this._gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, framebuffer.framebuffer);
-          this._gl.uniform1f(this._locations.uFlpY, -1);
+          filterFramebuffer = this._framebuffers[i & 1];
+          this._attachFramebuffer(filterFramebuffer);
         }
 
         if (useFilter) {
@@ -75,25 +78,19 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
         (useFilter || isLast) && this._gl.drawArrays({{AGL.Const.TRIANGLE_FAN}}, 0, 4);
 
-        framebuffer && AGL.Utils.bindActiveTexture(this._gl, framebuffer, 0);
+        filterFramebuffer && filterFramebuffer.useTexture(0);
       }
+
+      framebuffer && AGL.Utils.unbindFrameBuffer(this._gl);
+
+      this._gl.flush();
     }
 
     _scope.destruct = function() {
       this._framebuffers[0].destruct();
       this._framebuffers[1].destruct();
 
-      this._destructRenderer();
-
       _super.destruct.call(this);
-    }
-
-    var _superResize = _scope._resize;
-    _scope._resize = function() {
-      _superResize.call(this);
-
-      this._framebuffers[0].setSize(this._width, this._height);
-      this._framebuffers[1].setSize(this._width, this._height);
     }
 
     _scope._initCustom = function() {
@@ -101,14 +98,11 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
         new AGL.Framebuffer(),
         new AGL.Framebuffer()
       ];
-
-      this._gl.uniform1i(this._locations.uTex,  0);
-      this._gl.uniform1i(this._locations.uFTex, 1);
     }
   }
 );
 AGL.FilterRenderer.createVertexShader = function(config) {
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
 
   "in vec2 aPos;" +
 
@@ -126,7 +120,7 @@ AGL.FilterRenderer.createVertexShader = function(config) {
   "}";
 };
 AGL.FilterRenderer.createFragmentShader = function(config) {
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
 
   "uniform sampler2D uTex;" +
   "uniform sampler2D uFTex;" +

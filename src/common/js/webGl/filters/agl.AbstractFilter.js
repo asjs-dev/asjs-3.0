@@ -15,7 +15,7 @@ AGL.AbstractFilter = helpers.createPrototypeClass(
 
     this.intensity = intensity;
   },
-  function(_scope, _super) {
+  function(_scope) {
     helpers.property(_scope, "intensity", {
       get: function() { return this.v[0]; },
       set: function(v) { this.v[0] = v; }

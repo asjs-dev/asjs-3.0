@@ -1,18 +1,14 @@
 require("../NameSpace.js");
-require("./agl.RendererHelper.js");
+require("./agl.BaseRenderer.js");
 
 AGL.LightRenderer = helpers.createPrototypeClass(
-  helpers.BasePrototypeClass,
+  AGL.BaseRenderer,
   function LightRenderer(options) {
     options = options || {};
 
-    helpers.BasePrototypeClass.call(this);
-
-    var config = AGL.RendererHelper.initConfig({
-      contextAttributes : {
-        alpha              : true,
-        premultipliedAlpha : false
-      },
+    var config = AGL.Utils.initConfig({
+      canvas : options.canvas,
+      isOffscreen : true,
       locations : [
         "aMt",
         "aExt",
@@ -27,7 +23,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     config.lightNum = Math.max(0, options.lightNum || 1);
 
-    AGL.RendererHelper.constructor.call(this, config);
+    AGL.BaseRenderer.call(this, config);
 
     this.shadowMap = options.shadowMap;
     this.heightMap = options.heightMap;
@@ -37,75 +33,58 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     this.allowTransparency = options.allowTransparency === true;
   },
   function(_scope, _super) {
-    AGL.RendererHelper.body.call(_scope, _scope);
-
-    helpers.get(_scope, "stage",  function() { return this; });
-
     helpers.property(_scope, "shadowStart", {
       get: function() { return this._shadowStart; },
-      set: function(v) {
-        v = Math.max(0, Math.min(1, v || 0));
-        if (this._shadowStart !== v) {
-          this._shadowStart = v;
-          this._gl.uniform1f(this._locations.uDHS, v);
-        }
-      }
+      set: function(v) { this._shadowStart = Math.max(0, Math.min(1, v || 0)); }
     });
 
     helpers.property(_scope, "shadowLength", {
       get: function() { return this._shadowLength; },
-      set: function(v) {
-        v = Math.max(0, Math.min(1, v || 1));
-        if (this._shadowLength !== v) {
-          this._shadowLength = v;
-          this._gl.uniform1f(this._locations.uDHL, v);
-        }
-      }
+      set: function(v) { this._shadowLength = Math.max(0, Math.min(1, v || 1)); }
     });
 
     helpers.property(_scope, "allowTransparency", {
       get: function() { return this._allowTransparency; },
-      set: function(v) {
-        if (this._allowTransparency !== v) {
-          this._allowTransparency = v;
-          this._gl.uniform1f(this._locations.uAT, v ? 1 : 0);
-        }
-      }
+      set: function(v) { this._allowTransparency = v ? 1 : 0; }
     });
 
-    _scope._useShadowTexture = function(texture, id) {
+    _scope._useShadowTexture = function(texture, locationId, id, textureId) {
       if (texture) {
-        texture.isNeedToDraw(this._gl, this._renderTime) && AGL.Utils.useActiveTexture(this._gl, texture, id);
+        this._gl.uniform1i(this._locations[locationId], ++textureId);
+        texture.isNeedToDraw(this._gl, this._renderTime) && texture.useTexture(textureId);
         this._texturesEnabled[id] = 1;
       } else this._texturesEnabled[id] = 0;
+      return textureId;
     }
 
     _scope._render = function() {
-      this._useShadowTexture(this.shadowMap, 0);
-      this._useShadowTexture(this.heightMap, 1);
+      var textureId = -1;
+      textureId = this._useShadowTexture(this.shadowMap, "uTex",  0, textureId);
+      textureId = this._useShadowTexture(this.heightMap, "uHTex", 1, textureId);
 
       this._gl.uniform2fv(this._locations.uTE, this._texturesEnabled);
+
+      this._gl.uniform1f(this._locations.uDHS, this._shadowStart);
+      this._gl.uniform1f(this._locations.uDHL, this._shadowLength);
+      this._gl.uniform1f(this._locations.uAT, this._allowTransparency);
 
       this._bindArrayBuffer(this._lightBuffer,     this._lightData);
       this._bindArrayBuffer(this._extensionBuffer, this._extensionData);
 
+      this._gl.clearColor(0, 0, 0, 1);
       this._gl.clear({{AGL.Const.COLOR_BUFFER_BIT}});
+      this._useBlendMode(AGL.BlendMode.ADD);
       this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._lights.length);
-    }
 
-    _scope.destruct = function() {
-      this._destructRenderer();
-
-      _super.destruct.call(this);
+      this._gl.flush();
     }
 
     _scope.getLight = function(id) {
       return this._lights[id];
     }
 
-    var _superResize = _scope._resize;
     _scope._resize = function() {
-      _superResize.call(this);
+      _super._resize.call(this);
 
       this._gl.uniform4f(this._locations.uS, this._width, this._height, 1 / this._width, 1 / this._height);
     }
@@ -114,12 +93,9 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       this._gl.bindBuffer({{AGL.Const.ELEMENT_ARRAY_BUFFER}}, this._gl.createBuffer());
       this._gl.bufferData(
         {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
-        AGL.RendererHelper.pointsOrder,
+        AGL.Utils.pointsOrder,
         {{AGL.Const.STATIC_DRAW}}
       );
-
-      this._gl.uniform1i(this._locations.uTex,  0);
-      this._gl.uniform1i(this._locations.uHTex, 1);
 
       this._texturesEnabled = [0, 0];
 
@@ -134,14 +110,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       for (var i = 0; i < lightNum; ++i)
       this._lights.push(new AGL.Light(i, this._lightData, this._extensionData));
-
-      this._gl.clearColor(0, 0, 0, 1);
-      this._useBlendMode(AGL.BlendMode.ADD);
     }
   }
 );
 AGL.LightRenderer.createVertexShader = function(config) {
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
   "#define H vec4(1,-1,2,-2)\n" +
 
   "in vec2 aPos;" +
@@ -149,6 +122,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
   "in vec4 aExt;" +
 
   "uniform vec4 uS;" +
+  "uniform float uFlpY;" +
 
   "out vec2 vTCrd;" +
   "out vec4 vCrd;" +
@@ -178,6 +152,7 @@ AGL.LightRenderer.createVertexShader = function(config) {
       "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
       "vCrd.zw=vTCrd+((mt*vec3(1,1,1)).xy+H.xy)/H.zw;" +
     "}" +
+    "gl_Position.y*=uFlpY;" +
   "}";
 };
 AGL.LightRenderer.createFragmentShader = function(config) {
@@ -217,7 +192,7 @@ AGL.LightRenderer.createFragmentShader = function(config) {
     "}";
   }
 
-  return AGL.RendererHelper.createVersion(config.precision) +
+  return AGL.Utils.createVersion(config.precision) +
   "#define PI radians(180.)\n" +
 
   "in vec2 vTCrd;" +
