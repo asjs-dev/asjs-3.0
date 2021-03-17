@@ -23,6 +23,8 @@ require("./data/texture/agl.TextureInfo.js");
 require("./data/texture/agl.Texture.js");
 require("./data/texture/agl.Framebuffer.js");
 
+require("./utils/agl.Context.js");
+require("./utils/agl.Buffer.js");
 require("./utils/agl.Utils.js");
 
 require("./geom/agl.Matrix3.js");
@@ -40,7 +42,7 @@ require("./display/agl.Image.js");
 require("./display/agl.SmoothLight.js");
 
 require("./renderer/agl.BaseRenderer.js");
-require("./renderer/agl.BatchRendererBase.js");
+require("./renderer/agl.BaseBatchRenderer.js");
 require("./renderer/agl.FilterRenderer.js");
 require("./renderer/agl.LightRenderer.js");
 require("./renderer/agl.SimpleRenderer.js");

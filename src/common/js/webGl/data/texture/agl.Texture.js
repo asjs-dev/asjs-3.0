@@ -4,24 +4,28 @@ require("./agl.TextureInfo.js");
 AGL.Texture = helpers.createPrototypeClass(
   AGL.TextureInfo,
   function Texture(source, shouldUpdate) {
-    AGL.TextureInfo.call(this, shouldUpdate);
+    AGL.TextureInfo.call(this);
 
     /*
     this._source = null;
+    this._loaded =
     this.isVideo = false;
     */
 
     this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
 
-    this.source = source;
+    this.source       = source;
+    this.shouldUpdate = shouldUpdate;
+
+    this._currentRenderTime = 0;
 
     this._eventType;
   },
   function(_scope, _super) {
-    helpers.get(_scope, "width",  function() { return this._source[this._sourceWidthProperty] || 1; });
-    helpers.get(_scope, "height", function() { return this._source[this._sourceHeightProperty] || 1; });
+    helpers.get(_scope, "loaded", function() { return this._loaded; });
 
-    helpers.get(_scope, "renderSource", function() { return this._renderSource; });
+    helpers.get(_scope, "width",  function() { return this._getSourceWidth() || 1; });
+    helpers.get(_scope, "height", function() { return this._getSourceHeight() || 1; });
 
     helpers.property(_scope, "source", {
       get: function() { return this._source; },
@@ -51,12 +55,33 @@ AGL.Texture = helpers.createPrototypeClass(
       }
     });
 
-    _scope.useTexture = function(id) {
-      AGL.Utils.useActiveTexture(this.gl, this, id);
+    _scope.use = function(gl, id, renderTime, forceBind) {
+      if (this._isNeedToDraw(gl, renderTime)) this.useActiveTexture(gl, id);
+      else if (this._currenActivetId !== id || forceBind) this.bindActiveTexture(gl, id);
     }
 
-    _scope.isNeedToDraw = function(gl, renderTime) {
-      return _super.isNeedToDraw.call(this, gl, renderTime) || (this.isVideo && !this._source.paused);
+    _scope._isNeedToDraw = function(gl, renderTime) {
+      if (this._currentAglId < gl.agl_id) {
+        this._currentAglId = gl.agl_id;
+
+        this._baseTexture = gl.createTexture();
+
+        return true;
+      }
+
+      if (this.shouldUpdate && this._currentRenderTime < renderTime) {
+        this._currentRenderTime = renderTime;
+        return true;
+      }
+
+      if (this._currentUpdateId < this._updateId) {
+        this._currentUpdateId = this._updateId;
+        return true;
+      }
+
+      if (this.isVideo && !this._source.paused) return true;
+
+      return false;
     }
 
     _scope.destruct = function() {
@@ -68,25 +93,20 @@ AGL.Texture = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
+    _scope._getSourceWidth = function() {
+      return this._source ? this._source.naturalWidth  || this._source.videoWidth  || this._source.width : 0;
+    }
+
+    _scope._getSourceHeight = function() {
+      return this._source ? this._source.naturalHeight || this._source.videoHeight || this._source.height : 0;
+    }
+
     _scope._parseTextureSize = function() {
-      this._sourceWidthProperty  = "naturalWidth";
-      this._sourceHeightProperty = "naturalHeight";
-
-      if (!this._source[this._sourceWidthProperty]) {
-        this._sourceWidthProperty  = "videoWidth";
-        this._sourceHeightProperty = "videoHeight";
-      }
-
-      if (!this._source[this._sourceWidthProperty]) {
-        this._sourceWidthProperty  = "width";
-        this._sourceHeightProperty = "height";
-      }
-
-      this._loaded = this._source[this._sourceWidthProperty] > 0 && this._source[this._sourceHeightProperty] > 0;
+      this._loaded = this._getSourceWidth() > 0 && this._getSourceHeight() > 0;
       if (this._loaded) {
-        this._renderSource = this._source;
+        this.renderSource = this._source;
         ++this._updateId;
-      } else this._renderSource = null;
+      } else this.renderSource = null;
     }
 
     _scope._getSourceType = function() {

@@ -3,12 +3,10 @@ require("./agl.TextureInfo.js");
 
 AGL.Framebuffer = helpers.createPrototypeClass(
   AGL.TextureInfo,
-  function Framebuffer(shouldUpdate) {
-    AGL.TextureInfo.call(this, shouldUpdate);
+  function Framebuffer() {
+    AGL.TextureInfo.call(this, false);
 
-    //this.framebuffer = null;
-
-    this._framebufferTempId = AGL.Utils.info.maxTextureImageUnits - 1;
+    //this._framebuffer = null;
   },
   function(_scope, _super) {
     helpers.property(_scope, "width", {
@@ -36,60 +34,57 @@ AGL.Framebuffer = helpers.createPrototypeClass(
       this.height = h;
     }
 
-    _scope.destruct = function() {
-      this._destroyFramebuffer();
-
-      _super.destruct.call(this);
+    _scope.bind = function(gl) {
+      gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, this._framebuffer);
     }
 
-    _scope.useTexture = function(id) {
-      AGL.Utils.bindActiveTexture(this.gl, this, id);
+    _scope.unbind = function(gl) {
+      gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, null);
     }
 
-    _scope.isNeedToDraw = function(gl, renderTime) {
-      if (this.gl !== gl) {
+    _scope.use = function(gl, id) {
+      !this._update(gl, id) && this._currenActivetId !== id && this._use(gl, id);
+    }
 
-        this._destroyTexture();
-        this.baseTexture = gl.createTexture();
+    _scope._use = function(gl, id) {
+      this.activeTexture(gl, id);
+      gl.bindTexture(this.target, this._baseTexture);
+    }
 
-        AGL.Utils.useActiveTexture(gl, this, this._framebufferTempId);
+    _scope._update = function(gl, id) {
+      var result = false;
 
-        this._destroyFramebuffer();
-        this.framebuffer = gl.createFramebuffer();
+      if (this._currentAglId < gl.agl_id) {
+        this._currentAglId = gl.agl_id;
 
-        gl.bindFramebuffer({{AGL.Const.FRAMEBUFFER}}, this.framebuffer);
+        this._framebuffer = gl.createFramebuffer();
+
+        this._baseTexture = gl.createTexture();
+
+        this.useActiveTexture(gl, id);
+
+        this.bind(gl);
 
         gl.framebufferTexture2D(
           {{AGL.Const.FRAMEBUFFER}},
           {{AGL.Const.COLOR_ATTACHMENT0}},
           {{AGL.Const.TEXTURE_2D}},
-          this.baseTexture,
+          this._baseTexture,
           0
         );
 
-        this.gl = gl;
+        this.unbind(gl);
 
-        this._loaded = true;
-
-        return true;
-      }
-
-      if (this.shouldUpdate && this._currentRenderTime < renderTime) {
-        this._currentRenderTime = renderTime;
-        return true;
+        result = true;
       }
 
       if (this._currentUpdateId < this._updateId) {
         this._currentUpdateId = this._updateId;
-        AGL.Utils.useActiveTexture(gl, this, this._framebufferTempId);
-        return true;
+        this.useActiveTexture(gl, id);
+        result = true;
       }
 
-      return false;
-    }
-
-    _scope._destroyFramebuffer = function() {
-      AGL.Utils.destroyFramebuffer(this.gl, this.framebuffer);
+      return result;
     }
   }
 );

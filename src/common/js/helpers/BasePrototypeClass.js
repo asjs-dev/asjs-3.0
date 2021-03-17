@@ -5,11 +5,14 @@ require("./destructObjectFlat.js");
 helpers.BasePrototypeClass = helpers.BasePrototypeClass || helpers.createPrototypeClass(
   Object,
   function BasePrototypeClass() {},
-  function() {
-    this.destruct = function() {
+  function(_scope, _super) {
+    _scope.destruct = function() {
       helpers.destructObjectFlat(this);
+      helpers.destructObjectFlat(_super);
+      this.destruct = null;
     }
-    this.toObject  = function() {
+
+    _scope.toObject  = function() {
       return JSON.parse(JSON.stringify(this));
     }
   }

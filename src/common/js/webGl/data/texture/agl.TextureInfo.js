@@ -2,22 +2,21 @@ require("../../NameSpace.js");
 
 AGL.TextureInfo = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function TextureInfo(shouldUpdate) {
+  function TextureInfo() {
     helpers.BasePrototypeClass.call(this);
 
     /*
-    this._loaded     = false;
-    this.baseTexture =
-    this.gl          = null;
+    this._baseTexture  =
     */
 
     this.target = {{AGL.Const.TEXTURE_2D}};
 
-    this.shouldUpdate = shouldUpdate;
+    this._currenActivetId = -1;
+    this._currentAglId    =
+    this._updateId        =
+    this._currentUpdateId = 0;
 
-    this._updateId          =
-    this._currentUpdateId   =
-    this._currentRenderTime = 0;
+    this.renderSource = null;
 
     this.wrapS =
     this.wrapT = {{AGL.Const.CLAMP_TO_EDGE}};
@@ -30,9 +29,10 @@ AGL.TextureInfo = helpers.createPrototypeClass(
 
     this._width  =
     this._height = 1;
+
+    this.type = {{AGL.Const.UNSIGNED_BYTE}};
   },
   function(_scope, _super) {
-    helpers.get(_scope, "loaded", function() { return this._loaded; });
     helpers.get(_scope, "width",  function() { return this._width; });
     helpers.get(_scope, "height", function() { return this._height; });
 
@@ -50,37 +50,52 @@ AGL.TextureInfo = helpers.createPrototypeClass(
       }
     });
 
-    _scope.isNeedToDraw = function(gl, renderTime) {
-      if (this.gl !== gl) {
-        this._destroyTexture();
-
-        this.baseTexture = gl.createTexture();
-        this.gl          = gl;
-
-        return true;
-      }
-
-      if (this.shouldUpdate && this._currentRenderTime < renderTime) {
-        this._currentRenderTime = renderTime;
-        return true;
-      }
-
-      if (this._currentUpdateId < this._updateId) {
-        this._currentUpdateId = this._updateId;
-        return true;
-      }
-
-      return false;
+    _scope.useActiveTexture = function(gl, id) {
+      this.activeTexture(gl, id);
+      this.useTexture(gl);
     }
 
-    _scope.destruct = function() {
-      this._destroyTexture();
-
-      _super.destruct.call(this);
+    _scope.unbindTexture = function(gl, id) {
+      this.activeTexture(gl, id);
+      this._currenActivetId = -1;
+      gl.bindTexture(this.target, null);
     }
 
-    _scope._destroyTexture = function() {
-      AGL.Utils.destroyTexture(this.gl, this);
+    _scope.activeTexture = function(gl, id) {
+      this._currenActivetId = id;
+      gl.activeTexture({{AGL.Const.TEXTURE0}} + id);
+    }
+
+    _scope.bindActiveTexture = function(gl, id) {
+      this.activeTexture(gl, id);
+      gl.bindTexture(this.target, this._baseTexture);
+    }
+
+    _scope.useTexture = function(gl) {
+      gl.bindTexture(this.target, this._baseTexture);
+      this.uploadTexture(gl);
+    }
+
+    _scope.uploadTexture = function(gl) {
+      gl.texImage2D(
+        this.target,
+        0,
+        this.internalFormat,
+        this.width,
+        this.height,
+        0,
+        this.format,
+        this.type,
+        this.renderSource
+      );
+
+      gl.texParameteri(this.target, {{AGL.Const.TEXTURE_MAX_LEVEL}}, 0);
+      gl.generateMipmap(this.target);
+
+      gl.texParameteri(this.target, {{AGL.Const.TEXTURE_WRAP_S}},     this.wrapS);
+      gl.texParameteri(this.target, {{AGL.Const.TEXTURE_WRAP_T}},     this.wrapT);
+      gl.texParameteri(this.target, {{AGL.Const.TEXTURE_MIN_FILTER}}, this.minMipmapFilter);
+      gl.texParameteri(this.target, {{AGL.Const.TEXTURE_MAG_FILTER}}, this.magFilter);
     }
   }
 );

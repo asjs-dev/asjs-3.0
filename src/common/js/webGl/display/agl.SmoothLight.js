@@ -7,24 +7,28 @@ AGL.SmoothLight = helpers.createPrototypeClass(
 
     helpers.BasePrototypeClass.call(this);
 
-    //this._framebuffer = new AGL.Framebuffer(true);
+    this._framebuffer       = new AGL.Framebuffer();
+    this._filterFramebuffer = new AGL.Framebuffer();
 
     this.lightRenderer = new AGL.LightRenderer(options);
+    this.lightRenderer.clearColor.set(0, 0, 0, 1);
+    this.lightRenderer.clearBeforeRender = true;
 
     this._blurFilter = new AGL.BlurFilter();
 
     this.filterRenderer = new AGL.FilterRenderer({
-      /*config : {
-        canvas : this.lightRenderer.canvas,
+      config : {
+        context : this.lightRenderer.context,
       },
-      texture : this._framebuffer,*/
-      texture : new AGL.Texture(this.lightRenderer.canvas, true),
+      texture : this._framebuffer,
       filters : [
         this._blurFilter
       ]
     });
+    this.filterRenderer.clearColor.set(0, 0, 0, 0);
+    this.filterRenderer.clearBeforeRender = true;
 
-    this.image = new AGL.Image(new AGL.Texture(this.filterRenderer.canvas, true));
+    this.image = new AGL.Image(this._filterFramebuffer);
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     this.scale = options.scale || 1;
@@ -53,15 +57,10 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       }
     });
 
-    helpers.get(_scope, "isContextLost", function() {
-      return this.lightRenderer.isContextLost;
-    });
-
     _scope.render = function() {
       this._resizeFunc();
-      //this.lightRenderer.renderToTexture(this._framebuffer);
-      this.lightRenderer.render();
-      this.filterRenderer.render();
+      this.lightRenderer.renderToFramebuffer(this._framebuffer);
+      this.filterRenderer.renderToFramebuffer(this._filterFramebuffer);
     }
 
     _scope.setSize = function(w, h) {

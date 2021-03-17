@@ -1,4 +1,4 @@
-console.log("AGL 1.0");
+console.log("AGL 2.0 {{date}}");
 
 var F32A = Float32Array;
 
