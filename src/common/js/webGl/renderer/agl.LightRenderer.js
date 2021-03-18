@@ -91,7 +91,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       gl.uniform1f(locations.uDHL, this._shadowLength);
       gl.uniform1f(locations.uAT,  this._allowTransparency);
 
-      gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._lights.length);
+      this._drawInstanced(this._lights.length);
     }
 
     _scope._resize = function() {

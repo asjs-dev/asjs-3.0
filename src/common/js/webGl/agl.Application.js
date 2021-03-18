@@ -26,6 +26,7 @@ require("./data/texture/agl.Framebuffer.js");
 require("./utils/agl.Context.js");
 require("./utils/agl.Buffer.js");
 require("./utils/agl.Utils.js");
+require("./utils/agl.FPS.js");
 
 require("./geom/agl.Matrix3.js");
 require("./geom/agl.Point.js");

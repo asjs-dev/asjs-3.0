@@ -155,6 +155,10 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       return false;
     }
 
+    _scope._drawInstanced = function(count) {
+      this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, count);
+    }
+
     _scope._buildProgram = function() {
       var gl = this._gl;
 

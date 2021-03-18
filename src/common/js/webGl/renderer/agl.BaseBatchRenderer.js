@@ -68,7 +68,7 @@ AGL.BaseBatchRenderer = helpers.createPrototypeClass(
 
         this._gl.uniform1iv(this._locations.uTex, this._context.textureIds);
 
-        this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, this._batchItems);
+        this._drawInstanced(this._batchItems);
 
         this._batchItems = 0;
       }

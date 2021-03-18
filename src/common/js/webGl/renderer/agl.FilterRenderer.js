@@ -92,7 +92,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           gl.uniform1i(locations.uFtrST, filter.SUB_TYPE);
         }
 
-        (useFilter || isLast) && gl.drawArrays({{AGL.Const.TRIANGLE_FAN}}, 0, 4);
+        (useFilter || isLast) && this._drawInstanced(1);
 
         filterTexture && context.deactivateTexture(filterTexture);
 
