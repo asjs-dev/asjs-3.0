@@ -33,8 +33,10 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._enableBuffers = false;
 
     this._elementArrayBuffer = new AGL.Buffer(
-      AGL.Utils.pointsOrder,
-      "", 0, 0, 0,
+      new Uint16Array([
+        0, 1, 2, 3
+      ]),
+      "", 0, 0,
       {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
       {{AGL.Const.STATIC_DRAW}}
     );
@@ -46,15 +48,15 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
         1, 1,
         0, 1
       ]),
-      "aPos", 2, 1, 2,
+      "aPos", 1, 2,
       {{AGL.Const.ARRAY_BUFFER}},
       {{AGL.Const.STATIC_DRAW}},
       0
     );
 
     this._matrixBuffer = new AGL.Buffer(
-      new F32A(this._MAX_BATCH_ITEMS * 16),
-      "aMt", 16, 4, 4
+      this._MAX_BATCH_ITEMS,
+      "aMt", 4, 4
     );
   },
   function(_scope, _super) {
@@ -156,7 +158,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._drawInstanced = function(count) {
-      this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 6, {{AGL.Const.UNSIGNED_SHORT}}, 0, count);
+      this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 4, {{AGL.Const.UNSIGNED_SHORT}}, 0, count);
     }
 
     _scope._buildProgram = function() {

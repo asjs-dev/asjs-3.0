@@ -1,10 +1,10 @@
 require("../../NameSpace.js");
-require("./agl.AbstractPositioningProps.js");
+require("./agl.BasePositioningProps.js");
 
 AGL.ItemProps = helpers.createPrototypeClass(
-  AGL.AbstractPositioningProps,
+  AGL.BasePositioningProps,
   function ItemProps() {
-    AGL.AbstractPositioningProps.call(this);
+    AGL.BasePositioningProps.call(this);
 
     this._scaleUpdateId         =
     this._currentScaleUpdateId  = 0;

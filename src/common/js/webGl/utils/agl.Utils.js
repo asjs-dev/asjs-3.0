@@ -48,11 +48,6 @@ AGL.Utils = new (helpers.createPrototypeClass(
       };
     }
 
-    _scope.pointsOrder = new Uint16Array([
-      0, 1, 2,
-      0, 2, 3
-    ]);
-
     _scope.createVersion = function(precision) {
       return "#version 300 es\nprecision " + precision + " float;\n";
     }

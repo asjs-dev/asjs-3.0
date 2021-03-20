@@ -27,28 +27,28 @@ AGL.Stage2D = helpers.createPrototypeClass(
     var maxBatchItems = this._MAX_BATCH_ITEMS;
 
     this._parentColorBuffer = new AGL.Buffer(
-      new F32A(maxBatchItems * 4),
-      "aWrlCol", 4, 1, 4
+      maxBatchItems,
+      "aWrlCol", 1, 4
     );
 
     this._tintColorBuffer = new AGL.Buffer(
-      new F32A(maxBatchItems * 4),
-      "aTintCol", 4, 1, 4
+      maxBatchItems,
+      "aTintCol", 1, 4
     );
 
     this._alphaBuffer = new AGL.Buffer(
-      new F32A(maxBatchItems * 2),
-      "aAlpCol", 2, 1, 2
+      maxBatchItems,
+      "aAlpCol", 1, 2
     );
 
     this._effectBuffer = new AGL.Buffer(
-      new F32A(maxBatchItems * 2),
-      "aFx", 2, 1, 2
+      maxBatchItems,
+      "aFx", 1, 2
     );
 
     this._maskBuffer = new AGL.Buffer(
-      new F32A(maxBatchItems * 2),
-      "aMsk", 2, 1, 2
+      maxBatchItems,
+      "aMsk", 1, 2
     );
   },
   function(_scope, _super) {
@@ -139,9 +139,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "in vec4 aWrlCol;" +
       "in vec4 aTintCol;" +
       "in vec2 aAlpCol;" +
-
       "in vec2 aMsk;" +
-
       "in vec2 aFx;" +
 
       "uniform float uFlpY;" +

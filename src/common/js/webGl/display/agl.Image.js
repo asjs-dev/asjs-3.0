@@ -1,13 +1,13 @@
-require("./agl.AbstractDrawable.js");
+require("./agl.BaseDrawable.js");
 require("../NameSpace.js");
 require("../data/agl.BlendMode.js");
 require("../data/props/agl.TextureProps.js");
 require("../data/props/agl.TextureCrop.js");
 
 AGL.Image = helpers.createPrototypeClass(
-  AGL.AbstractDrawable,
+  AGL.BaseDrawable,
   function Image(texture) {
-    AGL.AbstractDrawable.call(this);
+    AGL.BaseDrawable.call(this);
 
     //this.mask = null;
     //this.interactive = false;
@@ -33,8 +33,8 @@ AGL.Image = helpers.createPrototypeClass(
     this.texture = texture;
   },
   function(_scope) {
-    _scope.update = function(renderTime) {
-      this._updateProps(renderTime);
+    _scope.update = function() {
+      this._updateProps();
       this._updateTexture();
       this.textureCrop.updateCrop();
     }

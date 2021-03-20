@@ -12,8 +12,8 @@ require("./NameSpace.js");
 
 require("./data/agl.BlendMode.js");
 
-require("./data/props/agl.AbstractProps.js");
-require("./data/props/agl.AbstractPositioningProps.js");
+require("./data/props/agl.BaseProps.js");
+require("./data/props/agl.BasePositioningProps.js");
 require("./data/props/agl.ColorProps.js");
 require("./data/props/agl.ItemProps.js");
 require("./data/props/agl.TextureCrop.js");
@@ -34,7 +34,7 @@ require("./geom/agl.Rect.js");
 
 require("./display/agl.BaseItem.js");
 require("./display/agl.Item.js");
-require("./display/agl.AbstractDrawable.js");
+require("./display/agl.BaseDrawable.js");
 require("./display/agl.Light.js");
 require("./display/agl.AnimatedImage.js");
 require("./display/agl.Container.js");
@@ -49,7 +49,7 @@ require("./renderer/agl.LightRenderer.js");
 require("./renderer/agl.SimpleRenderer.js");
 require("./renderer/agl.Stage2D.js");
 
-require("./filters/agl.AbstractFilter.js");
+require("./filters/agl.BaseFilter.js");
 
 require("./filters/agl.DisplacementFilter.js");
 require("./filters/agl.PixelateFilter.js");

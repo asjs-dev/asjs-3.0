@@ -12,6 +12,15 @@ helpers.createSingletonClass(ASJSUtils, "Language", ASJS.AbstractModel, function
 
   helpers.get(_scope, "defaultLanguage", function() { return _scope.get("defaultLanguage"); });
 
+  _scope.getLocalizationFor = function(data) {
+    var text = data[_scope.selectedLanguage];
+    if (!text) {
+      console.info("Missing translation (" + _scope.selectedLanguage + ") in:", data);
+      text = data[_scope.defaultLanguage];
+    }
+    return text;
+  };
+
   _scope.getText = function(k, o) {
     var i = _scope.get("elements")[k];
     if (!helpers.isEmpty(i) && (!helpers.isEmpty(i[_scope.selectedLanguage]) || !helpers.isEmpty(i[_scope.defaultLanguage]))) {
@@ -23,7 +32,7 @@ helpers.createSingletonClass(ASJSUtils, "Language", ASJS.AbstractModel, function
       }
       return text;
     }
-    console.warn("Missing translation:", k);
+    console.info("Missing translation:", k);
     return k;
   }
 });

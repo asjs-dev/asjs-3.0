@@ -38,12 +38,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     AGL.BaseRenderer.call(this, options.config);
 
     this._extensionBuffer = new AGL.Buffer(
-      new F32A(this._MAX_BATCH_ITEMS * 4),
-      "aExt", 4, 1, 4
+      this._MAX_BATCH_ITEMS,
+      "aExt", 1, 4
     );
 
     this._lights = [];
-
     for (var i = 0; i < this._MAX_BATCH_ITEMS; ++i)
       this._lights.push(new AGL.Light(i, this._matrixBuffer.data, this._extensionBuffer.data));
   },
@@ -69,8 +68,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     _scope._useShadowTexture = function(texture, locationId, id) {
       if (texture) {
-        this._context.useTextureAt(texture, id, this._renderTime, true);
-        this._gl.uniform1i(this._locations[locationId], id);
+        var textureId = this._context.useTexture(texture, this._renderTime, true);
+        this._gl.uniform1i(this._locations[locationId], textureId);
         this._texturesEnabled[id] = 1;
       } else this._texturesEnabled[id] = 0;
     }
@@ -131,6 +130,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "out mat4 vQ;" +
       "out vec4 vS;" +
       "out float vHS;" +
+      "out float vD;" +
+      "out float vSpt;" +
 
       "void main(void){" +
         "vec3 pos=vec3(aPos*2.-1.,1);" +
@@ -139,12 +140,14 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "vDat=aMt[3];" +
         "vCrd.xy=pos.xy;" +
         "vS=uS;" +
-        "vHS=clamp(.01,1.,vExt.z/1024.);" +
+        "vHS=vExt.z/1024.;" +
         "if(vExt.x<1.){" +
           "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
           "gl_Position=vec4(mt*pos,1);" +
           "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
           "vCrd.zw=((mt*vec3(0,0,1)).xy+H.xy)/H.zw;" +
+          "vD=aMt[1].z;" +
+          "vSpt=aMt[1].w;" +
         "}else{" +
           "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,-1,1,1);" +
           "gl_Position=vec4(pos,1);" +
@@ -156,6 +159,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     };
 
     _scope._createFragmentShader = function(config) {
+      var calcDistance = "if(isl){" +
+        "dst=length(vec3(vCrd.xy,((vHS-ph)*1024.)/vD));" +
+        "if(dst>1.||atan(length(vCrd.xy),vHS-ph)>vSpt)discard;" +
+      "}";
+
       var calcCoord = "vec2 p=vTCrd-i*m;";
 
       var calcHeight = "float pc=(i/dstTex)*mh;";
@@ -170,9 +178,10 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       function createLoop(core) {
         return "float st=vExt.w;" +
-        "float l=dstTex-vExt.w;" +
+        "float l=dstTex-st;" +
         "float umb=vDat.y;" +
-        "for(float i=st;i<l;++i){" +
+        "float lst=max(1.,dstTex/256.);" +
+        "for(float i=st;i<l;i+=lst){" +
           core +
           "i+=st+(i/dstTex)*umb;" +
         "}";
@@ -185,7 +194,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
             "mh-=ph;" +
             "sl-=ph;" +
           "}" +
-          "dst=isl?distance(vec3(0,0,vHS),vec3(vCrd.xy,ph)):distance(vec3(vTCrd,vHS),vec3(vCrd.zw,ph));" +
+          calcDistance +
           loopA +
         "}else{" +
           loopB +
@@ -202,6 +211,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "in vec4 vExt;" +
       "in vec4 vS;" +
       "in float vHS;" +
+      "in float vD;" +
+      "in float vSpt;" +
 
       "uniform sampler2D uTex;" +
       "uniform sampler2D uHTex;" +
@@ -216,13 +227,13 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "void main(void){" +
         "if(vDat.x==0.)discard;" +
         "bool isl=vExt.x<1.;" +
-        "float dst=1.;" +
-        "if(isl){" +
-          "dst=length(vCrd.xy);" +
-          "if(dst>1.||atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
-        "}" +
+        "float dst=0.;" +
+
+        "if(isl&&atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
+
         "vec3 rgb=vCol.rgb;" +
-        "if(vExt.y>0.&&(uTE.x>0.||uTE.y>0.)){" +
+        "if(vExt.y<1.||(uTE.x<1.&&uTE.y<1.))dst=length(vCrd.xy);" +
+        "else{" +
           "vec2 tCrd=vTCrd*vS.xy;" +
           "vec2 tCnt=vCrd.zw*vS.xy;" +
 
@@ -239,7 +250,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
             "tc=texture(uHTex,vTCrd);" +
             "ph=tc.b>0.?tc.g:0.;" +
             "mh-=ph;" +
-            "dst=isl?distance(vec3(0,0,vHS),vec3(vCrd.xy,ph)):distance(vec3(vTCrd,vHS),vec3(vCrd.zw,ph));" +
+            calcDistance +
             "if(uAT>0.&&uTE.x>0.){" +
               createLoop(
                 calcCoord +
@@ -295,8 +306,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
           "}" +
           "rgb=rgb*(1.-c.a)+c.rgb;" +
         "}" +
-        "float mp=clamp(1.-dst,0.,100.);" +
-        "fgCol=vec4(rgb*mp*vDat.z,1);" +
+        "fgCol=vec4(rgb*(1.-dst)*vDat.z,1);" +
       "}";
     };
   }

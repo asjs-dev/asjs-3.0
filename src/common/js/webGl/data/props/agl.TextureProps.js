@@ -1,10 +1,10 @@
 require("../../NameSpace.js");
-require("./agl.AbstractPositioningProps.js");
+require("./agl.BasePositioningProps.js");
 
 AGL.TextureProps = helpers.createPrototypeClass(
-  AGL.AbstractPositioningProps,
+  AGL.BasePositioningProps,
   function TextureProps() {
-    AGL.AbstractPositioningProps.call(this);
+    AGL.BasePositioningProps.call(this);
 
     this._width       =
     this._height      =

@@ -1,10 +1,10 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.BrightnessContrastFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function BrightnessContrastFilter(brightness, contrast) {
-    AGL.AbstractFilter.call(this, 2, 8, brightness);
+    AGL.BaseFilter.call(this, 2, 8, brightness);
 
     this.contrast = contrast;
   },

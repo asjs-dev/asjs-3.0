@@ -38,7 +38,7 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
     }
 
     _scope.update = function(renderTime) {
-      _super.update.call(this, renderTime);
+      _super.update.call(this);
       this.updateAnimation(renderTime);
     }
 

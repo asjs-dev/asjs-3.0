@@ -1,10 +1,10 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.EdgeDetectFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function EdgeDetectFilter(intensity) {
-    AGL.AbstractFilter.call(this, 1, 0, intensity);
+    AGL.BaseFilter.call(this, 1, 0, intensity);
 
     helpers.arraySet(this.kernels, [
       -1, -1, -1,

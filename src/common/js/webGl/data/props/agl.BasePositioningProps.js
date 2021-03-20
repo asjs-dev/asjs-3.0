@@ -1,10 +1,10 @@
 require("../../NameSpace.js");
-require("./agl.AbstractProps.js");
+require("./agl.BaseProps.js");
 
-AGL.AbstractPositioningProps = helpers.createPrototypeClass(
-  AGL.AbstractProps,
-  function AbstractPositioningProps() {
-    AGL.AbstractProps.call(this);
+AGL.BasePositioningProps = helpers.createPrototypeClass(
+  AGL.BaseProps,
+  function BasePositioningProps() {
+    AGL.BaseProps.call(this);
 
     this._rotationUpdateId        =
     this._currentRotationUpdateId =

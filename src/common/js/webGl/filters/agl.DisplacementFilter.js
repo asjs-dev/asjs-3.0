@@ -1,10 +1,10 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.DisplacementFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function DisplacementFilter(texture, intensity, x, y) {
-    AGL.AbstractFilter.call(this, 5, 0, intensity);
+    AGL.BaseFilter.call(this, 5, 0, intensity);
 
     this.texture = texture;
 

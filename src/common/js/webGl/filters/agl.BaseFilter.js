@@ -1,8 +1,8 @@
 require("../NameSpace.js");
 
-AGL.AbstractFilter = helpers.createPrototypeClass(
+AGL.BaseFilter = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function AbstractFilter(type, subType, intensity) {
+  function BaseFilter(type, subType, intensity) {
     helpers.BasePrototypeClass.call(this);
 
     this.TYPE     = type;

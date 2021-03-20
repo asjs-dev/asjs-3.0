@@ -57,11 +57,11 @@ AGL.Item = helpers.createPrototypeClass(
       _super.destruct.call(this);
     }
 
-    _scope.update = function(renderTime) {
-      this._updateProps(renderTime);
+    _scope.update = function() {
+      this._updateProps();
     }
 
-    _scope._updateProps = function(renderTime) {
+    _scope._updateProps = function() {
       var props = this.props;
           props.updateRotation();
           props.updateScale();

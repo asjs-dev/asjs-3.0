@@ -1,9 +1,9 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.PixelateFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function PixelateFilter(intensity) {
-    AGL.AbstractFilter.call(this, 4, 0, intensity);
+    AGL.BaseFilter.call(this, 4, 0, intensity);
   }
 );

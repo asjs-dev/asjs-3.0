@@ -2,22 +2,24 @@ require("../NameSpace.js");
 
 AGL.Buffer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function Buffer(data, locationName, length, num, size, target, type, divisor) {
+  function Buffer(data, locationName, rows, cols, target, type, divisor) {
     helpers.BasePrototypeClass.call(this);
 
     /*
     this._buffer = null;
     */
 
-    this.data          = data;
+    var length = rows * cols;
+
+    this.data          = typeof data === "number" ? new F32A(data * length) : data;
     this._locationName = locationName;
+    this._rows         = rows;
+    this._cols         = cols;
     this._length       = length * 4;
-    this._num          = num;
-    this._size         = size;
-    this._byteSize     = size * 4;
+    this._byteSize     = cols * 4;
     this._target       = target || {{AGL.Const.ARRAY_BUFFER}};
     this._type         = type   || {{AGL.Const.DYNAMIC_DRAW}};
-    this._divisor      = helpers.isEmpty(divisor) ? 1 : 0;
+    this._divisor      = typeof divisor === "number" ? divisor : 1;
   },
   function(_scope) {
     _scope.create = function(gl) {
@@ -43,9 +45,9 @@ AGL.Buffer = helpers.createPrototypeClass(
     _scope._enable = function(gl, locations) {
       var location = locations[this._locationName];
       var i = -1;
-      while (++i < this._num) {
+      while (++i < this._rows) {
         var loc = location + i;
-        gl.vertexAttribPointer(loc, this._size, {{AGL.Const.FLOAT}}, false, this._length, i * this._byteSize);
+        gl.vertexAttribPointer(loc, this._cols, {{AGL.Const.FLOAT}}, false, this._length, i * this._byteSize);
         gl.vertexAttribDivisor(loc, this._divisor);
         gl.enableVertexAttribArray(loc);
       }

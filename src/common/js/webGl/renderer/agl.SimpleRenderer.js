@@ -13,8 +13,8 @@ AGL.SimpleRenderer = helpers.createPrototypeClass(
     AGL.BaseBatchRenderer.call(this, options);
 
     this._textureIdBuffer = new AGL.Buffer(
-      new F32A(this._MAX_BATCH_ITEMS),
-      "aTexId", 1, 1, 1
+      this._MAX_BATCH_ITEMS,
+      "aTexId", 1, 1
     );
   },
   function(_scope, _super) {

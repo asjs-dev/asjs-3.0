@@ -1,9 +1,9 @@
 require("./agl.Item.js");
 require("../NameSpace.js");
 
-AGL.AbstractDrawable = helpers.createPrototypeClass(
+AGL.BaseDrawable = helpers.createPrototypeClass(
   AGL.Item,
-  function AbstractDrawable(texture) {
+  function BaseDrawable(texture) {
     AGL.Item.call(this);
 
     this._inverseMatrixCache = new F32A(6);

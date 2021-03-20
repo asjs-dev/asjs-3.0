@@ -94,8 +94,8 @@ AGL.Container = helpers.createPrototypeClass(
       return bounds;
     }
 
-    _scope.update = function(renderTime) {
-      this._updateProps(renderTime);
+    _scope.update = function() {
+      this._updateProps();
       this._updateColor();
     }
 

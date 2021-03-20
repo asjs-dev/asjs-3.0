@@ -1,9 +1,9 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.SepiaFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function SepiaFilter() {
-    AGL.AbstractFilter.call(this, 2, 2);
+    AGL.BaseFilter.call(this, 2, 2);
   }
 );

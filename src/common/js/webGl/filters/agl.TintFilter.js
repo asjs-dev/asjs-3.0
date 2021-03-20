@@ -1,10 +1,10 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.TintFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function TintFilter(intensity, r, g, b) {
-    AGL.AbstractFilter.call(this, 2, 4, intensity);
+    AGL.BaseFilter.call(this, 2, 4, intensity);
 
     this.r = r;
     this.g = g;

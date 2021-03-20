@@ -1,9 +1,9 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.InvertFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function InvertFilter() {
-    AGL.AbstractFilter.call(this, 2, 3);
+    AGL.BaseFilter.call(this, 2, 3);
   }
 );

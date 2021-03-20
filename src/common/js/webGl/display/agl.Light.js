@@ -1,14 +1,14 @@
-require("./agl.AbstractDrawable.js");
+require("./agl.BaseDrawable.js");
 require("../NameSpace.js");
 
 AGL.Light = helpers.createPrototypeClass(
-  AGL.AbstractDrawable,
+  AGL.BaseDrawable,
   function Light(
     id,
     lightData,
     extensionData
   ) {
-    AGL.AbstractDrawable.call(this);
+    AGL.BaseDrawable.call(this);
 
     this.color.a = 0;
 
@@ -21,7 +21,8 @@ AGL.Light = helpers.createPrototypeClass(
     this._lightData     = lightData;
     this._extensionData = extensionData;
 
-    this.angle      = 360 * Math.PI / 180;
+    this.angle      =
+    this.spotAngle  = 360 * Math.PI / 180;
     this.castShadow = true;
     this.type       = AGL.Light.Type.SPOT;
     this.precision  = 1;
@@ -53,6 +54,11 @@ AGL.Light = helpers.createPrototypeClass(
       set: function(v) { this._lightData[this._datId + 3] = v; }
     });
 
+    helpers.property(_scope, "spotAngle", {
+      get: function() { return this._lightData[this._matId + 7]; },
+      set: function(v) { this._lightData[this._matId + 7] = v; }
+    });
+
     _scope.isOn = function() {
       return this.renderable && this.stage !== null;
     }
@@ -82,17 +88,21 @@ AGL.Light = helpers.createPrototypeClass(
       d.y += (d.y - b.y);
     }
 
-    _scope.update = function(renderTime) {
+    _scope.update = function() {
       var lightData = this._lightData;
 
       var datId = this._datId;
 
       if (this.isOn()) {
-        this._updateProps(renderTime);
+        this.props.height = this.props.width;
+
+        this._updateProps();
         this._updateColor();
 
         lightData[datId]     = lightData[datId - 1] > 0 ? 1 : 0;
         lightData[datId + 2] = this.props.alpha;
+
+        lightData[this._matId + 6] = this.props.width;
 
         this._extensionData[this._extId + 2] = this.props.z;
       } else lightData[datId] = 0;

@@ -1,10 +1,10 @@
 require("../NameSpace.js");
-require("./agl.AbstractFilter.js");
+require("./agl.BaseFilter.js");
 
 AGL.VignetteFilter = helpers.createPrototypeClass(
-  AGL.AbstractFilter,
+  AGL.BaseFilter,
   function VignetteFilter(intensity, roundness, transition, r, g, b) {
-    AGL.AbstractFilter.call(this, 2, 6, intensity);
+    AGL.BaseFilter.call(this, 2, 6, intensity);
 
     this.roundness  = roundness;
     this.transition = transition;

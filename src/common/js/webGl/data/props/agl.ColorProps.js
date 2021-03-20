@@ -1,10 +1,10 @@
 require("../../NameSpace.js");
-require("./agl.AbstractProps.js");
+require("./agl.BaseProps.js");
 
 AGL.ColorProps = helpers.createPrototypeClass(
-  AGL.AbstractProps,
+  AGL.BaseProps,
   function ColorProps() {
-    AGL.AbstractProps.call(this);
+    AGL.BaseProps.call(this);
 
     this.items = [1, 1, 1, 1];
   },

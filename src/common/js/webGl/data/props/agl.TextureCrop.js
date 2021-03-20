@@ -1,10 +1,10 @@
 require("../../NameSpace.js");
-require("./agl.AbstractProps.js");
+require("./agl.BaseProps.js");
 
 AGL.TextureCrop = helpers.createPrototypeClass(
-  AGL.AbstractProps,
+  AGL.BaseProps,
   function TextureCrop() {
-    AGL.AbstractProps.call(this);
+    AGL.BaseProps.call(this);
 
     this._currentUpdateId = 0;
 
