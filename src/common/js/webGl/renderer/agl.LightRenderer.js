@@ -141,17 +141,18 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "vCrd.xy=pos.xy;" +
         "vS=uS;" +
         "vHS=vExt.z/1024.;" +
+        "mat3 mt;" +
         "if(vExt.x<1.){" +
-          "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+          "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
           "gl_Position=vec4(mt*pos,1);" +
           "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
-          "vCrd.zw=((mt*vec3(0,0,1)).xy+H.xy)/H.zw;" +
+          "vCrd.zw=(aMt[1].xy+H.xy)/H.zw;" +
           "vD=aMt[1].z;" +
           "vSpt=aMt[1].w;" +
         "}else{" +
-          "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,-1,1,1);" +
+          "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,-1,1,1);" +
           "gl_Position=vec4(pos,1);" +
-          "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
+          "vTCrd=vec2(aPos.x,1.-aPos.y);" +
           "vCrd.zw=vTCrd+((mt*vec3(1,1,1)).xy+H.xy)/H.zw;" +
         "}" +
         "gl_Position.y*=uFlpY;" +
@@ -161,12 +162,20 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     _scope._createFragmentShader = function(config) {
       var calcDistance = "if(isl){" +
         "dst=length(vec3(vCrd.xy,((vHS-ph)*1024.)/vD));" +
-        "if(dst>1.||atan(length(vCrd.xy),vHS-ph)>vSpt)discard;" +
+        "if(" +
+          "dst>1.||" +
+          "(vSpt<PI&&atan(vHS-ph,length(vCrd.xy))+PIH<PI-vSpt)" +
+        ")discard;" +
+        "if(vDat.w<PI&&atan(vCrd.x,length(vec2(vHS-ph,vCrd.y)))+PIH<PI-vDat.w)dst*=1.5;" +
       "}";
 
       var calcCoord = "vec2 p=vTCrd-i*m;";
 
       var calcHeight = "float pc=(i/dstTex)*mh;";
+
+      var heightCheck = "tc=texture(uHTex,p);" +
+      "if(tc.b>0.){" +
+        "tc.rg-=ph;";
 
       var transparencyCheck =
       "tc=texture(uTex,p);" +
@@ -180,7 +189,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         return "float st=vExt.w;" +
         "float l=dstTex-st;" +
         "float umb=vDat.y;" +
-        "float lst=max(1.,dstTex/256.);" +
+        "float lst=max(1.,dstTex/128.);" +
         "for(float i=st;i<l;i+=lst){" +
           core +
           "i+=st+(i/dstTex)*umb;" +
@@ -203,6 +212,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       return AGL.Utils.createVersion(config.precision) +
       "#define PI radians(180.)\n" +
+      "#define PIH radians(90.)\n" +
 
       "in vec2 vTCrd;" +
       "in vec4 vCrd;" +
@@ -229,7 +239,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "bool isl=vExt.x<1.;" +
         "float dst=0.;" +
 
-        "if(isl&&atan(vCrd.y,vCrd.x)+PI>vDat.w)discard;" +
+        "if(isl&&vDat.w<PI&&abs(atan(vCrd.y,vCrd.x))>vDat.w)discard;" +
 
         "vec3 rgb=vCol.rgb;" +
         "if(vExt.y<1.||(uTE.x<1.&&uTE.y<1.))dst=length(vCrd.xy);" +
@@ -254,9 +264,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
             "if(uAT>0.&&uTE.x>0.){" +
               createLoop(
                 calcCoord +
-                "tc=texture(uHTex,p);" +
-                "if(tc.b>0.){" +
-                  "tc.rg-=ph;" +
+                heightCheck +
                   calcHeight +
                   "if(tc.x<=pc&&tc.y>=pc){" +
                     transparencyCheck +
@@ -266,9 +274,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
             "}else{" +
               createLoop(
                 calcCoord +
-                "tc=texture(uHTex,p);" +
-                "if(tc.b>0.){" +
-                  "tc.rg-=ph;" +
+                heightCheck +
                   calcHeight +
                   "if(tc.x<=pc&&tc.y>=pc)discard;" +
                 "}"

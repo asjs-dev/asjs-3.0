@@ -78,10 +78,8 @@ AGL.Context = helpers.createPrototypeClass(
       this.textureIds.length  = 0;
     }
 
-    _scope.useTexture = function(textureInfo, renderTime, forceBind, requiredSlotNumber, callback) {
+    _scope.useTexture = function(textureInfo, renderTime, forceBind, callback) {
       if (!textureInfo) return -1;
-
-      requiredSlotNumber = requiredSlotNumber || 0;
 
       var textureId = this._textureMap.indexOf(textureInfo);
       if (textureId < 0) {
@@ -89,7 +87,7 @@ AGL.Context = helpers.createPrototypeClass(
         forceBind = true;
       }
 
-      if (this._emptyTextureSlots.length <= requiredSlotNumber) {
+      if (this._emptyTextureSlots.length < 1) {
         callback && callback();
         this.clearTextures();
         textureId = 0;
@@ -147,7 +145,7 @@ AGL.Context = helpers.createPrototypeClass(
       gl.agl_id = this.contextId;
 
       this._loseContextExt = gl.getExtension('WEBGL_lose_context');
-      
+
       gl.pixelStorei({{AGL.Const.UNPACK_PREMULTIPLY_ALPHA_WEBGL}}, true);
       gl.enable({{AGL.Const.BLEND}});
       gl.enable({{AGL.Const.SCISSOR_TEST}});

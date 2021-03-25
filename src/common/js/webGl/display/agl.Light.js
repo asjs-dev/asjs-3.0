@@ -22,7 +22,7 @@ AGL.Light = helpers.createPrototypeClass(
     this._extensionData = extensionData;
 
     this.angle      =
-    this.spotAngle  = 360 * Math.PI / 180;
+    this.spotAngle  = 180 * AGL.Utils.THETA;
     this.castShadow = true;
     this.type       = AGL.Light.Type.SPOT;
     this.precision  = 1;

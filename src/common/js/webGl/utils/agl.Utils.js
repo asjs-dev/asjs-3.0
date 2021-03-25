@@ -5,14 +5,14 @@ AGL.Utils = new (helpers.createPrototypeClass(
   function Utils() {
     helpers.BasePrototypeClass.call(this);
 
+    this.THETA = Math.PI / 180;
+
     this.loadVertexShader   = this.loadShader.bind(this, {{AGL.Const.VERTEX_SHADER}});
     this.loadFragmentShader = this.loadShader.bind(this, {{AGL.Const.FRAGMENT_SHADER}});
 
     this.info = {
       isWebGl2Supported : false
     };
-
-    window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
   },
   function(_scope) {
     _scope.initContextConfig = function(config) {
@@ -37,12 +37,7 @@ AGL.Utils = new (helpers.createPrototypeClass(
     _scope.initRendererConfig = function(config, target) {
       config = config || {};
       return {
-        locations : (config.locations || []).concat([
-          "aMt",
-          "uFlpY",
-          "aPos",
-          "uTex"
-        ]),
+        locations : config.locations || [],
         precision : config.precision || "lowp", /* lowp mediump highp */
         context   : config.context   || new AGL.Context()
       };
@@ -51,31 +46,6 @@ AGL.Utils = new (helpers.createPrototypeClass(
     _scope.createVersion = function(precision) {
       return "#version 300 es\nprecision " + precision + " float;\n";
     }
-
-    _scope.createGetTextureFunction = function(maxTextureImageUnits) {
-      var func =
-      "vec4 gtTexCol(float i,vec2 c){" +
-        "if(i<0.)return vec4(1);";
-
-      for (var i = 0; i < maxTextureImageUnits; ++i) func +=
-        "else if(i<" + (i + 1) + ".)return texture(uTex[" + i + "],c);";
-
-      func +=
-        "return vec4(0);" +
-      "}";
-      return func;
-    };
-
-    _scope.getTexColor = "fgCol=gtTexCol(vTexId,vTexCrop.xy+vTexCrop.zw*mod(vTCrd,1.));";
-
-    _scope.calcGlPositions =
-      "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
-      "mat3 tMt=mat3(aMt[1].zw,0,aMt[2].xy,0,aMt[2].zw,1);" +
-      "vec3 pos=vec3(aPos,1);" +
-      "gl_Position=vec4(mt*pos,1);" +
-      "gl_Position.y*=uFlpY;" +
-      "vTCrd=(tMt*pos).xy;" +
-      "vTexCrop=aMt[3];";
 
     _scope.initApplication = function(callback) {
       function checkCanvas(inited) {
@@ -158,14 +128,6 @@ AGL.Utils = new (helpers.createPrototypeClass(
 
     _scope.isPowerOf2 = function(value) {
       return (value & (value - 1)) == 0;
-    }
-
-    _scope.onBeforeUnload = function() {
-      this.loadVertexShader   =
-      this.loadFragmentShader =
-      this.info               = null;
-
-      this.destruct();
     }
   }
 ))();

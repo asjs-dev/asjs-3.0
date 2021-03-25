@@ -27,6 +27,13 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._resizeId         =
     this._currentResizeId  = 0;
 
+    config.locations = config.locations.concat([
+      "aMt",
+      "uFlpY",
+      "aPos",
+      "uTex"
+    ]);
+
     this._config  = config;
     this._context = config.context;
 

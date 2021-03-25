@@ -43,15 +43,14 @@ require("./display/agl.Image.js");
 require("./display/agl.SmoothLight.js");
 
 require("./renderer/agl.BaseRenderer.js");
-require("./renderer/agl.BaseBatchRenderer.js");
 require("./renderer/agl.FilterRenderer.js");
 require("./renderer/agl.LightRenderer.js");
-require("./renderer/agl.SimpleRenderer.js");
 require("./renderer/agl.Stage2D.js");
 
 require("./filters/agl.BaseFilter.js");
 
 require("./filters/agl.DisplacementFilter.js");
+require("./filters/agl.MaskFilter.js");
 require("./filters/agl.PixelateFilter.js");
 
 require("./filters/agl.EdgeDetectFilter.js");

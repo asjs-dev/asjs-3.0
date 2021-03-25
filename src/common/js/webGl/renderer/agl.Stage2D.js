@@ -1,22 +1,40 @@
 require("../NameSpace.js");
-require("./agl.BaseBatchRenderer.js");
 require("../display/agl.Item.js");
 require("../geom/agl.Matrix3.js");
+require("../data/agl.BlendMode.js");
+require("../display/agl.Item.js");
+require("../display/agl.Container.js");
+require("../display/agl.StageContainer.js");
+require("../utils/agl.Utils.js");
+require("./agl.BaseRenderer.js");
 
 AGL.Stage2D = helpers.createPrototypeClass(
-  AGL.BaseBatchRenderer,
+  AGL.BaseRenderer,
   function Stage2D(options) {
     options                  = options || {};
     options.config           = AGL.Utils.initRendererConfig(options.config, AGL.Stage2D);
     options.config.locations = options.config.locations.concat([
-      "aWrlCol",
-      "aTintCol",
-      "aAlpCol",
-      "aFx",
-      "aMsk"
+      "aWCol",
+      "aTCol",
+      "aACol",
+      "aFx"
     ]);
 
-    AGL.BaseBatchRenderer.call(this, options);
+    this._container = new AGL.StageContainer(this);
+
+    var maxBatchItems = this._MAX_BATCH_ITEMS = Math.max(1, options.maxBatchItems || 1e4);
+
+    this._batchItems = 0;
+
+    AGL.BaseRenderer.call(this, options.config);
+
+    this._drawFunctionMap = {};
+    this._drawFunctionMap[AGL.Item.TYPE]      = helpers.emptyFunction;
+    this._drawFunctionMap[AGL.Image.TYPE]     = this._drawImage.bind(this);
+    this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
+
+    this._batchDrawBound = this._batchDraw.bind(this);
+
     /*
     this.picked;
     this._isPickerSet = false;
@@ -24,34 +42,29 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     this.pickerPoint = AGL.Point.create();
 
-    var maxBatchItems = this._MAX_BATCH_ITEMS;
-
     this._parentColorBuffer = new AGL.Buffer(
       maxBatchItems,
-      "aWrlCol", 1, 4
+      "aWCol", 1, 4
     );
 
     this._tintColorBuffer = new AGL.Buffer(
       maxBatchItems,
-      "aTintCol", 1, 4
+      "aTCol", 1, 4
     );
 
     this._alphaBuffer = new AGL.Buffer(
       maxBatchItems,
-      "aAlpCol", 1, 2
+      "aACol", 1, 2
     );
 
     this._effectBuffer = new AGL.Buffer(
       maxBatchItems,
-      "aFx", 1, 2
-    );
-
-    this._maskBuffer = new AGL.Buffer(
-      maxBatchItems,
-      "aMsk", 1, 2
+      "aFx", 1, 4
     );
   },
   function(_scope, _super) {
+    helpers.get(_scope, "container", function() { return this._container; });
+
     _scope.render = function() {
       this.picked = null;
 
@@ -67,24 +80,31 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this.pickerPoint.y = (point.y - this.heightHalf) * this.matrixCache[4];
     }
 
-    _scope._drawImageCustomSettings = function(item) {
+    _scope._render = function() {
+      this._drawItem(this._container);
+      this._batchDraw();
+    }
+
+    _scope._drawItem = function(item) {
+      item.update(this._renderTime);
+      item.callback(item, this._renderTime);
+      item.renderable && this._drawFunctionMap[item.TYPE](item);
+    }
+
+    _scope._drawContainer = function(container) {
+      var children = container.children;
+      var l = children.length;
+      for (var i = 0; i < l; ++i) this._drawItem(children[i]);
+    }
+
+    _scope._drawImage = function(item) {
+      this._context.setBlendMode(item.blendMode, this._batchDrawBound);
+
       if (
         this._isPickerSet &&
         item.interactive &&
         item.isContainsPoint(this.pickerPoint)
       ) this.picked = item;
-
-      var maskId = this._batchItems * 2;
-      if (item.mask) {
-        this._maskBuffer.data[maskId] = this._context.useTexture(
-          item.mask,
-          this._renderTime,
-          false,
-          1,
-          this._batchDrawBound
-        );
-        this._maskBuffer.data[maskId + 1] = item.maskType;
-      } else this._maskBuffer.data[maskId] = -1;
 
       var quadId = this._batchItems * 4;
       var duoId  = this._batchItems * 2;
@@ -95,14 +115,42 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._alphaBuffer.data[duoId]     = item.props.alpha;
       this._alphaBuffer.data[duoId + 1] = item.parent.props.alpha;
 
-      this._effectBuffer.data[duoId] = this._context.useTexture(
+      this._effectBuffer.data[quadId] = this._context.useTexture(
         item.texture,
         this._renderTime,
         false,
-        0,
         this._batchDrawBound
       );
-      this._effectBuffer.data[duoId + 1] = item.tintType;
+      this._effectBuffer.data[quadId + 1] = item.tintType;
+
+      var matId  = this._batchItems * 16;
+
+      helpers.arraySet(this._matrixBuffer.data, item.matrixCache,        matId);
+      helpers.arraySet(this._matrixBuffer.data, item.textureMatrixCache, matId + 6);
+      helpers.arraySet(this._matrixBuffer.data, item.textureCropCache,   matId + 12);
+
+      ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
+    }
+
+    _scope._batchDraw = function() {
+      if (this._batchItems > 0) {
+        this._uploadBuffers();
+
+        this._gl.uniform1iv(this._locations.uTex, this._context.textureIds);
+
+        this._drawInstanced(this._batchItems);
+
+        this._batchItems = 0;
+      }
+    }
+
+    _scope._resize = function() {
+      var isResized = _super._resize.call(this);
+      if (isResized) {
+        AGL.Matrix3.projection(this._width, this._height, this._container.parent.matrixCache);
+        ++this._container.parent.propsUpdateId;
+      }
+      return isResized;
     }
 
     _scope._uploadBuffers = function() {
@@ -114,7 +162,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._tintColorBuffer.upload(gl,   enableBuffers, locations);
       this._alphaBuffer.upload(gl,       enableBuffers, locations);
       this._effectBuffer.upload(gl,      enableBuffers, locations);
-      this._maskBuffer.upload(gl,        enableBuffers, locations);
 
       _super._uploadBuffers.call(this);
     }
@@ -128,7 +175,6 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._tintColorBuffer.create(gl);
       this._alphaBuffer.create(gl);
       this._effectBuffer.create(gl);
-      this._maskBuffer.create(gl);
     }
 
     _scope._createVertexShader = function(config) {
@@ -136,93 +182,84 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       "in vec2 aPos;" +
       "in mat4 aMt;" +
-      "in vec4 aWrlCol;" +
-      "in vec4 aTintCol;" +
-      "in vec2 aAlpCol;" +
-      "in vec2 aMsk;" +
-      "in vec2 aFx;" +
+      "in vec4 aWCol;" +
+      "in vec4 aTCol;" +
+      "in vec2 aACol;" +
+      "in vec4 aFx;" +
 
       "uniform float uFlpY;" +
 
       "out vec2 vTCrd;" +
-
-      "out float vMskTexId;" +
-      "flat out int vMskTp;" +
-      "out vec2 vMskCrd;" +
-
       "out vec4 vTexCrop;" +
-      "out vec4 vWrlCol;" +
-      "out vec4 vTintCol;" +
-      "out float vAlpCol;" +
+      "out mat2x4 vCol;" +
+      "out float vACol;" +
       "out float vTexId;" +
-      "out float vTintTp;" +
-      "out vec2 vGlPos;" +
+      "out float vTTp;" +
 
       "void main(void){" +
-        AGL.Utils.calcGlPositions +
-        "vGlPos=gl_Position.xy;" +
-        "vWrlCol=aWrlCol;" +
-        "vTintCol=vec4(aTintCol.rgb*aTintCol.a,1.-aTintCol.a);" +
-        "vAlpCol=aAlpCol.x*aAlpCol.y;" +
+        "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+        "mat3 tMt=mat3(aMt[1].zw,0,aMt[2].xy,0,aMt[2].zw,1);" +
+        "vec3 pos=vec3(aPos,1);" +
+        "gl_Position=vec4(mt*pos,1);" +
+        "gl_Position.y*=uFlpY;" +
+        "vTCrd=(tMt*pos).xy;" +
+        "vTexCrop=aMt[3];" +
+
+        "vCol=mat2x4(aWCol,aTCol.rgb*aTCol.a,1.-aTCol.a);" +
+        "vACol=aACol.x*aACol.y;" +
 
         "vTexId=aFx.x;" +
-        "vTintTp=aFx.y;" +
-
-        "vMskTexId=aMsk.x;" +
-        "vMskTp=int(aMsk.y);" +
-        "vMskCrd=(vGlPos+vec2(1,-uFlpY))/vec2(2,-2.*uFlpY);" +
-
+        "vTTp=aFx.y;" +
       "}";
     };
 
     _scope._createFragmentShader = function(config) {
+      function createGetTextureFunction(maxTextureImageUnits) {
+        var func =
+        "vec4 gtTexCol(float i,vec2 c){" +
+          "if(i<0.)return vec4(1);";
+
+        for (var i = 0; i < maxTextureImageUnits; ++i) func +=
+          "else if(i<" + (i + 1) + ".)return texture(uTex[" + i + "],c);";
+
+        func +=
+          "return vec4(0);" +
+        "}";
+        return func;
+      }
+
       var maxTextureImageUnits = AGL.Utils.info.maxTextureImageUnits;
 
       return AGL.Utils.createVersion(config.precision) +
 
-      "in float vMskTexId;" +
-      "flat in int vMskTp;" +
-      "in vec2 vMskCrd;" +
-
       "in vec2 vTCrd;" +
       "in vec4 vTexCrop;" +
-      "in vec4 vWrlCol;" +
-      "in vec4 vTintCol;" +
-      "in float vAlpCol;" +
+      "in mat2x4 vCol;" +
+      "in float vACol;" +
       "in float vTexId;" +
-      "in float vTintTp;" +
-      "in vec2 vGlPos;" +
+      "in float vTTp;" +
 
       "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
 
       "out vec4 fgCol;" +
 
-      AGL.Utils.createGetTextureFunction(maxTextureImageUnits) +
+      createGetTextureFunction(maxTextureImageUnits) +
 
       "void main(void){" +
-        AGL.Utils.getTexColor +
-        "if(vAlpCol==0.||fgCol.a==0.)discard;" +
-
-        "float mskA=1.;" +
-        "if(vMskTexId>-1.){" +
-          "vec4 mskCol=gtTexCol(vMskTexId,vMskCrd);" +
-          "mskA=vMskTp<4" +
-            "?mskCol[vMskTp]" +
-            ":(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
-        "}" +
-
-        "fgCol.a*=vAlpCol*mskA;" +
+        "fgCol=gtTexCol(vTexId,vTexCrop.xy+vTexCrop.zw*mod(vTCrd,1.));" +
+        "fgCol.a*=vACol;" +
 
         "if(fgCol.a==0.)discard;" +
 
-        "if(vTintTp>0.){" +
-          "vec3 col=vTintCol.rgb+fgCol.rgb*vTintCol.a;" +
-          "if(vTintTp<2.||(vTintTp<3.&&fgCol.r==fgCol.g&&fgCol.r==fgCol.b))" +
+        "if(vTTp>0.){" +
+          "vec3 col=vCol[1].rgb+fgCol.rgb*vCol[1].a;" +
+          "if(vTTp<2.||(vTTp<3.&&fgCol.r==fgCol.g&&fgCol.r==fgCol.b))" +
             "fgCol.rgb*=col;" +
-          "else if(vTintTp<4.)" +
+          "else if(vTTp<4.)" +
             "fgCol.rgb=col;" +
         "}" +
-        "fgCol*=vWrlCol;" +
+
+        "fgCol*=vCol[0];" +
       "}";
     };
   }

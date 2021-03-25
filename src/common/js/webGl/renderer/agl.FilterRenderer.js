@@ -120,7 +120,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
         "gl_Position=vec4(mt*pos,1);" +
         "gl_Position.y*=uFlpY;" +
         "vCrd=pos.xy;" +
-        "vTCrd=(pos.xy+vec2(1,-1))/vec2(2,-2);" +
+        "vTCrd=vec2(aPos.x,1.-aPos.y);" +
       "}";
     };
 
@@ -257,12 +257,18 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
             "fgCol=texture(uTex,floor(vTCrd/vol)*vol);" +
           // DisplacementFilter
           "else if(uFtrT<6){" +
-            "vec2 flp=vec2(1,-1);" +
-            "vec2 dspMd=flp*(texture(" +
+            "vec2 dspMd=vec2(1,-1)*(texture(" +
               "uFTex," +
-              "mod(flp*(vCrd*.5+.5)+vec2(fvl[1],fvl[2]),1.)" +
+              "mod(vTCrd+vec2(fvl[1],fvl[2]),1.)" +
             ").rg-.5)*2.*vol;" +
             "fgCol=texture(uTex,vTCrd+dspMd);" +
+          "}" +
+          // MaskFilter
+          "else if(uFtrT<7){" +
+            "vec4 mskCol=texture(uFTex,vTCrd);" +
+            "fgCol.a*=fvl[0]<4." +
+              "?mskCol[int(fvl[0])]" +
+              ":(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
           "}" +
         "}" +
       "}";
