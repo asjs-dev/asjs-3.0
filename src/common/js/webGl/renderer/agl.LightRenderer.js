@@ -169,9 +169,9 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "if(vDat.w<PI&&atan(vCrd.x,length(vec2(vHS-ph,vCrd.y)))+PIH<PI-vDat.w)dst*=1.5;" +
       "}";
 
-      var calcCoord = "vec2 p=vTCrd-i*m;";
+      var calcCoord = "vec2 p=vCrd.zw+i*m;";
 
-      var calcHeight = "float pc=(i/dstTex)*mh;";
+      var calcHeight = "float pc=(1.-(i/dstTex))*mh;";
 
       var heightCheck = "tc=texture(uHTex,p);" +
       "if(tc.b>0.){" +
@@ -186,10 +186,10 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "c.rgb+=rgb*tc.rgb*tc.a;";
 
       function createLoop(core) {
-        return "float st=vExt.w;" +
+        return "float lst=max(mst,dstTex/vExt.w);" +
+        "float st=min(lst,1.);" +
         "float l=dstTex-st;" +
-        "float umb=vDat.y;" +
-        "float lst=max(1.,dstTex/128.);" +
+        "float umb=min(lst,vDat.y);" +
         "for(float i=st;i<l;i+=lst){" +
           core +
           "i+=st+(i/dstTex)*umb;" +
@@ -247,6 +247,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
           "vec2 tCrd=vTCrd*vS.xy;" +
           "vec2 tCnt=vCrd.zw*vS.xy;" +
 
+          "float mst=min(vS.z,vS.w);" +
           "vec2 dsth=tCrd-tCnt;" +
           "float dstTex=distance(tCrd,tCnt);" +
           "vec2 m=(dsth/dstTex)*vS.zw;" +

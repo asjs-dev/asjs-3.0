@@ -25,7 +25,7 @@ AGL.Light = helpers.createPrototypeClass(
     this.spotAngle  = 180 * AGL.Utils.THETA;
     this.castShadow = true;
     this.type       = AGL.Light.Type.SPOT;
-    this.precision  = 1;
+    this.precision  = 128;
     this.transition = 1;
   },
   function(_scope, _super) {
@@ -41,7 +41,7 @@ AGL.Light = helpers.createPrototypeClass(
 
     helpers.property(_scope, "precision", {
       get: function() { return this._extensionData[this._extId + 3]; },
-      set: function(v) { this._extensionData[this._extId + 3] = Math.max(1, Math.min(10, v)); }
+      set: function(v) { this._extensionData[this._extId + 3] = Math.max(1, v); }
     });
 
     helpers.property(_scope, "transition", {
