@@ -21,12 +21,15 @@ AGL.Light = helpers.createPrototypeClass(
     this._lightData     = lightData;
     this._extensionData = extensionData;
 
-    this.angle      =
+    this._castShadow =
+    this._gouraud    = true;
+
+    this.angle      = 0;
     this.spotAngle  = 180 * AGL.Utils.THETA;
-    this.castShadow = true;
+    this.castShadow =
+    this.gouraud    = true;
     this.type       = AGL.Light.Type.SPOT;
     this.precision  = 128;
-    this.transition = 1;
   },
   function(_scope, _super) {
     helpers.property(_scope, "type", {
@@ -35,18 +38,24 @@ AGL.Light = helpers.createPrototypeClass(
     });
 
     helpers.property(_scope, "castShadow", {
-      get: function() { return this._extensionData[this._extId + 1]; },
-      set: function(v) { this._extensionData[this._extId + 1] = v; }
+      get: function() { return this._castShadow; },
+      set: function(v) {
+        this._castShadow = v;
+        this._updateShadowProps();
+      }
+    });
+
+    helpers.property(_scope, "gouraud", {
+      get: function() { return this._gouraud; },
+      set: function(v) {
+        this._gouraud = v;
+        this._updateShadowProps();
+      }
     });
 
     helpers.property(_scope, "precision", {
       get: function() { return this._extensionData[this._extId + 3]; },
       set: function(v) { this._extensionData[this._extId + 3] = Math.max(1, v); }
-    });
-
-    helpers.property(_scope, "transition", {
-      get: function() { return this._lightData[this._datId + 1]; },
-      set: function(v) { this._lightData[this._datId + 1] = Math.max(0, v); }
     });
 
     helpers.property(_scope, "angle", {
@@ -61,6 +70,12 @@ AGL.Light = helpers.createPrototypeClass(
 
     _scope.isOn = function() {
       return this.renderable && this.stage !== null;
+    }
+
+    _scope._updateShadowProps = function() {
+      this._extensionData[this._extId + 1] =
+        this._castShadow * 1 |
+        this._gouraud * 2;
     }
 
     _scope._updateAdditionalData = function() {

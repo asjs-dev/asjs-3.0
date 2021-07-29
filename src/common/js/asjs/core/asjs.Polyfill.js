@@ -91,9 +91,8 @@ require("../geom/asjs.Point.js");
   }
 
   /* UserMedia */
-  for (var x = 0; x < vendors.length && !window.navigator.getUserMedia; ++x) {
+  for (var x = 0; x < vendors.length && !window.navigator.getUserMedia; ++x)
     window.navigator.getUserMedia = window.navigator[vendors[x] + "GetUserMedia"];
-  }
   !window.navigator.getUserMedia && console.log("window.navigator.getUserMedia is not supported!");
 
   /* URL */

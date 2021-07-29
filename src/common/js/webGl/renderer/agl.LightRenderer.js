@@ -8,34 +8,17 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     options.config           = AGL.Utils.initRendererConfig(options.config, AGL.LightRenderer);
     options.config.locations = options.config.locations.concat([
       "aExt",
-      "uHTex",
-      "uDHS",
-      "uDHL",
-      "uAT",
       "uS",
-      "uTE"
+      "uSC"
     ]);
 
-    this.shadowMap = options.shadowMap;
     this.heightMap = options.heightMap;
 
-    this._MAX_BATCH_ITEMS = helpers.isEmpty(options.lightNum)
-      ? 1
-      : Math.max(1, options.lightNum || 1);
-
-    this.shadowStart = helpers.isEmpty(options.shadowStart)
-      ? 0
-      : Math.max(0, options.shadowStart);
-
-    this.shadowLength = helpers.isEmpty(options.shadowLength)
-      ? 1
-      : Math.max(this.shadowStart, Math.min(1, options.shadowLength));
-
-    this.allowTransparency = options.allowTransparency === true;
-
-    this._texturesEnabled = [0, 0];
+    this._MAX_BATCH_ITEMS = Math.max(1, options.lightNum || 1);
 
     AGL.BaseRenderer.call(this, options.config);
+
+    this.scale = options.scale;
 
     this._extensionBuffer = new AGL.Buffer(
       this._MAX_BATCH_ITEMS,
@@ -47,31 +30,16 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       this._lights.push(new AGL.Light(i, this._matrixBuffer.data, this._extensionBuffer.data));
   },
   function(_scope, _super) {
-    helpers.property(_scope, "shadowStart", {
-      get: function() { return this._shadowStart; },
-      set: function(v) { this._shadowStart = Math.max(0, Math.min(1, v || 0)); }
-    });
-
-    helpers.property(_scope, "shadowLength", {
-      get: function() { return this._shadowLength; },
-      set: function(v) { this._shadowLength = Math.max(0, Math.min(1, v || 1)); }
-    });
-
-    helpers.property(_scope, "allowTransparency", {
-      get: function() { return this._allowTransparency; },
-      set: function(v) { this._allowTransparency = v ? 1 : 0; }
+    helpers.property(_scope, "scale", {
+      get: function() { return this._scale; },
+      set: function(v) {
+        v = Math.max(0, Math.min(1, v || 1));
+        this._scale = v;
+      }
     });
 
     _scope.getLight = function(id) {
       return this._lights[id];
-    }
-
-    _scope._useShadowTexture = function(texture, locationId, id) {
-      if (texture) {
-        var textureId = this._context.useTexture(texture, this._renderTime, true);
-        this._gl.uniform1i(this._locations[locationId], textureId);
-        this._texturesEnabled[id] = 1;
-      } else this._texturesEnabled[id] = 0;
     }
 
     _scope._render = function() {
@@ -80,15 +48,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       this._context.setBlendMode(AGL.BlendMode.ADD);
 
-      this._useShadowTexture(this.shadowMap, "uTex",  0);
-      this._useShadowTexture(this.heightMap, "uHTex", 1);
+      this.heightMap && gl.uniform1i(locations.uTex, this._context.useTexture(this.heightMap, this._renderTime, true));
 
       this._uploadBuffers();
 
-      gl.uniform2fv(locations.uTE, this._texturesEnabled);
-      gl.uniform1f(locations.uDHS, this._shadowStart);
-      gl.uniform1f(locations.uDHL, this._shadowLength);
-      gl.uniform1f(locations.uAT,  this._allowTransparency);
+      gl.uniform1f(locations.uSC, this._scale);
 
       this._drawInstanced(this._lights.length);
     }
@@ -114,6 +78,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     _scope._createVertexShader = function(config) {
       return AGL.Utils.createVersion(config.precision) +
       "#define H vec4(1,-1,2,-2)\n" +
+      "#define PI radians(180.)\n" +
 
       "in vec2 aPos;" +
       "in mat4 aMt;" +
@@ -121,6 +86,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       "uniform vec4 uS;" +
       "uniform float uFlpY;" +
+      "uniform float uSC;" +
 
       "out vec2 vTCrd;" +
       "out vec4 vCrd;" +
@@ -132,84 +98,44 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "out float vHS;" +
       "out float vD;" +
       "out float vSpt;" +
+      "out float vSC;" +
+      "out vec2 vSln;" +
 
       "void main(void){" +
-        "vec3 pos=vec3(aPos*2.-1.,1);" +
         "vExt=aExt;" +
         "vCol=aMt[2];" +
         "vDat=aMt[3];" +
-        "vCrd.xy=pos.xy;" +
-        "vS=uS;" +
-        "vHS=vExt.z/1024.;" +
-        "mat3 mt;" +
-        "if(vExt.x<1.){" +
-          "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
-          "gl_Position=vec4(mt*pos,1);" +
-          "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
-          "vCrd.zw=(aMt[1].xy+H.xy)/H.zw;" +
-          "vD=aMt[1].z;" +
-          "vSpt=aMt[1].w;" +
-        "}else{" +
-          "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,-1,1,1);" +
-          "gl_Position=vec4(pos,1);" +
-          "vTCrd=vec2(aPos.x,1.-aPos.y);" +
-          "vCrd.zw=vTCrd+((mt*vec3(1,1,1)).xy+H.xy)/H.zw;" +
+        "if(vDat.x>0.){" +
+          "vS=uS;" +
+          "vSC=uSC;" +
+          "vec3 pos=vec3(aPos*2.-1.,1);" +
+
+          "vCrd.xy=pos.xy*vSC;" +
+          "vHS=vExt.z*vSC;" +
+
+          "mat3 mt;" +
+          "if(vExt.x<1.){" +
+            "vExt.w*=vSC;" +
+            "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+            "gl_Position=vec4(mt*pos,1);" +
+            "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
+            "vCrd.zw=(aMt[1].xy+H.xy)/H.zw;" +
+            "vSpt=PI-aMt[1].w;" +
+            "vD=aMt[1].z*vSC;" +
+            "vSln=vec2(sin(vDat.w),cos(vDat.w));" +
+          "}else{" +
+            "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,-1,1,1);" +
+            "gl_Position=vec4(pos,1);" +
+            "vTCrd=vec2(aPos.x,1.-aPos.y);" +
+            "vCrd.zw=vTCrd+((mt*vec3(1,1,1)).xy+H.xy)/H.zw;" +
+          "}" +
+          "gl_Position.y*=uFlpY;" +
+          "vSC*=255.;" +
         "}" +
-        "gl_Position.y*=uFlpY;" +
       "}";
     };
 
     _scope._createFragmentShader = function(config) {
-      var calcDistance = "if(isl){" +
-        "dst=length(vec3(vCrd.xy,((vHS-ph)*1024.)/vD));" +
-        "if(" +
-          "dst>1.||" +
-          "(vSpt<PI&&atan(vHS-ph,length(vCrd.xy))+PIH<PI-vSpt)" +
-        ")discard;" +
-        "if(vDat.w<PI&&atan(vCrd.x,length(vec2(vHS-ph,vCrd.y)))+PIH<PI-vDat.w)dst*=1.5;" +
-      "}";
-
-      var calcCoord = "vec2 p=vCrd.zw+i*m;";
-
-      var calcHeight = "float pc=(1.-(i/dstTex))*mh;";
-
-      var heightCheck = "tc=texture(uHTex,p);" +
-      "if(tc.b>0.){" +
-        "tc.rg-=ph;";
-
-      var transparencyCheck =
-      "tc=texture(uTex,p);" +
-      "if(c.a<tc.a){" +
-        "c.a+=tc.a;" +
-        "if(c.a>=1.)discard;" +
-      "}" +
-      "c.rgb+=rgb*tc.rgb*tc.a;";
-
-      function createLoop(core) {
-        return "float lst=max(mst,dstTex/vExt.w);" +
-        "float st=min(lst,1.);" +
-        "float l=dstTex-st;" +
-        "float umb=min(lst,vDat.y);" +
-        "for(float i=st;i<l;i+=lst){" +
-          core +
-          "i+=st+(i/dstTex)*umb;" +
-        "}";
-      }
-
-      function createShadowMapBlock(loopA, loopB) {
-        return "if(sl.y-sl.x<1.){" +
-          "if(texture(uTex,vTCrd).a>0.){" +
-            "ph=sl.y;" +
-            "mh-=ph;" +
-            "sl-=ph;" +
-          "}" +
-          calcDistance +
-          loopA +
-        "}else{" +
-          loopB +
-        "}";
-      }
-
       return AGL.Utils.createVersion(config.precision) +
       "#define PI radians(180.)\n" +
       "#define PIH radians(90.)\n" +
@@ -223,97 +149,98 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "in float vHS;" +
       "in float vD;" +
       "in float vSpt;" +
+      "in float vSC;" +
+      "in vec2 vSln;" +
 
       "uniform sampler2D uTex;" +
-      "uniform sampler2D uHTex;" +
-
-      "uniform float uDHS;" +
-      "uniform float uDHL;" +
-      "uniform float uAT;" +
-      "uniform vec2 uTE;" +
 
       "out vec4 fgCol;" +
+      /*
+      "float rand(vec2 st){" +
+        "return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123);" +
+      "}" +
+      */
+
+      "float clcAng(vec2 a,vec2 b){" +
+        //"return (a.x*b.x+a.y*b.y)/(length(a)*length(b));" +
+        "float c=PIH-atan(a.y,a.x);" +
+        "float d=atan(b.y,b.x);" +
+        "float e=c-PIH;" +
+        "float f=e+(e-d);" +
+        "return abs(f-PIH)/PIH;" +
+      "}" +
 
       "void main(void){" +
-        "if(vDat.x==0.)discard;" +
+        "if(vDat.x<1.)discard;" +
+
         "bool isl=vExt.x<1.;" +
-        "float dst=0.;" +
 
-        "if(isl&&vDat.w<PI&&abs(atan(vCrd.y,vCrd.x))>vDat.w)discard;" +
+        "vec4 tc=texture(uTex,vTCrd);" +
 
-        "vec3 rgb=vCol.rgb;" +
-        "if(vExt.y<1.||(uTE.x<1.&&uTE.y<1.))dst=length(vCrd.xy);" +
-        "else{" +
-          "vec2 tCrd=vTCrd*vS.xy;" +
-          "vec2 tCnt=vCrd.zw*vS.xy;" +
+        "float ph=tc.g*tc.b*255.;" +
 
-          "float mst=min(vS.z,vS.w);" +
-          "vec2 dsth=tCrd-tCnt;" +
-          "float dstTex=distance(tCrd,tCnt);" +
-          "vec2 m=(dsth/dstTex)*vS.zw;" +
+        "ph*=vSC;" +
 
-          "vec4 c=vec4(0);" +
-          "vec4 tc;" +
+        "vec2 tCrd=vTCrd*vS.xy;" +
+        "vec2 tCnt=vCrd.zw*vS.xy;" +
+        "float pxDst=distance(vec3(tCnt,vHS),vec3(tCrd,ph));" +
+        "float dst=isl?pxDst/vD:ph/vHS;" +
 
-          "float mh=vHS;" +
-          "float ph=0.;" +
-          "if(uTE.y>0.){" +
-            "tc=texture(uHTex,vTCrd);" +
-            "ph=tc.b>0.?tc.g:0.;" +
-            "mh-=ph;" +
-            calcDistance +
-            "if(uAT>0.&&uTE.x>0.){" +
-              createLoop(
-                calcCoord +
-                heightCheck +
-                  calcHeight +
-                  "if(tc.x<=pc&&tc.y>=pc){" +
-                    transparencyCheck +
-                  "}" +
-                "}"
-              ) +
-            "}else{" +
-              createLoop(
-                calcCoord +
-                heightCheck +
-                  calcHeight +
-                  "if(tc.x<=pc&&tc.y>=pc)discard;" +
-                "}"
-              ) +
-            "}" +
-          "}else{" +
-            "vec2 sl=vec2(uDHS,uDHL);" +
-            "if(uAT>0.){" +
-              createShadowMapBlock(
-                createLoop(
-                  calcHeight +
-                  "if(sl.x<=pc&&sl.y>=pc){" +
-                    calcCoord +
-                    transparencyCheck +
-                  "}"
-                ), createLoop(
-                  calcCoord +
-                  transparencyCheck
-                )
-              ) +
-            "}else{" +
-              createShadowMapBlock(
-                createLoop(
-                  calcCoord +
-                  "if(texture(uTex,p).a>0.){" +
-                    calcHeight +
-                    "if(sl.x<=pc&&sl.y>=pc)discard;" +
-                  "}"
-                ), createLoop(
-                  calcCoord +
-                  "if(texture(uTex,p).a>0.)discard;"
-                )
-              ) +
+        "if(dst>1.)discard;" +
+
+        "if(isl&&vSpt>0.&&vSpt<PI){" +
+          "float slh=(vHS-ph)/255.;" +
+          "vec2 sl=vec2(slh*vSln.y-vCrd.x*vSln.x,slh*vSln.x+vCrd.x*vSln.y);" +
+          "if(atan(sl.x,length(vec2(sl.y,vCrd.y)))+PIH<vSpt)discard;" +
+        "}" +
+
+        "vec4 lcol=vCol;" +
+        "float vol=1.-dst;" +
+
+        "int flg=int(vExt.y);" +
+
+        "if(vol>0.){" +
+          "float flatDst=distance(tCnt,tCrd);" +
+
+          "float rt=atan(tCrd.y-tCnt.y,tCrd.x-tCnt.x);" +
+          "vec2 dsth=vec2(cos(rt),sin(rt));" +
+
+          "float ldsth=length(dsth);" +
+          "float mh=ph-vHS;" +
+
+          "vec2 p;" +
+          "float pc;" +
+
+          "if((flg&2)>0){" +
+            "p=tCrd-dsth;" +
+            "pc=vHS+((flatDst-ldsth)/flatDst)*mh;" +
+
+            "tc=texture(uTex,p*vS.zw);" +
+            "tc.g*=tc.b*255.*vSC;" +
+
+            "if(tc.g>pc)discard;" +
+
+            "vol*=clcAng(vec2(length(tCrd-p),pc-tc.g),vec2(length(tCnt-p),ph-tc.g));" +
+          "}" +
+
+          "if((flg&1)>0&&vol>0.){" +
+            "float lst=max(ldsth,flatDst/vExt.w);" +
+
+            "float l=flatDst-lst*2.;" +
+            "for(float i=lst;i<l;i+=lst){" +
+              "p=tCnt+i*dsth;" +
+              "pc=vHS+((i*ldsth)/flatDst)*mh;" +
+
+              "tc=texture(uTex,p*vS.zw);" +
+              "if(tc.b>0.){" +
+                "tc.rg*=tc.b*255.*vSC;" +
+                "if(tc.r<pc&&tc.g>pc)discard;" +
+              "}" +
             "}" +
           "}" +
-          "rgb=rgb*(1.-c.a)+c.rgb;" +
         "}" +
-        "fgCol=vec4(rgb*(1.-dst)*vDat.z,1);" +
+
+        "fgCol=vec4(lcol.rgb*vol*vDat.z,1);" +
       "}";
     };
   }

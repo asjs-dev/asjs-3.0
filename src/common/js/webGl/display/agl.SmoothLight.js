@@ -39,15 +39,14 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       this._renderFilterFunc = this._renderFilterToFramebuffer.bind(this);
     }
 
-    this.scale = options.scale || 1;
-    this.blur  = helpers.isEmpty(options.blur) ? 1 : options.blur;
+    this.blur = helpers.isEmpty(options.blur) ? 1 : options.blur;
   },
   function(_scope, _super) {
     helpers.property(_scope, "scale", {
-      get: function() { return this._scale; },
+      get: function() { return this.lightRenderer.scale; },
       set: function(v) {
-        if (this._scale !== v) {
-          this._scale = v;
+        if (this.lightRenderer.scale !== v) {
+          this.lightRenderer.scale = v;
           this._resizeFunc = this._resize;
         }
       }
@@ -98,8 +97,8 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     _scope._resize = function() {
       this._resizeFunc = helpers.emptyFunction;
 
-      var scaledWidth  = this._width  * this._scale;
-      var scaledHeight = this._height * this._scale;
+      var scaledWidth  = this._width  * this.lightRenderer.scale;
+      var scaledHeight = this._height * this.lightRenderer.scale;
 
       this.image.props.width  = this._width;
       this.image.props.height = this._height;

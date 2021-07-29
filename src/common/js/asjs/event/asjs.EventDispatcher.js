@@ -83,9 +83,7 @@ helpers.createClass(ASJS, "EventDispatcher", helpers.BaseClass, function(_scope,
       helpers.map(type, function(id, item) {
         types = types.concat(item.split(" "));
       });
-    } else {
-      types = type.split(" ");
-    }
+    } else types = type.split(" ");
 
     return types;
   }
