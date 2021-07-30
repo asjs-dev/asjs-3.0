@@ -41,7 +41,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     this._elementArrayBuffer = new AGL.Buffer(
       new Uint16Array([
-        0, 1, 2, 3
+        0, 1, 3, 2
       ]),
       "", 0, 0,
       {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
@@ -165,7 +165,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._drawInstanced = function(count) {
-      this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_FAN}}, 4, {{AGL.Const.UNSIGNED_SHORT}}, 0, count);
+      this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_STRIP}}, 4, {{AGL.Const.UNSIGNED_SHORT}}, 0, count);
     }
 
     _scope._buildProgram = function() {

@@ -17,7 +17,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "aWCol",
       "aTCol",
       "aACol",
-      "aFx"
+      "aFx",
+      "aDst"
     ]);
 
     this._container = new AGL.StageContainer(this);
@@ -60,6 +61,11 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this._effectBuffer = new AGL.Buffer(
       maxBatchItems,
       "aFx", 1, 4
+    );
+
+    this._distortionBuffer = new AGL.Buffer(
+      maxBatchItems,
+      "aDst", 4, 2
     );
   },
   function(_scope, _super) {
@@ -106,8 +112,10 @@ AGL.Stage2D = helpers.createPrototypeClass(
         item.isContainsPoint(this.pickerPoint)
       ) this.picked = item;
 
-      var quadId = this._batchItems * 4;
       var duoId  = this._batchItems * 2;
+      var quadId = this._batchItems * 4;
+      var octId  = this._batchItems * 8;
+      var matId  = this._batchItems * 16;
 
       helpers.arraySet(this._parentColorBuffer.data, item.parent.colorCache, quadId);
       helpers.arraySet(this._tintColorBuffer.data,   item.colorCache,        quadId);
@@ -123,11 +131,11 @@ AGL.Stage2D = helpers.createPrototypeClass(
       );
       this._effectBuffer.data[quadId + 1] = item.tintType;
 
-      var matId  = this._batchItems * 16;
-
       helpers.arraySet(this._matrixBuffer.data, item.matrixCache,        matId);
       helpers.arraySet(this._matrixBuffer.data, item.textureMatrixCache, matId + 6);
       helpers.arraySet(this._matrixBuffer.data, item.textureCropCache,   matId + 12);
+
+      helpers.arraySet(this._distortionBuffer.data, item.distortionPropsCache, octId);
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
@@ -162,6 +170,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._tintColorBuffer.upload(gl,   enableBuffers, locations);
       this._alphaBuffer.upload(gl,       enableBuffers, locations);
       this._effectBuffer.upload(gl,      enableBuffers, locations);
+      this._distortionBuffer.upload(gl,  enableBuffers, locations);
 
       _super._uploadBuffers.call(this);
     }
@@ -175,6 +184,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       this._tintColorBuffer.create(gl);
       this._alphaBuffer.create(gl);
       this._effectBuffer.create(gl);
+      this._distortionBuffer.create(gl);
     }
 
     _scope._createVertexShader = function(config) {
@@ -186,6 +196,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "in vec4 aTCol;" +
       "in vec2 aACol;" +
       "in vec4 aFx;" +
+      "in mat4x2 aDst;" +
 
       "uniform float uFlpY;" +
 
@@ -196,11 +207,29 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "out float vTexId;" +
       "out float vTTp;" +
 
+      "vec2 clcQd(mat4x2 mt,vec2 p){" +
+        "vec2 o=1.-p;" +
+        "vec4 cmt=vec4(" +
+          "o.y*mt[0].x+p.y*mt[3].x," +
+          "o.x*mt[0].y+p.x*mt[1].y," +
+          "o.y*mt[1].x+p.y*mt[2].x," +
+          "o.x*mt[3].y+p.x*mt[2].y" +
+        ");" +
+        "return vec2(" +
+          "o.x*cmt.x+p.x*cmt.z," +
+          "o.y*cmt.y+p.y*cmt.w" +
+        ");" +
+      "}" +
+
       "void main(void){" +
         "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
         "mat3 tMt=mat3(aMt[1].zw,0,aMt[2].xy,0,aMt[2].zw,1);" +
         "vec3 pos=vec3(aPos,1);" +
-        "gl_Position=vec4(mt*pos,1);" +
+        "vec3 tpos=vec3(" +
+          "clcQd(aDst,pos.xy)," +
+          "1" +
+        ");" +
+        "gl_Position=vec4(mt*tpos,1);" +
         "gl_Position.y*=uFlpY;" +
         "vTCrd=(tMt*pos).xy;" +
         "vTexCrop=aMt[3];" +

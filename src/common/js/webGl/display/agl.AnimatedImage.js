@@ -54,12 +54,7 @@ AGL.AnimatedImage = helpers.createPrototypeClass(
     }
 
     _scope._useTextureFrame = function() {
-      var textureFrameCrop = this.frames[this.frame];
-
-      this.textureCrop.x      = textureFrameCrop.x;
-      this.textureCrop.y      = textureFrameCrop.y;
-      this.textureCrop.width  = textureFrameCrop.width;
-      this.textureCrop.height = textureFrameCrop.height;
+      this.textureCrop.setRect(this.frames[this.frame]);
     }
 
     _scope.destruct = function() {

@@ -3,6 +3,7 @@ require("../NameSpace.js");
 require("../data/agl.BlendMode.js");
 require("../data/props/agl.TextureProps.js");
 require("../data/props/agl.TextureCrop.js");
+require("../data/props/agl.DistortionProps.js");
 
 AGL.Image = helpers.createPrototypeClass(
   AGL.BaseDrawable,
@@ -18,12 +19,14 @@ AGL.Image = helpers.createPrototypeClass(
     this.tintType  = AGL.Image.TintType.NONE;
     this.blendMode = AGL.BlendMode.NORMAL;
 
-    this.textureProps = new AGL.TextureProps();
-    this.textureCrop  = new AGL.TextureCrop();
+    this.textureProps    = new AGL.TextureProps();
+    this.textureCrop     = new AGL.TextureCrop();
+    this.distortionProps = new AGL.DistortionProps();
 
     this._currentTexturePropsUpdateId = 0;
 
-    this.textureCropCache = this.textureCrop.items;
+    this.textureCropCache     = this.textureCrop.items;
+    this.distortionPropsCache = this.distortionProps.items;
 
     this.colorCache = this.color.items;
 

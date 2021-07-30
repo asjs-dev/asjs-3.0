@@ -14,7 +14,6 @@ AGL.BasePositioningProps = helpers.createPrototypeClass(
 
     this._x        =
     this._y        =
-    this._z        =
     this._rotation =
     this._anchorX  =
     this._anchorY  =
@@ -40,16 +39,6 @@ AGL.BasePositioningProps = helpers.createPrototypeClass(
       set: function(v) {
         if (this._y !== v) {
           this._y = v;
-          ++this.updateId;
-        }
-      }
-    });
-
-    helpers.property(_scope, "z", {
-      get: function() { return this._z; },
-      set: function(v) {
-        if (this._z !== v) {
-          this._z = v;
           ++this.updateId;
         }
       }

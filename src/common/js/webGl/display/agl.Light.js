@@ -1,5 +1,6 @@
 require("./agl.BaseDrawable.js");
 require("../NameSpace.js");
+require("../data/props/agl.LightProps.js");
 
 AGL.Light = helpers.createPrototypeClass(
   AGL.BaseDrawable,
@@ -9,6 +10,8 @@ AGL.Light = helpers.createPrototypeClass(
     extensionData
   ) {
     AGL.BaseDrawable.call(this);
+
+    this.props = new AGL.LightProps();
 
     this.color.a = 0;
 

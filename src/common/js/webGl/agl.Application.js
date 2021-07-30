@@ -16,8 +16,10 @@ require("./data/props/agl.BaseProps.js");
 require("./data/props/agl.BasePositioningProps.js");
 require("./data/props/agl.ColorProps.js");
 require("./data/props/agl.ItemProps.js");
+require("./data/props/agl.LightProps.js");
 require("./data/props/agl.TextureCrop.js");
 require("./data/props/agl.TextureProps.js");
+require("./data/props/agl.DistortionProps.js");
 
 require("./data/texture/agl.TextureInfo.js");
 require("./data/texture/agl.Texture.js");

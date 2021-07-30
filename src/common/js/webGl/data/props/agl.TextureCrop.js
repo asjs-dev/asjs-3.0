@@ -62,5 +62,12 @@ AGL.TextureCrop = helpers.createPrototypeClass(
         this.items[3] = this._height - this.items[1];
       }
     }
+
+    _scope.setRect = function(rect) {
+      this.x      = rect.x;
+      this.y      = rect.y;
+      this.width  = rect.width;
+      this.height = rect.height;
+    }
   }
 );
