@@ -28,7 +28,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._currentResizeId  = 0;
 
     config.locations = config.locations.concat([
-      "aMt",
       "uFlpY",
       "aPos",
       "uTex"
@@ -36,6 +35,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
 
     this._config  = config;
     this._context = config.context;
+
+    this._vao = this._context.gl.createVertexArray();
 
     this._enableBuffers = false;
 
@@ -59,11 +60,6 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       {{AGL.Const.ARRAY_BUFFER}},
       {{AGL.Const.STATIC_DRAW}},
       0
-    );
-
-    this._matrixBuffer = new AGL.Buffer(
-      this._MAX_BATCH_ITEMS,
-      "aMt", 4, 4
     );
   },
   function(_scope, _super) {
@@ -134,7 +130,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
         this._currentContextId = this._context.contextId;
         this._buildProgram();
         this._enableBuffers = true;
-      } else if (this._context.useProgram(this._program)) this._enableBuffers = true;
+      } else if (this._context.useProgram(this._program, this._vao)) this._enableBuffers = true;
 
       this._resize();
     }
@@ -177,24 +173,25 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       ]);
       this._locations = AGL.Utils.getLocationsFor(gl, this._program, this._config.locations);
 
-      this._context.useProgram(this._program);
-
-      this._elementArrayBuffer.create(gl);
-      this._elementArrayBuffer.upload(gl);
-
-      this._positionBuffer.create(gl);
-      this._positionBuffer.upload(gl, true, this._locations);
+      this._context.useProgram(this._program, this._vao);
 
       this._createBuffers();
     }
 
     _scope._uploadBuffers = function() {
-      this._matrixBuffer.upload(this._gl, this._enableBuffers, this._locations);
+      var gl = this._gl;
+
+      this._positionBuffer.upload(gl, true, this._locations);
+      this._elementArrayBuffer.upload(gl);
+
       this._enableBuffers = false;
     }
 
     _scope._createBuffers = function() {
-      this._matrixBuffer.create(this._gl);
+      var gl = this._gl;
+
+      this._elementArrayBuffer.create(gl);
+      this._positionBuffer.create(gl);
     }
   }
 );

@@ -1,8 +1,8 @@
 require("../NameSpace.js");
-require("./agl.BaseRenderer.js");
+require("./agl.BatchRenderer.js");
 
 AGL.LightRenderer = helpers.createPrototypeClass(
-  AGL.BaseRenderer,
+  AGL.BatchRenderer,
   function LightRenderer(options) {
     options                  = options || {};
     options.config           = AGL.Utils.initRendererConfig(options.config, AGL.LightRenderer);
@@ -16,7 +16,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     this._MAX_BATCH_ITEMS = Math.max(1, options.lightNum || 1);
 
-    AGL.BaseRenderer.call(this, options.config);
+    AGL.BatchRenderer.call(this, options.config);
 
     this.scale = options.scale;
 
@@ -160,9 +160,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123);" +
       "}" +
       */
-
       "float clcAng(vec2 a,vec2 b){" +
-        //"return (a.x*b.x+a.y*b.y)/(length(a)*length(b));" +
         "float c=PIH-atan(a.y,a.x);" +
         "float d=atan(b.y,b.x);" +
         "float e=c-PIH;" +
@@ -177,9 +175,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
         "vec4 tc=texture(uTex,vTCrd);" +
 
-        "float ph=tc.g*tc.b*255.;" +
-
-        "ph*=vSC;" +
+        "float shn=tc.b*10.;" +
+        "float ph=tc.g*vSC;" +
 
         "vec2 tCrd=vTCrd*vS.xy;" +
         "vec2 tCnt=vCrd.zw*vS.xy;" +
@@ -199,48 +196,47 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
         "int flg=int(vExt.y);" +
 
-        "if(vol>0.){" +
-          "float flatDst=distance(tCnt,tCrd);" +
+        "float flatDst=distance(tCnt,tCrd);" +
 
-          "float rt=atan(tCrd.y-tCnt.y,tCrd.x-tCnt.x);" +
-          "vec2 dsth=vec2(cos(rt),sin(rt));" +
+        "float rt=atan(tCrd.y-tCnt.y,tCrd.x-tCnt.x);" +
+        "vec2 dsth=vec2(cos(rt),sin(rt));" +
 
-          "float ldsth=length(dsth);" +
-          "float mh=ph-vHS;" +
+        "float ldsth=length(dsth);" +
+        "float mh=ph-vHS;" +
 
-          "vec2 p;" +
-          "float pc;" +
+        "vec2 p;" +
+        "float pc;" +
 
-          "if((flg&2)>0){" +
-            "p=tCrd-dsth;" +
-            "pc=vHS+((flatDst-ldsth)/flatDst)*mh;" +
+        "if((flg&2)>0){" +
+          "p=tCrd-dsth;" +
+          "pc=vHS+((flatDst-ldsth)/flatDst)*mh;" +
+
+          "tc=texture(uTex,p*vS.zw);" +
+          "tc.g*=vSC;" +
+
+          "if(tc.g>pc)discard;" +
+
+          "vol*=clcAng(vec2(length(tCrd-p),pc-tc.g),vec2(length(tCnt-p),ph-tc.g));" +
+        "}" +
+
+        "if((flg&1)>0&&vol>0.){" +
+          "float lst=max(ldsth,flatDst/vExt.w);" +
+
+          "float l=flatDst-lst*2.;" +
+          "for(float i=lst;i<l;i+=lst){" +
+            "p=tCnt+i*dsth;" +
+            "pc=vHS+((i*ldsth)/flatDst)*mh;" +
 
             "tc=texture(uTex,p*vS.zw);" +
-            "tc.g*=tc.b*255.*vSC;" +
-
-            "if(tc.g>pc)discard;" +
-
-            "vol*=clcAng(vec2(length(tCrd-p),pc-tc.g),vec2(length(tCnt-p),ph-tc.g));" +
-          "}" +
-
-          "if((flg&1)>0&&vol>0.){" +
-            "float lst=max(ldsth,flatDst/vExt.w);" +
-
-            "float l=flatDst-lst*2.;" +
-            "for(float i=lst;i<l;i+=lst){" +
-              "p=tCnt+i*dsth;" +
-              "pc=vHS+((i*ldsth)/flatDst)*mh;" +
-
-              "tc=texture(uTex,p*vS.zw);" +
-              "if(tc.b>0.){" +
-                "tc.rg*=tc.b*255.*vSC;" +
-                "if(tc.r<pc&&tc.g>pc)discard;" +
-              "}" +
+            "if(tc.a>0.){" +
+              "tc.rg*=vSC;" +
+              "if(tc.r<pc&&tc.g>pc)discard;" +
             "}" +
           "}" +
         "}" +
 
-        "fgCol=vec4(lcol.rgb*vol*vDat.z,1);" +
+        "vec3 lv=lcol.rgb*vol*vDat.z;" +
+        "fgCol=vec4(lv,1);" +
       "}";
     };
   }

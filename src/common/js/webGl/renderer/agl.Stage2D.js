@@ -2,22 +2,18 @@ require("../NameSpace.js");
 require("../display/agl.Item.js");
 require("../geom/agl.Matrix3.js");
 require("../data/agl.BlendMode.js");
-require("../display/agl.Item.js");
 require("../display/agl.Container.js");
 require("../display/agl.StageContainer.js");
 require("../utils/agl.Utils.js");
-require("./agl.BaseRenderer.js");
+require("./agl.BatchRenderer.js");
 
 AGL.Stage2D = helpers.createPrototypeClass(
-  AGL.BaseRenderer,
+  AGL.BatchRenderer,
   function Stage2D(options) {
     options                  = options || {};
     options.config           = AGL.Utils.initRendererConfig(options.config, AGL.Stage2D);
     options.config.locations = options.config.locations.concat([
-      "aWCol",
-      "aTCol",
-      "aACol",
-      "aFx",
+      "aDat",
       "aDst"
     ]);
 
@@ -27,7 +23,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     this._batchItems = 0;
 
-    AGL.BaseRenderer.call(this, options.config);
+    AGL.BatchRenderer.call(this, options.config);
 
     this._drawFunctionMap = {};
     this._drawFunctionMap[AGL.Item.TYPE]      = helpers.emptyFunction;
@@ -43,24 +39,9 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     this.pickerPoint = AGL.Point.create();
 
-    this._parentColorBuffer = new AGL.Buffer(
+    this._dataBuffer = new AGL.Buffer(
       maxBatchItems,
-      "aWCol", 1, 4
-    );
-
-    this._tintColorBuffer = new AGL.Buffer(
-      maxBatchItems,
-      "aTCol", 1, 4
-    );
-
-    this._alphaBuffer = new AGL.Buffer(
-      maxBatchItems,
-      "aACol", 1, 2
-    );
-
-    this._effectBuffer = new AGL.Buffer(
-      maxBatchItems,
-      "aFx", 1, 4
+      "aDat", 3, 4
     );
 
     this._distortionBuffer = new AGL.Buffer(
@@ -112,24 +93,23 @@ AGL.Stage2D = helpers.createPrototypeClass(
         item.isContainsPoint(this.pickerPoint)
       ) this.picked = item;
 
-      var duoId  = this._batchItems * 2;
       var quadId = this._batchItems * 4;
       var octId  = this._batchItems * 8;
+      var twId   = this._batchItems * 12;
       var matId  = this._batchItems * 16;
 
-      helpers.arraySet(this._parentColorBuffer.data, item.parent.colorCache, quadId);
-      helpers.arraySet(this._tintColorBuffer.data,   item.colorCache,        quadId);
+      helpers.arraySet(this._dataBuffer.data, item.parent.colorCache, twId);
+      helpers.arraySet(this._dataBuffer.data, item.colorCache,        twId + 4);
 
-      this._alphaBuffer.data[duoId]     = item.props.alpha;
-      this._alphaBuffer.data[duoId + 1] = item.parent.props.alpha;
-
-      this._effectBuffer.data[quadId] = this._context.useTexture(
+      this._dataBuffer.data[twId + 8]  = item.props.alpha;
+      this._dataBuffer.data[twId + 9]  = item.parent.props.alpha;
+      this._dataBuffer.data[twId + 10] = this._context.useTexture(
         item.texture,
         this._renderTime,
         false,
         this._batchDrawBound
       );
-      this._effectBuffer.data[quadId + 1] = item.tintType;
+      this._dataBuffer.data[twId + 11] = item.tintType;
 
       helpers.arraySet(this._matrixBuffer.data, item.matrixCache,        matId);
       helpers.arraySet(this._matrixBuffer.data, item.textureMatrixCache, matId + 6);
@@ -166,11 +146,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
       var locations     = this._locations;
       var enableBuffers = this._enableBuffers;
 
-      this._parentColorBuffer.upload(gl, enableBuffers, locations);
-      this._tintColorBuffer.upload(gl,   enableBuffers, locations);
-      this._alphaBuffer.upload(gl,       enableBuffers, locations);
-      this._effectBuffer.upload(gl,      enableBuffers, locations);
-      this._distortionBuffer.upload(gl,  enableBuffers, locations);
+      this._dataBuffer.upload(gl,       enableBuffers, locations);
+      this._distortionBuffer.upload(gl, enableBuffers, locations);
 
       _super._uploadBuffers.call(this);
     }
@@ -180,10 +157,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       var gl = this._gl;
 
-      this._parentColorBuffer.create(gl);
-      this._tintColorBuffer.create(gl);
-      this._alphaBuffer.create(gl);
-      this._effectBuffer.create(gl);
+      this._dataBuffer.create(gl);
       this._distortionBuffer.create(gl);
     }
 
@@ -192,10 +166,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       "in vec2 aPos;" +
       "in mat4 aMt;" +
-      "in vec4 aWCol;" +
-      "in vec4 aTCol;" +
-      "in vec2 aACol;" +
-      "in vec4 aFx;" +
+      "in mat3x4 aDat;" +
       "in mat4x2 aDst;" +
 
       "uniform float uFlpY;" +
@@ -234,11 +205,11 @@ AGL.Stage2D = helpers.createPrototypeClass(
         "vTCrd=(tMt*pos).xy;" +
         "vTexCrop=aMt[3];" +
 
-        "vCol=mat2x4(aWCol,aTCol.rgb*aTCol.a,1.-aTCol.a);" +
-        "vACol=aACol.x*aACol.y;" +
+        "vCol=mat2x4(aDat[0],aDat[1].rgb*aDat[1].a,1.-aDat[1].a);" +
+        "vACol=aDat[2].x*aDat[2].y;" +
 
-        "vTexId=aFx.x;" +
-        "vTTp=aFx.y;" +
+        "vTexId=aDat[2].z;" +
+        "vTTp=aDat[2].w;" +
       "}";
     };
 

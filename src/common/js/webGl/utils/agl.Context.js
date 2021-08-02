@@ -118,11 +118,17 @@ AGL.Context = helpers.createPrototypeClass(
       textureId > -1 && textureInfo.unbindTexture(this.gl, textureId);
     }
 
-    _scope.useProgram = function(program) {
+    _scope.useProgram = function(program, vao) {
       if (this._currentProgram !== program) {
         this._currentProgram = program;
         this.clearTextures();
-        this.gl.useProgram(program);
+
+        var gl = this.gl;
+
+        gl.bindVertexArray(null);
+        gl.useProgram(program);
+        gl.bindVertexArray(vao);
+
         return true;
       }
       return false;

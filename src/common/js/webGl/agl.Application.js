@@ -45,6 +45,7 @@ require("./display/agl.Image.js");
 require("./display/agl.SmoothLight.js");
 
 require("./renderer/agl.BaseRenderer.js");
+require("./renderer/agl.BatchRenderer.js");
 require("./renderer/agl.FilterRenderer.js");
 require("./renderer/agl.LightRenderer.js");
 require("./renderer/agl.Stage2D.js");

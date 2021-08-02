@@ -21,13 +21,6 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
     this.filters = options.filters || [];
     this.texture = options.texture;
 
-    helpers.arraySet(this._matrixBuffer.data, [
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    ], 0);
-
     this._framebuffers = [
       new AGL.Framebuffer(),
       new AGL.Framebuffer()
@@ -107,7 +100,6 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
       return AGL.Utils.createVersion(config.precision) +
 
       "in vec2 aPos;" +
-      "in mat4 aMt;" +
 
       "uniform float uFlpY;" +
 
@@ -115,9 +107,8 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
       "out vec2 vTCrd;" +
 
       "void main(void){" +
-        "mat3 mt=mat3(aMt[0].xyz,aMt[1].xyz,aMt[2].xyz);" +
         "vec3 pos=vec3(aPos*2.-1.,1);" +
-        "gl_Position=vec4(mt*pos,1);" +
+        "gl_Position=vec4(pos,1);" +
         "gl_Position.y*=uFlpY;" +
         "vCrd=pos.xy;" +
         "vTCrd=vec2(aPos.x,1.-aPos.y);" +

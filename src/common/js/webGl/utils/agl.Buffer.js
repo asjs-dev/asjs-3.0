@@ -15,11 +15,16 @@ AGL.Buffer = helpers.createPrototypeClass(
     this._locationName = locationName;
     this._rows         = rows;
     this._cols         = cols;
-    this._length       = length * 4;
-    this._byteSize     = cols * 4;
     this._target       = target || {{AGL.Const.ARRAY_BUFFER}};
     this._type         = type   || {{AGL.Const.DYNAMIC_DRAW}};
+    this._length       = length * 4;
+    this._offset       = cols * 4;
     this._divisor      = typeof divisor === "number" ? divisor : 1;
+
+    if (this._type === {{AGL.Const.STATIC_DRAW}}) {
+      this._length =
+      this._offset = 0;
+    }
   },
   function(_scope) {
     _scope.create = function(gl) {
@@ -31,10 +36,10 @@ AGL.Buffer = helpers.createPrototypeClass(
       gl.bindBuffer(this._target, this._buffer);
     }
 
-    _scope.upload = function(gl, enabled, locations) {
+    _scope.upload = function(gl, enable, locations) {
       this.bind(gl);
+      enable && this._enable(gl, locations);
   		gl.bufferData(this._target, this.data, this._type);
-      enabled && this._enable(gl, locations);
     }
 
     _scope.enable = function(gl, locations) {
@@ -47,9 +52,9 @@ AGL.Buffer = helpers.createPrototypeClass(
       var i = -1;
       while (++i < this._rows) {
         var loc = location + i;
-        gl.vertexAttribPointer(loc, this._cols, {{AGL.Const.FLOAT}}, false, this._length, i * this._byteSize);
-        gl.vertexAttribDivisor(loc, this._divisor);
         gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, this._cols, {{AGL.Const.FLOAT}}, false, this._length, i * this._offset);
+        gl.vertexAttribDivisor(loc, this._divisor);
       }
     }
   }
