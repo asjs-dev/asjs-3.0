@@ -9,7 +9,7 @@ helpers.constant(ASJS.GeomUtils, "pointInOrigo", function(point) {
 });
 
 helpers.constant(ASJS.GeomUtils, "twoPointDistance", function(pointA, pointB) {
-  return Math.sqrt(Math.pow(pointB.x - pointA.x, 2) + Math.pow(pointB.y - pointA.y, 2));
+  return Math.hypot(pointB.x - pointA.x, pointB.y - pointA.y);
 });
 
 helpers.constant(ASJS.GeomUtils, "pointInRect", function(point, rect) {

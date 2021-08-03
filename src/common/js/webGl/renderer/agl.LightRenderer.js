@@ -105,33 +105,31 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "vExt=aExt;" +
         "vCol=aMt[2];" +
         "vDat=aMt[3];" +
-        "if(vDat.x>0.){" +
-          "vS=uS;" +
-          "vSC=uSC;" +
-          "vec3 pos=vec3(aPos*2.-1.,1);" +
 
-          "vCrd.xy=pos.xy*vSC;" +
-          "vHS=vExt.z*vSC;" +
+        "vS=uS;" +
+        "vSC=uSC;" +
+        "vec3 pos=vec3(aPos*2.-1.,1);" +
 
-          "mat3 mt;" +
-          "if(vExt.x<1.){" +
-            "vExt.w*=vSC;" +
-            "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
-            "gl_Position=vec4(mt*pos,1);" +
-            "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
-            "vCrd.zw=(aMt[1].xy+H.xy)/H.zw;" +
-            "vSpt=PI-aMt[1].w;" +
-            "vD=aMt[1].z*vSC;" +
-            "vSln=vec2(sin(vDat.w),cos(vDat.w));" +
-          "}else{" +
-            "mt=mat3(aMt[0].xy,0,aMt[0].zw,0,-1,1,1);" +
-            "gl_Position=vec4(pos,1);" +
-            "vTCrd=vec2(aPos.x,1.-aPos.y);" +
-            "vCrd.zw=vTCrd+((mt*vec3(1,1,1)).xy+H.xy)/H.zw;" +
-          "}" +
-          "gl_Position.y*=uFlpY;" +
-          "vSC*=255.;" +
+        "vCrd.xy=pos.xy*vSC;" +
+        "vHS=vExt.z*vSC;" +
+
+        "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+        "if(vExt.x<1.){" +
+          "vExt.w*=vSC;" +
+          "gl_Position=vec4(mt*pos,1);" +
+          "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
+          "vCrd.zw=(aMt[1].xy+H.xy)/H.zw;" +
+          "vSpt=PI-aMt[1].w;" +
+          "vD=aMt[1].z*vSC;" +
+          "vSln=vec2(sin(vDat.w),cos(vDat.w));" +
+        "}else{" +
+          "mt[2].xy=vec2(-1,1);" +
+          "gl_Position=vec4(pos,1);" +
+          "vTCrd=vec2(aPos.x,1.-aPos.y);" +
+          "vCrd.zw=vTCrd+((mt*vec3(1,1,1)).xy+H.xy)/H.zw;" +
         "}" +
+        "gl_Position.y*=uFlpY;" +
+        "vSC*=255.;" +
       "}";
     };
 
@@ -222,10 +220,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "if((flg&1)>0&&vol>0.){" +
           "float lst=max(ldsth,flatDst/vExt.w);" +
 
-          "float l=flatDst-lst*2.;" +
+          "float hst=(ldsth/flatDst)*mh;" +
+          "float l=flatDst-lst*3.;" +
           "for(float i=lst;i<l;i+=lst){" +
             "p=tCnt+i*dsth;" +
-            "pc=vHS+((i*ldsth)/flatDst)*mh;" +
+            "pc=vHS+i*hst;" +
 
             "tc=texture(uTex,p*vS.zw);" +
             "if(tc.a>0.){" +
@@ -236,7 +235,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "}" +
 
         "vec3 lv=lcol.rgb*vol*vDat.z;" +
-        "fgCol=vec4(lv,1);" +
+        "fgCol=vec4(lv*pow(lv,vec3(shn)),1);" +
       "}";
     };
   }
