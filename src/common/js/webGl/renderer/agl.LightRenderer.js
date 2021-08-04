@@ -93,7 +93,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "out vec4 vCol;" +
       "out vec4 vDat;" +
       "out vec4 vExt;" +
-      "out mat4 vQ;" +
       "out vec4 vS;" +
       "out float vHS;" +
       "out float vD;" +
@@ -173,6 +172,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
         "vec4 tc=texture(uTex,vTCrd);" +
 
+        "float alp=tc.a;" +
         "float shn=tc.b*10.;" +
         "float ph=tc.g*vSC;" +
 
@@ -196,46 +196,42 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
         "float flatDst=distance(tCnt,tCrd);" +
 
-        "float rt=atan(tCrd.y-tCnt.y,tCrd.x-tCnt.x);" +
-        "vec2 dsth=vec2(cos(rt),sin(rt));" +
+        "vec2 dsth=vec2(tCrd.x-tCnt.x,tCrd.y-tCnt.y)/flatDst;" +
 
-        "float ldsth=length(dsth);" +
         "float mh=ph-vHS;" +
 
         "vec2 p;" +
         "float pc;" +
 
-        "if((flg&2)>0){" +
+        "if((flg&2)>0&&alp>0.){" +
           "p=tCrd-dsth;" +
-          "pc=vHS+((flatDst-ldsth)/flatDst)*mh;" +
+          "pc=vHS+((flatDst-1.)/flatDst)*mh;" +
 
           "tc=texture(uTex,p*vS.zw);" +
           "tc.g*=vSC;" +
 
           "if(tc.g>pc)discard;" +
 
-          "vol*=clcAng(vec2(length(tCrd-p),pc-tc.g),vec2(length(tCnt-p),ph-tc.g));" +
+          "vol*=pow(vol*clcAng(vec2(length(tCrd-p),pc-tc.g),vec2(length(tCnt-p),ph-tc.g)),shn);" +
         "}" +
 
         "if((flg&1)>0&&vol>0.){" +
-          "float lst=max(ldsth,flatDst/vExt.w);" +
-
-          "float hst=(ldsth/flatDst)*mh;" +
-          "float l=flatDst-lst*3.;" +
+          "float lst=max(1.,vExt.w);" +
+          "float hst=(1./flatDst)*mh;" +
+          "float l=flatDst-lst;" +
           "for(float i=lst;i<l;i+=lst){" +
             "p=tCnt+i*dsth;" +
             "pc=vHS+i*hst;" +
-
             "tc=texture(uTex,p*vS.zw);" +
             "if(tc.a>0.){" +
               "tc.rg*=vSC;" +
               "if(tc.r<pc&&tc.g>pc)discard;" +
             "}" +
+            "lst*=1.01;" +
           "}" +
         "}" +
 
-        "vec3 lv=lcol.rgb*vol*vDat.z;" +
-        "fgCol=vec4(lv*pow(lv,vec3(shn)),1);" +
+        "fgCol=vec4(lcol.rgb*vol*vDat.z,1);" +
       "}";
     };
   }

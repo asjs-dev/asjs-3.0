@@ -32,7 +32,7 @@ AGL.Light = helpers.createPrototypeClass(
     this.castShadow =
     this.gouraud    = true;
     this.type       = AGL.Light.Type.SPOT;
-    this.precision  = 128;
+    this.precision  = 2;
   },
   function(_scope, _super) {
     helpers.property(_scope, "type", {
