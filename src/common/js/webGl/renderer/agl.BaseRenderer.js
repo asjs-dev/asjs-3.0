@@ -6,7 +6,7 @@ require("../data/props/agl.ColorProps.js");
 
 AGL.BaseRenderer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function BaseRenderer(config) {
+  function BaseRenderer(options) {
     helpers.BasePrototypeClass.call(this);
 
     /*
@@ -27,36 +27,36 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     this._resizeId         =
     this._currentResizeId  = 0;
 
-    config.locations = config.locations.concat([
+    this._options          = options;
+    this._config           = this._options.config;
+    this._context          = this._config.context;
+    this._config.locations = this._config.locations.concat([
       "uFlpY",
       "aPos",
       "uTex"
     ]);
-
-    this._config  = config;
-    this._context = config.context;
 
     this._vao = this._context.gl.createVertexArray();
 
     this._enableBuffers = false;
 
     this._elementArrayBuffer = new AGL.Buffer(
-      new Uint16Array([
+      "", new Uint16Array([
         0, 1, 3, 2
       ]),
-      "", 0, 0,
+      0, 0,
       {{AGL.Const.ELEMENT_ARRAY_BUFFER}},
       {{AGL.Const.STATIC_DRAW}}
     );
 
     this._positionBuffer = new AGL.Buffer(
-      new F32A([
+      "aPos", new F32A([
         0, 0,
         1, 0,
         1, 1,
         0, 1
       ]),
-      "aPos", 1, 2,
+      1, 2,
       {{AGL.Const.ARRAY_BUFFER}},
       {{AGL.Const.STATIC_DRAW}},
       0
@@ -102,23 +102,25 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope.renderToFramebuffer = function(framebuffer) {
-      if (this._context.isContextLost) return;
-      this._switchToProgram();
-      this._attachFramebuffer(framebuffer);
-      this._renderBatch(framebuffer);
-      framebuffer.unbind(this._gl);
+      if (!this._context.isContextLost) {
+        this._switchToProgram();
+        this._attachFramebuffer(framebuffer);
+        this._renderBatch(framebuffer);
+        framebuffer.unbind(this._gl);
+      }
     }
 
     _scope.render = function() {
-      if (this._context.isContextLost) return;
-      this._switchToProgram();
-      this._gl.uniform1f(this._locations.uFlpY, 1);
-      this._clearBeforeRenderFunc();
-      this._renderBatch();
+      if (!this._context.isContextLost) {
+        this._switchToProgram();
+        this._gl.uniform1f(this._locations.uFlpY, 1);
+        this._renderBatch();
+      }
     }
 
     _scope._renderBatch = function(framebuffer) {
       this._renderTime = Date.now();
+      this._clearBeforeRenderFunc();
       this._render(framebuffer);
       this._gl.flush();
     }
@@ -144,21 +146,21 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._gl.uniform1f(this._locations.uFlpY, -1);
     }
 
-    _scope._clear = function(framebuffer) {
+    _scope._clear = function() {
       var clearColorProps = this.clearColor;
       this._gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearColor.a);
       this._gl.clear({{AGL.Const.COLOR_BUFFER_BIT}});
     }
 
     _scope._resize = function() {
-      if (this._context.setSize(this._width, this._height)) return true;
+      if (this._context.setSize(this._width, this._height)) ++this._resizeId;
       if (this._currentResizeId < this._resizeId) {
         this._currentResizeId = this._resizeId;
-        return true;
+        this._customResize();
       }
-
-      return false;
     }
+
+    _scope._customResize = helpers.emptyFunction;
 
     _scope._drawInstanced = function(count) {
       this._gl.drawElementsInstanced({{AGL.Const.TRIANGLE_STRIP}}, 4, {{AGL.Const.UNSIGNED_SHORT}}, 0, count);
@@ -168,8 +170,8 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       var gl = this._gl;
 
       this._program = AGL.Utils.createProgram(gl, [
-        AGL.Utils.loadVertexShader(gl,   this._createVertexShader(this._config)),
-        AGL.Utils.loadFragmentShader(gl, this._createFragmentShader(this._config))
+        AGL.Utils.loadVertexShader(gl,   this._createVertexShader(this._options)),
+        AGL.Utils.loadFragmentShader(gl, this._createFragmentShader(this._options))
       ]);
       this._locations = AGL.Utils.getLocationsFor(gl, this._program, this._config.locations);
 

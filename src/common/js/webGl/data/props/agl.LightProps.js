@@ -6,14 +6,23 @@ AGL.LightProps = helpers.createPrototypeClass(
   function LightProps() {
     AGL.ItemProps.call(this);
 
-    this._z = 0;
+    this.z = 0;
   },
   function(_scope) {
-    helpers.property(_scope, "z", {
-      get: function() { return this._z; },
+    helpers.property(_scope, "width", {
+      get: function() { return this._width; },
       set: function(v) {
-        if (this._z !== v) this._z = v;
+        if (this._width !== v) {
+          this._width  =
+          this._height = v;
+          ++this._scaleUpdateId;
+        }
       }
+    });
+
+    helpers.property(_scope, "height", {
+      get: function() { return this._height; },
+      set: function(v) {}
     });
   }
 );

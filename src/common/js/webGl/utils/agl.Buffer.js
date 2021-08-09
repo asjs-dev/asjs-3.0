@@ -2,7 +2,7 @@ require("../NameSpace.js");
 
 AGL.Buffer = helpers.createPrototypeClass(
   helpers.BasePrototypeClass,
-  function Buffer(data, locationName, rows, cols, target, type, divisor) {
+  function Buffer(locationName, data, rows, cols, target, type, divisor) {
     helpers.BasePrototypeClass.call(this);
 
     /*

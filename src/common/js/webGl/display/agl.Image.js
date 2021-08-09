@@ -25,10 +25,10 @@ AGL.Image = helpers.createPrototypeClass(
 
     this._currentTexturePropsUpdateId = 0;
 
-    this.textureCropCache     = this.textureCrop.items;
-    this.distortionPropsCache = this.distortionProps.items;
-
-    this.colorCache = this.color.items;
+    this.textureCropCache         = this.textureCrop.items;
+    this.textureRepeatRandomCache = this.textureProps.items;
+    this.distortionPropsCache     = this.distortionProps.items;
+    this.colorCache               = this.color.items;
 
     this.texture = texture;
   },

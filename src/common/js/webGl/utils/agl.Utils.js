@@ -18,23 +18,16 @@ AGL.Utils = new (helpers.createPrototypeClass(
     _scope.initContextConfig = function(config) {
       config = config || {};
 
-      var attributes = config.contextAttributes || {};
-
       return {
         canvas            : config.canvas || document.createElement("canvas"),
-        contextAttributes : {
-          alpha                 : attributes.alpha                 || false,
-          antialias             : attributes.antialias             || false,
-          depth                 : attributes.depth                 || false,
-          stencil               : attributes.stencil               || false,
-          premultipliedAlpha    : attributes.premultipliedAlpha    || false,
-          powerPreference       : attributes.powerPreference       || "high-performance",
-          preserveDrawingBuffer : attributes.preserveDrawingBuffer || true,
-        }
+        contextAttributes : Object.assign({
+          powerPreference       : "high-performance",
+          preserveDrawingBuffer : true,
+        }, config.contextAttributes || {});
       };
     }
 
-    _scope.initRendererConfig = function(config, target) {
+    _scope.initRendererConfig = function(config) {
       config = config || {};
       return {
         locations : config.locations || [],
@@ -126,8 +119,8 @@ AGL.Utils = new (helpers.createPrototypeClass(
       return locations;
     }
 
-    _scope.isPowerOf2 = function(value) {
-      return (value & (value - 1)) == 0;
-    }
+    _scope.GLSL_RANDOM = "float rand(vec2 xy,float seed){" +
+      "return fract(tan(distance(xy*1.61803398874989484820459,xy)*seed)*(xy.x+.01));" +
+    "}";
   }
 ))();

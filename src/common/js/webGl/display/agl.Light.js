@@ -112,8 +112,6 @@ AGL.Light = helpers.createPrototypeClass(
       var datId = this._datId;
 
       if (this.isOn()) {
-        this.props.height = this.props.width;
-
         this._updateProps();
         this._updateColor();
 

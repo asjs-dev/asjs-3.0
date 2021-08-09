@@ -3,16 +3,16 @@ require("./agl.BaseRenderer.js");
 
 AGL.BatchRenderer = helpers.createPrototypeClass(
   AGL.BaseRenderer,
-  function BatchRenderer(config) {
-    config.locations = config.locations.concat([
+  function BatchRenderer(options) {
+    options.config.locations = options.config.locations.concat([
       "aMt"
     ]);
 
-    AGL.BaseRenderer.call(this, config);
+    AGL.BaseRenderer.call(this, options);
 
     this._matrixBuffer = new AGL.Buffer(
-      this._MAX_BATCH_ITEMS,
-      "aMt", 4, 4
+      "aMt", this._MAX_BATCH_ITEMS,
+      4, 4
     );
   },
   function(_scope, _super) {
