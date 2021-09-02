@@ -13,7 +13,7 @@ AGL.BaseFilter = helpers.createPrototypeClass(
 
     this.kernels = new F32A(9);
 
-    this.intensity = intensity;
+    this.intensity = intensity || 0;
   },
   function(_scope) {
     helpers.property(_scope, "intensity", {

@@ -13,5 +13,9 @@ AGL.StageContainer = helpers.createPrototypeClass(
   function(_scope) {
     helpers.get(_scope, "stage",  function() { return this; });
     helpers.get(_scope, "parent", function() { return this._parent; });
+
+    _scope._updatePremultipliedAlpha = function() {
+      this.premultipliedAlpha = this.props.alpha;
+    }
   }
 );

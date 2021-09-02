@@ -5,8 +5,7 @@ require("../helpers/map.js");
 require("../helpers/emptyFunction.js");
 require("../helpers/createPrototypeClass.js");
 require("../helpers/BasePrototypeClass.js");
-require("../helpers/isEmpty.js");
-require("../helpers/deepFreeze.js");
+require("../helpers/typeIs.js");
 
 require("./NameSpace.js");
 

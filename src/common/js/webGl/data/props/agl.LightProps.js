@@ -22,7 +22,7 @@ AGL.LightProps = helpers.createPrototypeClass(
 
     helpers.property(_scope, "height", {
       get: function() { return this._height; },
-      set: function(v) {}
+      set: helpers.emptyFunction
     });
   }
 );

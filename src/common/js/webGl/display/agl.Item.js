@@ -43,9 +43,7 @@ AGL.Item = helpers.createPrototypeClass(
 
     helpers.property(_scope, "callback", {
       get: function() { return this._callback; },
-      set: function(v) {
-        if (this._callback !== v) this._callback = v || helpers.emptyFunction;
-      }
+      set: function(v) { this._callback = v || helpers.emptyFunction; }
     });
 
     _scope.getBounds = function() {

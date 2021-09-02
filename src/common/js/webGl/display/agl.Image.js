@@ -60,9 +60,9 @@ AGL.Image = helpers.createPrototypeClass(
   }
 );
 AGL.Image.TYPE     = "drawable";
-AGL.Image.TintType = helpers.deepFreeze({
+AGL.Image.TintType = {
   NONE      : 0,
   NORMAL    : 1,
   GRAYSCALE : 2,
   OVERRIDE  : 3
-});
+};

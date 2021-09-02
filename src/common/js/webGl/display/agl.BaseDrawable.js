@@ -41,10 +41,10 @@ AGL.BaseDrawable = helpers.createPrototypeClass(
       var c = corners[2];
       var d = corners[3];
 
-      bounds.x      = Math.min(a.x, b.x, c.x, d.x);
-      bounds.y      = Math.min(a.y, b.y, c.y, d.y);
-      bounds.width  = Math.max(a.x, b.x, c.x, d.x);
-      bounds.height = Math.max(a.y, b.y, c.y, d.y);
+      bounds.x      = min(a.x, b.x, c.x, d.x);
+      bounds.y      = min(a.y, b.y, c.y, d.y);
+      bounds.width  = max(a.x, b.x, c.x, d.x);
+      bounds.height = max(a.y, b.y, c.y, d.y);
     }
 
     _scope._updateAdditionalData = function() {

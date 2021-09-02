@@ -104,11 +104,9 @@ AGL.Context = helpers.createPrototypeClass(
 
       this._textureMap[textureId] = textureInfo;
 
-      var textureIdIndex = this.textureIds.indexOf(textureId);
-      textureIdIndex < 0 && this.textureIds.push(textureId);
+      this.textureIds.indexOf(textureId) < 0 && this.textureIds.push(textureId);
 
-      var emptyTextureId = this._emptyTextureSlots.indexOf(textureId);
-      emptyTextureId > -1 && this._emptyTextureSlots.splice(emptyTextureId, 1);
+      helpers.removeFromArray(this._emptyTextureSlots, textureId);
 
       return textureId;
     }

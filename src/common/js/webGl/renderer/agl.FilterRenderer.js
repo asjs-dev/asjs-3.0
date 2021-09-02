@@ -135,15 +135,16 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
         "if(uFtrT.x>0){" +
           "float[] vl=uFtrV;" +
           "vec2 oPx=1./vec2(textureSize(uTex,0));" +
-          "float val=vl[0];" +
-          "vec2 vol=val*oPx;" +
+          "float v=vl[0];" +
+          "vec2 vol=v*oPx;" +
+          "vec4 oClVl=oCl*(1.-v);" +
           /*
             CONVOLUTE FILTERS:
               - SharpenFilter
               - EdgeDetectFilter
           */
           "if(uFtrT.x<2){" +
-            "mat3 kr=uFtrK*val;" +
+            "mat3 kr=uFtrK*v;" +
             "oCl=vec4((" +
               "texture(uTex,vTCrd-oPx)*kr[0].x+" +
               "texture(uTex,vTCrd+oPx*vec2(0,-1))*kr[0].y+" +
@@ -159,54 +160,54 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           "}else if(uFtrT.x<3){"+
             // GrayscaleFilter
             "if(uFtrT.y<2)" +
-              "oCl=vec4(vec3((oCl.r+oCl.g+oCl.b)/3.),oCl.a);" +
+              "oCl=oClVl+vec4(vec3((oCl.r+oCl.g+oCl.b)/3.),oCl.a)*v;" +
             // SepiaFilter
             "else if(uFtrT.y<3)" +
-              "oCl=vec4(vec3(.874,.514,.156)*((oCl.r+oCl.g+oCl.b)/3.),oCl.a);" +
+              "oCl=oClVl+vec4(vec3(.874,.514,.156)*((oCl.r+oCl.g+oCl.b)/3.),oCl.a)*v;" +
             // InvertFilter
             "else if(uFtrT.y<4)" +
-              "oCl=abs(vec4(oCl.rgb-1.,oCl.a));" +
+              "oCl=oClVl+abs(vec4(oCl.rgb-1.,oCl.a))*v;" +
             // TintFilter
             "else if(uFtrT.y<5)" +
-              "oCl.rgb*=vec3(vl[2],vl[3],vl[4])*val;" +
+              "oCl.rgb*=vec3(vl[2],vl[3],vl[4])*v;" +
             // ColorLimitFilter
             "else if(uFtrT.y<6)" +
-              "oCl=vec4((round((oCl.rgb*256.)/val)/256.)*val,oCl.a);" +
+              "oCl=vec4((round((oCl.rgb*256.)/v)/256.)*v,oCl.a);" +
             // VignetteFilter
             "else if(uFtrT.y<7){" +
-              "vec2 pv=pow(abs(vCrd*val),vec2(vl[1]));" +
-              "float v=clamp(min(1.,(1.-length(pv))*vl[5]),0.,1.);" +
-              "oCl.rgb*=vec3(v);" +
-              "oCl.rgb+=vec3(vl[2],vl[3],vl[4])*(1.-v);" +
+              "vec2 pv=pow(abs(vCrd*v),vec2(vl[1]));" +
+              "float cv=clamp(min(1.,(1.-length(pv))*vl[5]),0.,1.);" +
+              "oCl.rgb=oCl.rgb*vec3(cv)+vec3(vl[2],vl[3],vl[4])*(1.-cv);" +
+
             "}" +
             // RainbowFilter
             "else if(uFtrT.y<8)" +
-              "oCl.rgb+=vec3(vCrd.xy*.15,(vCrd.x*vCrd.y)*.15);" +
+              "oCl.rgb+=vec3(vCrd.xy*.15,(vCrd.x*vCrd.y)*.15)*v;" +
             // BrightnessContrastFilter
             "else if(uFtrT.y<9)" +
-              "oCl.rgb=vec3((oCl.rgb-.5)*vl[1]+.5+val);" +
+              "oCl.rgb=vec3((oCl.rgb-.5)*vl[1]+.5+v);" +
             // GammaFilter
             "else if(uFtrT.y<10)" +
-              "oCl.rgb=vec3(pow(oCl.rgb,vec3(val)));" +
+              "oCl.rgb=vec3(pow(oCl.rgb,vec3(v)));" +
           "}" +
           // SAMPLING FILTERS
           "else if(uFtrT.x<4){" +
-            "vec2 wh=oPx*vec2(val,vl[1]);" +
-            "vec4 col=vec4(0);" +
+            "vec2 wh=oPx*vec2(v,vl[1]);" +
+            "vec4 cl=vec4(0);" +
             "float c=0.;" +
             "float m;" +
             "float im;" +
-            "vec4 tCol;" +
+            "vec4 tCl;" +
             "if(uFtrT.y<2)" +
               // BlurFilter
               "for(float i=-2.;i<3.;++i){" +
                 "for(float j=-2.;j<3.;++j){" +
                   "m=abs(i)+abs(j);" +
                   "im=1.-(m*.25);" +
-                  "tCol=i==0.&&j==0." +
+                  "tCl=i==0.&&j==0." +
                     "?oCl" +
                     ":texture(uTex,vTCrd+(wh*vec2(i,j)));" +
-                  "col+=tCol*im;" +
+                  "cl+=tCl*im;" +
                   "c+=im;" +
                 "}" +
               "}" +
@@ -217,18 +218,18 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
                 "for(float j=-2.;j<3.;++j){" +
                   "m=abs(i)+abs(j);" +
                   "im=1.-(m*.25);" +
-                  "tCol=i==0.&&j==0." +
+                  "tCl=i==0.&&j==0." +
                     "?oCl" +
                     ":texture(uTex,vTCrd+(wh*vec2(i,j)));" +
-                  "float avg=(tCol.r+tCol.g+tCol.b+tCol.a)/4.;" +
+                  "float avg=(tCl.r+tCl.g+tCl.b+tCl.a)/4.;" +
                   "if(avg-oAvg>=vl[3]*m){" +
-                    "col+=tCol*im*(2.-vl[3]);" +
+                    "cl+=tCl*im*(2.-vl[3]);" +
                     "c+=im;" +
                   "}" +
                 "}" +
               "}" +
             "}" +
-            "oCl=col/c;" +
+            "oCl=cl/c;" +
           "}" +
           // PixelateFilter
           "else if(uFtrT.x<5)" +
@@ -243,10 +244,10 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           "}" +
           // MaskFilter
           "else if(uFtrT.x<7){" +
-            "vec4 mskCol=texture(uFTex,vTCrd);" +
-            "oCl.a*=val<4." +
-              "?mskCol[int(val)]" +
-              ":(mskCol.r+mskCol.g+mskCol.b+mskCol.a)/4.;" +
+            "vec4 mskCl=texture(uFTex,vTCrd);" +
+            "oCl.a*=v<4." +
+              "?mskCl[int(v)]" +
+              ":(mskCl.r+mskCl.g+mskCl.b+mskCl.a)/4.;" +
           "}" +
         "}" +
       "}";

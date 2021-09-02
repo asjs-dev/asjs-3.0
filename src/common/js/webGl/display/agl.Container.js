@@ -8,6 +8,8 @@ AGL.Container = helpers.createPrototypeClass(
 
     this.TYPE = AGL.Container.TYPE;
 
+    this.premultipliedAlpha = 1;
+
     this.children = [];
   },
   function(_scope, _super) {
@@ -77,18 +79,18 @@ AGL.Container = helpers.createPrototypeClass(
     _scope.getBounds = function() {
       var bounds = this._bounds;
 
-      bounds.x      =  1/0;
+      bounds.x      =
       bounds.y      =  1/0;
-      bounds.width  = -1/0;
+      bounds.width  =
       bounds.height = -1/0;
 
       var l = this.children.length;
       for (var i = 0; i < l; ++i) {
         var childBounds = this.children[i].getBounds();
-        bounds.x      = Math.min(bounds.x,      childBounds.x);
-        bounds.y      = Math.min(bounds.y,      childBounds.y);
-        bounds.width  = Math.max(bounds.width,  childBounds.width);
-        bounds.height = Math.max(bounds.height, childBounds.height);
+        bounds.x      = min(bounds.x,      childBounds.x);
+        bounds.y      = min(bounds.y,      childBounds.y);
+        bounds.width  = max(bounds.width,  childBounds.width);
+        bounds.height = max(bounds.height, childBounds.height);
       }
 
       return bounds;
@@ -99,9 +101,15 @@ AGL.Container = helpers.createPrototypeClass(
       this._updateColor();
     }
 
+    _scope._updatePremultipliedAlpha = function() {
+      this.premultipliedAlpha = this.props.alpha * this.parent.premultipliedAlpha;
+    }
+
     _scope._updateColor = function() {
       var parent = this._parent;
       var color  = this.color;
+
+      this._updatePremultipliedAlpha();
 
       if (
         this._currentParentColorUpdateId < parent.colorUpdateId ||

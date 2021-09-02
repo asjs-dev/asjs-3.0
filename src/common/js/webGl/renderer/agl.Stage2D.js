@@ -16,13 +16,15 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
     options.config           = AGL.Utils.initRendererConfig(options.config, AGL.Stage2D);
     options.config.locations = options.config.locations.concat([
-      "aDat",
-      "aDst"
+      "aDt",
+      "aDst",
+      "uWCl",
+      "uWA"
     ]);
 
     this._container = new AGL.StageContainer(this);
 
-    var maxBatchItems = this._MAX_BATCH_ITEMS = Math.max(1, options.maxBatchItems || 1e4);
+    var maxBatchItems = this._MAX_BATCH_ITEMS = max(1, options.maxBatchItems || 1e4);
 
     this._batchItems = 0;
 
@@ -43,13 +45,13 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this.pickerPoint = AGL.Point.create();
 
     this._dataBuffer = new AGL.Buffer(
-      "aDat", maxBatchItems,
+      "aDt", maxBatchItems,
       3, 4
     );
 
     this._distortionBuffer = new AGL.Buffer(
       "aDst", maxBatchItems,
-      3, 4
+      2, 4
     );
   },
   function(_scope, _super) {
@@ -82,6 +84,12 @@ AGL.Stage2D = helpers.createPrototypeClass(
     }
 
     _scope._drawContainer = function(container) {
+      var gl        = this._gl;
+      var locations = this._locations;
+
+      gl.uniform4fv(locations.uWCl, container.colorCache);
+      gl.uniform1f(locations.uWA,   container.premultipliedAlpha);
+
       var children = container.children;
       var l = children.length;
       for (var i = 0; i < l; ++i) this._drawItem(children[i]);
@@ -96,29 +104,26 @@ AGL.Stage2D = helpers.createPrototypeClass(
         item.isContainsPoint(this.pickerPoint)
       ) this.picked = item;
 
-      var quadId = this._batchItems * 4;
-      var twId   = this._batchItems * 12;
-      var matId  = this._batchItems * 16;
+      var twId  = this._batchItems * 12;
+      var matId = this._batchItems * 16;
 
-      helpers.arraySet(this._dataBuffer.data, item.parent.colorCache, twId);
-      helpers.arraySet(this._dataBuffer.data, item.colorCache,        twId + 4);
+      helpers.arraySet(this._dataBuffer.data, item.colorCache,               twId);
+      helpers.arraySet(this._dataBuffer.data, item.textureRepeatRandomCache, twId + 8);
 
-      this._dataBuffer.data[twId + 8]  = item.props.alpha;
-      this._dataBuffer.data[twId + 9]  = item.parent.props.alpha;
-      this._dataBuffer.data[twId + 10] = this._context.useTexture(
+      this._dataBuffer.data[twId + 4] = item.props.alpha;
+      this._dataBuffer.data[twId + 5] = item.tintType;
+      this._dataBuffer.data[twId + 6] = this._context.useTexture(
         item.texture,
         this._renderTime,
         false,
         this._batchDrawBound
       );
-      this._dataBuffer.data[twId + 11] = item.tintType;
 
       helpers.arraySet(this._matrixBuffer.data, item.matrixCache,        matId);
       helpers.arraySet(this._matrixBuffer.data, item.textureMatrixCache, matId + 6);
       helpers.arraySet(this._matrixBuffer.data, item.textureCropCache,   matId + 12);
 
-      helpers.arraySet(this._distortionBuffer.data, item.distortionPropsCache,     twId);
-      helpers.arraySet(this._distortionBuffer.data, item.textureRepeatRandomCache, twId + 8);
+      helpers.arraySet(this._distortionBuffer.data, item.distortionPropsCache, this._batchItems * 8);
 
       ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
     }
@@ -167,17 +172,20 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       "in vec2 aPos;" +
       "in mat4 aMt;" +
-      "in mat3x4 aDat;" +
-      "in mat3x4 aDst;" +
+      "in mat3x4 aDt;" +
+      "in mat2x4 aDst;" +
 
       "uniform float uFlpY;" +
+      "uniform vec4 uWCl;" +
+      "uniform float uWA;" +
 
       "out vec2 vTCrd;" +
       "out vec4 vTexCrop;" +
-      "out mat2x4 vCol;" +
-      "out float vACol;" +
+      "out mat2x4 vCl;" +
+      "out float vACl;" +
       "out float vTexId;" +
       "out float vTTp;" +
+
       (useRepeatTextures
         ? "out vec3 vRR;"
         : "") +
@@ -211,13 +219,14 @@ AGL.Stage2D = helpers.createPrototypeClass(
         "vTCrd=(tMt*pos).xy;" +
         "vTexCrop=aMt[3];" +
 
-        "vCol=mat2x4(aDat[0],aDat[1].rgb*aDat[1].a,1.-aDat[1].a);" +
-        "vACol=aDat[2].x*aDat[2].y;" +
+        "vCl=mat2x4(uWCl,aDt[0].rgb*aDt[0].a,1.-aDt[0].a);" +
+        "vACl=uWA*aDt[1].x;" +
 
-        "vTexId=aDat[2].z;" +
-        "vTTp=aDat[2].w;" +
+        "vTTp=aDt[1].y;" +
+        "vTexId=aDt[1].z;" +
+
         (useRepeatTextures
-          ? "vRR=aDst[2].xyz;" +
+          ? "vRR=aDt[2].xyz;" +
             "vRR.z=vRR.x+vRR.y;"
           : "") +
       "}";
@@ -229,7 +238,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       function createGetTextureFunction(maxTextureImageUnits) {
         var func =
-        "vec4 gtTexCol(float i,vec2 c){" +
+        "vec4 gtTexCl(float i,vec2 c){" +
           "if(i<0.)return vec4(1);";
 
         for (var i = 0; i < maxTextureImageUnits; ++i) func +=
@@ -243,15 +252,15 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       var maxTextureImageUnits = AGL.Utils.info.maxTextureImageUnits;
       function getSimpleTexColor(modCoordName) {
-        return "gtTexCol(vTexId,vTexCrop.xy+vTexCrop.zw*" + modCoordName + ")";
+        return "gtTexCl(vTexId,vTexCrop.xy+vTexCrop.zw*" + modCoordName + ")";
       }
 
       return AGL.Utils.createVersion(options.config.precision) +
 
       "in vec2 vTCrd;" +
       "in vec4 vTexCrop;" +
-      "in mat2x4 vCol;" +
-      "in float vACol;" +
+      "in mat2x4 vCl;" +
+      "in float vACl;" +
       "in float vTexId;" +
       "in float vTTp;" +
       (useRepeatTextures
@@ -266,7 +275,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       (useRepeatTextures
         ? AGL.Utils.GLSL_RANDOM +
-          "vec4 gtColBCrd(vec2 st,vec2 crd){" +
+          "vec4 gtClBCrd(vec2 st,vec2 crd){" +
             "vec2 tCrd=vTCrd;" +
             "float rnd=rand(floor(tCrd+st),1.);" +
             "float rndDg=rnd*360.*vRR.x;" +
@@ -283,32 +292,33 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       "void main(void){" +
         "vec2 crd=mod(vTCrd,1.);" +
+
         (useRepeatTextures
           ? "oCl=vRR.z>0." +
               "?(" +
-                  "gtColBCrd(vec2(0),crd)+" +
-                  "gtColBCrd(vec2(1,0),crd)+" +
-                  "gtColBCrd(vec2(0,1),crd)+" +
-                  "gtColBCrd(vec2(1),crd)" +
+                  "gtClBCrd(vec2(0),crd)+" +
+                  "gtClBCrd(vec2(1,0),crd)+" +
+                  "gtClBCrd(vec2(0,1),crd)+" +
+                  "gtClBCrd(vec2(1),crd)" +
                 ")/vec4(1,1,1,4)" +
               ":" + getSimpleTexColor("crd") + ";"
           : "oCl=" + getSimpleTexColor("crd") + ";") +
 
-        "oCl.a*=vACol;" +
+        "oCl.a*=vACl;" +
 
         "if(oCl.a==0.)discard;" +
 
         (useTint
           ? "if(vTTp>0.){" +
-              "vec3 col=vCol[1].rgb+oCl.rgb*vCol[1].a;" +
+              "vec3 cl=vCl[1].rgb+oCl.rgb*vCl[1].a;" +
               "if(vTTp<2.||(vTTp<3.&&oCl.r==oCl.g&&oCl.r==oCl.b))" +
-                "oCl.rgb*=col;" +
+                "oCl.rgb*=cl;" +
               "else if(vTTp<4.)" +
-                "oCl.rgb=col;" +
+                "oCl.rgb=cl;" +
             "}"
           : "") +
 
-        "oCl*=vCol[0];" +
+        "oCl*=vCl[0];" +
       "}";
     };
   }

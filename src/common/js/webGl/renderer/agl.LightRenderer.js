@@ -14,7 +14,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     this.heightMap = options.heightMap;
 
-    this._MAX_BATCH_ITEMS = Math.max(1, options.lightNum || 1);
+    this._MAX_BATCH_ITEMS = max(1, options.lightNum || 1);
 
     AGL.BatchRenderer.call(this, options);
 
@@ -33,7 +33,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     helpers.property(_scope, "scale", {
       get: function() { return this._scale; },
       set: function(v) {
-        v = Math.max(0, Math.min(1, v || 1));
+        v = max(0, min(1, v || 1));
         this._scale = v;
       }
     });
@@ -86,8 +86,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       "out vec2 vTCrd;" +
       "out vec4 vCrd;" +
-      "out vec4 vCol;" +
-      "out vec4 vDat;" +
+      "out vec4 vCl;" +
+      "out vec4 vDt;" +
       "out vec4 vExt;" +
       "out vec4 vS;" +
       "out float vHS;" +
@@ -98,8 +98,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       "void main(void){" +
         "vExt=aExt;" +
-        "vCol=aMt[2];" +
-        "vDat=aMt[3];" +
+        "vCl=aMt[2];" +
+        "vDt=aMt[3];" +
 
         "vS=uS;" +
         "vSC=uSC;" +
@@ -109,14 +109,15 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "vHS=vExt.z*vSC;" +
 
         "mat3 mt=mat3(aMt[0].xy,0,aMt[0].zw,0,aMt[1].xy,1);" +
+        "vExt.w*=vSC;" +
+        "vDt.y*=vSC;" +
+        "vD=aMt[1].z*vSC;" +
         "if(vExt.x<1.){" +
-          "vExt.w*=vSC;" +
           "gl_Position=vec4(mt*pos,1);" +
           "vTCrd=(gl_Position.xy+H.xy)/H.zw;" +
           "vCrd.zw=(aMt[1].xy+H.xy)/H.zw;" +
           "vSpt=PI-aMt[1].w;" +
-          "vD=aMt[1].z*vSC;" +
-          "vSln=vec2(sin(vDat.w),cos(vDat.w));" +
+          "vSln=vec2(sin(vDt.w),cos(vDt.w));" +
         "}else{" +
           "mt[2].xy=vec2(-1,1);" +
           "gl_Position=vec4(pos,1);" +
@@ -135,8 +136,8 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
       "in vec2 vTCrd;" +
       "in vec4 vCrd;" +
-      "in vec4 vCol;" +
-      "in vec4 vDat;" +
+      "in vec4 vCl;" +
+      "in vec4 vDt;" +
       "in vec4 vExt;" +
       "in vec4 vS;" +
       "in float vHS;" +
@@ -158,7 +159,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "}" +
 
       "void main(void){" +
-        "if(vDat.x<1.)discard;" +
+        "if(vDt.x<1.)discard;" +
 
         "bool isl=vExt.x<1.;" +
 
@@ -176,13 +177,14 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
         "if(isl&&dst>1.)discard;" +
 
+        "float shl=vD/vDt.y;" +
+
         "if(isl&&vSpt>0.&&vSpt<PI){" +
           "float slh=(vHS-ph)/255.;" +
           "vec2 sl=vec2(slh*vSln.y-vCrd.x*vSln.x,slh*vSln.x+vCrd.x*vSln.y);" +
           "if(atan(sl.x,length(vec2(sl.y,vCrd.y)))+PIH<vSpt)discard;" +
         "}" +
 
-        "vec4 lcol=vCol;" +
         "float vol=1.-(isl?dst:0.);" +
 
         "int flg=int(vExt.y);" +
@@ -209,22 +211,24 @@ AGL.LightRenderer = helpers.createPrototypeClass(
         "}" +
 
         "if((flg&1)>0&&vol>0.){" +
-          "float lst=max(1.,vExt.w);" +
           "float hst=(1./flatDst)*mh;" +
-          "float l=flatDst-lst;" +
-          "for(float i=1.;i<flatDst;i+=lst){" +
+          "float l=flatDst-vExt.w;" +
+          "float s=max(0.,l-shl);" +
+          "for(float i=l;i>s;i-=vExt.w){" +
             "p=tCnt+i*dsth;" +
             "pc=vHS+i*hst;" +
             "tc=texture(uTex,p*vS.zw);" +
             "if(tc.a>0.){" +
               "tc.rg*=vSC;" +
-              "if(tc.r<pc&&tc.g>pc)discard;" +
+              "if(tc.r<pc&&tc.g>pc){" +
+                "vol*=clamp(0.,1.,distance(tCrd,p)/shl);" +
+                "break;" +
+              "}" +
             "}" +
-            "lst*=1.001;" +
           "}" +
         "}" +
 
-        "oCl=vec4(lcol.rgb*vol*vDat.z,1);" +
+        "oCl=vec4(vCl.rgb*vCl.a*vol*vDt.z,1);" +
       "}";
     };
   }

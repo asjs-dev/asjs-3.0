@@ -3,7 +3,7 @@ require("./agl.BaseFilter.js");
 
 AGL.InvertFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
-  function InvertFilter() {
-    AGL.BaseFilter.call(this, 2, 3);
+  function InvertFilter(intensity) {
+    AGL.BaseFilter.call(this, 2, 3, intensity);
   }
 );

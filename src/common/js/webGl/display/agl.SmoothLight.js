@@ -39,7 +39,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
       this._renderFilterFunc = this._renderFilterToFramebuffer.bind(this);
     }
 
-    this.blur = helpers.isEmpty(options.blur) ? 1 : options.blur;
+    this.blur = typeof options.blur === "number" ? options.blur : 1;
   },
   function(_scope, _super) {
     helpers.property(_scope, "scale", {

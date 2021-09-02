@@ -2,16 +2,17 @@ require("../NameSpace.js");
 
 AGL.FPS = {
   start : function(targetFPS) {
-    this._targetMS = 0;
-    this._then     = 0;
-    this._frames   = 0;
-    this._prevTime = 0;
+    this._targetMS =
+    this._then     =
+    this._frames   =
+    this._prevTime =
+
+    this.fps   =
+    this.delay = 0;
 
     this._then     = Date.now();
     this._targetMS = 1000 / (targetFPS || 60);
 
-    this.fps   =
-    this.delay = 0;
   },
   update : function() {
     this._frames++;

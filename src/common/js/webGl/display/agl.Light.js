@@ -32,7 +32,8 @@ AGL.Light = helpers.createPrototypeClass(
     this.castShadow =
     this.gouraud    = true;
     this.type       = AGL.Light.Type.SPOT;
-    this.precision  = 2;
+    this.precision  =
+    this.diffuse    = 1;
   },
   function(_scope, _super) {
     helpers.property(_scope, "type", {
@@ -58,7 +59,7 @@ AGL.Light = helpers.createPrototypeClass(
 
     helpers.property(_scope, "precision", {
       get: function() { return this._extensionData[this._extId + 3]; },
-      set: function(v) { this._extensionData[this._extId + 3] = Math.max(1, v); }
+      set: function(v) { this._extensionData[this._extId + 3] = max(1, v); }
     });
 
     helpers.property(_scope, "angle", {
@@ -116,6 +117,7 @@ AGL.Light = helpers.createPrototypeClass(
         this._updateColor();
 
         lightData[datId]     = lightData[datId - 1] > 0 ? 1 : 0;
+        lightData[datId + 1] = this.diffuse;
         lightData[datId + 2] = this.props.alpha;
 
         lightData[this._matId + 6] = this.props.width;
@@ -141,17 +143,15 @@ AGL.Light = helpers.createPrototypeClass(
 
         var colId = this._colId;
 
-        var premultipliedAlpha = parentColorCache[3] * color.a;
-
-        lightData[colId]     = parentColorCache[0] * color.r * premultipliedAlpha;
-        lightData[colId + 1] = parentColorCache[1] * color.g * premultipliedAlpha;
-        lightData[colId + 2] = parentColorCache[2] * color.b * premultipliedAlpha;
-        lightData[colId + 3] = premultipliedAlpha;
+        lightData[colId]     = parentColorCache[0] * color.r;
+        lightData[colId + 1] = parentColorCache[1] * color.g;
+        lightData[colId + 2] = parentColorCache[2] * color.b;
+        lightData[colId + 3] = parentColorCache[3] * color.a;
       }
     }
   }
 );
-AGL.Light.Type = helpers.deepFreeze({
+AGL.Light.Type = {
   SPOT    : 0,
   AMBIENT : 1
-});
+};
