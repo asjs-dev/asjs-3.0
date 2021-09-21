@@ -27,16 +27,16 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     this.filterRenderer.clearColor.set(0, 0, 0, 0);
     this.filterRenderer.clearBeforeRender = true;
 
-    this.image = new AGL.Image();
+    this.image           = new AGL.Image();
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     if (!options.config.context) {
-      this.image.texture = new AGL.Texture(this.filterRenderer.context.canvas, true);
+      this.image.texture     = new AGL.Texture(this.filterRenderer.context.canvas, true);
       this._renderFilterFunc = this._renderFilter.bind(this);
     } else {
       this._filterFramebuffer = new AGL.Framebuffer();
-      this.image.texture = this._filterFramebuffer;
-      this._renderFilterFunc = this._renderFilterToFramebuffer.bind(this);
+      this.image.texture      = this._filterFramebuffer;
+      this._renderFilterFunc  = this._renderFilterToFramebuffer.bind(this);
     }
 
     this.blur = typeof options.blur === "number" ? options.blur : 1;
@@ -55,12 +55,9 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     helpers.property(_scope, "blur", {
       get: function() { return this._blur; },
       set: function(v) {
-        if (this._blur !== v) {
-          this._blur = v;
-          var blurFilter = this._blurFilter;
-          blurFilter.intensityX =
-          blurFilter.intensityY = this._blur;
-        }
+        this._blur                  =
+        this._blurFilter.intensityX =
+        this._blurFilter.intensityY = v;
       }
     });
 

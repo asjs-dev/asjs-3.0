@@ -23,7 +23,6 @@ AGL.Texture = helpers.createPrototypeClass(
   },
   function(_scope, _super) {
     helpers.get(_scope, "loaded", function() { return this._loaded; });
-
     helpers.get(_scope, "width",  function() { return this._getSourceWidth() || 1; });
     helpers.get(_scope, "height", function() { return this._getSourceHeight() || 1; });
 
@@ -47,7 +46,7 @@ AGL.Texture = helpers.createPrototypeClass(
 
           this._parseTextureSize();
 
-          this._source.addEventListener(
+          v.addEventListener(
             this._eventType,
             this._onTextureLoadedBind
           );

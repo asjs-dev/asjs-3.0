@@ -4,7 +4,7 @@ require("./agl.BaseFilter.js");
 AGL.MaskFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
   function MaskFilter(texture, type) {
-    AGL.BaseFilter.call(this, 6, 0, type);
+    AGL.BaseFilter.call(this, 7, 0, type);
 
     this.texture = texture;
   }, function(_scope) {

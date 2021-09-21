@@ -5,14 +5,14 @@ AGL.createBlendMode = function(funcs, eqs) {
   return {
     funcName: "blendFunc" + (
       funcs.length < 3
-      ? ""
-      : "Separate"
+        ? ""
+        : "Separate"
     ),
     funcs: funcs,
     eqName: "blendEquation" + (
       !eqs || eqs.length < 2
-      ? ""
-      : "Separate"
+        ? ""
+        : "Separate"
     ),
     eqs: eqs || [{{AGL.Const.FUNC_ADD}}]
   };

@@ -4,7 +4,7 @@ require("./agl.BaseFilter.js");
 AGL.DisplacementFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
   function DisplacementFilter(texture, intensity, x, y) {
-    AGL.BaseFilter.call(this, 5, 0, intensity);
+    AGL.BaseFilter.call(this, 6, 0, intensity);
 
     this.texture = texture;
 

@@ -4,7 +4,7 @@ require("./agl.BaseFilter.js");
 AGL.TintFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
   function TintFilter(intensity, r, g, b) {
-    AGL.BaseFilter.call(this, 2, 4, intensity);
+    AGL.BaseFilter.call(this, 3, 4, intensity);
 
     this.r = r;
     this.g = g;

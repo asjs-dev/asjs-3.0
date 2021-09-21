@@ -4,7 +4,7 @@ require("./agl.BaseFilter.js");
 AGL.VignetteFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
   function VignetteFilter(intensity, roundness, transition, r, g, b) {
-    AGL.BaseFilter.call(this, 2, 6, intensity);
+    AGL.BaseFilter.call(this, 3, 6, intensity);
 
     this.roundness  = roundness;
     this.transition = transition;

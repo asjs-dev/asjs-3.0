@@ -4,7 +4,7 @@ require("./agl.BaseFilter.js");
 AGL.BrightnessContrastFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
   function BrightnessContrastFilter(brightness, contrast) {
-    AGL.BaseFilter.call(this, 2, 8, brightness);
+    AGL.BaseFilter.call(this, 3, 8, brightness);
 
     this.contrast = contrast;
   },

@@ -58,6 +58,8 @@ require("./filters/agl.PixelateFilter.js");
 require("./filters/agl.EdgeDetectFilter.js");
 require("./filters/agl.SharpenFilter.js");
 
+require("./filters/agl.SaturateFilter.js");
+
 require("./filters/agl.GrayscaleFilter.js");
 require("./filters/agl.SepiaFilter.js");
 require("./filters/agl.InvertFilter.js");

@@ -119,8 +119,10 @@ AGL.Utils = new (helpers.createPrototypeClass(
       return locations;
     }
 
-    _scope.GLSL_RANDOM = "float rand(vec2 xy,float seed){" +
-      "return fract(tan(distance(xy*1.61803398874989484820459,xy)*seed)*(xy.x+.01));" +
+    _scope.GLSL_RANDOM = "float rand(vec2 p,float s){" +
+      "p+=floor(p/10000.);" +
+      "p=mod(p,vec2(10000));" +
+      "return fract(sin(dot(p,vec2(sin(p.x+p.y),cos(p.y-p.x)))*s)*.5+.5);" +
     "}";
   }
 ))();

@@ -4,6 +4,6 @@ require("./agl.BaseFilter.js");
 AGL.PixelateFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
   function PixelateFilter(intensity) {
-    AGL.BaseFilter.call(this, 4, 0, intensity);
+    AGL.BaseFilter.call(this, 5, 0, intensity);
   }
 );

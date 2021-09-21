@@ -11,7 +11,7 @@ AGL.BaseFilter = helpers.createPrototypeClass(
 
     this.v = new F32A(9);
 
-    this.kernels = new F32A(9);
+    this.kernels = new F32A(16);
 
     this.intensity = intensity || 0;
   },

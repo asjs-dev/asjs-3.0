@@ -4,7 +4,7 @@ require("./agl.BaseFilter.js");
 AGL.BlurFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
   function BlurFilter(intensityX, intensityY) {
-    AGL.BaseFilter.call(this, 3, 1, intensityX);
+    AGL.BaseFilter.call(this, 4, 1, intensityX);
 
     this.intensityY = intensityY;
   }

@@ -14,11 +14,11 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
     this.heightMap = options.heightMap;
 
-    this._MAX_BATCH_ITEMS = max(1, options.lightNum || 1);
+    this._MAX_BATCH_ITEMS = options.lightNum || 1;
 
     AGL.BatchRenderer.call(this, options);
 
-    this.scale = options.scale;
+    this.scale = options.scale || 1;
 
     this._extensionBuffer = new AGL.Buffer(
       "aExt", this._MAX_BATCH_ITEMS,
@@ -30,14 +30,6 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       this._lights.push(new AGL.Light(i, this._matrixBuffer.data, this._extensionBuffer.data));
   },
   function(_scope, _super) {
-    helpers.property(_scope, "scale", {
-      get: function() { return this._scale; },
-      set: function(v) {
-        v = max(0, min(1, v || 1));
-        this._scale = v;
-      }
-    });
-
     _scope.getLight = function(id) {
       return this._lights[id];
     }
@@ -45,14 +37,15 @@ AGL.LightRenderer = helpers.createPrototypeClass(
     _scope._render = function() {
       var gl        = this._gl;
       var locations = this._locations;
+      var heightMap = this.heightMap;
 
       this._context.setBlendMode(AGL.BlendMode.ADD);
 
-      this.heightMap && gl.uniform1i(locations.uTex, this._context.useTexture(this.heightMap, this._renderTime, true));
+      heightMap && gl.uniform1i(locations.uTex, this._context.useTexture(heightMap, this._renderTime, true));
+
+      this._gl.uniform1f(this._locations.uSC, this.scale);
 
       this._uploadBuffers();
-
-      gl.uniform1f(locations.uSC, this._scale);
 
       this._drawInstanced(this._lights.length);
     }
@@ -77,31 +70,32 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "#define PI radians(180.)\n" +
 
       "in vec2 aPos;" +
-      "in mat4 aMt;" +
       "in vec4 aExt;" +
+      "in mat4 aMt;" +
 
-      "uniform vec4 uS;" +
-      "uniform float uFlpY;" +
-      "uniform float uSC;" +
+      "uniform float " +
+        "uFlpY," +
+        "uSC;" +
 
-      "out vec2 vTCrd;" +
-      "out vec4 vCrd;" +
-      "out vec4 vCl;" +
-      "out vec4 vDt;" +
-      "out vec4 vExt;" +
-      "out vec4 vS;" +
-      "out float vHS;" +
-      "out float vD;" +
-      "out float vSpt;" +
-      "out float vSC;" +
-      "out vec2 vSln;" +
+      "out float " +
+        "vHS," +
+        "vD," +
+        "vSpt," +
+        "vSC;" +
+      "out vec2 " +
+        "vTCrd," +
+        "vSln;" +
+      "out vec4 " +
+        "vCrd," +
+        "vCl," +
+        "vDt," +
+        "vExt;" +
 
       "void main(void){" +
         "vExt=aExt;" +
         "vCl=aMt[2];" +
         "vDt=aMt[3];" +
 
-        "vS=uS;" +
         "vSC=uSC;" +
         "vec3 pos=vec3(aPos*2.-1.,1);" +
 
@@ -125,7 +119,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
           "vCrd.zw=vTCrd+((mt*vec3(1)).xy+H.xy)/H.zw;" +
         "}" +
         "gl_Position.y*=uFlpY;" +
-        "vSC*=255.;" +
+        "vSC*=100.;" +
       "}";
     };
 
@@ -134,101 +128,103 @@ AGL.LightRenderer = helpers.createPrototypeClass(
       "#define PI radians(180.)\n" +
       "#define PIH radians(90.)\n" +
 
-      "in vec2 vTCrd;" +
-      "in vec4 vCrd;" +
-      "in vec4 vCl;" +
-      "in vec4 vDt;" +
-      "in vec4 vExt;" +
-      "in vec4 vS;" +
-      "in float vHS;" +
-      "in float vD;" +
-      "in float vSpt;" +
-      "in float vSC;" +
-      "in vec2 vSln;" +
+      "in float " +
+        "vHS," +
+        "vD," +
+        "vSpt," +
+        "vSC;" +
+      "in vec2 " +
+        "vTCrd," +
+        "vSln;" +
+      "in vec4 " +
+        "vCrd," +
+        "vCl," +
+        "vDt," +
+        "vExt;" +
 
       "uniform sampler2D uTex;" +
+      "uniform vec4 uS;" +
 
       "out vec4 oCl;" +
 
-      "float clcAng(vec2 a,vec2 b){" +
-        "float c=PIH-atan(a.y,a.x);" +
-        "float d=atan(b.y,b.x);" +
-        "float e=c-PIH;" +
-        "float f=e+(e-d);" +
-        "return abs(f-PIH)/PIH;" +
-      "}" +
-
       "void main(void){" +
-        "if(vDt.x<1.)discard;" +
+        "if(vDt.x>0.){" +
+          "bool isl=vExt.x<1.;" +
 
-        "bool isl=vExt.x<1.;" +
+          "vec4 tc=texture(uTex,vTCrd);" +
 
-        "vec4 tc=texture(uTex,vTCrd);" +
+          "vec2 " +
+            "tCrd=vTCrd*uS.xy," +
+            "tCnt=vCrd.zw*uS.xy;" +
 
-        "float alp=tc.a;" +
-        "float shn=tc.b*10.;" +
-        "float ph=tc.g*vSC;" +
+          "float " +
+            "alp=tc.a," +
+            "shn=1.+tc.b," +
+            "ph=tc.g*vSC," +
+            "pxDst=distance(vec3(tCnt,vHS),vec3(tCrd,ph))," +
+            "dst=pxDst/vD," +
+            "vol=(1.-(isl?dst:0.))*vCl.a;" +
 
-        "vec2 tCrd=vTCrd*vS.xy;" +
-        "vec2 tCnt=vCrd.zw*vS.xy;" +
-        "float pxDst=distance(vec3(tCnt,vHS),vec3(tCrd,ph));" +
+          "if(!isl||dst<1.){" +
+            "float shl=vD/vDt.y;" +
 
-        "float dst=pxDst/vD;" +
+            "if(isl&&vSpt>0.&&vSpt<PI){" +
+              "float slh=(vHS-ph)/100.;" +
+              "vec2 sl=vec2(slh*vSln.y-vCrd.x*vSln.x,slh*vSln.x+vCrd.x*vSln.y);" +
+              "if(atan(sl.x,length(vec2(sl.y,vCrd.y)))+PIH<vSpt)discard;" +
+            "}" +
 
-        "if(isl&&dst>1.)discard;" +
+            "int flg=int(vExt.y);" +
 
-        "float shl=vD/vDt.y;" +
+            "float " +
+              "flatDst=distance(tCnt,tCrd)," +
+              "mh=ph-vHS," +
+              "pc;" +
 
-        "if(isl&&vSpt>0.&&vSpt<PI){" +
-          "float slh=(vHS-ph)/255.;" +
-          "vec2 sl=vec2(slh*vSln.y-vCrd.x*vSln.x,slh*vSln.x+vCrd.x*vSln.y);" +
-          "if(atan(sl.x,length(vec2(sl.y,vCrd.y)))+PIH<vSpt)discard;" +
-        "}" +
 
-        "float vol=1.-(isl?dst:0.);" +
+            "vec2 " +
+              "dsth=(vec2(tCrd.x-tCnt.x,tCrd.y-tCnt.y)/flatDst)," +
+              "p;" +
 
-        "int flg=int(vExt.y);" +
+            "if((flg&2)>0&&alp>0.&&vol>0.){" +
+              "p=tCrd-dsth;" +
+              "pc=vHS+((flatDst-1.)/flatDst)*mh;" +
 
-        "float flatDst=distance(tCnt,tCrd);" +
+              "tc=texture(uTex,p*uS.zw);" +
 
-        "vec2 dsth=vec2(tCrd.x-tCnt.x,tCrd.y-tCnt.y)/flatDst;" +
+              "float " +
+                "h=tc.g*vSC," +
+                "mtp=clamp(0.,1.,pc-h);" +
 
-        "float mh=ph-vHS;" +
+              "shn+=1.-mtp;" +
 
-        "vec2 p;" +
-        "float pc;" +
+              "vol*=((atan(vHS-h,distance(tCnt,p))+atan(ph-h,distance(tCrd,p)))/PI)+mtp;" +
+            "}" +
 
-        "if((flg&2)>0&&alp>0.){" +
-          "p=tCrd-dsth;" +
-          "pc=vHS+((flatDst-1.)/flatDst)*mh;" +
+            "vol*=shn;" +
 
-          "tc=texture(uTex,p*vS.zw);" +
-          "float h=tc.g*vSC;" +
-
-          "if(h>pc)discard;" +
-
-          "vol*=pow(vol*clcAng(vec2(length(tCrd-p),pc-h),vec2(length(tCnt-p),ph-h)),shn);" +
-        "}" +
-
-        "if((flg&1)>0&&vol>0.){" +
-          "float hst=(1./flatDst)*mh;" +
-          "float l=flatDst-vExt.w;" +
-          "float s=max(0.,l-shl);" +
-          "for(float i=l;i>s;i-=vExt.w){" +
-            "p=tCnt+i*dsth;" +
-            "pc=vHS+i*hst;" +
-            "tc=texture(uTex,p*vS.zw);" +
-            "if(tc.a>0.){" +
-              "tc.rg*=vSC;" +
-              "if(tc.r<pc&&tc.g>pc){" +
-                "vol*=clamp(0.,1.,distance(tCrd,p)/shl);" +
-                "break;" +
+            "if((flg&1)>0&&vol>0.){" +
+              "float " +
+                "hst=(1./flatDst)*mh," +
+                "l=flatDst-vExt.w," +
+                "s=max(0.,l-shl);" +
+              "for(float i=l;i>s;i-=vExt.w){" +
+                "p=tCnt+i*dsth;" +
+                "pc=vHS+i*hst;" +
+                "tc=texture(uTex,p*uS.zw);" +
+                "if(tc.a>0.){" +
+                  "tc.rg*=vSC;" +
+                  "if(tc.r<pc&&tc.g>pc){" +
+                    "vol*=clamp(0.,1.,distance(tCrd,p)/shl);" +
+                    "break;" +
+                  "}" +
+                "}" +
               "}" +
             "}" +
           "}" +
-        "}" +
 
-        "oCl=vec4(vCl.rgb*vCl.a*vol*vDt.z,1);" +
+          "oCl=vec4(vCl.rgb*vol*vDt.z,1);" +
+        "}" +
       "}";
     };
   }

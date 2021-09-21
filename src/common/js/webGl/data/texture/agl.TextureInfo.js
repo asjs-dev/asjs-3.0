@@ -43,7 +43,7 @@ AGL.TextureInfo = helpers.createPrototypeClass(
       set: function(v) {
         if (this._minFilter !== v) {
           this._minFilter = v;
-          this._minMipmapFilter = this._minFilter === {{AGL.Const.LINEAR}}
+          this._minMipmapFilter = v === {{AGL.Const.LINEAR}}
               ? {{AGL.Const.LINEAR_MIPMAP_LINEAR}}
               : {{AGL.Const.NEAREST_MIPMAP_NEAREST}};
         }
