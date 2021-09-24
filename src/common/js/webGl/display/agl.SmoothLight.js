@@ -31,12 +31,12 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     if (!options.config.context) {
-      this.image.texture     = new AGL.Texture(this.filterRenderer.context.canvas, true);
-      this._renderFilterFunc = this._renderFilter.bind(this);
+      this.image.texture          = new AGL.Texture(this.filterRenderer.context.canvas, true);
+      this._renderFilterFuncBound = this._renderFilter.bind(this);
     } else {
-      this._filterFramebuffer = new AGL.Framebuffer();
-      this.image.texture      = this._filterFramebuffer;
-      this._renderFilterFunc  = this._renderFilterToFramebuffer.bind(this);
+      this._filterFramebuffer     = new AGL.Framebuffer();
+      this.image.texture          = this._filterFramebuffer;
+      this._renderFilterFuncBound = this._renderFilterToFramebuffer.bind(this);
     }
 
     this.blur = typeof options.blur === "number" ? options.blur : 1;
@@ -64,7 +64,7 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     _scope.render = function() {
       this._resizeFunc();
       this.lightRenderer.renderToFramebuffer(this._framebuffer);
-      this._renderFilterFunc();
+      this._renderFilterFuncBound();
     }
 
     _scope._renderFilter = function() {

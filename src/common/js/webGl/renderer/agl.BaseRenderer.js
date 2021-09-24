@@ -104,7 +104,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     _scope.renderToFramebuffer = function(framebuffer) {
       if (!this._context.isContextLost) {
         this._switchToProgram();
-        this._attachFramebuffer(framebuffer);
+        this._attachFramebufferAlias(framebuffer);
         this._renderBatch(framebuffer);
         framebuffer.unbind(this._gl);
       }
@@ -137,7 +137,7 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
       this._resize();
     }
 
-    _scope._attachFramebuffer = function(framebuffer) {
+    _scope._attachFramebufferAlias = _scope._attachFramebuffer = function(framebuffer) {
       framebuffer.setSize(this._width, this._height);
       this._context.useTexture(framebuffer, this._renderTime);
       this._context.deactivateTexture(framebuffer);
@@ -167,15 +167,20 @@ AGL.BaseRenderer = helpers.createPrototypeClass(
     }
 
     _scope._buildProgram = function() {
-      var gl = this._gl;
+      var gl      = this._gl;
+      var options = this._options;
 
-      this._program = AGL.Utils.createProgram(gl, [
-        AGL.Utils.loadVertexShader(gl,   this._createVertexShader(this._options)),
-        AGL.Utils.loadFragmentShader(gl, this._createFragmentShader(this._options))
-      ]);
-      this._locations = AGL.Utils.getLocationsFor(gl, this._program, this._config.locations);
+      var program = AGL.Utils.createProgram(
+        gl,
+        this._createVertexShader(options),
+        this._createFragmentShader(options)
+      );
 
-      this._context.useProgram(this._program, this._vao);
+      this._program = program;
+
+      this._locations = AGL.Utils.getLocationsFor(gl, program, this._config.locations);
+
+      this._context.useProgram(program, this._vao);
 
       this._createBuffers();
     }

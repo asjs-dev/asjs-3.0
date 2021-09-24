@@ -12,7 +12,7 @@ AGL.Texture = helpers.createPrototypeClass(
     this.isVideo = false;
     */
 
-    this._onTextureLoadedBind = this._onTextureLoaded.bind(this);
+    this._onTextureLoadedBound = this._onTextureLoaded.bind(this);
 
     this.source       = source;
     this.shouldUpdate = shouldUpdate;
@@ -34,7 +34,7 @@ AGL.Texture = helpers.createPrototypeClass(
 
           this._source && this._source.removeEventListener(
             this._eventType,
-            this._onTextureLoadedBind
+            this._onTextureLoadedBound
           );
 
           this._source = v;
@@ -48,7 +48,7 @@ AGL.Texture = helpers.createPrototypeClass(
 
           v.addEventListener(
             this._eventType,
-            this._onTextureLoadedBind
+            this._onTextureLoadedBound
           );
         }
       }
@@ -86,7 +86,7 @@ AGL.Texture = helpers.createPrototypeClass(
     _scope.destruct = function() {
       this._source && this._source.removeEventListener(
         this._eventType,
-        this._onTextureLoadedBind
+        this._onTextureLoadedBound
       );
 
       _super.destruct.call(this);

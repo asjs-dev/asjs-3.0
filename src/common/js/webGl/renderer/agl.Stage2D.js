@@ -36,6 +36,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
     this._batchDrawBound = this._batchDraw.bind(this);
+    this._drawItemBound  = this._drawItem.bind(this);
 
     /*
     this.picked;
@@ -90,9 +91,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       gl.uniform4fv(locations.uWCl, container.colorCache);
       gl.uniform1f(locations.uWA,   container.premultipliedAlpha);
 
-      var children = container.children;
-      var l = children.length;
-      for (var i = 0; i < l; ++i) this._drawItem(children[i]);
+      container.children.forEach(this._drawItemBound);
     }
 
     _scope._drawImage = function(item) {
@@ -250,7 +249,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
         return func;
       }
 
-      var maxTextureImageUnits = AGL.Utils.info.maxTextureImageUnits;
+      var maxTextureImageUnits = AGL.Utils.INFO.maxTextureImageUnits;
       function getSimpleTexColor(modCoordName) {
         return "gtTexCl(vTexId,vTexCrop.xy+vTexCrop.zw*" + modCoordName + ")";
       }

@@ -1,11 +1,11 @@
 require("./NameSpace.js");
 
-helpers.areArraysEqual = helpers.areArraysEqual || function(arrayA, arrayB) {
-  if (!arrayA || arrayA.length !== arrayB.length) return false;
+helpers.areArraysEqual = helpers.areArraysEqual || function(a, b) {
+  if (!a || !b || a.length !== b.length) return false;
 
-  for (var i = 0; i < arrayB.length; i++) {
-    if (arrayB[i] !== arr[i]) return false;
-  }
+  for (var i = 0; i < b.length; i++)
+    if (b[i] !== a[i])
+      return false;
 
   return true;
 }

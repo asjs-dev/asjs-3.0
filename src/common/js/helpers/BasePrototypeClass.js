@@ -11,9 +11,5 @@ helpers.BasePrototypeClass = helpers.BasePrototypeClass || helpers.createPrototy
       helpers.destructObjectFlat(_super);
       this.destruct = null;
     }
-
-    _scope.toObject  = function() {
-      return JSON.parse(JSON.stringify(this));
-    }
   }
 );

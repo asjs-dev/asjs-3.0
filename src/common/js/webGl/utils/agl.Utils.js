@@ -1,128 +1,115 @@
 require("../NameSpace.js");
 
-AGL.Utils = new (helpers.createPrototypeClass(
-  helpers.BasePrototypeClass,
-  function Utils() {
-    helpers.BasePrototypeClass.call(this);
+(function() {
+  AGL.Utils = {};
 
-    this.THETA = Math.PI / 180;
+  AGL.Utils.THETA = Math.PI / 180;
 
-    this.loadVertexShader   = this.loadShader.bind(this, {{AGL.Const.VERTEX_SHADER}});
-    this.loadFragmentShader = this.loadShader.bind(this, {{AGL.Const.FRAGMENT_SHADER}});
+  AGL.Utils.GLSL_RANDOM = "float rand(vec2 p,float s){" +
+    "p+=floor(p/10000.);" +
+    "p=mod(p,vec2(10000));" +
+    "return fract(sin(dot(p,vec2(sin(p.x+p.y),cos(p.y-p.x)))*s)*.5+.5);" +
+  "}";
 
-    this.info = {
-      isWebGl2Supported : false
+  AGL.Utils.INFO = {
+    isWebGl2Supported : false
+  };
+
+  AGL.Utils.initContextConfig = function(config) {
+    config = config || {};
+
+    return {
+      canvas            : config.canvas || document.createElement("canvas"),
+      contextAttributes : Object.assign({
+        powerPreference       : "high-performance",
+        preserveDrawingBuffer : true,
+      }, config.contextAttributes || {});
     };
-  },
-  function(_scope) {
-    _scope.initContextConfig = function(config) {
-      config = config || {};
+  };
 
-      return {
-        canvas            : config.canvas || document.createElement("canvas"),
-        contextAttributes : Object.assign({
-          powerPreference       : "high-performance",
-          preserveDrawingBuffer : true,
-        }, config.contextAttributes || {});
-      };
-    }
+  AGL.Utils.initRendererConfig = function(config) {
+    config = config || {};
 
-    _scope.initRendererConfig = function(config) {
-      config = config || {};
-      return {
-        locations : config.locations || [],
-        precision : config.precision || "lowp", /* lowp mediump highp */
-        context   : config.context   || new AGL.Context()
-      };
-    }
+    return {
+      locations : config.locations || [],
+      precision : config.precision || "lowp", /* lowp mediump highp */
+      context   : config.context   || new AGL.Context()
+    };
+  };
 
-    _scope.createVersion = function(precision) {
-      return "#version 300 es\nprecision " + precision + " float;\n";
-    }
-
-    _scope.initApplication = function(callback) {
-      function checkCanvas(inited) {
-        if (document.readyState === "complete") {
-          document.addEventListener("readystatechange", checkCanvasBound);
-
-          var gl = document.createElement("canvas").getContext("webgl2");
-          if (gl) {
-            this.info.isWebGl2Supported    = true;
-            this.info.maxTextureImageUnits = gl.getParameter({{AGL.Const.MAX_TEXTURE_IMAGE_UNITS}});
-          }
-          gl = null;
-
-          callback(this.info.isWebGl2Supported);
-        } else if (!inited) document.addEventListener("readystatechange", checkCanvasBound);
-      }
-
-      var checkCanvasBound = checkCanvas.bind(this, true);
-      checkCanvas();
-    }
-
-    _scope.loadShader = function(shaderType, gl, shaderSource) {
-      var shader = gl.createShader(shaderType);
-
-      gl.shaderSource(shader, shaderSource);
-      gl.compileShader(shader);
-
-      var compiled = gl.getShaderParameter(shader, {{AGL.Const.COMPILE_STATUS}});
-      if (!compiled) {
-        var lastError = gl.getShaderInfoLog(shader);
-        console.log("Error compiling shader " + shaderType + ": " + lastError);
-        gl.deleteShader(shader);
-        return null;
-      }
-
-      return shader;
-    }
-
-    _scope.createProgram = function(gl, shaders, attribs, locations) {
-      var program = gl.createProgram();
-
-      helpers.map(shaders, function(key, shader) {
-        gl.attachShader(program, shader);
-      });
-
-      if (attribs) {
-        helpers.map(attribs, function(key, attrib) {
-          gl.bindAttribLocation(
-            program,
-            locations ? locations[key] : key,
-            attrib
-          );
-        });
-      }
-
-      gl.linkProgram(program);
-
-      var linked = gl.getProgramParameter(program, {{AGL.Const.LINK_STATUS}});
-      if (!linked) {
-          var lastError = gl.getProgramInfoLog(program);
-          console.log("Error in program linking: " + lastError);
-          gl.deleteProgram(program);
-          return null;
-      }
-
-      return program;
-    }
-
-    _scope.getLocationsFor = function(gl, program, locationsDescriptor) {
-      var locationTypes = {
-        a : "Attrib",
-        u : "Uniform"
-      }
-      var locations = {};
-      helpers.map(locationsDescriptor, function(key, name) {
-        locations[name] = gl["get" + locationTypes[name[0]] + "Location"](program, name);
-      });
-      return locations;
-    }
-
-    _scope.GLSL_RANDOM = "float rand(vec2 p,float s){" +
-      "p+=floor(p/10000.);" +
-      "p=mod(p,vec2(10000));" +
-      "return fract(sin(dot(p,vec2(sin(p.x+p.y),cos(p.y-p.x)))*s)*.5+.5);" +
-    "}";
+  AGL.Utils.createVersion = function(precision) {
+    return "#version 300 es\nprecision " + precision + " float;\n";
   }
-))();
+
+  AGL.Utils.initApplication = function(callback) {
+    function checkCanvas(inited) {
+      if (document.readyState === "complete") {
+        document.removeEventListener("readystatechange", checkCanvasBound);
+
+        var gl = document.createElement("canvas").getContext("webgl2");
+        if (gl) {
+          AGL.Utils.INFO.isWebGl2Supported    = true;
+          AGL.Utils.INFO.maxTextureImageUnits = gl.getParameter({{AGL.Const.MAX_TEXTURE_IMAGE_UNITS}});
+        }
+        gl = null;
+
+        callback(AGL.Utils.INFO.isWebGl2Supported);
+      } else if (!inited) document.addEventListener("readystatechange", checkCanvasBound);
+    }
+
+    var checkCanvasBound = checkCanvas.bind(this, true);
+    checkCanvas();
+  }
+
+  var _createShader = function(gl, shaderType, shaderSource) {
+    var shader = gl.createShader(shaderType);
+
+    gl.shaderSource(shader, shaderSource);
+    gl.compileShader(shader);
+
+    return shader;
+  }
+
+  AGL.Utils.createProgram = function(gl, vertexShaderSource, fragmentShaderSource) {
+    var vertexShader   = _createShader(gl, {{AGL.Const.VERTEX_SHADER}},   vertexShaderSource);
+    var fragmentShader = _createShader(gl, {{AGL.Const.FRAGMENT_SHADER}}, fragmentShaderSource);
+
+    var program = gl.createProgram();
+
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, {{AGL.Const.LINK_STATUS}})) {
+      console.error(
+        "Program info:",         gl.getProgramInfoLog(program), "\n",
+        "Validate status:",      gl.getProgramParameter(program, {{AGL.Const.VALIDATE_STATUS}}), "\n",
+        "Vertex shader info:",   gl.getShaderInfoLog(vertexShader), "\n",
+        "Fragment shader info:", gl.getShaderInfoLog(fragmentShader)
+      );
+
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      gl.deleteProgram(program);
+
+      throw "WebGL application stoped";
+    };
+
+    return program;
+  }
+
+  var _locationTypes = {
+    a : "Attrib",
+    u : "Uniform"
+  };
+
+  AGL.Utils.getLocationsFor = function(gl, program, locationsDescriptor) {
+    var locations = {};
+
+    locationsDescriptor.forEach(function(name) {
+      locations[name] = gl["get" + _locationTypes[name[0]] + "Location"](program, name);
+    });
+
+    return locations;
+  }
+})();

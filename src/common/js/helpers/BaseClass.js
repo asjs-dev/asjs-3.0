@@ -13,7 +13,4 @@ helpers.createClass(helpers, "BaseClass", Object, function(_scope, _super) {
     _scope =
     _super = null;
   }
-  _scope.toObject  = function() {
-    return JSON.parse(JSON.stringify(_scope));
-  }
 });

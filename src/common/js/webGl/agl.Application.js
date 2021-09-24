@@ -1,7 +1,6 @@
 require("../helpers/removeFromArray.js");
 require("../helpers/arraySet.js");
 require("../helpers/property.js");
-require("../helpers/map.js");
 require("../helpers/emptyFunction.js");
 require("../helpers/createPrototypeClass.js");
 require("../helpers/BasePrototypeClass.js");

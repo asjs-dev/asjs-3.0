@@ -17,7 +17,7 @@ AGL.Context = helpers.createPrototypeClass(
     this._config = AGL.Utils.initContextConfig(config || {});
     this._canvas = this._config.canvas;
 
-    this._MAX_TEXTURE_NUM = AGL.Utils.info.maxTextureImageUnits;
+    this._MAX_TEXTURE_NUM = AGL.Utils.INFO.maxTextureImageUnits;
 
     this._onContextLostBound     = this._onContextLost.bind(this);
     this._onContextRestoredBound = this._initContext.bind(this);
@@ -35,20 +35,8 @@ AGL.Context = helpers.createPrototypeClass(
     _scope.useBlendMode = function(blendMode) {
       this._currentBlendMode = blendMode;
 
-      var eqs   = blendMode.eqs;
-      var funcs = blendMode.funcs;
-
-      this.gl[blendMode.eqName](
-        eqs[0],
-        eqs[1]
-      );
-
-      this.gl[blendMode.funcName](
-        funcs[0],
-        funcs[1],
-        funcs[2],
-        funcs[3]
-      );
+      this.gl[blendMode.eqName].apply(this.gl, blendMode.eqs);
+      this.gl[blendMode.funcName].apply(this.gl, blendMode.funcs);
     }
 
     _scope.setBlendMode = function(blendMode, drawCallback) {
@@ -98,8 +86,6 @@ AGL.Context = helpers.createPrototypeClass(
     }
 
     _scope.useTextureAt = function(textureInfo, textureId, renderTime, forceBind) {
-      if (!textureInfo) return -1;
-
       textureInfo.use(this.gl, textureId, renderTime, forceBind);
 
       this._textureMap[textureId] = textureInfo;

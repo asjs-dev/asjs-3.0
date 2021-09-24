@@ -26,13 +26,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
     ];
   },
   function(_scope, _super) {
-    _scope.renderToFramebuffer = function(framebuffer) {
-      if (!this._context.isContextLost) {
-        this._switchToProgram();
-        this._renderBatch(framebuffer);
-        framebuffer.unbind(this._gl);
-      }
-    }
+    _scope._attachFramebufferAlias = helpers.emptyFunction;
 
     _scope.destruct = function() {
       this._framebuffers[0].destruct();
@@ -56,6 +50,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
       var l = this.filters.length || 1;
       var minL = l - 2;
+
       for (var i = 0; i < l; ++i) {
         var filter    = this.filters[i];
         var useFilter = filter && filter.on;
