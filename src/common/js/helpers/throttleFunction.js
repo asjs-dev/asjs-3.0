@@ -1,6 +1,6 @@
 require("./NameSpace.js");
 
-helpers.throttleFunction = helpers.throttleFunction || function(callback) {
+helpers.throttleFunction = function(callback) {
   var timeout;
   return function() {
     clearTimeout(timeout);

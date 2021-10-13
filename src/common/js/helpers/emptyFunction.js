@@ -1,3 +1,3 @@
 require("./NameSpace.js");
 
-helpers.emptyFunction = helpers.emptyFunction || function() {}
+helpers.emptyFunction = function() {}

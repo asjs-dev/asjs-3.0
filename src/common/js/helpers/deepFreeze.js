@@ -1,7 +1,7 @@
 require("./NameSpace.js");
 require("./typeIs.js");
 
-helpers.deepFreeze = helpers.deepFreeze || function(obj) {
+helpers.deepFreeze = function(obj) {
   var propNames = Object.getOwnPropertyNames(obj);
 
   for (var name of propNames) {

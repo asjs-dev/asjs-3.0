@@ -1,12 +1,19 @@
 require("../NameSpace.js");
 require("./agl.BaseFilter.js");
+require("../data/props/agl.FilterTextureProps.js");
 
 AGL.MaskFilter = helpers.createPrototypeClass(
   AGL.BaseFilter,
-  function MaskFilter(texture, type) {
+  function MaskFilter(texture, type, translateX, translateY, cropX, cropY, cropWidth, cropHeight) {
     AGL.BaseFilter.call(this, 7, 0, type);
 
-    this.texture = texture;
+    this.textureProps = new AGL.FilterTextureProps(
+      this,
+      texture,
+      translateX, translateY,
+      cropX, cropY,
+      cropWidth, cropHeight
+    );
   }, function(_scope) {
     helpers.property(_scope, "type", {
       get: function() { return this.v[0]; },

@@ -1,7 +1,7 @@
 require("./NameSpace.js");
 require("./property.js");
 
-helpers.extendProperties = helpers.extendProperties || function(target) {
+helpers.extendProperties = function(target) {
   var sup = {};
   for (var key in target) {
     if (["$n", "constructor"].indexOf(key) === -1) {

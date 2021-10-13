@@ -1,6 +1,6 @@
 require("./NameSpace.js");
 
-helpers.createPrototypeClass = helpers.createPrototypeClass || function(parent, construct, body) {
+helpers.createPrototypeClass = function(parent, construct, body) {
   var _super = parent.prototype;
   var _scope = construct.prototype;
 

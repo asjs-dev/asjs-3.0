@@ -38,8 +38,7 @@ AGL.Texture = helpers.createPrototypeClass(
           );
 
           this._source = v;
-
-          this.isVideo = this._getSourceType() === "video";
+          this.isVideo = this._source.tagName ? this._source.tagName.toLowerCase() === "video" : false;
           this._eventType = this.isVideo
             ? "canplay"
             : "load";
@@ -106,10 +105,6 @@ AGL.Texture = helpers.createPrototypeClass(
         this.renderSource = this._source;
         ++this._updateId;
       } else this.renderSource = null;
-    }
-
-    _scope._getSourceType = function() {
-      return this._source.tagName ? this._source.tagName.toLowerCase() : "";
     }
 
     _scope._onTextureLoaded = _scope._parseTextureSize;

@@ -2,7 +2,7 @@ require("./NameSpace.js");
 require("./createPrototypeClass.js");
 require("./destructObjectFlat.js");
 
-helpers.BasePrototypeClass = helpers.BasePrototypeClass || helpers.createPrototypeClass(
+helpers.BasePrototypeClass = helpers.createPrototypeClass(
   Object,
   function BasePrototypeClass() {},
   function(_scope, _super) {

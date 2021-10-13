@@ -4,7 +4,6 @@ require("../helpers/property.js");
 require("../helpers/emptyFunction.js");
 require("../helpers/createPrototypeClass.js");
 require("../helpers/BasePrototypeClass.js");
-require("../helpers/typeIs.js");
 
 require("./NameSpace.js");
 
@@ -18,6 +17,7 @@ require("./data/props/agl.LightProps.js");
 require("./data/props/agl.TextureCrop.js");
 require("./data/props/agl.TextureProps.js");
 require("./data/props/agl.DistortionProps.js");
+require("./data/props/agl.FilterTextureProps.js");
 
 require("./data/texture/agl.TextureInfo.js");
 require("./data/texture/agl.Texture.js");

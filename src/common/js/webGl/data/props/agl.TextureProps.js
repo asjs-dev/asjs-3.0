@@ -9,7 +9,7 @@ AGL.TextureProps = helpers.createPrototypeClass(
     this._repeatX =
     this._repeatY = 1;
 
-    this.items = [0, 0];
+    this.items = [0, 0, 0];
   },
   function(_scope) {
     helpers.get(_scope, "scaledWidth",  function() { return this._repeatX; });
@@ -43,6 +43,11 @@ AGL.TextureProps = helpers.createPrototypeClass(
     helpers.property(_scope, "repeatRandomColorization", {
       get: function() { return this.items[1]; },
       set: function(v) { this.items[1] = v; }
+    });
+
+    helpers.property(_scope, "repeatRandomBlur", {
+      get: function() { return this.items[2]; },
+      set: function(v) { this.items[2] = v; }
     });
   }
 );

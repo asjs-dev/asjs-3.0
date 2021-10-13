@@ -1,7 +1,7 @@
 require("./NameSpace.js");
 require("./typeIs.js");
 
-helpers.clone = helpers.clone || function(a) {
+helpers.clone = function(a) {
   if (helpers.typeIs(a, "object")) return a;
 
   var b = Array.isArray(a)

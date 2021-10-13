@@ -91,7 +91,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
       gl.uniform4fv(locations.uWCl, container.colorCache);
       gl.uniform1f(locations.uWA,   container.premultipliedAlpha);
 
-      container.children.forEach(this._drawItemBound);
+      var children = container.children;
+      for (var i = 0, l = children.length; i < l; ++i) this._drawItem(children[i]);
     }
 
     _scope._drawImage = function(item) {
@@ -188,7 +189,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "out mat2x4 vCl;" +
 
       (useRepeatTextures
-        ? "out vec3 vRR;"
+        ? "out vec4 vRR;"
         : "") +
 
       "vec2 clcQd(vec2 p){" +
@@ -226,8 +227,8 @@ AGL.Stage2D = helpers.createPrototypeClass(
         "vTexId=aDt[1].z;" +
 
         (useRepeatTextures
-          ? "vRR=aDt[2].xyz;" +
-            "vRR.z=vRR.x+vRR.y;"
+          ? "vRR=aDt[2].xyzw;" +
+            "vRR.w=vRR.x+vRR.y;"
           : "") +
       "}";
     };
@@ -264,7 +265,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
       "in vec4 vTexCrop;" +
       "in mat2x4 vCl;" +
       (useRepeatTextures
-        ? "in vec3 vRR;"
+        ? "in vec4 vRR;"
         : "") +
 
       "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
@@ -275,7 +276,7 @@ AGL.Stage2D = helpers.createPrototypeClass(
 
       (useRepeatTextures
         ? AGL.Utils.GLSL_RANDOM +
-          "vec4 gtClBCrd(vec2 st,vec2 crd){" +
+          "vec4 gtClBCrd(vec2 st){" +
             "vec2 tCrd=vTCrd;" +
 
             "float " +
@@ -286,10 +287,12 @@ AGL.Stage2D = helpers.createPrototypeClass(
               "vec2 rt=vec2(sin(rndDg),cos(rndDg));" +
               "tCrd=vec2(tCrd.x*rt.y-tCrd.y*rt.x,tCrd.x*rt.x+tCrd.y*rt.y);" +
             "}" +
-            "vec4 cl=" + getSimpleTexColor("mod(tCrd,1.)") + ";" +
-            "if(vRR.y>0.)cl.rgb*=1.-(2.*rnd-1.)*vRR.y;" +
-            "cl.rgb*=abs((1.-st.x-crd.x)*(1.-st.y-crd.y));" +
-            "return cl;" +
+
+            "return " + getSimpleTexColor("mod(tCrd,1.)") + ";" +
+          "}" +
+          "float gtRClBCrd(vec2 st,vec2 crd){" +
+            "float rnd=rand(floor(vTCrd+st),1.);" +
+            "return (1.-(2.*rnd-1.)*vRR.y)*abs((1.-st.x-crd.x)*(1.-st.y-crd.y));" +
           "}"
         : "") +
 
@@ -298,14 +301,23 @@ AGL.Stage2D = helpers.createPrototypeClass(
           "vec2 crd=mod(vTCrd,1.);" +
 
           (useRepeatTextures
-            ? "oCl=vRR.z>0." +
-                "?(" +
-                    "gtClBCrd(vec2(0),crd)+" +
-                    "gtClBCrd(vec2(1,0),crd)+" +
-                    "gtClBCrd(vec2(0,1),crd)+" +
-                    "gtClBCrd(vec2(1),crd)" +
-                  ")/vec4(1,1,1,4)" +
-                ":" + getSimpleTexColor("crd") + ";"
+            ? "if(vRR.w>0.){" +
+                "vec2 zr=vec2(0,1);" +
+                "oCl=vRR.z>0." +
+                  "?(" +
+                    "gtClBCrd(zr.xx)+" +
+                    "gtClBCrd(zr.yx)+" +
+                    "gtClBCrd(zr.xy)+" +
+                    "gtClBCrd(zr.yy)" +
+                  ")/vec4(4)" +
+                  ":gtClBCrd(zr);" +
+                "if(vRR.y>0.)oCl.rgb*=(" +
+                  "gtRClBCrd(zr.xx,crd)+" +
+                  "gtRClBCrd(zr.yx,crd)+" +
+                  "gtRClBCrd(zr.xy,crd)+" +
+                  "gtRClBCrd(zr.yy,crd)" +
+                ");" +
+              "}else oCl=" + getSimpleTexColor("crd") + ";"
             : "oCl=" + getSimpleTexColor("crd") + ";") +
         "}else oCl+=1.;" +
 

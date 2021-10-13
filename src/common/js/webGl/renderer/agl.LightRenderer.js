@@ -163,7 +163,7 @@ AGL.LightRenderer = helpers.createPrototypeClass(
             "ph=tc.g*vSC," +
             "pxDst=distance(vec3(tCnt,vHS),vec3(tCrd,ph))," +
             "dst=pxDst/vD," +
-            "vol=(1.-(isl?dst:0.))*vCl.a;" +
+            "vol=1.-(isl?dst:0.);" +
 
           "if(!isl||dst<1.){" +
             "float shl=vD/vDt.y;" +
@@ -171,24 +171,31 @@ AGL.LightRenderer = helpers.createPrototypeClass(
             "if(isl&&vSpt>0.&&vSpt<PI){" +
               "float slh=(vHS-ph)/100.;" +
               "vec2 sl=vec2(slh*vSln.y-vCrd.x*vSln.x,slh*vSln.x+vCrd.x*vSln.y);" +
-              "if(atan(sl.x,length(vec2(sl.y,vCrd.y)))+PIH<vSpt)discard;" +
+
+              //"if(atan(sl.x,length(vec2(sl.y,vCrd.y)))+PIH<vSpt)vol=0.;" +
+
+              "vol*=(atan(sl.x,length(vec2(sl.y,vCrd.y)))+PIH)-vSpt;" +
             "}" +
 
             "int flg=int(vExt.y);" +
 
             "float " +
-              "flatDst=distance(tCnt,tCrd)," +
+              "fltDst=distance(tCnt,tCrd)," +
               "mh=ph-vHS," +
               "pc;" +
 
-
             "vec2 " +
-              "dsth=(vec2(tCrd.x-tCnt.x,tCrd.y-tCnt.y)/flatDst)," +
+              "dsth=vec2(tCrd.x-tCnt.x,tCrd.y-tCnt.y)/fltDst," +
               "p;" +
+
+            "float dsthL=length(dsth);" +
 
             "if((flg&2)>0&&alp>0.&&vol>0.){" +
               "p=tCrd-dsth;" +
-              "pc=vHS+((flatDst-1.)/flatDst)*mh;" +
+
+              "float pl=fltDst-dsthL;" +
+
+              "pc=vHS+(pl/fltDst)*mh;" +
 
               "tc=texture(uTex,p*uS.zw);" +
 
@@ -198,32 +205,32 @@ AGL.LightRenderer = helpers.createPrototypeClass(
 
               "shn+=1.-mtp;" +
 
-              "vol*=((atan(vHS-h,distance(tCnt,p))+atan(ph-h,distance(tCrd,p)))/PI)+mtp;" +
+              "vol*=((atan(vHS-h,pl)+atan(ph-h,dsthL))/PI)+mtp;" +
             "}" +
 
             "vol*=shn;" +
 
             "if((flg&1)>0&&vol>0.){" +
               "float " +
-                "hst=(1./flatDst)*mh," +
-                "l=flatDst-vExt.w," +
-                "s=max(0.,l-shl);" +
-              "for(float i=l;i>s;i-=vExt.w){" +
+                "st=max(fltDst/128.,vExt.w)," +
+                "hst=mh/fltDst," +
+                "l=fltDst-st," +
+                "s=max(0.,l-shl)+st;" +
+
+              "for(float i=l;i>s;i-=st){" +
                 "p=tCnt+i*dsth;" +
                 "pc=vHS+i*hst;" +
                 "tc=texture(uTex,p*uS.zw);" +
-                "if(tc.a>0.){" +
-                  "tc.rg*=vSC;" +
-                  "if(tc.r<pc&&tc.g>pc){" +
-                    "vol*=clamp(0.,1.,distance(tCrd,p)/shl);" +
-                    "break;" +
-                  "}" +
+                "tc.rg*=vSC;" +
+                "if(tc.r<=pc&&tc.g>=pc){" +
+                  "vol*=clamp(0.,1.,distance(tCrd,p)/shl);" +
+                  "break;" +
                 "}" +
               "}" +
             "}" +
           "}" +
 
-          "oCl=vec4(vCl.rgb*vol*vDt.z,1);" +
+          "oCl=vec4(vCl.rgb*vol*vDt.z*vCl.a,1);" +
         "}" +
       "}";
     };

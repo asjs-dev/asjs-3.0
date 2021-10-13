@@ -1,5 +1,5 @@
 require("./NameSpace.js");
 
-helpers.isDocumentComplete = helpers.isDocumentComplete || function() {
+helpers.isDocumentComplete = function() {
   return document.readyState === "complete";
 }

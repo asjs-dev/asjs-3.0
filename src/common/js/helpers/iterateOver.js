@@ -1,7 +1,7 @@
 require("./NameSpace.js");
 require("./isEmpty.js");
 
-helpers.iterateOver = helpers.iterateOver || function(object, callback, endCallback) {
+helpers.iterateOver = function(object, callback, endCallback) {
   if (helpers.isEmpty(object)) return end();
   var keys = Object.keys(object);
   var key;

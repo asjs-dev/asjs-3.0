@@ -3,7 +3,7 @@ require("./property.js");
 require("./constant.js");
 require("./extendProperties.js");
 
-helpers.override = helpers.override || function(t, s, k) {
+helpers.override = function(t, s, k) {
   if (["$n", "constructor"].indexOf(k) === -1) {
     var desc = Object.getOwnPropertyDescriptor(t, k);
     if (desc.writable) s[k] = t[k];
@@ -11,11 +11,11 @@ helpers.override = helpers.override || function(t, s, k) {
   }
 };
 
-helpers.destructClass = helpers.destructClass || function(t) {
+helpers.destructClass = function(t) {
   t && t.destruct && t.destruct();
 }
 
-helpers.createClass = helpers.createClass || function(nameSpace, name, base, body, singleton) {
+helpers.createClass = function(nameSpace, name, base, body, singleton) {
   function setup(name, base, body, args) {
     base.apply(this, args);
     var s = {};
@@ -56,6 +56,6 @@ helpers.createClass = helpers.createClass || function(nameSpace, name, base, bod
   helpers.constant(nameSpace, name, proto);
 }
 
-helpers.createSingletonClass = helpers.createSingletonClass || function(nameSpace, name, base, body) {
+helpers.createSingletonClass = function(nameSpace, name, base, body) {
   helpers.createClass(nameSpace, name, base, body, true);
 }

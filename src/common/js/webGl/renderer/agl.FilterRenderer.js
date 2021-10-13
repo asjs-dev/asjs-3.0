@@ -59,7 +59,7 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
 
         var isLast = i > minL;
 
-        var filterTexture = useFilter && filter.texture;
+        var filterTexture = useFilter && filter.textureProps && filter.textureProps.texture;
         if (filterTexture) {
           context.useTextureAt(filterTexture, 1, renderTime, true);
           gl.uniform1i(locations.uFTex, 1);
@@ -253,13 +253,15 @@ AGL.FilterRenderer = helpers.createPrototypeClass(
           "else if(uFtrT.x<7){" +
             "vec2 dspMd=vec2(1,-1)*(texture(" +
               "uFTex," +
-              "mod(vTCrd+vec2(vl[1],vl[2]),1.)" +
+              "mod(vec2(vl[1],vl[2])+vTCrd,1.)*vec2(vl[5]-vl[3],vl[6]-vl[4])" +
             ").rg-.5)*2.*vol;" +
             "oCl=texture(uTex,vTCrd+dspMd);" +
           "}" +
           // MaskFilter
           "else if(uFtrT.x<8){" +
-            "vec4 mskCl=texture(uFTex,vTCrd);" +
+            "vec4 mskCl=texture(uFTex," +
+              "mod(vec2(vl[1],vl[2])+vTCrd,1.)*vec2(vl[5]-vl[3],vl[6]-vl[4])" +
+            ");" +
             "oCl.a*=v<4." +
               "?mskCl[int(v)]" +
               ":(mskCl.r+mskCl.g+mskCl.b+mskCl.a)/4.;" +
