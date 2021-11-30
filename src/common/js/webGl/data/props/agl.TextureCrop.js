@@ -1,10 +1,9 @@
-require("../../NameSpace.js");
-require("./agl.BaseProps.js");
+import "../../NameSpace.js";
+import "./agl.BaseProps.js";
 
-AGL.TextureCrop = helpers.createPrototypeClass(
-  AGL.BaseProps,
-  function TextureCrop() {
-    AGL.BaseProps.call(this);
+AGL.TextureCrop = class extends AGL.BaseProps {
+  constructor() {
+    super();
 
     this._currentUpdateId = 0;
 
@@ -12,62 +11,53 @@ AGL.TextureCrop = helpers.createPrototypeClass(
 
     this._width  =
     this._height = 1;
-  },
-  function(_scope) {
-    helpers.property(_scope, "x", {
-      get: function() { return this.items[0]; },
-      set: function(v) {
-        if (this.items[0] !== v) {
-          this.items[0] = v;
-          ++this.updateId;
-        }
-      }
-    });
+  }
 
-    helpers.property(_scope, "y", {
-      get: function() { return this.items[1]; },
-      set: function(v) {
-        if (this.items[1] !== v) {
-          this.items[1] = v;
-          ++this.updateId;
-        }
-      }
-    });
-
-    helpers.property(_scope, "width", {
-      get: function() { return this._width; },
-      set: function(v) {
-        if (this._width !== v) {
-          this._width = v;
-          ++this.updateId;
-        }
-      }
-    });
-
-    helpers.property(_scope, "height", {
-      get: function() { return this._height; },
-      set: function(v) {
-        if (this._height !== v) {
-          this._height = v;
-          ++this.updateId;
-        }
-      }
-    });
-
-    _scope.updateCrop = function() {
-      if (this._currentUpdateId < this.updateId) {
-        this._currentUpdateId = this.updateId;
-
-        this.items[2] = this._width  - this.items[0];
-        this.items[3] = this._height - this.items[1];
-      }
-    }
-
-    _scope.setRect = function(rect) {
-      this.x      = rect.x;
-      this.y      = rect.y;
-      this.width  = rect.width;
-      this.height = rect.height;
+  get x() { return this.items[0]; }
+  set x(v) {
+    if (this.items[0] !== v) {
+      this.items[0] = v;
+      ++this.updateId;
     }
   }
-);
+
+  get y() { return this.items[1]; }
+  set y(v) {
+    if (this.items[1] !== v) {
+      this.items[1] = v;
+      ++this.updateId;
+    }
+  }
+
+  get width() { return this._width; }
+  set width(v) {
+    if (this._width !== v) {
+      this._width = v;
+      ++this.updateId;
+    }
+  }
+
+  get height() { return this._height; }
+  set height(v) {
+    if (this._height !== v) {
+      this._height = v;
+      ++this.updateId;
+    }
+  }
+
+  updateCrop() {
+    if (this._currentUpdateId < this.updateId) {
+      this._currentUpdateId = this.updateId;
+
+      this.items[2] = this._width  - this.items[0];
+      this.items[3] = this._height - this.items[1];
+    }
+  }
+
+  setRect(rect) {
+    this.x      = rect.x;
+    this.y      = rect.y;
+    this.width  = rect.width;
+    this.height = rect.height;
+  }
+}

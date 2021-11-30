@@ -1,14 +1,13 @@
-require("./agl.BaseDrawable.js");
-require("../NameSpace.js");
-require("../data/agl.BlendMode.js");
-require("../data/props/agl.TextureProps.js");
-require("../data/props/agl.TextureCrop.js");
-require("../data/props/agl.DistortionProps.js");
+import "../NameSpace.js";
+import "../data/agl.BlendMode.js";
+import "../data/props/agl.TextureProps.js";
+import "../data/props/agl.TextureCrop.js";
+import "../data/props/agl.DistortionProps.js";
+import "./agl.BaseDrawable.js";
 
-AGL.Image = helpers.createPrototypeClass(
-  AGL.BaseDrawable,
-  function Image(texture) {
-    AGL.BaseDrawable.call(this);
+AGL.Image = class extends AGL.BaseDrawable {
+  constructor(texture) {
+    super();
 
     //this.interactive = false;
 
@@ -31,34 +30,33 @@ AGL.Image = helpers.createPrototypeClass(
     this.colorCache               = this.color.items;
 
     this.texture = texture;
-  },
-  function(_scope) {
-    _scope.update = function() {
-      this._updateProps();
-      this._updateTexture();
-      this.textureCrop.updateCrop();
-    }
+  }
 
-    _scope.isContainsPoint = function(point) {
-      this._updateAdditionalData();
-      return AGL.Matrix3.isPointInMatrix(this._inverseMatrixCache, point);
-    }
+  update() {
+    this._updateProps();
+    this._updateTexture();
+    this.textureCrop.updateCrop();
+  }
 
-    _scope._updateTexture = function() {
-      var props = this.textureProps;
+  isContainsPoint(point) {
+    this._updateAdditionalData();
+    return AGL.Matrix3.isPointInMatrix(this._inverseMatrixCache, point);
+  }
+
+  _updateTexture() {
+    const props = this.textureProps;
           props.updateRotation();
 
-      if (this._currentTexturePropsUpdateId < props.updateId) {
-        this._currentTexturePropsUpdateId = props.updateId;
+    if (this._currentTexturePropsUpdateId < props.updateId) {
+      this._currentTexturePropsUpdateId = props.updateId;
 
-        AGL.Matrix3.transformLocal(
-          props,
-          this.textureMatrixCache
-        );
-      }
+      AGL.Matrix3.transformLocal(
+        props,
+        this.textureMatrixCache
+      );
     }
   }
-);
+}
 AGL.Image.TYPE     = "drawable";
 AGL.Image.TintType = {
   NONE      : 0,

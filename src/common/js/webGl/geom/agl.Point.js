@@ -1,10 +1,8 @@
-require("../NameSpace.js");
+import "../NameSpace.js";
 
 AGL.Point = {
-  create : function(x, y) {
-    return {
-      x : x || 0,
-      y : y || 0
-    };
-  }
+  create : (x, y) => ({
+    x : x || 0,
+    y : y || 0
+  })
 };

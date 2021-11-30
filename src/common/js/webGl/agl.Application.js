@@ -1,73 +1,71 @@
-require("../helpers/removeFromArray.js");
-require("../helpers/arraySet.js");
-require("../helpers/property.js");
-require("../helpers/emptyFunction.js");
-require("../helpers/createPrototypeClass.js");
-require("../helpers/BasePrototypeClass.js");
+import "../helpers/removeFromArray.js";
+import "../helpers/arraySet.js";
+import "../helpers/BasePrototypeClass.js";
 
-require("./NameSpace.js");
+import "./agl.Common.js";
+import "./NameSpace.js";
 
-require("./data/agl.BlendMode.js");
+import "./data/agl.BlendMode.js";
 
-require("./data/props/agl.BaseProps.js");
-require("./data/props/agl.BasePositioningProps.js");
-require("./data/props/agl.ColorProps.js");
-require("./data/props/agl.ItemProps.js");
-require("./data/props/agl.LightProps.js");
-require("./data/props/agl.TextureCrop.js");
-require("./data/props/agl.TextureProps.js");
-require("./data/props/agl.DistortionProps.js");
-require("./data/props/agl.FilterTextureProps.js");
+import "./data/props/agl.BaseProps.js";
+import "./data/props/agl.BasePositioningProps.js";
+import "./data/props/agl.ColorProps.js";
+import "./data/props/agl.ItemProps.js";
+import "./data/props/agl.LightProps.js";
+import "./data/props/agl.TextureCrop.js";
+import "./data/props/agl.TextureProps.js";
+import "./data/props/agl.DistortionProps.js";
+import "./data/props/agl.FilterTextureProps.js";
 
-require("./data/texture/agl.TextureInfo.js");
-require("./data/texture/agl.Texture.js");
-require("./data/texture/agl.Framebuffer.js");
+import "./data/texture/agl.TextureInfo.js";
+import "./data/texture/agl.Texture.js";
+import "./data/texture/agl.Framebuffer.js";
 
-require("./utils/agl.Context.js");
-require("./utils/agl.Buffer.js");
-require("./utils/agl.Utils.js");
-require("./utils/agl.FPS.js");
+import "./utils/agl.Context.js";
+import "./utils/agl.Buffer.js";
+import "./utils/agl.Utils.js";
+import "./utils/agl.FPS.js";
 
-require("./geom/agl.Matrix3.js");
-require("./geom/agl.Point.js");
-require("./geom/agl.Rect.js");
+import "./geom/agl.Matrix3.js";
+import "./geom/agl.Point.js";
+import "./geom/agl.Rect.js";
 
-require("./display/agl.BaseItem.js");
-require("./display/agl.Item.js");
-require("./display/agl.BaseDrawable.js");
-require("./display/agl.Light.js");
-require("./display/agl.AnimatedImage.js");
-require("./display/agl.Container.js");
-require("./display/agl.StageContainer.js");
-require("./display/agl.Image.js");
-require("./display/agl.SmoothLight.js");
+import "./display/agl.BaseItem.js";
+import "./display/agl.Item.js";
+import "./display/agl.BaseDrawable.js";
+import "./display/agl.Light.js";
+import "./display/agl.AnimatedImage.js";
+import "./display/agl.Container.js";
+import "./display/agl.StageContainer.js";
+import "./display/agl.Image.js";
+import "./display/agl.SmoothLight.js";
 
-require("./renderer/agl.BaseRenderer.js");
-require("./renderer/agl.BatchRenderer.js");
-require("./renderer/agl.FilterRenderer.js");
-require("./renderer/agl.LightRenderer.js");
-require("./renderer/agl.Stage2D.js");
+import "./renderer/agl.BaseRenderer.js";
+import "./renderer/agl.BatchRenderer.js";
+import "./renderer/agl.FilterRenderer.js";
+import "./renderer/agl.LightRenderer.js";
+import "./renderer/agl.Stage2D.js";
 
-require("./filters/agl.BaseFilter.js");
+import "./filters/agl.BaseFilter.js";
 
-require("./filters/agl.DisplacementFilter.js");
-require("./filters/agl.MaskFilter.js");
-require("./filters/agl.PixelateFilter.js");
+import "./filters/agl.DisplacementFilter.js";
+import "./filters/agl.MaskFilter.js";
+import "./filters/agl.PixelateFilter.js";
 
-require("./filters/agl.EdgeDetectFilter.js");
-require("./filters/agl.SharpenFilter.js");
+import "./filters/agl.EdgeDetectFilter.js";
+import "./filters/agl.SharpenFilter.js";
 
-require("./filters/agl.SaturateFilter.js");
+import "./filters/agl.SaturateFilter.js";
 
-require("./filters/agl.GrayscaleFilter.js");
-require("./filters/agl.SepiaFilter.js");
-require("./filters/agl.InvertFilter.js");
-require("./filters/agl.TintFilter.js");
-require("./filters/agl.ColorLimitFilter.js");
-require("./filters/agl.VignetteFilter.js");
-require("./filters/agl.RainbowFilter.js");
-require("./filters/agl.BrightnessContrastFilter.js");
-require("./filters/agl.GammaFilter.js");
+import "./filters/agl.GrayscaleFilter.js";
+import "./filters/agl.SepiaFilter.js";
+import "./filters/agl.InvertFilter.js";
+import "./filters/agl.TintFilter.js";
+import "./filters/agl.ColorLimitFilter.js";
+import "./filters/agl.VignetteFilter.js";
+import "./filters/agl.RainbowFilter.js";
+import "./filters/agl.BrightnessContrastFilter.js";
+import "./filters/agl.GammaFilter.js";
 
-require("./filters/agl.BlurFilter.js");
-require("./filters/agl.GlowFilter.js");
+import "./filters/agl.BlurFilter.js";
+import "./filters/agl.GlowFilter.js";

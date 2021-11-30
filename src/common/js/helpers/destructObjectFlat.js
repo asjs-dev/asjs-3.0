@@ -1,7 +1,11 @@
 require("./NameSpace.js");
 require("./deleteProperty.js");
+require("./iterateOver.js");
 
 helpers.destructObjectFlat = function(target) {
-  for (var key in target) helpers.deleteProperty(target, key);
+  helpers.iterateOver(target, function(key, item, next) {
+    helpers.deleteProperty(target, key);
+    next();
+  });
   target = null;
 };

@@ -1,21 +1,20 @@
-require("./agl.Container.js");
-require("./agl.BaseItem.js");
-require("../NameSpace.js");
+import "../NameSpace.js";
+import "./agl.Container.js";
+import "./agl.BaseItem.js";
 
-AGL.StageContainer = helpers.createPrototypeClass(
-  AGL.Container,
-  function StageContainer(renderer) {
-    AGL.Container.call(this);
+AGL.StageContainer = class extends AGL.Container {
+  constructor(renderer) {
+    super();
 
     this.renderer = renderer;
     this._parent = new AGL.BaseItem();
-  },
-  function(_scope) {
-    helpers.get(_scope, "stage",  function() { return this; });
-    helpers.get(_scope, "parent", function() { return this._parent; });
-
-    _scope._updatePremultipliedAlpha = function() {
-      this.premultipliedAlpha = this.props.alpha;
-    }
   }
-);
+
+  get stage() { return this; }
+
+  get parent() { return this._parent; }
+
+  _updatePremultipliedAlpha() {
+    this.premultipliedAlpha = this.props.alpha;
+  }
+}

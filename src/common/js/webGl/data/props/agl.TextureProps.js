@@ -1,53 +1,42 @@
-require("../../NameSpace.js");
-require("./agl.BasePositioningProps.js");
+import "../../NameSpace.js";
+import "./agl.BasePositioningProps.js";
 
-AGL.TextureProps = helpers.createPrototypeClass(
-  AGL.BasePositioningProps,
-  function TextureProps() {
-    AGL.BasePositioningProps.call(this);
+AGL.TextureProps = class extends AGL.BasePositioningProps {
+  constructor() {
+    super();
 
     this._repeatX =
     this._repeatY = 1;
 
     this.items = [0, 0, 0];
-  },
-  function(_scope) {
-    helpers.get(_scope, "scaledWidth",  function() { return this._repeatX; });
-    helpers.get(_scope, "scaledHeight", function() { return this._repeatY; });
-
-    helpers.property(_scope, "repeatX", {
-      get: function() { return this._repeatX; },
-      set: function(v) {
-        if (this._repeatX !== v) {
-          this._repeatX = v;
-          ++this.updateId;
-        }
-      }
-    });
-
-    helpers.property(_scope, "repeatY", {
-      get: function() { return this._repeatY; },
-      set: function(v) {
-        if (this._repeatY !== v) {
-          this._repeatY = v;
-          ++this.updateId;
-        }
-      }
-    });
-
-    helpers.property(_scope, "repeatRandomRotation", {
-      get: function() { return this.items[0]; },
-      set: function(v) { this.items[0] = v; }
-    });
-
-    helpers.property(_scope, "repeatRandomColorization", {
-      get: function() { return this.items[1]; },
-      set: function(v) { this.items[1] = v; }
-    });
-
-    helpers.property(_scope, "repeatRandomBlur", {
-      get: function() { return this.items[2]; },
-      set: function(v) { this.items[2] = v; }
-    });
   }
-);
+
+  get scaledWidth() { return this._repeatX; }
+
+  get scaledHeight() { return this._repeatY; }
+
+  get repeatX() { return this._repeatX; }
+  set repeatX(v) {
+    if (this._repeatX !== v) {
+      this._repeatX = v;
+      ++this.updateId;
+    }
+  }
+
+  get repeatY() { return this._repeatY; }
+  set repeatY(v) {
+    if (this._repeatY !== v) {
+      this._repeatY = v;
+      ++this.updateId;
+    }
+  }
+
+  get repeatRandomRotation() { return this.items[0]; }
+  set repeatRandomRotation(v) { this.items[0] = v; }
+
+  get repeatRandomColorization() { return this.items[1]; }
+  set repeatRandomColorization(v) { this.items[1] = v; }
+
+  get repeatRandomBlur() { return this.items[2]; }
+  set repeatRandomBlur(v) { this.items[2] = v; }
+}

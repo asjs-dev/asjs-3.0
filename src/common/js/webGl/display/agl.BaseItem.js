@@ -1,9 +1,8 @@
-require("../NameSpace.js");
+import "../NameSpace.js";
 
-AGL.BaseItem = helpers.createPrototypeClass(
-  helpers.BasePrototypeClass,
-  function BaseItem() {
-    helpers.BasePrototypeClass.call(this);
+AGL.BaseItem = class extends helpers.BasePrototypeClass {
+  constructor() {
+    super();
 
     this.matrixCache = AGL.Matrix3.identity();
 
@@ -12,4 +11,4 @@ AGL.BaseItem = helpers.createPrototypeClass(
 
     this.colorCache = [1, 1, 1, 1];
   }
-);
+}

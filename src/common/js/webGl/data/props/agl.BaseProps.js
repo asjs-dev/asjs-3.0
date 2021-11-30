@@ -1,8 +1,7 @@
-require("../../NameSpace.js");
+import "../../NameSpace.js";
 
-AGL.BaseProps = helpers.createPrototypeClass(
-  Object,
-  function BaseProps() {
+AGL.BaseProps = class {
+  constructor() {
     this.updateId = 0;
   }
-);
+}

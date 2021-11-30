@@ -1,17 +1,14 @@
-require("../NameSpace.js");
-require("./agl.BaseFilter.js");
+import "../NameSpace.js";
+import "./agl.BaseFilter.js";
 
-AGL.GlowFilter = helpers.createPrototypeClass(
-  AGL.BaseFilter,
-  function GlowFilter(intensityX, intensityY, volume) {
-    AGL.BaseFilter.call(this, 4, 2, intensityX);
+AGL.GlowFilter = class extends AGL.BaseFilter {
+  constructor(intensityX, intensityY, volume) {
+    super(4, 2, intensityX);
 
     this.intensityY = intensityY;
     this.volume     = volume;
-  }, function(_scope) {
-    helpers.property(_scope, "volume", {
-      get: function() { return this.v[3]; },
-      set: function(v) { this.v[3] = v; }
-    });
   }
-);
+  
+  get volume() { return this.v[3]; }
+  set volume(v) { this.v[3] = v; }
+}

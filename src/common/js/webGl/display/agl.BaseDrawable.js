@@ -1,10 +1,9 @@
-require("./agl.Item.js");
-require("../NameSpace.js");
+import "../NameSpace.js";
+import "./agl.Item.js";
 
-AGL.BaseDrawable = helpers.createPrototypeClass(
-  AGL.Item,
-  function BaseDrawable(texture) {
-    AGL.Item.call(this);
+AGL.BaseDrawable = class extends AGL.Item {
+  constructor(texture) {
+    super();
 
     this._inverseMatrixCache = new F32A(6);
 
@@ -14,45 +13,44 @@ AGL.BaseDrawable = helpers.createPrototypeClass(
       AGL.Point.create(),
       AGL.Point.create()
     ];
-  },
-  function(_scope) {
-    _scope.getCorners = function() {
-      this._updateAdditionalData();
-      return this._corners;
-    }
+  }
 
-    _scope.getBounds = function() {
-      this._updateAdditionalData();
-      return this._bounds;
-    }
+  getCorners() {
+    this._updateAdditionalData();
+    return this._corners;
+  }
 
-    _scope._calcCorners = function() {
-      AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage.renderer);
-    }
+  getBounds() {
+    this._updateAdditionalData();
+    return this._bounds;
+  }
 
-    _scope._calcBounds = function() {
-      this._calcCorners();
+  _calcCorners() {
+    AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage.renderer);
+  }
 
-      var corners = this._corners;
-      var bounds = this._bounds;
+  _calcBounds() {
+    this._calcCorners();
 
-      var a = corners[0];
-      var b = corners[1];
-      var c = corners[2];
-      var d = corners[3];
+    const corners = this._corners;
+    const bounds = this._bounds;
 
-      bounds.x      = min(a.x, b.x, c.x, d.x);
-      bounds.y      = min(a.y, b.y, c.y, d.y);
-      bounds.width  = max(a.x, b.x, c.x, d.x);
-      bounds.height = max(a.y, b.y, c.y, d.y);
-    }
+    const a = corners[0];
+    const b = corners[1];
+    const c = corners[2];
+    const d = corners[3];
 
-    _scope._updateAdditionalData = function() {
-      if (this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
-        this._currentAdditionalPropsUpdateId = this.propsUpdateId;
-        AGL.Matrix3.inverse(this.matrixCache, this._inverseMatrixCache);
-        this._calcBounds();
-      }
+    bounds.x      = min(a.x, b.x, c.x, d.x);
+    bounds.y      = min(a.y, b.y, c.y, d.y);
+    bounds.width  = max(a.x, b.x, c.x, d.x);
+    bounds.height = max(a.y, b.y, c.y, d.y);
+  }
+
+  _updateAdditionalData() {
+    if (this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
+      this._currentAdditionalPropsUpdateId = this.propsUpdateId;
+      AGL.Matrix3.inverse(this.matrixCache, this._inverseMatrixCache);
+      this._calcBounds();
     }
   }
-);
+}

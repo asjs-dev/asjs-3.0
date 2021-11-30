@@ -1,4 +1,4 @@
-require("../NameSpace.js");
-require("./agl.BaseFilter.js");
+import "../NameSpace.js";
+import "./agl.BaseFilter.js";
 
 AGL.PixelateFilter = AGL.BaseFilter.bind({}, 5, 0);

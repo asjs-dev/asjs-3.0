@@ -1,7 +1,7 @@
-require("../NameSpace.js");
+import "../NameSpace.js";
 
 AGL.FPS = {
-  start : function(targetFPS) {
+  start : function (targetFPS) {
     this._targetMS =
     this._then     =
     this._frames   =
@@ -17,7 +17,7 @@ AGL.FPS = {
   update : function() {
     this._frames++;
 
-    var now = Date.now();
+    const now = Date.now();
 
     this.delay = (now - this._then) / this._targetMS;
 

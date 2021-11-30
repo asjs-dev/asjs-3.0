@@ -1,15 +1,10 @@
-require("./agl.BaseDrawable.js");
-require("../NameSpace.js");
-require("../data/props/agl.LightProps.js");
+import "../NameSpace.js";
+import "../data/props/agl.LightProps.js";
+import "./agl.BaseDrawable.js";
 
-AGL.Light = helpers.createPrototypeClass(
-  AGL.BaseDrawable,
-  function Light(
-    id,
-    lightData,
-    extensionData
-  ) {
-    AGL.BaseDrawable.call(this);
+AGL.Light = class extends AGL.BaseDrawable {
+  constructor(id, lightData, extensionData) {
+    super();
 
     this.props = new AGL.LightProps();
 
@@ -34,123 +29,109 @@ AGL.Light = helpers.createPrototypeClass(
     this.type       = AGL.Light.Type.SPOT;
     this.precision  =
     this.diffuse    = 1;
-  },
-  function(_scope, _super) {
-    helpers.property(_scope, "type", {
-      get: function() { return this._extensionData[this._extId]; },
-      set: function(v) { this._extensionData[this._extId] = v; }
-    });
+  }
 
-    helpers.property(_scope, "castShadow", {
-      get: function() { return this._castShadow; },
-      set: function(v) {
-        this._castShadow = v;
-        this._updateShadowProps();
-      }
-    });
+  get type() { return this._extensionData[this._extId]; }
+  set type(v) { this._extensionData[this._extId] = v; }
 
-    helpers.property(_scope, "gouraud", {
-      get: function() { return this._gouraud; },
-      set: function(v) {
-        this._gouraud = v;
-        this._updateShadowProps();
-      }
-    });
+  get castShadow() { return this._castShadow; }
+  set castShadow(v) {
+    this._castShadow = v;
+    this._updateShadowProps();
+  }
 
-    helpers.property(_scope, "precision", {
-      get: function() { return this._extensionData[this._extId + 3]; },
-      set: function(v) { this._extensionData[this._extId + 3] = max(1, v); }
-    });
+  get gouraud() { return this._gouraud; }
+  set gouraud(v) {
+    this._gouraud = v;
+    this._updateShadowProps();
+  }
 
-    helpers.property(_scope, "angle", {
-      get: function() { return this._lightData[this._datId + 3]; },
-      set: function(v) { this._lightData[this._datId + 3] = v; }
-    });
+  get precision() { return this._extensionData[this._extId + 3]; }
+  set precision(v) { this._extensionData[this._extId + 3] = max(1, v); }
 
-    helpers.property(_scope, "spotAngle", {
-      get: function() { return this._lightData[this._matId + 7]; },
-      set: function(v) { this._lightData[this._matId + 7] = v; }
-    });
+  get angle() { return this._lightData[this._datId + 3]; }
+  set angle(v) { this._lightData[this._datId + 3] = v; }
 
-    _scope.isOn = function() {
-      return this.renderable && this.stage !== null;
-    }
+  get spotAngle() { return this._lightData[this._matId + 7]; }
+  set spotAngle(v) { this._lightData[this._matId + 7] = v; }
 
-    _scope._updateShadowProps = function() {
-      this._extensionData[this._extId + 1] =
-        this._castShadow * 1 |
-        this._gouraud * 2;
-    }
+  isOn() {
+    return this.renderable && this.stage !== null;
+  }
 
-    _scope._updateAdditionalData = function() {
-      if (this.isOn() && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
-        this._currentAdditionalPropsUpdateId = this.propsUpdateId;
-        this._calcBounds();
-      }
-    }
+  update() {
+    const lightData = this._lightData;
+    const datId = this._datId;
 
-    _scope._calcCorners = function() {
-      AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage.renderer);
+    if (this.isOn()) {
+      this._updateProps();
+      this._updateColor();
 
-      var corners = this._corners;
+      lightData[datId]     = lightData[datId - 1] > 0 ? 1 : 0;
+      lightData[datId + 1] = this.diffuse;
+      lightData[datId + 2] = this.props.alpha;
 
-      var a = corners[0];
-      var b = corners[1];
-      var c = corners[2];
-      var d = corners[3];
+      lightData[this._matId + 6] = this.props.width;
 
-      a.x += (a.x - d.x) + (a.x - c.x);
-      a.y += (a.y - d.y) + (a.y - c.y);
-      c.x += (c.x - b.x);
-      c.y += (c.y - b.y);
-      d.x += (d.x - b.x);
-      d.y += (d.y - b.y);
-    }
+      this._extensionData[this._extId + 2] = this.props.z;
+    } else lightData[datId] = 0;
+  }
 
-    _scope.update = function() {
-      var lightData = this._lightData;
+  _updateShadowProps() {
+    this._extensionData[this._extId + 1] =
+      this._castShadow * 1 |
+      this._gouraud * 2;
+  }
 
-      var datId = this._datId;
-
-      if (this.isOn()) {
-        this._updateProps();
-        this._updateColor();
-
-        lightData[datId]     = lightData[datId - 1] > 0 ? 1 : 0;
-        lightData[datId + 1] = this.diffuse;
-        lightData[datId + 2] = this.props.alpha;
-
-        lightData[this._matId + 6] = this.props.width;
-
-        this._extensionData[this._extId + 2] = this.props.z;
-      } else lightData[datId] = 0;
-    }
-
-    _scope._updateTransform = function(props, parent) {
-      _super._updateTransform.call(this, props, parent);
-
-      helpers.arraySet(this._lightData, this.matrixCache, this._matId);
-    }
-
-    _scope._updateColor = function() {
-      var color = this.color;
-
-      if (this._currentColorUpdateId < color.updateId) {
-        this._currentColorUpdateId = color.updateId;
-
-        var lightData        = this._lightData;
-        var parentColorCache = this._parent.colorCache;
-
-        var colId = this._colId;
-
-        lightData[colId]     = parentColorCache[0] * color.r;
-        lightData[colId + 1] = parentColorCache[1] * color.g;
-        lightData[colId + 2] = parentColorCache[2] * color.b;
-        lightData[colId + 3] = parentColorCache[3] * color.a;
-      }
+  _updateAdditionalData() {
+    if (this.isOn() && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
+      this._currentAdditionalPropsUpdateId = this.propsUpdateId;
+      this._calcBounds();
     }
   }
-);
+
+  _calcCorners() {
+    AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage.renderer);
+
+    const corners = this._corners;
+
+    const a = corners[0];
+    const b = corners[1];
+    const c = corners[2];
+    const d = corners[3];
+
+    a.x += (a.x - d.x) + (a.x - c.x);
+    a.y += (a.y - d.y) + (a.y - c.y);
+    c.x += (c.x - b.x);
+    c.y += (c.y - b.y);
+    d.x += (d.x - b.x);
+    d.y += (d.y - b.y);
+  }
+
+  _updateTransform(props, parent) {
+    super._updateTransform(props, parent);
+
+    helpers.arraySet(this._lightData, this.matrixCache, this._matId);
+  }
+
+  _updateColor() {
+    const color = this.color;
+
+    if (this._currentColorUpdateId < color.updateId) {
+      this._currentColorUpdateId = color.updateId;
+
+      const lightData        = this._lightData;
+      const parentColorCache = this._parent.colorCache;
+
+      const colId = this._colId;
+
+      lightData[colId]     = parentColorCache[0] * color.r;
+      lightData[colId + 1] = parentColorCache[1] * color.g;
+      lightData[colId + 2] = parentColorCache[2] * color.b;
+      lightData[colId + 3] = parentColorCache[3] * color.a;
+    }
+  }
+}
 AGL.Light.Type = {
   SPOT    : 0,
   AMBIENT : 1

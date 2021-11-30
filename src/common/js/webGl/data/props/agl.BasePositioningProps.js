@@ -1,10 +1,9 @@
-require("../../NameSpace.js");
-require("./agl.BaseProps.js");
+import "../../NameSpace.js";
+import "./agl.BaseProps.js";
 
-AGL.BasePositioningProps = helpers.createPrototypeClass(
-  AGL.BaseProps,
-  function BasePositioningProps() {
-    AGL.BaseProps.call(this);
+AGL.BasePositioningProps = class extends AGL.BaseProps {
+  constructor() {
+    super();
 
     this._rotationUpdateId        =
     this._currentRotationUpdateId =
@@ -22,98 +21,84 @@ AGL.BasePositioningProps = helpers.createPrototypeClass(
 
     this.cosRotationA =
     this.cosRotationB = 1;
-  },
-  function(_scope) {
-    helpers.property(_scope, "x", {
-      get: function() { return this._x; },
-      set: function(v) {
-        if (this._x !== v) {
-          this._x = v;
-          ++this.updateId;
-        }
-      }
-    });
+  }
 
-    helpers.property(_scope, "y", {
-      get: function() { return this._y; },
-      set: function(v) {
-        if (this._y !== v) {
-          this._y = v;
-          ++this.updateId;
-        }
-      }
-    });
+  get x() { return this._x; }
+  set x(v) {
+    if (this._x !== v) {
+      this._x = v;
+      ++this.updateId;
+    }
+  }
 
-    helpers.property(_scope, "rotation", {
-      get: function() { return this._rotation; },
-      set: function(v) {
-        if (this._rotation !== v) {
-          this._rotation = v;
-          ++this._rotationUpdateId;
-        }
-      }
-    });
+  get y() { return this._y; }
+  set y(v) {
+    if (this._y !== v) {
+      this._y = v;
+      ++this.updateId;
+    }
+  }
 
-    helpers.property(_scope, "anchorX", {
-      get: function() { return this._anchorX; },
-      set: function(v) {
-        if (this._anchorX !== v) {
-          this._anchorX = v;
-          ++this.updateId;
-        }
-      }
-    });
 
-    helpers.property(_scope, "anchorY", {
-      get: function() { return this._anchorY; },
-      set: function(v) {
-        if (this._anchorY !== v) {
-          this._anchorY = v;
-          ++this.updateId;
-        }
-      }
-    });
+  get rotation() { return this._rotation; }
+  set rotation(v) {
+    if (this._rotation !== v) {
+      this._rotation = v;
+      ++this._rotationUpdateId;
+    }
+  }
 
-    helpers.property(_scope, "skewX", {
-      get: function() { return this._skewX; },
-      set: function(v) {
-        if (this._skewX !== v) {
-          this._skewX = v;
-          ++this._rotationUpdateId;
-        }
-      }
-    });
+  get anchorX() { return this._anchorX; }
+  set anchorX(v) {
+    if (this._anchorX !== v) {
+      this._anchorX = v;
+      ++this.updateId;
+    }
+  }
 
-    helpers.property(_scope, "skewY", {
-      get: function() { return this._skewY; },
-      set: function(v) {
-        if (this._skewY !== v) {
-          this._skewY = v;
-          ++this._rotationUpdateId;
-        }
-      }
-    });
+  get anchorY() { return this._anchorY; }
+  set anchorY(v) {
+    if (this._anchorY !== v) {
+      this._anchorY = v;
+      ++this.updateId;
+    }
+  }
 
-    _scope.updateRotation = function() {
-      if (this._currentRotationUpdateId < this._rotationUpdateId) {
-        this._currentRotationUpdateId = this._rotationUpdateId;
-        ++this.updateId;
+  get skewX() { return this._skewX; }
+  set skewX(v) {
+    if (this._skewX !== v) {
+      this._skewX = v;
+      ++this._rotationUpdateId;
+    }
+  }
 
-        if (this._skewX === 0 && this._skewY === 0) {
-          this.sinRotationA =
-          this.sinRotationB = sin(this._rotation);
-          this.cosRotationA =
-          this.cosRotationB = cos(this._rotation);
-        } else {
-          var rotSkewX = this._rotation - this._skewX;
-          var rotSkewY = this._rotation + this._skewY;
+  get skewY() { return this._skewY; }
+  set skewY(v) {
+    if (this._skewY !== v) {
+      this._skewY = v;
+      ++this._rotationUpdateId;
+    }
+  }
 
-          this.sinRotationA = sin(rotSkewY);
-          this.cosRotationA = cos(rotSkewY);
-          this.sinRotationB = sin(rotSkewX);
-          this.cosRotationB = cos(rotSkewX);
-        }
+  updateRotation() {
+    if (this._currentRotationUpdateId < this._rotationUpdateId) {
+      this._currentRotationUpdateId = this._rotationUpdateId;
+      ++this.updateId;
+
+      if (this._skewX === 0 && this._skewY === 0) {
+        this.sinRotationA =
+        this.sinRotationB = sin(this._rotation);
+        this.cosRotationA =
+        this.cosRotationB = cos(this._rotation);
+      } else {
+        const rotSkewX = this._rotation - this._skewX;
+        const rotSkewY = this._rotation + this._skewY;
+
+        this.sinRotationA = sin(rotSkewY);
+        this.cosRotationA = cos(rotSkewY);
+        this.sinRotationB = sin(rotSkewX);
+        this.cosRotationB = cos(rotSkewX);
       }
     }
   }
-);
+}

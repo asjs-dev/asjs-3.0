@@ -1,18 +1,12 @@
-require("../NameSpace.js");
+import "../NameSpace.js";
 
 AGL.Matrix3 = {
-  identity: function() {
-    return new F32A([
-      1, 0,
-      0, 1,
-      0, 0
-    ]);
-  },
-  projection: function(
-    width,
-    height,
-    destinationMatrix
-  ) {
+  identity: () => new F32A([
+    1, 0,
+    0, 1,
+    0, 0
+  ]),
+  projection: (width, height, destinationMatrix) => {
     destinationMatrix[0] = 2 / width;
     destinationMatrix[1] =
     destinationMatrix[2] = 0;
@@ -20,14 +14,11 @@ AGL.Matrix3 = {
     destinationMatrix[4] = -1;
     destinationMatrix[5] = 1;
   },
-  transformLocal: function(
-    props,
-    destinationMatrix
-  ) {
-    var anchorX = props.anchorX;
-    var anchorY = props.anchorY;
-    var scaledWidth  = props.scaledWidth;
-    var scaledHeight = props.scaledHeight;
+  transformLocal: (props, destinationMatrix) => {
+    const anchorX = props.anchorX;
+    const anchorY = props.anchorY;
+    const scaledWidth  = props.scaledWidth;
+    const scaledHeight = props.scaledHeight;
 
     destinationMatrix[0] =   props.cosRotationA * scaledWidth;
     destinationMatrix[1] =   props.sinRotationA * scaledWidth;
@@ -40,21 +31,17 @@ AGL.Matrix3 = {
                              anchorX * destinationMatrix[1] -
                              anchorY * destinationMatrix[3];
   },
-  transform: function(
-    matrix,
-    props,
-    destinationMatrix
-  ) {
-    var x = props.x;
-    var y = props.y;
-    var anchorX = props.anchorX;
-    var anchorY = props.anchorY;
-    var sinRotationA = props.sinRotationA;
-    var sinRotationB = props.sinRotationB;
-    var cosRotationA = props.cosRotationA;
-    var cosRotationB = props.cosRotationB;
-    var scaledWidth  = props.scaledWidth;
-    var scaledHeight = props.scaledHeight;
+  transform: (matrix, props, destinationMatrix) => {
+    const x = props.x;
+    const y = props.y;
+    const anchorX = props.anchorX;
+    const anchorY = props.anchorY;
+    const sinRotationA = props.sinRotationA;
+    const sinRotationB = props.sinRotationB;
+    const cosRotationA = props.cosRotationA;
+    const cosRotationB = props.cosRotationB;
+    const scaledWidth  = props.scaledWidth;
+    const scaledHeight = props.scaledHeight;
 
     destinationMatrix[0] = (cosRotationA * matrix[0] + sinRotationA * matrix[2]) * scaledWidth;
     destinationMatrix[1] = (cosRotationA * matrix[1] + sinRotationA * matrix[3]) * scaledWidth;
@@ -72,8 +59,8 @@ AGL.Matrix3 = {
                            + y * matrix[3]
                            + matrix[5];
   },
-  inverse: function(matrix, destinationMatrix) {
-    var det = 1 / (matrix[0] * matrix[3] - matrix[2] * matrix[1]);
+  inverse: (matrix, destinationMatrix) => {
+    const det = 1 / (matrix[0] * matrix[3] - matrix[2] * matrix[1]);
 
     destinationMatrix[0] =  det * matrix[3];
     destinationMatrix[1] = -det * matrix[1];
@@ -82,15 +69,15 @@ AGL.Matrix3 = {
     destinationMatrix[4] =  det * (matrix[2] * matrix[5] - matrix[3] * matrix[4]);
     destinationMatrix[5] = -det * (matrix[0] * matrix[5] - matrix[1] * matrix[4]);
   },
-  isPointInMatrix: function(matrix, point) {
-    var x = point.x * matrix[0] + point.y * matrix[2] + matrix[4];
-    var y = point.x * matrix[1] + point.y * matrix[3] + matrix[5];
+  isPointInMatrix: (matrix, point) => {
+    const x = point.x * matrix[0] + point.y * matrix[2] + matrix[4];
+    const y = point.x * matrix[1] + point.y * matrix[3] + matrix[5];
 
     return x >= 0 && x <= 1 && y >= 0 && y <= 1;
   },
-  calcCorners: function(matrix, corners, resolution) {
-    var widthHalf  = resolution.widthHalf;
-    var heightHalf = resolution.heightHalf;
+  calcCorners: (matrix, corners, resolution) => {
+    const widthHalf  = resolution.widthHalf;
+    const heightHalf = resolution.heightHalf;
 
     corners[0].x = widthHalf + matrix[4] * widthHalf;
     corners[0].y = resolution.height - (heightHalf + matrix[5] * heightHalf);

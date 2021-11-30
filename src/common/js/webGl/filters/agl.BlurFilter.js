@@ -1,11 +1,10 @@
-require("../NameSpace.js");
-require("./agl.BaseFilter.js");
+import "../NameSpace.js";
+import "./agl.BaseFilter.js";
 
-AGL.BlurFilter = helpers.createPrototypeClass(
-  AGL.BaseFilter,
-  function BlurFilter(intensityX, intensityY) {
-    AGL.BaseFilter.call(this, 4, 1, intensityX);
+AGL.BlurFilter = class extends AGL.BaseFilter {
+  constructor(intensityX, intensityY) {
+    super(4, 1, intensityX);
 
     this.intensityY = intensityY;
   }
-);
+}

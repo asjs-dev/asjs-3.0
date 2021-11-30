@@ -1,11 +1,10 @@
-require("../NameSpace.js");
-require("./agl.BaseFilter.js");
-require("../data/props/agl.FilterTextureProps.js");
+import "../NameSpace.js";
+import "../data/props/agl.FilterTextureProps.js";
+import "./agl.BaseFilter.js";
 
-AGL.DisplacementFilter = helpers.createPrototypeClass(
-  AGL.BaseFilter,
-  function DisplacementFilter(texture, intensity, translateX, translateY, cropX, cropY, cropWidth, cropHeight) {
-    AGL.BaseFilter.call(this, 6, 0, intensity);
+AGL.DisplacementFilter = class extends AGL.BaseFilter {
+  constructor(texture, intensity, translateX, translateY, cropX, cropY, cropWidth, cropHeight) {
+    super(6, 0, intensity);
 
     this.textureProps = new AGL.FilterTextureProps(
       this,
@@ -15,4 +14,4 @@ AGL.DisplacementFilter = helpers.createPrototypeClass(
       cropWidth, cropHeight
     );
   }
-);
+}

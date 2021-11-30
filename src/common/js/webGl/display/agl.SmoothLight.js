@@ -1,11 +1,10 @@
-require("../NameSpace.js");
+import "../NameSpace.js";
 
-AGL.SmoothLight = helpers.createPrototypeClass(
-  helpers.BasePrototypeClass,
-  function SmoothLight(options) {
+AGL.SmoothLight = class extends helpers.BasePrototypeClass {
+  constructor(options) {
+    super();
+
     options = options || {};
-
-    helpers.BasePrototypeClass.call(this);
 
     this._framebuffer = new AGL.Framebuffer();
 
@@ -40,68 +39,62 @@ AGL.SmoothLight = helpers.createPrototypeClass(
     }
 
     this.blur = typeof options.blur === "number" ? options.blur : 1;
-  },
-  function(_scope, _super) {
-    helpers.property(_scope, "scale", {
-      get: function() { return this.lightRenderer.scale; },
-      set: function(v) {
-        if (this.lightRenderer.scale !== v) {
-          this.lightRenderer.scale = v;
-          this._resizeFunc = this._resize;
-        }
-      }
-    });
+  }
 
-    helpers.property(_scope, "blur", {
-      get: function() { return this._blur; },
-      set: function(v) {
-        this._blur                  =
-        this._blurFilter.intensityX =
-        this._blurFilter.intensityY = v;
-      }
-    });
-
-    _scope.render = function() {
-      this._resizeFunc();
-      this.lightRenderer.renderToFramebuffer(this._framebuffer);
-      this._renderFilterFuncBound();
-    }
-
-    _scope._renderFilter = function() {
-      this.filterRenderer.render();
-    }
-
-    _scope._renderFilterToFramebuffer = function() {
-      this.filterRenderer.renderToFramebuffer(this._filterFramebuffer);
-    }
-
-    _scope.setSize = function(w, h) {
-      this._width  = w;
-      this._height = h;
-
+  get scale() { return this.lightRenderer.scale; }
+  set scale(v) {
+    if (this.lightRenderer.scale !== v) {
+      this.lightRenderer.scale = v;
       this._resizeFunc = this._resize;
     }
-
-    _scope.destruct = function() {
-      this.lightRenderer.destruct();
-      this.filterRenderer.destruct();
-      this._blurFilter.destruct();
-      this.image.destruct();
-
-      _super.destruct.call(this);
-    }
-
-    _scope._resize = function() {
-      this._resizeFunc = helpers.emptyFunction;
-
-      var scaledWidth  = this._width  * this.lightRenderer.scale;
-      var scaledHeight = this._height * this.lightRenderer.scale;
-
-      this.image.props.width  = this._width;
-      this.image.props.height = this._height;
-
-      this.lightRenderer.setSize(scaledWidth, scaledHeight);
-      this.filterRenderer.setSize(scaledWidth, scaledHeight);
-    }
   }
-);
+
+  get blur() { return this._blur; }
+  set blur(v) {
+    this._blur                  =
+    this._blurFilter.intensityX =
+    this._blurFilter.intensityY = v;
+  }
+
+  render() {
+    this._resizeFunc();
+    this.lightRenderer.renderToFramebuffer(this._framebuffer);
+    this._renderFilterFuncBound();
+  }
+
+  setSize(w, h) {
+    this._width  = w;
+    this._height = h;
+
+    this._resizeFunc = this._resize;
+  }
+
+  destruct() {
+    this.lightRenderer.destruct();
+    this.filterRenderer.destruct();
+    this.image.destruct();
+
+    super.destruct();
+  }
+
+  _renderFilter() {
+    this.filterRenderer.render();
+  }
+
+  _renderFilterToFramebuffer() {
+    this.filterRenderer.renderToFramebuffer(this._filterFramebuffer);
+  }
+
+  _resize() {
+    this._resizeFunc = emptyFunction;
+
+    const scaledWidth  = this._width  * this.lightRenderer.scale;
+    const scaledHeight = this._height * this.lightRenderer.scale;
+
+    this.image.props.width  = this._width;
+    this.image.props.height = this._height;
+
+    this.lightRenderer.setSize(scaledWidth, scaledHeight);
+    this.filterRenderer.setSize(scaledWidth, scaledHeight);
+  }
+}

@@ -1,10 +1,7 @@
-require("../NameSpace.js");
+import "../NameSpace.js";
 
-AGL.BaseFilter = helpers.createPrototypeClass(
-  helpers.BasePrototypeClass,
-  function BaseFilter(type, subType, intensity) {
-    helpers.BasePrototypeClass.call(this);
-
+AGL.BaseFilter = class {
+  constructor(type, subType, intensity) {
     this.TYPE     = type;
     this.SUB_TYPE = subType;
     this.on       = true;
@@ -14,36 +11,23 @@ AGL.BaseFilter = helpers.createPrototypeClass(
     this.kernels = new F32A(16);
 
     this.intensity = intensity || 0;
-  },
-  function(_scope) {
-    helpers.property(_scope, "intensity", {
-      get: function() { return this.v[0]; },
-      set: function(v) { this.v[0] = v; }
-    });
-
-    helpers.property(_scope, "intensityX", {
-      get: function() { return this.v[0]; },
-      set: function(v) { this.v[0] = v; }
-    });
-
-    helpers.property(_scope, "intensityY", {
-      get: function() { return this.v[1]; },
-      set: function(v) { this.v[1] = v; }
-    });
-
-    helpers.property(_scope, "r", {
-      get: function() { return this.v[2]; },
-      set: function(v) { this.v[2] = v; }
-    });
-
-    helpers.property(_scope, "g", {
-      get: function() { return this.v[3]; },
-      set: function(v) { this.v[3] = v; }
-    });
-
-    helpers.property(_scope, "b", {
-      get: function() { return this.v[4]; },
-      set: function(v) { this.v[4] = v; }
-    });
   }
-);
+
+  get intensity() { return this.v[0]; }
+  set intensity(v) { this.v[0] = v; }
+
+  get intensityX() { return this.v[0]; }
+  set intensityX(v) { this.v[0] = v; }
+
+  get intensityY() { return this.v[1]; }
+  set intensityY(v) { this.v[1] = v; }
+
+  get r() { return this.v[2]; }
+  set r(v) { this.v[2] = v; }
+
+  get g() { return this.v[3]; }
+  set g(v) { this.v[3] = v; }
+
+  get b() { return this.v[4]; }
+  set b(v) { this.v[4] = v; }
+}

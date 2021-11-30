@@ -1,29 +1,29 @@
-require("../NameSpace.js");
-require("./agl.BaseRenderer.js");
+import "../../utils/NameSpace.js";
+import "./agl.BaseRenderer.js";
 
-AGL.BatchRenderer = helpers.createPrototypeClass(
-  AGL.BaseRenderer,
-  function BatchRenderer(options) {
+AGL.BatchRenderer = class extends AGL.BaseRenderer {
+  constructor(options) {
     options.config.locations = options.config.locations.concat([
       "aMt"
     ]);
 
-    AGL.BaseRenderer.call(this, options);
+    super(options);
+
+    this._MAX_BATCH_ITEMS = options.maxBatchItems || 1;
 
     this._matrixBuffer = new AGL.Buffer(
       "aMt", this._MAX_BATCH_ITEMS,
       4, 4
     );
-  },
-  function(_scope, _super) {
-    _scope._uploadBuffers = function() {
-      this._matrixBuffer.upload(this._gl, this._enableBuffers, this._locations);
-      _super._uploadBuffers.call(this);
-    }
-
-    _scope._createBuffers = function() {
-      _super._createBuffers.call(this);
-      this._matrixBuffer.create(this._gl);
-    }
   }
-);
+
+  _uploadBuffers() {
+    this._matrixBuffer.upload(this._gl, this._enableBuffers, this._locations);
+    super._uploadBuffers();
+  }
+
+  _createBuffers() {
+    super._createBuffers();
+    this._matrixBuffer.create(this._gl);
+  }
+}

@@ -1,4 +1,4 @@
-require("../NameSpace.js");
+import "../NameSpace.js";
 
 (function() {
   AGL.Utils = {};
@@ -15,7 +15,7 @@ require("../NameSpace.js");
     isWebGl2Supported : false
   };
 
-  AGL.Utils.initContextConfig = function(config) {
+  AGL.Utils.initContextConfig = (config) => {
     config = config || {};
 
     return {
@@ -27,7 +27,7 @@ require("../NameSpace.js");
     };
   };
 
-  AGL.Utils.initRendererConfig = function(config) {
+  AGL.Utils.initRendererConfig = (config) => {
     config = config || {};
 
     return {
@@ -37,32 +37,29 @@ require("../NameSpace.js");
     };
   };
 
-  AGL.Utils.createVersion = function(precision) {
-    return "#version 300 es\nprecision " + precision + " float;\n";
-  }
+  AGL.Utils.createVersion = (precision) => "#version 300 es\nprecision " + precision + " float;\n";
 
-  AGL.Utils.initApplication = function(callback) {
-    function checkCanvas(inited) {
+  AGL.Utils.initApplication = (callback) => {
+    const checkCanvas = (inited) => {
       if (document.readyState === "complete") {
         document.removeEventListener("readystatechange", checkCanvasBound);
 
-        var gl = document.createElement("canvas").getContext("webgl2");
+        const gl = document.createElement("canvas").getContext("webgl2");
         if (gl) {
           AGL.Utils.INFO.isWebGl2Supported    = true;
-          AGL.Utils.INFO.maxTextureImageUnits = gl.getParameter({{AGL.Const.MAX_TEXTURE_IMAGE_UNITS}});
+          AGL.Utils.INFO.maxTextureImageUnits = gl.getParameter(AGL.Const.MAX_TEXTURE_IMAGE_UNITS);
         }
-        gl = null;
 
         callback(AGL.Utils.INFO.isWebGl2Supported);
       } else if (!inited) document.addEventListener("readystatechange", checkCanvasBound);
-    }
+    };
 
-    var checkCanvasBound = checkCanvas.bind(this, true);
+    const checkCanvasBound = checkCanvas.bind(this, true);
     checkCanvas();
   }
 
-  var _createShader = function(gl, shaderType, shaderSource) {
-    var shader = gl.createShader(shaderType);
+  const _createShader = (gl, shaderType, shaderSource) => {
+    const shader = gl.createShader(shaderType);
 
     gl.shaderSource(shader, shaderSource);
     gl.compileShader(shader);
@@ -70,20 +67,20 @@ require("../NameSpace.js");
     return shader;
   }
 
-  AGL.Utils.createProgram = function(gl, vertexShaderSource, fragmentShaderSource) {
-    var vertexShader   = _createShader(gl, {{AGL.Const.VERTEX_SHADER}},   vertexShaderSource);
-    var fragmentShader = _createShader(gl, {{AGL.Const.FRAGMENT_SHADER}}, fragmentShaderSource);
+  AGL.Utils.createProgram = (gl, vertexShaderSource, fragmentShaderSource) => {
+    const vertexShader   = _createShader(gl, AGL.Const.VERTEX_SHADER,   vertexShaderSource);
+    const fragmentShader = _createShader(gl, AGL.Const.FRAGMENT_SHADER, fragmentShaderSource);
 
-    var program = gl.createProgram();
+    const program = gl.createProgram();
 
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
 
-    if (!gl.getProgramParameter(program, {{AGL.Const.LINK_STATUS}})) {
+    if (!gl.getProgramParameter(program, AGL.Const.LINK_STATUS)) {
       console.error(
         "Program info:",         gl.getProgramInfoLog(program), "\n",
-        "Validate status:",      gl.getProgramParameter(program, {{AGL.Const.VALIDATE_STATUS}}), "\n",
+        "Validate status:",      gl.getProgramParameter(program, AGL.Const.VALIDATE_STATUS), "\n",
         "Vertex shader info:",   gl.getShaderInfoLog(vertexShader), "\n",
         "Fragment shader info:", gl.getShaderInfoLog(fragmentShader)
       );
@@ -98,13 +95,13 @@ require("../NameSpace.js");
     return program;
   }
 
-  var _locationTypes = {
+  const _locationTypes = {
     a : "Attrib",
     u : "Uniform"
   };
 
-  AGL.Utils.getLocationsFor = function(gl, program, locationsDescriptor) {
-    var locations = {};
+  AGL.Utils.getLocationsFor = (gl, program, locationsDescriptor) => {
+    const locations = {};
 
     locationsDescriptor.forEach(function(name) {
       locations[name] = gl["get" + _locationTypes[name[0]] + "Location"](program, name);

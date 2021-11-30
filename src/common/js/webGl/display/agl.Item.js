@@ -1,13 +1,12 @@
-require("../NameSpace.js");
-require("../data/props/agl.ItemProps.js");
-require("../data/props/agl.ColorProps.js");
-require("../geom/agl.Rect.js");
-require("./agl.BaseItem.js");
+import "../NameSpace.js";
+import "../data/props/agl.ItemProps.js";
+import "../data/props/agl.ColorProps.js";
+import "../geom/agl.Rect.js";
+import "./agl.BaseItem.js";
 
-AGL.Item = helpers.createPrototypeClass(
-  AGL.BaseItem,
-  function Item() {
-    AGL.BaseItem.call(this);
+AGL.Item = class extends AGL.BaseItem {
+  constructor() {
+    super();
 
     this.TYPE = AGL.Item.TYPE;
 
@@ -22,64 +21,59 @@ AGL.Item = helpers.createPrototypeClass(
     this._currentParentColorUpdateId     =
     this._currentAdditionalPropsUpdateId = 0;
 
-    this.callback = helpers.emptyFunction;
+    this.callback = emptyFunction;
 
     this._bounds = AGL.Rect.create();
-  },
-  function(_scope, _super) {
-    helpers.get(_scope, "stage", function() { return this._parent ? this._parent.stage : null; });
+  }
 
-    helpers.property(_scope, "parent", {
-      get: function() { return this._parent; },
-      set: function(v) {
-        if (this._parent !== v) {
-          this._parent = v;
-          this._currentParentPropsUpdateId     =
-          this._currentParentColorUpdateId     =
-          this._currentAdditionalPropsUpdateId = 0;
-        }
-      }
-    });
+  get stage() { return this._parent ? this._parent.stage : null; }
 
-    helpers.property(_scope, "callback", {
-      get: function() { return this._callback; },
-      set: function(v) { this._callback = v || helpers.emptyFunction; }
-    });
-
-    _scope.getBounds = function() {
-      return this._bounds;
-    }
-
-    _scope.destruct = function() {
-      this._parent && this._parent.removeChild && this._parent.removeChild(this);
-      _super.destruct.call(this);
-    }
-
-    _scope.update = function() {
-      this._updateProps();
-    }
-
-    _scope._updateProps = function() {
-      var props = this.props;
-          props.updateRotation();
-          props.updateScale();
-      var parent = this._parent;
-
-      (this._currentParentPropsUpdateId < parent.propsUpdateId || this._currentPropsUpdateId < props.updateId) &&
-        this._updateTransform(props, parent);
-    }
-
-    _scope._updateTransform = function(props, parent) {
-      this._currentParentPropsUpdateId = parent.propsUpdateId;
-      this._currentPropsUpdateId       = props.updateId;
-      ++this.propsUpdateId;
-
-      AGL.Matrix3.transform(
-        parent.matrixCache,
-        props,
-        this.matrixCache
-      );
+  get parent() { return this._parent; }
+  set parent(v) {
+    if (this._parent !== v) {
+      this._parent = v;
+      this._currentParentPropsUpdateId     =
+      this._currentParentColorUpdateId     =
+      this._currentAdditionalPropsUpdateId = 0;
     }
   }
-);
+
+  get callback() { return this._callback; }
+  set callback(v) { this._callback = v || emptyFunction; }
+
+  getBounds() {
+    return this._bounds;
+  }
+
+  destruct() {
+    this._parent && this._parent.removeChild && this._parent.removeChild(this);
+    super.destruct();
+  }
+
+  update() {
+    this._updateProps();
+  }
+
+  _updateProps() {
+    const props = this.props;
+          props.updateRotation();
+          props.updateScale();
+    const parent = this._parent;
+
+    (this._currentParentPropsUpdateId < parent.propsUpdateId || this._currentPropsUpdateId < props.updateId) &&
+      this._updateTransform(props, parent);
+  }
+
+  _updateTransform(props, parent) {
+    this._currentParentPropsUpdateId = parent.propsUpdateId;
+    this._currentPropsUpdateId       = props.updateId;
+    ++this.propsUpdateId;
+
+    AGL.Matrix3.transform(
+      parent.matrixCache,
+      props,
+      this.matrixCache
+    );
+  }
+}
 AGL.Item.TYPE = "item";
