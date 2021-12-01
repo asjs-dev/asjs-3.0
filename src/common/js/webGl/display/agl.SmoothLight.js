@@ -1,9 +1,7 @@
 import "../NameSpace.js";
 
-AGL.SmoothLight = class extends helpers.BasePrototypeClass {
+AGL.SmoothLight = class {
   constructor(options) {
-    super();
-
     options = options || {};
 
     this._framebuffer = new AGL.Framebuffer();
@@ -73,8 +71,6 @@ AGL.SmoothLight = class extends helpers.BasePrototypeClass {
     this.lightRenderer.destruct();
     this.filterRenderer.destruct();
     this.image.destruct();
-
-    super.destruct();
   }
 
   _renderFilter() {

@@ -1,9 +1,7 @@
 import "../../NameSpace.js";
 
-AGL.TextureInfo = class extends helpers.BasePrototypeClass {
+AGL.TextureInfo = class {
   constructor() {
-    super();
-
     /*
     this._baseTexture  =
     */
@@ -23,7 +21,7 @@ AGL.TextureInfo = class extends helpers.BasePrototypeClass {
     this.internalFormat =
     this.format         = AGL.Const.RGBA;
 
-    this.minFilter =
+    this.minFilter = AGL.Const.NEAREST_MIPMAP_NEAREST;
     this.magFilter = AGL.Const.NEAREST;
 
     this._width  =
@@ -35,18 +33,6 @@ AGL.TextureInfo = class extends helpers.BasePrototypeClass {
   get width() { return this._width; }
 
   get height() { return this._height; }
-
-  get minMipmapFilter() { return this._minMipmapFilter; }
-
-  get minFilter() { return this._minFilter; }
-  set minFilter(v) {
-    if (this._minFilter !== v) {
-      this._minFilter = v;
-      this._minMipmapFilter = v === AGL.Const.LINEAR
-          ? AGL.Const.LINEAR_MIPMAP_LINEAR
-          : AGL.Const.NEAREST_MIPMAP_NEAREST;
-    }
-  }
 
   useActiveTexture(gl, id) {
     this.activeTexture(gl, id);
@@ -92,7 +78,9 @@ AGL.TextureInfo = class extends helpers.BasePrototypeClass {
 
     gl.texParameteri(this.target, AGL.Const.TEXTURE_WRAP_S,     this.wrapS);
     gl.texParameteri(this.target, AGL.Const.TEXTURE_WRAP_T,     this.wrapT);
-    gl.texParameteri(this.target, AGL.Const.TEXTURE_MIN_FILTER, this.minMipmapFilter);
+    gl.texParameteri(this.target, AGL.Const.TEXTURE_MIN_FILTER, this.minFilter);
     gl.texParameteri(this.target, AGL.Const.TEXTURE_MAG_FILTER, this.magFilter);
   }
+
+  destruct() {}
 }

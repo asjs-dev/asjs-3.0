@@ -64,8 +64,9 @@ AGL.FilterRenderer = class extends AGL.BaseRenderer {
       }
 
       if (isLast) {
-        if (framebuffer) this._attachFramebuffer(framebuffer);
-        else gl.uniform1f(locations.uFlpY, 1);
+        framebuffer
+          ? this._attachFramebuffer(framebuffer)
+          : gl.uniform1f(locations.uFlpY, 1);
       } else if (useFilter) {
         filterFramebuffer = this._framebuffers[i & 1];
         this._attachFramebuffer(filterFramebuffer);
@@ -90,7 +91,6 @@ AGL.FilterRenderer = class extends AGL.BaseRenderer {
 
   _createVertexShader(options) {
     return AGL.Utils.createVersion(options.config.precision) +
-
     "in vec2 aPos;" +
 
     "uniform float uFlpY;" +
@@ -110,7 +110,6 @@ AGL.FilterRenderer = class extends AGL.BaseRenderer {
 
   _createFragmentShader(options) {
     return AGL.Utils.createVersion(options.config.precision) +
-
     "uniform sampler2D " +
       "uTex," +
       "uFTex;" +

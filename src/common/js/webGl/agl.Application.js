@@ -1,6 +1,5 @@
 import "../helpers/removeFromArray.js";
 import "../helpers/arraySet.js";
-import "../helpers/BasePrototypeClass.js";
 
 import "./agl.Common.js";
 import "./NameSpace.js";

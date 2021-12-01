@@ -47,7 +47,7 @@ AGL.Texture = class extends AGL.TextureInfo {
 
       this._parseTextureSize();
 
-      value.addEventListener(
+      !this._loaded && value.addEventListener(
         this._eventType,
         this._onTextureLoadedBound
       );
@@ -55,8 +55,10 @@ AGL.Texture = class extends AGL.TextureInfo {
   }
 
   use(gl, id, renderTime, forceBind) {
-    if (this._isNeedToDraw(gl, renderTime)) this.useActiveTexture(gl, id);
-    else if (this._currenActivetId !== id || forceBind) this.bindActiveTexture(gl, id);
+    if (this._isNeedToDraw(gl, renderTime))
+      this.useActiveTexture(gl, id);
+    else if (this._currenActivetId !== id || forceBind)
+      this.bindActiveTexture(gl, id);
   }
 
   destruct() {
@@ -64,8 +66,6 @@ AGL.Texture = class extends AGL.TextureInfo {
       this._eventType,
       this._onTextureLoadedBound
     );
-
-    super.destruct();
   }
 
   _isNeedToDraw(gl, renderTime) {
@@ -87,17 +87,22 @@ AGL.Texture = class extends AGL.TextureInfo {
       return true;
     }
 
-    if (this.isVideo && !this._source.paused) return true;
+    if (this.isVideo && !this._source.paused)
+      return true;
 
     return false;
   }
 
   get _sourceWidth() {
-    return this._source ? this._source.naturalWidth  || this._source.videoWidth  || this._source.width : 0;
+    return this._source
+      ? this._source.naturalWidth  || this._source.videoWidth  || this._source.width
+      : 0;
   }
 
   get _sourceHeight() {
-    return this._source ? this._source.naturalHeight || this._source.videoHeight || this._source.height : 0;
+    return this._source
+      ? this._source.naturalHeight || this._source.videoHeight || this._source.height
+      : 0;
   }
 
   _parseTextureSize() {
@@ -105,7 +110,8 @@ AGL.Texture = class extends AGL.TextureInfo {
     if (this._loaded) {
       this.renderSource = this._source;
       ++this._updateId;
-    } else this.renderSource = null;
+    } else
+      this.renderSource = null;
   }
 }
 

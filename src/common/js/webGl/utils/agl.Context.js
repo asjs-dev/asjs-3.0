@@ -1,9 +1,7 @@
 import "../NameSpace.js";
 
-AGL.Context = class extends helpers.BasePrototypeClass {
+AGL.Context = class {
   constructor(config) {
-    super();
-
     /*
     this._currentProgram   =
     this._currentBlendMode =
@@ -53,8 +51,6 @@ AGL.Context = class extends helpers.BasePrototypeClass {
     this._canvas.removeEventListener("webglcontextrestored", this._onContextRestoredBound);
 
     this._loseContextExt && this._loseContextExt.loseContext();
-
-    super.destruct();
   }
 
   clearTextures() {
@@ -67,7 +63,8 @@ AGL.Context = class extends helpers.BasePrototypeClass {
   }
 
   useTexture(textureInfo, renderTime, forceBind, callback) {
-    if (!textureInfo) return -1;
+    if (!textureInfo)
+      return -1;
 
     let textureId = this._textureMap.indexOf(textureInfo);
     if (textureId < 0) {
@@ -98,7 +95,7 @@ AGL.Context = class extends helpers.BasePrototypeClass {
   }
 
   deactivateTexture(textureInfo) {
-    const textureId = textureInfo ? this._textureMap.indexOf(textureInfo) : -1;
+    const textureId = this._textureMap.indexOf(textureInfo);
     textureId > -1 && textureInfo.unbindTexture(this.gl, textureId);
   }
 

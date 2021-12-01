@@ -1,9 +1,7 @@
 import "../NameSpace.js";
 
-AGL.Buffer = class extends helpers.BasePrototypeClass {
+AGL.Buffer = class {
   constructor(locationName, data, rows, cols, target, type, divisor) {
-    super();
-
     /*
     this._buffer = null;
     */
@@ -20,10 +18,9 @@ AGL.Buffer = class extends helpers.BasePrototypeClass {
     this._offset       = cols * 4;
     this._divisor      = typeof divisor === "number" ? divisor : 1;
 
-    if (this._type === AGL.Const.STATIC_DRAW) {
+    if (this._type === AGL.Const.STATIC_DRAW)
       this._length =
       this._offset = 0;
-    }
   }
 
   create(gl) {
@@ -45,6 +42,8 @@ AGL.Buffer = class extends helpers.BasePrototypeClass {
     this.bind(gl);
     this._enable(gl, locations);
   }
+
+  destruct() {}
 
   _enable(gl, locations) {
     const location = locations[this._locationName];

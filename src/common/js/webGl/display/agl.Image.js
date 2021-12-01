@@ -57,7 +57,9 @@ AGL.Image = class extends AGL.BaseDrawable {
     }
   }
 }
+
 AGL.Image.TYPE     = "drawable";
+
 AGL.Image.TintType = {
   NONE      : 0,
   NORMAL    : 1,

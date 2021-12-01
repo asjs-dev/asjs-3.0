@@ -6,9 +6,21 @@ import "../NameSpace.js";
   AGL.Utils.THETA = Math.PI / 180;
 
   AGL.Utils.GLSL_RANDOM = "float rand(vec2 p,float s){" +
-    "p+=floor(p/10000.);" +
-    "p=mod(p,vec2(10000));" +
-    "return fract(sin(dot(p,vec2(sin(p.x+p.y),cos(p.y-p.x)))*s)*.5+.5);" +
+    "p=mod(" +
+      "p+floor(p/10000.)," +
+      "vec2(10000)" +
+    ");" +
+    "return fract(" +
+      "sin(" +
+        "dot(" +
+          "p," +
+          "vec2(" +
+            "sin(p.x+p.y)," +
+            "cos(p.y-p.x)" +
+          ")" +
+        ")*s" +
+      ")*.5+.5" +
+    ");" +
   "}";
 
   AGL.Utils.INFO = {
@@ -20,10 +32,10 @@ import "../NameSpace.js";
 
     return {
       canvas            : config.canvas || document.createElement("canvas"),
-      contextAttributes : Object.assign({
+      contextAttributes : {... {
         powerPreference       : "high-performance",
         preserveDrawingBuffer : true,
-      }, config.contextAttributes || {});
+      }, ... (config.contextAttributes || {})};
     };
   };
 
@@ -37,7 +49,8 @@ import "../NameSpace.js";
     };
   };
 
-  AGL.Utils.createVersion = (precision) => "#version 300 es\nprecision " + precision + " float;\n";
+  AGL.Utils.createVersion = (precision) => "#version 300 es\n" +
+    "precision " + precision + " float;\n";
 
   AGL.Utils.initApplication = (callback) => {
     const checkCanvas = (inited) => {
@@ -51,7 +64,8 @@ import "../NameSpace.js";
         }
 
         callback(AGL.Utils.INFO.isWebGl2Supported);
-      } else if (!inited) document.addEventListener("readystatechange", checkCanvasBound);
+      } else if (!inited)
+        document.addEventListener("readystatechange", checkCanvasBound);
     };
 
     const checkCanvasBound = checkCanvas.bind(this, true);

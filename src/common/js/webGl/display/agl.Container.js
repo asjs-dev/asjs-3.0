@@ -14,12 +14,12 @@ AGL.Container = class extends AGL.Item {
 
   destruct() {
     this.empty();
-
     super.destruct();
   }
 
   empty() {
-    while (this.children.length) this.removeChildAt(0);
+    while (this.children.length)
+      this.removeChildAt(0);
   }
 
   contains(child) {
@@ -27,7 +27,7 @@ AGL.Container = class extends AGL.Item {
   }
 
   addChild(child) {
-    return this.addChildAt(child, this.children.length);
+    this.addChildAt(child, this.children.length);
   }
 
   addChildAt(child, index) {
@@ -37,7 +37,6 @@ AGL.Container = class extends AGL.Item {
       this.setChildIndex(child, index);
       child.parent = this;
     }
-    return child;
   }
 
   removeChild(child) {
@@ -45,11 +44,10 @@ AGL.Container = class extends AGL.Item {
       helpers.removeFromArray(this.children, child);
       child.parent = null;
     }
-    return child;
   }
 
   removeChildAt(index) {
-    return this.removeChild(this.getChildAt(index));
+    this.removeChild(this.getChildAt(index));
   }
 
   getChildAt(index) {
@@ -59,7 +57,6 @@ AGL.Container = class extends AGL.Item {
   setChildIndex(child, index) {
     helpers.removeFromArray(this.children, child);
     this.children.splice(index, 0, child);
-    return child;
   }
 
   getChildIndex(child) {
@@ -69,10 +66,10 @@ AGL.Container = class extends AGL.Item {
   swapChildren(childA, childB) {
     const childAIndex = this.getChildIndex(childA);
     const childBIndex = this.getChildIndex(childB);
-    if (childAIndex < 0 || childBIndex < 0) return false;
-    this.setChildIndex(childA, childBIndex);
-    this.setChildIndex(childB, childAIndex);
-    return true;
+    if (childAIndex > -1 && childBIndex > -1) {
+      this.setChildIndex(childA, childBIndex);
+      this.setChildIndex(childB, childAIndex);
+    }
   }
 
   getBounds() {
@@ -128,4 +125,5 @@ AGL.Container = class extends AGL.Item {
     }
   }
 }
+
 AGL.Container.TYPE = "container";

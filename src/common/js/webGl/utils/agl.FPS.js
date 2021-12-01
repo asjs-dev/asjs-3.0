@@ -12,7 +12,6 @@ AGL.FPS = {
 
     this._then     = Date.now();
     this._targetMS = 1000 / (targetFPS || 60);
-
   },
   update : function() {
     this._frames++;

@@ -4,17 +4,16 @@ import "../utils/agl.Buffer.js";
 import "../utils/agl.Utils.js";
 import "../data/props/agl.ColorProps.js";
 
-AGL.BaseRenderer = class extends helpers.BasePrototypeClass {
+AGL.BaseRenderer = class {
   constructor(options) {
-    super();
-
     /*
-    this._program          =
-    this._width            =
-    this._height           =
-    this.widthHalf         =
-    this.heightHalf        =
-    this._gl               = null;
+    this._program           =
+    this._width             =
+    this._height            =
+    this.widthHalf          =
+    this.heightHalf         =
+    this._clearBeforeRender =
+    this._gl                = null;
     */
 
     this._attachFramebufferAlias = this._attachFramebuffer;
@@ -84,9 +83,9 @@ AGL.BaseRenderer = class extends helpers.BasePrototypeClass {
     }
   }
 
-  get clearBeforeRender() { return this._clearBeforeRenderFunc === this._clear; }
+  get clearBeforeRender() { return this._clearBeforeRender; }
   set clearBeforeRender(v) {
-    this._clearBeforeRenderFunc = v
+    this._clearBeforeRenderFunc = (this._clearBeforeRender = v)
       ? this._clear
       : emptyFunction;
   }
@@ -113,6 +112,8 @@ AGL.BaseRenderer = class extends helpers.BasePrototypeClass {
     }
   }
 
+  destruct() {}
+
   _renderBatch(framebuffer) {
     this._renderTime = Date.now();
     this._clearBeforeRenderFunc();
@@ -127,7 +128,8 @@ AGL.BaseRenderer = class extends helpers.BasePrototypeClass {
       this._currentContextId = this._context.contextId;
       this._buildProgram();
       this._enableBuffers = true;
-    } else if (this._context.useProgram(this._program, this._vao)) this._enableBuffers = true;
+    } else if (this._context.useProgram(this._program, this._vao))
+      this._enableBuffers = true;
 
     this._resize();
   }
@@ -147,7 +149,8 @@ AGL.BaseRenderer = class extends helpers.BasePrototypeClass {
   }
 
   _resize() {
-    if (this._context.setSize(this._width, this._height)) ++this._resizeId;
+    if (this._context.setSize(this._width, this._height))
+      ++this._resizeId;
     if (this._currentResizeId < this._resizeId) {
       this._currentResizeId = this._resizeId;
       this._customResize();

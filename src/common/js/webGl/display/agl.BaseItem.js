@@ -1,9 +1,7 @@
 import "../NameSpace.js";
 
-AGL.BaseItem = class extends helpers.BasePrototypeClass {
+AGL.BaseItem = class {
   constructor() {
-    super();
-
     this.matrixCache = AGL.Matrix3.identity();
 
     this.colorUpdateId =
@@ -11,4 +9,6 @@ AGL.BaseItem = class extends helpers.BasePrototypeClass {
 
     this.colorCache = [1, 1, 1, 1];
   }
+
+  destruct() {}
 }

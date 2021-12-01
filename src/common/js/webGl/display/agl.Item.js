@@ -76,4 +76,5 @@ AGL.Item = class extends AGL.BaseItem {
     );
   }
 }
+
 AGL.Item.TYPE = "item";

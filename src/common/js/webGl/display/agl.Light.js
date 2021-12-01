@@ -74,7 +74,8 @@ AGL.Light = class extends AGL.BaseDrawable {
       lightData[this._matId + 6] = this.props.width;
 
       this._extensionData[this._extId + 2] = this.props.z;
-    } else lightData[datId] = 0;
+    } else
+      lightData[datId] = 0;
   }
 
   _updateShadowProps() {
@@ -132,6 +133,7 @@ AGL.Light = class extends AGL.BaseDrawable {
     }
   }
 }
+
 AGL.Light.Type = {
   SPOT    : 0,
   AMBIENT : 1

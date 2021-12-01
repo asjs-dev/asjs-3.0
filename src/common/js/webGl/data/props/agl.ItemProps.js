@@ -5,8 +5,8 @@ AGL.ItemProps = class extends AGL.BasePositioningProps {
   constructor() {
     super();
 
-    this._scaleUpdateId         =
-    this._currentScaleUpdateId  = 0;
+    this._scaleUpdateId        =
+    this._currentScaleUpdateId = 0;
 
     this.scaledWidth  =
     this.scaledHeight =

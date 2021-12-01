@@ -9,9 +9,9 @@ import "./agl.BatchRenderer.js";
 
 AGL.Stage2D = class extends AGL.BatchRenderer {
   constructor(options) {
-    options = Object.assign({
+    options = {... {
       useTint : true
-    }, options || {});
+    }, ... (options || {})};
 
     options.config           = AGL.Utils.initRendererConfig(options.config, AGL.Stage2D);
     options.config.locations = options.config.locations.concat([
@@ -87,7 +87,8 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     this._gl.uniform1f(this._locations.uWA,   container.premultipliedAlpha);
 
     const children = container.children;
-    for (let i = 0, l = children.length; i < l; ++i) this._drawItem(children[i]);
+    for (let i = 0, l = children.length; i < l; ++i)
+      this._drawItem(children[i]);
   }
 
   _drawImage(item) {
@@ -159,7 +160,6 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     const useRepeatTextures = options.useRepeatTextures;
 
     return AGL.Utils.createVersion(options.config.precision) +
-
     "in vec2 aPos;" +
     "in mat4x2 aDst;" +
     "in mat3x4 aDt;" +
@@ -172,15 +172,14 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
 
     "out float " +
       "vACl," +
-      "vTexId," +
+      "vTId," +
       "vTTp;" +
     "out vec2 vTCrd;" +
-    "out vec4 vTexCrop;" +
-    "out mat2x4 vCl;" +
-
+    "out vec4 vTCrop" +
     (useRepeatTextures
-      ? "out vec4 vRR;"
-      : "") +
+      ? ",vRR;"
+      : ";") +
+    "out mat2x4 vCl;" +
 
     "vec2 clcQd(vec2 p){" +
       "vec2 o=1.-p;" +
@@ -209,13 +208,13 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
       "gl_Position.y*=uFlpY;" +
       "float dt=aDt[1].w;" +
       "vTCrd=(tMt*((dt*vec3(aPos,1))+((1.-dt)*tPos))).xy;" +
-      "vTexCrop=aMt[3];" +
+      "vTCrop=aMt[3];" +
 
       "vCl=mat2x4(uWCl,aDt[0].rgb*aDt[0].a,1.-aDt[0].a);" +
       "vACl=uWA*aDt[1].x;" +
 
       "vTTp=aDt[1].y;" +
-      "vTexId=aDt[1].z;" +
+      "vTId=aDt[1].z;" +
 
       (useRepeatTextures
         ? "vRR=aDt[2].xyzw;" +
@@ -242,20 +241,19 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
       return func;
     }
 
-    const getSimpleTexColor = (modCoordName) => "gtTexCl(vTexId,vTexCrop.xy+vTexCrop.zw*" + modCoordName + ")";
+    const getSimpleTexColor = (modCoordName) => "gtTexCl(vTId,vTCrop.xy+vTCrop.zw*" + modCoordName + ")";
 
     return AGL.Utils.createVersion(options.config.precision) +
-
     "in float " +
       "vACl," +
-      "vTexId," +
+      "vTId," +
       "vTTp;" +
     "in vec2 vTCrd;" +
-    "in vec4 vTexCrop;" +
-    "in mat2x4 vCl;" +
+    "in vec4 vTCrop" +
     (useRepeatTextures
-      ? "in vec4 vRR;"
-      : "") +
+      ? ",vRR;"
+      : ";") +
+    "in mat2x4 vCl;" +
 
     "uniform sampler2D uTex[" + maxTextureImageUnits + "];" +
 
@@ -286,7 +284,7 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
       : "") +
 
     "void main(void){" +
-      "if(vTexId>-1.){" +
+      "if(vTId>-1.){" +
         "vec2 crd=mod(vTCrd,1.);" +
 
         (useRepeatTextures
