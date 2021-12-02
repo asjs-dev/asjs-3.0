@@ -5,3 +5,4 @@ const max = $m.max;
 const sin = $m.sin;
 const cos = $m.cos;
 const emptyFunction = () => {};
+const placeholderImage = new Image();

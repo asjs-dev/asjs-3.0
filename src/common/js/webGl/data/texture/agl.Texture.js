@@ -16,6 +16,9 @@ AGL.Texture = class extends AGL.TextureInfo {
     this.source       = source;
     this.shouldUpdate = shouldUpdate;
 
+    this._dimensionWidthName  = "width";
+    this._dimensionHeightName = "height";
+
     this._currentRenderTime = 0;
 
     this._eventType;
@@ -37,20 +40,24 @@ AGL.Texture = class extends AGL.TextureInfo {
         this._onTextureLoadedBound
       );
 
-      this._source = value;
-      this.isVideo = this._source.tagName
-        ? this._source.tagName.toLowerCase() === "video"
-        : false;
-      this._eventType = this.isVideo
-        ? "canplay"
-        : "load";
+      if (value) {
+        this._source = value;
 
-      this._parseTextureSize();
+        this.isVideo = value.tagName
+          ? value.tagName.toLowerCase() === "video"
+          : false;
+        this._eventType = this.isVideo
+          ? "canplay"
+          : "load";
 
-      !this._loaded && value.addEventListener(
-        this._eventType,
-        this._onTextureLoadedBound
-      );
+        this._parseTextureSize();
+
+        !this._loaded && value.addEventListener(
+          this._eventType,
+          this._onTextureLoadedBound
+        );
+      } else
+        this._source = placeholderImage;
     }
   }
 
@@ -62,7 +69,7 @@ AGL.Texture = class extends AGL.TextureInfo {
   }
 
   destruct() {
-    this._source && this._source.removeEventListener(
+    this._source.removeEventListener(
       this._eventType,
       this._onTextureLoadedBound
     );
@@ -94,18 +101,24 @@ AGL.Texture = class extends AGL.TextureInfo {
   }
 
   get _sourceWidth() {
-    return this._source
-      ? this._source.naturalWidth  || this._source.videoWidth  || this._source.width
-      : 0;
+    return this._source[this._dimensionWidthName];
   }
 
   get _sourceHeight() {
-    return this._source
-      ? this._source.naturalHeight || this._source.videoHeight || this._source.height
-      : 0;
+    return this._source[this._dimensionHeightName];
   }
 
   _parseTextureSize() {
+    this._dimensionWidthName  = "width";
+    this._dimensionHeightName = "height";
+    if (this._source.naturalWidth) {
+      this._dimensionWidthName  = "naturalWidth";
+      this._dimensionHeightName = "naturalHeight";
+    } else if (this._source.videoWidth) {
+      this._dimensionWidthName  = "videoWidth";
+      this._dimensionHeightName = "videoHeight";
+    }
+
     this._loaded = this._sourceWidth > 0 && this._sourceHeight > 0;
     if (this._loaded) {
       this.renderSource = this._source;
