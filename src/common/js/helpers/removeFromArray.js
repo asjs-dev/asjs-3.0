@@ -1,4 +1,4 @@
-require("./NameSpace.js");
+import helpers from "./NameSpace.js";
 
 helpers.removeFromArray = (array, item) => {
   var index = array.indexOf(item);

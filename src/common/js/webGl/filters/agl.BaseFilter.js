@@ -2,13 +2,13 @@ import "../NameSpace.js";
 
 AGL.BaseFilter = class {
   constructor(type, subType, intensity) {
-    this.TYPE     = type;
+    this.TYPE = type;
     this.SUB_TYPE = subType;
-    this.on       = true;
+    this.on = true;
 
-    this.v = new F32A(9);
+    this.v = new Float32Array(9);
 
-    this.kernels = new F32A(16);
+    this.kernels = new Float32Array(16);
 
     this.intensity = intensity || 0;
   }

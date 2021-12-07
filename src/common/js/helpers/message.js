@@ -1,5 +1,5 @@
-require("./NameSpace.js");
-require("./constant.js");
+import helpers from "./NameSpace.js";
+import "./constant.js";
 
 helpers.message = function(target, name) {
   try {

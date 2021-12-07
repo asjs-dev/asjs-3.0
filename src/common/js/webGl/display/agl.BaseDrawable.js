@@ -5,7 +5,7 @@ AGL.BaseDrawable = class extends AGL.Item {
   constructor(texture) {
     super();
 
-    this._inverseMatrixCache = new F32A(6);
+    this._inverseMatrixCache = new Float32Array(6);
 
     this._corners = [
       AGL.Point.create(),
@@ -26,7 +26,11 @@ AGL.BaseDrawable = class extends AGL.Item {
   }
 
   _calcCorners() {
-    AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage.renderer);
+    AGL.Matrix3.calcCorners(
+      this.matrixCache,
+      this._corners,
+      this.stage.renderer
+    );
   }
 
   _calcBounds() {
@@ -40,10 +44,10 @@ AGL.BaseDrawable = class extends AGL.Item {
     const c = corners[2];
     const d = corners[3];
 
-    bounds.x      = min(a.x, b.x, c.x, d.x);
-    bounds.y      = min(a.y, b.y, c.y, d.y);
-    bounds.width  = max(a.x, b.x, c.x, d.x);
-    bounds.height = max(a.y, b.y, c.y, d.y);
+    bounds.x = Math.min(a.x, b.x, c.x, d.x);
+    bounds.y = Math.min(a.y, b.y, c.y, d.y);
+    bounds.width = Math.max(a.x, b.x, c.x, d.x);
+    bounds.height = Math.max(a.y, b.y, c.y, d.y);
   }
 
   _updateAdditionalData() {

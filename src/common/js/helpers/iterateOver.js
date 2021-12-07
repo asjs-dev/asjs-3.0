@@ -1,5 +1,5 @@
-require("./NameSpace.js");
-require("./isEmpty.js");
+import helpers from "./NameSpace.js";
+import "./isEmpty.js";
 
 helpers.iterateOver = function(object, callback, endCallback) {
   if (helpers.isEmpty(object)) return end();

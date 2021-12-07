@@ -5,11 +5,11 @@ AGL.VignetteFilter = class extends AGL.BaseFilter {
   constructor(intensity, roundness, transition, r, g, b) {
     super(3, 6, intensity);
 
-    this.roundness  = roundness;
+    this.roundness = roundness;
     this.transition = transition;
-    this.r          = r;
-    this.g          = g;
-    this.b          = b;
+    this.r = r;
+    this.g = g;
+    this.b = b;
   }
 
   get roundness() { return this.v[1]; }

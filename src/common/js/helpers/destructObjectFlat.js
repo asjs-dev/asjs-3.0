@@ -1,6 +1,6 @@
-require("./NameSpace.js");
-require("./deleteProperty.js");
-require("./iterateOver.js");
+import helpers from "./NameSpace.js";
+import "./deleteProperty.js";
+import "./iterateOver.js";
 
 helpers.destructObjectFlat = function(target) {
   helpers.iterateOver(target, function(key, item, next) {

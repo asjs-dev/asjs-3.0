@@ -6,9 +6,9 @@ AGL.GlowFilter = class extends AGL.BaseFilter {
     super(4, 2, intensityX);
 
     this.intensityY = intensityY;
-    this.volume     = volume;
+    this.volume = volume;
   }
-  
+
   get volume() { return this.v[3]; }
   set volume(v) { this.v[3] = v; }
 }

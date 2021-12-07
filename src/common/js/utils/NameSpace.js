@@ -1,1 +1,1 @@
-var ASJSUtils = ASJSUtils || {};
+window.ASJSUtils = {};

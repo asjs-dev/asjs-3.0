@@ -1,4 +1,4 @@
-require("./NameSpace.js");
+import helpers from "./NameSpace.js";
 
 helpers.nthCall = function(callback, nth) {
   var count = nth - 1;

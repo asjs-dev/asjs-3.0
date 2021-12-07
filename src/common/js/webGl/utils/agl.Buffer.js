@@ -3,20 +3,24 @@ import "../NameSpace.js";
 AGL.Buffer = class {
   constructor(locationName, data, rows, cols, target, type, divisor) {
     /*
-    this._buffer = null;
+    this._buffer
     */
 
     const length = rows * cols;
 
-    this.data          = typeof data === "number" ? new F32A(data * length) : data;
+    this.data = typeof data === "number"
+      ? new Float32Array(data * length)
+      : data;
     this._locationName = locationName;
-    this._rows         = rows;
-    this._cols         = cols;
-    this._target       = target || AGL.Const.ARRAY_BUFFER;
-    this._type         = type   || AGL.Const.DYNAMIC_DRAW;
-    this._length       = length * 4;
-    this._offset       = cols * 4;
-    this._divisor      = typeof divisor === "number" ? divisor : 1;
+    this._rows = rows;
+    this._cols = cols;
+    this._target = target || AGL.Const.ARRAY_BUFFER;
+    this._type = type || AGL.Const.DYNAMIC_DRAW;
+    this._length = length * 4;
+    this._offset = cols * 4;
+    this._divisor = typeof divisor === "number"
+      ? divisor
+      : 1;
 
     if (this._type === AGL.Const.STATIC_DRAW)
       this._length =
@@ -51,7 +55,14 @@ AGL.Buffer = class {
     while (++i < this._rows) {
       const loc = location + i;
       gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(loc, this._cols, AGL.Const.FLOAT, false, this._length, i * this._offset);
+      gl.vertexAttribPointer(
+        loc,
+        this._cols,
+        AGL.Const.FLOAT,
+        false,
+        this._length,
+        i * this._offset
+      );
       gl.vertexAttribDivisor(loc, this._divisor);
     }
   }

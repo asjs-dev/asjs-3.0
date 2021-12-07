@@ -1,5 +1,5 @@
-require("./NameSpace.js");
-require("./typeIs.js");
+import helpers from "./NameSpace.js";
+import "./typeIs.js";
 
 helpers.deepFreeze = function(obj) {
   var propNames = Object.getOwnPropertyNames(obj);

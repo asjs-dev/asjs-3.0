@@ -1,6 +1,8 @@
 import "../NameSpace.js";
 
-(function() {
+(() => {
+  AGL.Const = {};
+
   AGL.Utils = {};
 
   AGL.Utils.THETA = Math.PI / 180;
@@ -27,15 +29,29 @@ import "../NameSpace.js";
     isWebGl2Supported : false
   };
 
+  const gl = document.createElement("canvas").getContext("webgl2");
+  if (gl) {
+    for (let key in gl) {
+      const value = gl[key];
+      if (typeof value === "number" && key === key.toUpperCase())
+        AGL.Const[key] = value;
+    }
+
+    AGL.Utils.INFO.isWebGl2Supported = true;
+    AGL.Utils.INFO.maxTextureImageUnits = gl.getParameter(
+      AGL.Const.MAX_TEXTURE_IMAGE_UNITS
+    );
+  }
+
   AGL.Utils.initContextConfig = (config) => {
     config = config || {};
 
     return {
-      canvas            : config.canvas || document.createElement("canvas"),
+      canvas : config.canvas || document.createElement("canvas"),
       contextAttributes : {... {
-        powerPreference       : "high-performance",
+        powerPreference : "high-performance",
         preserveDrawingBuffer : true,
-      }, ... (config.contextAttributes || {})};
+      }, ... (config.contextAttributes || {})}
     };
   };
 
@@ -45,7 +61,7 @@ import "../NameSpace.js";
     return {
       locations : config.locations || [],
       precision : config.precision || "lowp", /* lowp mediump highp */
-      context   : config.context   || new AGL.Context()
+      context : config.context || new AGL.Context()
     };
   };
 
@@ -56,13 +72,6 @@ import "../NameSpace.js";
     const checkCanvas = (inited) => {
       if (document.readyState === "complete") {
         document.removeEventListener("readystatechange", checkCanvasBound);
-
-        const gl = document.createElement("canvas").getContext("webgl2");
-        if (gl) {
-          AGL.Utils.INFO.isWebGl2Supported    = true;
-          AGL.Utils.INFO.maxTextureImageUnits = gl.getParameter(AGL.Const.MAX_TEXTURE_IMAGE_UNITS);
-        }
-
         callback(AGL.Utils.INFO.isWebGl2Supported);
       } else if (!inited)
         document.addEventListener("readystatechange", checkCanvasBound);
@@ -82,8 +91,16 @@ import "../NameSpace.js";
   }
 
   AGL.Utils.createProgram = (gl, vertexShaderSource, fragmentShaderSource) => {
-    const vertexShader   = _createShader(gl, AGL.Const.VERTEX_SHADER,   vertexShaderSource);
-    const fragmentShader = _createShader(gl, AGL.Const.FRAGMENT_SHADER, fragmentShaderSource);
+    const vertexShader = _createShader(
+      gl,
+      AGL.Const.VERTEX_SHADER,
+      vertexShaderSource
+    );
+    const fragmentShader = _createShader(
+      gl,
+      AGL.Const.FRAGMENT_SHADER,
+      fragmentShaderSource
+    );
 
     const program = gl.createProgram();
 
@@ -93,9 +110,12 @@ import "../NameSpace.js";
 
     if (!gl.getProgramParameter(program, AGL.Const.LINK_STATUS)) {
       console.error(
-        "Program info:",         gl.getProgramInfoLog(program), "\n",
-        "Validate status:",      gl.getProgramParameter(program, AGL.Const.VALIDATE_STATUS), "\n",
-        "Vertex shader info:",   gl.getShaderInfoLog(vertexShader), "\n",
+        "Program info:", gl.getProgramInfoLog(program), "\n",
+        "Validate status:", gl.getProgramParameter(
+          program,
+          AGL.Const.VALIDATE_STATUS
+        ), "\n",
+        "Vertex shader info:", gl.getShaderInfoLog(vertexShader), "\n",
         "Fragment shader info:", gl.getShaderInfoLog(fragmentShader)
       );
 
@@ -117,8 +137,11 @@ import "../NameSpace.js";
   AGL.Utils.getLocationsFor = (gl, program, locationsDescriptor) => {
     const locations = {};
 
-    locationsDescriptor.forEach(function(name) {
-      locations[name] = gl["get" + _locationTypes[name[0]] + "Location"](program, name);
+    locationsDescriptor.forEach((name) => {
+      locations[name] = gl["get" + _locationTypes[name[0]] + "Location"](
+        program,
+        name
+      );
     });
 
     return locations;

@@ -9,7 +9,7 @@ AGL.TextureCrop = class extends AGL.BaseProps {
 
     this.items = [0, 0, 1, 1];
 
-    this._width  =
+    this._width =
     this._height = 1;
   }
 
@@ -49,15 +49,15 @@ AGL.TextureCrop = class extends AGL.BaseProps {
     if (this._currentUpdateId < this.updateId) {
       this._currentUpdateId = this.updateId;
 
-      this.items[2] = this._width  - this.items[0];
+      this.items[2] = this._width - this.items[0];
       this.items[3] = this._height - this.items[1];
     }
   }
 
   setRect(rect) {
-    this.x      = rect.x;
-    this.y      = rect.y;
-    this.width  = rect.width;
+    this.x = rect.x;
+    this.y = rect.y;
+    this.width = rect.width;
     this.height = rect.height;
   }
 }

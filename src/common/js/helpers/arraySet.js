@@ -1,4 +1,4 @@
-require("./NameSpace.js");
+import helpers from "./NameSpace.js";
 
 helpers.arraySet = (target, source, from) => {
   var i = source.length;

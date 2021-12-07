@@ -1,4 +1,4 @@
-require("./NameSpace.js");
+import helpers from "./NameSpace.js";
 
 helpers.areArraysEqual = function(a, b) {
   if (!a || !b || a.length !== b.length) return false;

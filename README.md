@@ -114,7 +114,7 @@ helpers.createClass(SampleApp, "Application", ASJS.Sprite, function(_scope, _sup
         s.move( 50, 50 );
         s.setCSS( "background-color", "#000000" );
         s.addEventListener( ASJS.MouseEvent.CLICK, function( event ) {
-          trace( "click :)" );
+          console.log( "click :)" );
         });
     stage.addChild(s);
   }

@@ -1,5 +1,5 @@
-require("./NameSpace.js");
-require("./property.js");
+import helpers from "./NameSpace.js";
+import "./property.js";
 
 helpers.extendProperties = function(target) {
   var sup = {};

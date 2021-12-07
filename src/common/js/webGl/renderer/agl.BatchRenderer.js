@@ -1,4 +1,3 @@
-import "../../utils/NameSpace.js";
 import "./agl.BaseRenderer.js";
 
 AGL.BatchRenderer = class extends AGL.BaseRenderer {

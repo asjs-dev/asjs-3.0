@@ -1,3 +1,4 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 
 AGL.SmoothLight = class {
@@ -24,19 +25,24 @@ AGL.SmoothLight = class {
     this.filterRenderer.clearColor.set(0, 0, 0, 0);
     this.filterRenderer.clearBeforeRender = true;
 
-    this.image           = new AGL.Image();
+    this.image = new AGL.Image();
     this.image.blendMode = AGL.BlendMode.MULTIPLY;
 
     if (!options.config.context) {
-      this.image.texture          = new AGL.Texture(this.filterRenderer.context.canvas, true);
+      this.image.texture = new AGL.Texture(
+        this.filterRenderer.context.canvas,
+        true
+      );
       this._renderFilterFuncBound = this._renderFilter.bind(this);
     } else {
-      this._filterFramebuffer     = new AGL.Framebuffer();
-      this.image.texture          = this._filterFramebuffer;
+      this._filterFramebuffer = new AGL.Framebuffer();
+      this.image.texture = this._filterFramebuffer;
       this._renderFilterFuncBound = this._renderFilterToFramebuffer.bind(this);
     }
 
-    this.blur = typeof options.blur === "number" ? options.blur : 1;
+    this.blur = typeof options.blur === "number"
+      ? options.blur
+      : 1;
   }
 
   get scale() { return this.lightRenderer.scale; }
@@ -49,7 +55,7 @@ AGL.SmoothLight = class {
 
   get blur() { return this._blur; }
   set blur(v) {
-    this._blur                  =
+    this._blur =
     this._blurFilter.intensityX =
     this._blurFilter.intensityY = v;
   }
@@ -61,7 +67,7 @@ AGL.SmoothLight = class {
   }
 
   setSize(w, h) {
-    this._width  = w;
+    this._width = w;
     this._height = h;
 
     this._resizeFunc = this._resize;
@@ -82,12 +88,12 @@ AGL.SmoothLight = class {
   }
 
   _resize() {
-    this._resizeFunc = emptyFunction;
+    this._resizeFunc = helpers.emptyFunction;
 
-    const scaledWidth  = this._width  * this.lightRenderer.scale;
+    const scaledWidth = this._width * this.lightRenderer.scale;
     const scaledHeight = this._height * this.lightRenderer.scale;
 
-    this.image.props.width  = this._width;
+    this.image.props.width = this._width;
     this.image.props.height = this._height;
 
     this.lightRenderer.setSize(scaledWidth, scaledHeight);

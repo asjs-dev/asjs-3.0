@@ -5,17 +5,17 @@ AGL.ItemProps = class extends AGL.BasePositioningProps {
   constructor() {
     super();
 
-    this._scaleUpdateId        =
+    this._scaleUpdateId =
     this._currentScaleUpdateId = 0;
 
-    this.scaledWidth  =
+    this.scaledWidth =
     this.scaledHeight =
 
     this._scaleX =
     this._scaleY =
-    this._width  =
+    this._width =
     this._height =
-    this.alpha   = 1;
+    this.alpha = 1;
   }
 
   get scaleX() { return this._scaleX; }
@@ -55,7 +55,7 @@ AGL.ItemProps = class extends AGL.BasePositioningProps {
       this._currentScaleUpdateId = this._scaleUpdateId;
       ++this.updateId;
 
-      this.scaledWidth  = this._width  * this._scaleX;
+      this.scaledWidth = this._width * this._scaleX;
       this.scaledHeight = this._height * this._scaleY;
     }
   }

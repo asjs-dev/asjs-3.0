@@ -1,7 +1,8 @@
-require("./deleteProperty.js");
-require("./createClass.js");
-require("./typeIs.js");
-require("./iterateOver.js");
+import helpers from "./NameSpace.js";
+import "./deleteProperty.js";
+import "./createClass.js";
+import "./typeIs.js";
+import "./iterateOver.js";
 
 helpers.destructObject = function(target, stack) {
   var stack = stack || [];

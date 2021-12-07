@@ -3,28 +3,27 @@ import "../../NameSpace.js";
 AGL.TextureInfo = class {
   constructor() {
     /*
-    this._baseTexture  =
+    this._baseTexture
     */
 
     this.target = AGL.Const.TEXTURE_2D;
 
     this._currenActivetId = -1;
-    this._currentAglId    =
-    this._updateId        =
-    this._currentUpdateId = 0;
 
-    this.renderSource = null;
+    this._currentAglId =
+    this._updateId =
+    this._currentUpdateId = 0;
 
     this.wrapS =
     this.wrapT = AGL.Const.CLAMP_TO_EDGE;
 
     this.internalFormat =
-    this.format         = AGL.Const.RGBA;
+    this.format = AGL.Const.RGBA;
 
     this.minFilter = AGL.Const.NEAREST_MIPMAP_NEAREST;
     this.magFilter = AGL.Const.NEAREST;
 
-    this._width  =
+    this._width =
     this._height = 1;
 
     this.type = AGL.Const.UNSIGNED_BYTE;
@@ -70,14 +69,14 @@ AGL.TextureInfo = class {
       0,
       this.format,
       this.type,
-      this.renderSource
+      this._renderSource
     );
 
     gl.texParameteri(this.target, AGL.Const.TEXTURE_MAX_LEVEL, 0);
     gl.generateMipmap(this.target);
 
-    gl.texParameteri(this.target, AGL.Const.TEXTURE_WRAP_S,     this.wrapS);
-    gl.texParameteri(this.target, AGL.Const.TEXTURE_WRAP_T,     this.wrapT);
+    gl.texParameteri(this.target, AGL.Const.TEXTURE_WRAP_S, this.wrapS);
+    gl.texParameteri(this.target, AGL.Const.TEXTURE_WRAP_T, this.wrapT);
     gl.texParameteri(this.target, AGL.Const.TEXTURE_MIN_FILTER, this.minFilter);
     gl.texParameteri(this.target, AGL.Const.TEXTURE_MAG_FILTER, this.magFilter);
   }

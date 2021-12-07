@@ -1,2 +1,3 @@
-var helpers = helpers || {};
-var _ = helpers;
+var helpers = {};
+
+export default helpers;

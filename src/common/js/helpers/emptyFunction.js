@@ -1,3 +1,3 @@
-require("./NameSpace.js");
+import helpers from "./NameSpace.js";
 
-helpers.emptyFunction = function() {}
+helpers.emptyFunction = () => {};

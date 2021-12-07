@@ -1,3 +1,4 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 import "./agl.Item.js";
 
@@ -6,8 +7,6 @@ AGL.Container = class extends AGL.Item {
     super();
 
     this.TYPE = AGL.Container.TYPE;
-
-    this.premultipliedAlpha = 1;
 
     this.children = [];
   }
@@ -75,18 +74,18 @@ AGL.Container = class extends AGL.Item {
   getBounds() {
     const bounds = this._bounds;
 
-    bounds.x      =
-    bounds.y      =  1/0;
-    bounds.width  =
+    bounds.x =
+    bounds.y =  1/0;
+    bounds.width =
     bounds.height = -1/0;
 
     for (let i = 0, l = this.children.length; i < l; ++i) {
       const childBounds = this.children[i].getBounds();
 
-      bounds.x      = min(bounds.x,      childBounds.x);
-      bounds.y      = min(bounds.y,      childBounds.y);
-      bounds.width  = max(bounds.width,  childBounds.width);
-      bounds.height = max(bounds.height, childBounds.height);
+      bounds.x = Math.min(bounds.x, childBounds.x);
+      bounds.y = Math.min(bounds.y, childBounds.y);
+      bounds.width = Math.max(bounds.width, childBounds.width);
+      bounds.height = Math.max(bounds.height, childBounds.height);
     }
 
     return bounds;
@@ -97,25 +96,23 @@ AGL.Container = class extends AGL.Item {
     this._updateColor();
   }
 
-  _updatePremultipliedAlpha() {
-    this.premultipliedAlpha = this.props.alpha * this.parent.premultipliedAlpha;
+  get premultipliedAlpha() {
+    return this.props.alpha * this._parent.premultipliedAlpha;
   }
 
   _updateColor() {
     const parent = this._parent;
-    const color  = this.color;
-
-    this._updatePremultipliedAlpha();
+    const color = this.color;
 
     if (
       this._currentParentColorUpdateId < parent.colorUpdateId ||
       this._currentColorUpdateId < color.updateId
     ) {
-      this._currentColorUpdateId       = color.updateId;
+      this._currentColorUpdateId = color.updateId;
       this._currentParentColorUpdateId = parent.colorUpdateId;
       ++this.colorUpdateId;
 
-      const colorCache       = this.colorCache;
+      const colorCache = this.colorCache;
       const parentColorCache = parent.colorCache;
 
       colorCache[0] = parentColorCache[0] * color.r;

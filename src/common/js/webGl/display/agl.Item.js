@@ -1,3 +1,4 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 import "../data/props/agl.ItemProps.js";
 import "../data/props/agl.ColorProps.js";
@@ -15,31 +16,35 @@ AGL.Item = class extends AGL.BaseItem {
     this.props = new AGL.ItemProps();
     this.color = new AGL.ColorProps();
 
-    this._currentPropsUpdateId           =
-    this._currentColorUpdateId           =
-    this._currentParentPropsUpdateId     =
-    this._currentParentColorUpdateId     =
+    this._currentPropsUpdateId =
+    this._currentColorUpdateId =
+    this._currentParentPropsUpdateId =
+    this._currentParentColorUpdateId =
     this._currentAdditionalPropsUpdateId = 0;
 
-    this.callback = emptyFunction;
+    this.callback = helpers.emptyFunction;
 
     this._bounds = AGL.Rect.create();
   }
 
-  get stage() { return this._parent ? this._parent.stage : null; }
+  get stage() {
+    return this._parent
+      ? this._parent.stage
+      : null;
+  }
 
   get parent() { return this._parent; }
   set parent(v) {
     if (this._parent !== v) {
       this._parent = v;
-      this._currentParentPropsUpdateId     =
-      this._currentParentColorUpdateId     =
+      this._currentParentPropsUpdateId =
+      this._currentParentColorUpdateId =
       this._currentAdditionalPropsUpdateId = 0;
     }
   }
 
   get callback() { return this._callback; }
-  set callback(v) { this._callback = v || emptyFunction; }
+  set callback(v) { this._callback = v || helpers.emptyFunction; }
 
   getBounds() {
     return this._bounds;
@@ -56,24 +61,22 @@ AGL.Item = class extends AGL.BaseItem {
 
   _updateProps() {
     const props = this.props;
-          props.updateRotation();
-          props.updateScale();
+    props.updateRotation();
+    props.updateScale();
     const parent = this._parent;
 
-    (this._currentParentPropsUpdateId < parent.propsUpdateId || this._currentPropsUpdateId < props.updateId) &&
-      this._updateTransform(props, parent);
+    (
+      this._currentParentPropsUpdateId < parent.propsUpdateId ||
+      this._currentPropsUpdateId < props.updateId
+    ) && this._updateTransform(props, parent);
   }
 
   _updateTransform(props, parent) {
     this._currentParentPropsUpdateId = parent.propsUpdateId;
-    this._currentPropsUpdateId       = props.updateId;
+    this._currentPropsUpdateId = props.updateId;
     ++this.propsUpdateId;
 
-    AGL.Matrix3.transform(
-      parent.matrixCache,
-      props,
-      this.matrixCache
-    );
+    AGL.Matrix3.transform(parent.matrixCache, props, this.matrixCache);
   }
 }
 

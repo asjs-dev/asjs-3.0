@@ -1,21 +1,21 @@
 import "../NameSpace.js";
 import "../utils/agl.Utils.js";
 
-(function() {
-  function _createBlendMode(funcs, eqs) {
+(() => {
+  const _createBlendMode = (funcs, eqs) => {
     return {
-      funcName: "blendFunc" + (
+      funcName : "blendFunc" + (
         funcs.length < 3
           ? ""
           : "Separate"
       ),
-      funcs: funcs,
-      eqName: "blendEquation" + (
+      funcs : funcs,
+      eqName : "blendEquation" + (
         !eqs || eqs.length < 2
           ? ""
           : "Separate"
       ),
-      eqs: eqs || [AGL.Const.FUNC_ADD]
+      eqs : eqs || [AGL.Const.FUNC_ADD]
     };
   }
 

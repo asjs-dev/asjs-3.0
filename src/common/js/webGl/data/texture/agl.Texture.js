@@ -1,30 +1,30 @@
 import "../../NameSpace.js";
 import "./agl.TextureInfo.js";
 
+const _placeholderImage = new Image();
+
 AGL.Texture = class extends AGL.TextureInfo {
   constructor(source, shouldUpdate) {
     super();
 
     /*
-    this._source = null;
-    this._loaded =
-    this.isVideo = false;
+    this._source
+    this._loaded
+    this.isVideo
     */
 
     this._onTextureLoadedBound = this._parseTextureSize.bind(this);
 
-    this.source       = source;
+    this.source = source;
     this.shouldUpdate = shouldUpdate;
 
-    this._dimensionWidthName  = "width";
+    this._dimensionWidthName = "width";
     this._dimensionHeightName = "height";
 
     this._currentRenderTime = 0;
 
     this._eventType;
   }
-
-  get loaded() { return this._loaded; }
 
   get width() { return this._sourceWidth || 1; }
 
@@ -57,7 +57,7 @@ AGL.Texture = class extends AGL.TextureInfo {
           this._onTextureLoadedBound
         );
       } else
-        this._source = placeholderImage;
+        this._source = _placeholderImage;
     }
   }
 
@@ -109,33 +109,33 @@ AGL.Texture = class extends AGL.TextureInfo {
   }
 
   _parseTextureSize() {
-    this._dimensionWidthName  = "width";
+    this._dimensionWidthName = "width";
     this._dimensionHeightName = "height";
     if (this._source.naturalWidth) {
-      this._dimensionWidthName  = "naturalWidth";
+      this._dimensionWidthName = "naturalWidth";
       this._dimensionHeightName = "naturalHeight";
     } else if (this._source.videoWidth) {
-      this._dimensionWidthName  = "videoWidth";
+      this._dimensionWidthName = "videoWidth";
       this._dimensionHeightName = "videoHeight";
     }
 
-    this._loaded = this._sourceWidth > 0 && this._sourceHeight > 0;
+    this._loaded = this._sourceWidth * this._sourceHeight > 0;
     if (this._loaded) {
-      this.renderSource = this._source;
+      this._renderSource = this._source;
       ++this._updateId;
     } else
-      this.renderSource = null;
+      this._renderSource = null;
   }
 }
 
-AGL.Texture.loadImage = function(src, shouldUpdate) {
+AGL.Texture.loadImage = (src, shouldUpdate) => {
   const image = document.createElement("img");
   const texture = new AGL.Texture(image, shouldUpdate);
   image.src = src;
   return texture;
 };
 
-AGL.Texture.loadVideo = function(src, shouldUpdate) {
+AGL.Texture.loadVideo = (src, shouldUpdate) => {
   const video = document.createElement("video");
   const texture = new AGL.Texture(video, shouldUpdate);
   video.src = src;

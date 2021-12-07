@@ -12,7 +12,6 @@ require("../helpers/valueOrDefault.js");
 require("../helpers/throttleFunction.js");
 require("../helpers/deleteProperty.js");
 require("../helpers/BaseClass.js");
-require("../helpers/trace.js");
 
 require("core/asjs.Core.js");
 

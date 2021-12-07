@@ -11,7 +11,7 @@ AGL.LightProps = class extends AGL.ItemProps {
   get width() { return this._width; }
   set width(v) {
     if (this._width !== v) {
-      this._width  =
+      this._width =
       this._height = v;
       ++this._scaleUpdateId;
     }

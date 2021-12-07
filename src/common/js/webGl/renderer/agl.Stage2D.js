@@ -1,3 +1,4 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 import "../display/agl.Item.js";
 import "../geom/agl.Matrix3.js";
@@ -13,7 +14,7 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
       useTint : true
     }, ... (options || {})};
 
-    options.config           = AGL.Utils.initRendererConfig(options.config, AGL.Stage2D);
+    options.config = AGL.Utils.initRendererConfig(options.config, AGL.Stage2D);
     options.config.locations = options.config.locations.concat([
       "aDt",
       "aDst",
@@ -29,16 +30,16 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     this._batchItems = 0;
 
     this._drawFunctionMap = {};
-    this._drawFunctionMap[AGL.Item.TYPE]      = emptyFunction;
-    this._drawFunctionMap[AGL.Image.TYPE]     = this._drawImage.bind(this);
+    this._drawFunctionMap[AGL.Item.TYPE] = helpers.emptyFunction;
+    this._drawFunctionMap[AGL.Image.TYPE] = this._drawImage.bind(this);
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
     this._batchDrawBound = this._batchDraw.bind(this);
-    this._drawItemBound  = this._drawItem.bind(this);
+    this._drawItemBound = this._drawItem.bind(this);
 
     /*
-    this.picked;
-    this._isPickerSet = false;
+    this.picked
+    this._isPickerSet
     */
 
     this.pickerPoint = AGL.Point.create();
@@ -67,7 +68,7 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
   setPickerPoint(point) {
     this._isPickerSet = true;
 
-    this.pickerPoint.x = (point.x - this.widthHalf)  * this.matrixCache[0];
+    this.pickerPoint.x = (point.x - this.widthHalf) * this.matrixCache[0];
     this.pickerPoint.y = (point.y - this.heightHalf) * this.matrixCache[4];
   }
 
@@ -84,7 +85,7 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
 
   _drawContainer(container) {
     this._gl.uniform4fv(this._locations.uWCl, container.colorCache);
-    this._gl.uniform1f(this._locations.uWA,   container.premultipliedAlpha);
+    this._gl.uniform1f(this._locations.uWA, container.premultipliedAlpha);
 
     const children = container.children;
     for (let i = 0, l = children.length; i < l; ++i)
@@ -103,8 +104,12 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     const twId  = this._batchItems * 12;
     const matId = this._batchItems * 16;
 
-    helpers.arraySet(this._dataBuffer.data, item.colorCache,               twId);
-    helpers.arraySet(this._dataBuffer.data, item.textureRepeatRandomCache, twId + 8);
+    helpers.arraySet(this._dataBuffer.data, item.colorCache, twId);
+    helpers.arraySet(
+      this._dataBuffer.data,
+      item.textureRepeatRandomCache,
+      twId + 8
+    );
 
     this._dataBuffer.data[twId + 4] = item.props.alpha;
     this._dataBuffer.data[twId + 5] = item.tintType;
@@ -116,11 +121,23 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     );
     this._dataBuffer.data[twId + 7] = item.distortionProps.distortTexture;
 
-    helpers.arraySet(this._matrixBuffer.data, item.matrixCache,        matId);
-    helpers.arraySet(this._matrixBuffer.data, item.textureMatrixCache, matId + 6);
-    helpers.arraySet(this._matrixBuffer.data, item.textureCropCache,   matId + 12);
+    helpers.arraySet(this._matrixBuffer.data, item.matrixCache, matId);
+    helpers.arraySet(
+      this._matrixBuffer.data,
+      item.textureMatrixCache,
+      matId + 6
+    );
+    helpers.arraySet(
+      this._matrixBuffer.data,
+      item.textureCropCache,
+      matId + 12
+    );
 
-    helpers.arraySet(this._distortionBuffer.data, item.distortionPropsCache, this._batchItems * 8);
+    helpers.arraySet(
+      this._distortionBuffer.data,
+      item.distortionPropsCache,
+      this._batchItems * 8
+    );
 
     ++this._batchItems === this._MAX_BATCH_ITEMS && this._batchDraw();
   }
@@ -138,13 +155,21 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
   }
 
   _customResize() {
-    AGL.Matrix3.projection(this._width, this._height, this._container.parent.matrixCache);
+    AGL.Matrix3.projection(
+      this._width,
+      this._height,
+      this._container.parent.matrixCache
+    );
     ++this._container.parent.propsUpdateId;
   }
 
   _uploadBuffers() {
-    this._dataBuffer.upload(this._gl,       this._enableBuffers, this._locations);
-    this._distortionBuffer.upload(this._gl, this._enableBuffers, this._locations);
+    this._dataBuffer.upload(this._gl, this._enableBuffers, this._locations);
+    this._distortionBuffer.upload(
+      this._gl,
+      this._enableBuffers,
+      this._locations
+    );
 
     super._uploadBuffers();
   }
@@ -241,7 +266,8 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
       return func;
     }
 
-    const getSimpleTexColor = (modCoordName) => "gtTexCl(vTId,vTCrop.xy+vTCrop.zw*" + modCoordName + ")";
+    const getSimpleTexColor = (modCoordName) =>
+      "gtTexCl(vTId,vTCrop.xy+vTCrop.zw*" + modCoordName + ")";
 
     return AGL.Utils.createVersion(options.config.precision) +
     "in float " +
@@ -279,7 +305,8 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
         "}" +
         "float gtRClBCrd(vec2 st,vec2 crd){" +
           "float rnd=rand(floor(vTCrd+st),1.);" +
-          "return (1.-(2.*rnd-1.)*vRR.y)*abs((1.-st.x-crd.x)*(1.-st.y-crd.y));" +
+          "return (1.-(2.*rnd-1.)*vRR.y)*" +
+            "abs((1.-st.x-crd.x)*(1.-st.y-crd.y));" +
         "}"
       : "") +
 

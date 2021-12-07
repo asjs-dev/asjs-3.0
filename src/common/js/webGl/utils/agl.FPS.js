@@ -3,14 +3,14 @@ import "../NameSpace.js";
 AGL.FPS = {
   start : function (targetFPS) {
     this._targetMS =
-    this._then     =
-    this._frames   =
+    this._then =
+    this._frames =
     this._prevTime =
 
-    this.fps   =
+    this.fps =
     this.delay = 0;
 
-    this._then     = Date.now();
+    this._then = Date.now();
     this._targetMS = 1000 / (targetFPS || 60);
   },
   update : function() {
@@ -24,7 +24,7 @@ AGL.FPS = {
       this.fps = (this._frames * 1000) / (now - this._prevTime);
 
       this._prevTime = now;
-      this._frames   = 0;
+      this._frames = 0;
     }
 
     this._then = now;

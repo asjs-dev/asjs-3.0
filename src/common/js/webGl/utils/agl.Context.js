@@ -1,34 +1,38 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 
 AGL.Context = class {
   constructor(config) {
     /*
-    this._currentProgram   =
-    this._currentBlendMode =
-    this.width             =
-    this.height            = null;
+    this._currentProgram
+    this._currentBlendMode
+    this.width
+    this.height
     */
 
     this.contextId = 0;
 
     this._config = AGL.Utils.initContextConfig(config || {});
-    this._canvas = this._config.canvas;
+    this.canvas = this._config.canvas;
 
     this._MAX_TEXTURE_NUM = AGL.Utils.INFO.maxTextureImageUnits;
 
-    this._onContextLostBound     = this._onContextLost.bind(this);
+    this._onContextLostBound = this._onContextLost.bind(this);
     this._onContextRestoredBound = this._initContext.bind(this);
-    this._restoreContextBound    = this._restoreContext.bind(this);
+    this._restoreContextBound = this._restoreContext.bind(this);
 
-    this._canvas.addEventListener("webglcontextlost",     this._onContextLostBound);
-    this._canvas.addEventListener("webglcontextrestored", this._onContextRestoredBound);
+    this.canvas.addEventListener("webglcontextlost", this._onContextLostBound);
+    this.canvas.addEventListener(
+      "webglcontextrestored",
+      this._onContextRestoredBound
+    );
 
     this._initContext();
   }
 
-  get canvas() { return this._canvas; }
-
-  get isContextLost() { return this.gl && this.gl.isContextLost && this.gl.isContextLost(); }
+  isLost() {
+    return this.gl && this.gl.isContextLost && this.gl.isContextLost();
+  }
 
   useBlendMode(blendMode) {
     this._currentBlendMode = blendMode;
@@ -47,19 +51,25 @@ AGL.Context = class {
   destruct() {
     this.gl.useProgram(null);
 
-    this._canvas.removeEventListener("webglcontextlost",     this._onContextLostBound);
-    this._canvas.removeEventListener("webglcontextrestored", this._onContextRestoredBound);
+    this.canvas.removeEventListener(
+      "webglcontextlost",
+      this._onContextLostBound
+    );
+    this.canvas.removeEventListener(
+      "webglcontextrestored",
+      this._onContextRestoredBound
+    );
 
     this._loseContextExt && this._loseContextExt.loseContext();
   }
 
   clearTextures() {
     for (let i = 0; i < this._MAX_TEXTURE_NUM; ++i) {
-      this._textureMap[i]        = null;
+      this._textureMap[i] = null;
       this._emptyTextureSlots[i] = i;
     }
 
-    this.textureIds.length  = 0;
+    this.textureIds.length = 0;
   }
 
   useTexture(textureInfo, renderTime, forceBind, callback) {
@@ -116,13 +126,13 @@ AGL.Context = class {
   }
 
   setCanvasSize(width, height) {
-    this._canvas.width  !== width  && (this._canvas.width  = width);
-    this._canvas.height !== height && (this._canvas.height = height);
+    this.canvas.width !== width && (this.canvas.width = width);
+    this.canvas.height !== height && (this.canvas.height = height);
   }
 
   setSize(width, height) {
     if (this.width !== width || this.height !== height) {
-      this.width  = width;
+      this.width = width;
       this.height = height;
 
       this.gl.scissor(0, 0, width, height);
@@ -145,7 +155,8 @@ AGL.Context = class {
   _initContext() {
     ++this.contextId;
 
-    const gl = this.gl = this._canvas.getContext("webgl2", this._config.contextAttributes);
+    const gl =
+    this.gl = this.canvas.getContext("webgl2", this._config.contextAttributes);
 
     gl.agl_id = this.contextId;
 
@@ -157,7 +168,7 @@ AGL.Context = class {
 
     this._textureMap = [];
     this._emptyTextureSlots = [];
-    this.textureIds  = [];
+    this.textureIds = [];
 
     this.clearTextures();
   }

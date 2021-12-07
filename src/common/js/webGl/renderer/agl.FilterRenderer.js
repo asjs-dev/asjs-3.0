@@ -3,8 +3,11 @@ import "./agl.BaseRenderer.js";
 
 AGL.FilterRenderer = class extends AGL.BaseRenderer {
   constructor(options) {
-    options                  = options || {};
-    options.config           = AGL.Utils.initRendererConfig(options.config, AGL.FilterRenderer);
+    options = options || {};
+    options.config = AGL.Utils.initRendererConfig(
+      options.config,
+      AGL.FilterRenderer
+    );
     options.config.locations = options.config.locations.concat([
       "uFTex",
       "uFtrT",
@@ -34,10 +37,10 @@ AGL.FilterRenderer = class extends AGL.BaseRenderer {
   _attachFramebufferAlias() {};
 
   _render(framebuffer) {
-    const context    = this._context;
-    const gl         = this._gl;
+    const context = this._context;
+    const gl = this._gl;
     const renderTime = this._renderTime;
-    const locations  = this._locations;
+    const locations = this._locations;
 
     context.setBlendMode(AGL.BlendMode.NORMAL);
 
@@ -52,22 +55,24 @@ AGL.FilterRenderer = class extends AGL.BaseRenderer {
     for (let i = 0; i < l; ++i) {
       let filterFramebuffer;
 
-      const filter    = this.filters[i];
+      const filter = this.filters[i];
       const useFilter = filter && filter.on;
 
       const isLast = i > minL;
 
-      const filterTexture = useFilter && filter.textureProps && filter.textureProps.texture;
+      const filterTexture = useFilter &&
+        filter.textureProps &&
+        filter.textureProps.texture;
       if (filterTexture) {
         context.useTextureAt(filterTexture, 1, renderTime, true);
         gl.uniform1i(locations.uFTex, 1);
       }
 
-      if (isLast) {
+      if (isLast)
         framebuffer
           ? this._attachFramebuffer(framebuffer)
           : gl.uniform1f(locations.uFlpY, 1);
-      } else if (useFilter) {
+      else if (useFilter) {
         filterFramebuffer = this._framebuffers[i & 1];
         this._attachFramebuffer(filterFramebuffer);
       }
@@ -170,7 +175,8 @@ AGL.FilterRenderer = class extends AGL.BaseRenderer {
             "oCl=oClVl+vec4(vec3((oCl.r+oCl.g+oCl.b)/3.),oCl.a)*v;" +
           // SepiaFilter
           "else if(uFtrT.y<3)" +
-            "oCl=oClVl+vec4(vec3(.874,.514,.156)*((oCl.r+oCl.g+oCl.b)/3.),oCl.a)*v;" +
+            "oCl=oClVl+" +
+              "vec4(vec3(.874,.514,.156)*((oCl.r+oCl.g+oCl.b)/3.),oCl.a)*v;" +
           // InvertFilter
           "else if(uFtrT.y<4)" +
             "oCl=oClVl+vec4(1.-oCl.rgb,oCl.a)*v;" +
@@ -225,7 +231,9 @@ AGL.FilterRenderer = class extends AGL.BaseRenderer {
             "}" +
           "else{" +
             // GlowFilter
-            "float oAvg=uFtrT.y==2?(oCl.r+oCl.g+oCl.b+oCl.a)/4.:0.;" +
+            "float oAvg=uFtrT.y==2" +
+              "?(oCl.r+oCl.g+oCl.b+oCl.a)/4." +
+              ":0.;" +
             "for(float i=-2.;i<3.;++i){" +
               "for(float j=-2.;j<3.;++j){" +
                 "m=abs(i)+abs(j);" +

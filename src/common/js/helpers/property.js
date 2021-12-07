@@ -1,4 +1,4 @@
-require("./NameSpace.js");
+import helpers from "./NameSpace.js";
 
 helpers.property = function(target, name, descriptor) {
   descriptor.enumerable   = true;

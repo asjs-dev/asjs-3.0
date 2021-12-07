@@ -2,7 +2,16 @@ import "../../NameSpace.js";
 import "./agl.BasePositioningProps.js";
 
 AGL.FilterTextureProps = class {
-  constructor(filter, texture, translateX, translateY, cropX, cropY, cropWidth, cropHeight) {
+  constructor(
+    filter,
+    texture,
+    translateX,
+    translateY,
+    cropX,
+    cropY,
+    cropWidth,
+    cropHeight
+  ) {
     this._filter = filter;
     this.texture = texture;
     this.translateX = translateX || 0;

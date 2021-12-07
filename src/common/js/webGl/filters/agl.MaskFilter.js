@@ -3,15 +3,27 @@ import "../data/props/agl.FilterTextureProps.js";
 import "./agl.BaseFilter.js";
 
 AGL.MaskFilter = class extends AGL.BaseFilter {
-  constructor(texture, type, translateX, translateY, cropX, cropY, cropWidth, cropHeight) {
+  constructor(
+    texture,
+    type,
+    translateX,
+    translateY,
+    cropX,
+    cropY,
+    cropWidth,
+    cropHeight
+  ) {
     super(7, 0, type);
 
     this.textureProps = new AGL.FilterTextureProps(
       this,
       texture,
-      translateX, translateY,
-      cropX, cropY,
-      cropWidth, cropHeight
+      translateX,
+      translateY,
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight
     );
   }
 

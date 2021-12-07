@@ -1,7 +1,7 @@
 import "../helpers/removeFromArray.js";
 import "../helpers/arraySet.js";
+import "../helpers/emptyFunction.js";
 
-import "./agl.Common.js";
 import "./NameSpace.js";
 
 import "./data/agl.BlendMode.js";

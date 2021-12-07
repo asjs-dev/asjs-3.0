@@ -1,3 +1,4 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 import "../utils/agl.Context.js";
 import "../utils/agl.Buffer.js";
@@ -7,29 +8,28 @@ import "../data/props/agl.ColorProps.js";
 AGL.BaseRenderer = class {
   constructor(options) {
     /*
-    this._program           =
-    this._width             =
-    this._height            =
-    this.widthHalf          =
-    this.heightHalf         =
-    this._clearBeforeRender =
-    this._gl                = null;
+    this._program
+    this._width
+    this._height
+    this.widthHalf
+    this.heightHalf
+    this._gl
     */
 
     this._attachFramebufferAlias = this._attachFramebuffer;
 
-    this._clearBeforeRenderFunc = emptyFunction;
+    this._clearBeforeRenderFunc = helpers.emptyFunction;
 
     this.clearColor = new AGL.ColorProps();
 
     this._currentContextId =
-    this._renderTime       =
-    this._resizeId         =
-    this._currentResizeId  = 0;
+    this._renderTime =
+    this._resizeId =
+    this._currentResizeId = 0;
 
-    this._options          = options;
-    this._config           = this._options.config;
-    this._context          = this._config.context;
+    this._options = options;
+    this._config = this._options.config;
+    this._context = this._config.context;
     this._config.locations = this._config.locations.concat([
       "uFlpY",
       "aPos",
@@ -50,7 +50,7 @@ AGL.BaseRenderer = class {
     );
 
     this._positionBuffer = new AGL.Buffer(
-      "aPos", new F32A([
+      "aPos", new Float32Array([
         0, 0,
         1, 0,
         1, 1,
@@ -68,7 +68,7 @@ AGL.BaseRenderer = class {
   get width() { return this._width; }
   set width(v) {
     if (this._width !== v) {
-      this._width    = v;
+      this._width = v;
       this.widthHalf = v * .5;
       ++this._resizeId;
     }
@@ -77,26 +77,26 @@ AGL.BaseRenderer = class {
   get height() { return this._height; }
   set height(v) {
     if (this._height !== v) {
-      this._height    = v;
+      this._height = v;
       this.heightHalf = v * .5;
       ++this._resizeId;
     }
   }
 
-  get clearBeforeRender() { return this._clearBeforeRender; }
+  get clearBeforeRender() { return this._clearBeforeRenderFunc === this._clear; }
   set clearBeforeRender(v) {
-    this._clearBeforeRenderFunc = (this._clearBeforeRender = v)
+    this._clearBeforeRenderFunc = v
       ? this._clear
-      : emptyFunction;
+      : helpers.emptyFunction;
   }
 
   setSize(width, height) {
-    this.width  = width;
+    this.width = width;
     this.height = height;
   }
 
   renderToFramebuffer(framebuffer) {
-    if (!this._context.isContextLost) {
+    if (!this._context.isLost()) {
       this._switchToProgram();
       this._attachFramebufferAlias(framebuffer);
       this._renderBatch(framebuffer);
@@ -105,7 +105,7 @@ AGL.BaseRenderer = class {
   }
 
   render() {
-    if (!this._context.isContextLost) {
+    if (!this._context.isLost()) {
       this._switchToProgram();
       this._gl.uniform1f(this._locations.uFlpY, 1);
       this._renderBatch();
@@ -144,7 +144,12 @@ AGL.BaseRenderer = class {
   }
 
   _clear() {
-    this._gl.clearColor(this.clearColor.r, this.clearColor.g, this.clearColor.b, this.clearColor.a);
+    this._gl.clearColor(
+      this.clearColor.r,
+      this.clearColor.g,
+      this.clearColor.b,
+      this.clearColor.a
+    );
     this._gl.clear(AGL.Const.COLOR_BUFFER_BIT);
   }
 
@@ -160,7 +165,13 @@ AGL.BaseRenderer = class {
   _customResize() {}
 
   _drawInstanced(count) {
-    this._gl.drawElementsInstanced(AGL.Const.TRIANGLE_STRIP, 4, AGL.Const.UNSIGNED_SHORT, 0, count);
+    this._gl.drawElementsInstanced(
+      AGL.Const.TRIANGLE_STRIP,
+      4,
+      AGL.Const.UNSIGNED_SHORT,
+      0,
+      count
+    );
   }
 
   _buildProgram() {
@@ -174,7 +185,11 @@ AGL.BaseRenderer = class {
 
     this._program = program;
 
-    this._locations = AGL.Utils.getLocationsFor(this._gl, program, this._config.locations);
+    this._locations = AGL.Utils.getLocationsFor(
+      this._gl,
+      program,
+      this._config.locations
+    );
 
     this._context.useProgram(program, this._vao);
 

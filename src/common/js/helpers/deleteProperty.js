@@ -1,6 +1,6 @@
-require("./NameSpace.js");
-require("./property.js");
-require("./emptyFunction.js");
+import helpers from "./NameSpace.js";
+import "./property.js";
+import "./emptyFunction.js";
 
 helpers.deleteProperty = function(target, name) {
   var descriptor = Object.getOwnPropertyDescriptor(target, name);

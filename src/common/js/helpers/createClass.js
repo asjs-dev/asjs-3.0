@@ -1,7 +1,7 @@
-require("./NameSpace.js");
-require("./property.js");
-require("./constant.js");
-require("./extendProperties.js");
+import helpers from "./NameSpace.js";
+import "./property.js";
+import "./constant.js";
+import "./extendProperties.js";
 
 helpers.override = function(t, s, k) {
   if (["$n", "constructor"].indexOf(k) === -1) {

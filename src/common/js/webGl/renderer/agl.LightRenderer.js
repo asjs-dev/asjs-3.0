@@ -3,8 +3,11 @@ import "./agl.BatchRenderer.js";
 
 AGL.LightRenderer = class extends AGL.BatchRenderer {
   constructor(options) {
-    options                  = options || {};
-    options.config           = AGL.Utils.initRendererConfig(options.config, AGL.LightRenderer);
+    options = options || {};
+    options.config = AGL.Utils.initRendererConfig(
+      options.config,
+      AGL.LightRenderer
+    );
     options.config.locations = options.config.locations.concat([
       "aExt",
       "uS",
@@ -25,7 +28,13 @@ AGL.LightRenderer = class extends AGL.BatchRenderer {
 
     this._lights = [];
     for (let i = 0; i < maxBatchItems; ++i)
-      this._lights.push(new AGL.Light(i, this._matrixBuffer.data, this._extensionBuffer.data));
+      this._lights.push(
+        new AGL.Light(
+          i,
+          this._matrixBuffer.data,
+          this._extensionBuffer.data
+        )
+      );
   }
 
   getLight(id) {
@@ -37,7 +46,8 @@ AGL.LightRenderer = class extends AGL.BatchRenderer {
 
     this.heightMap && this._gl.uniform1i(
       this._locations.uTex,
-      this._context.useTexture(this.heightMap, this._renderTime, true));
+      this._context.useTexture(this.heightMap, this._renderTime, true)
+    );
 
     this._gl.uniform1f(this._locations.uSC, this.scale);
 
@@ -47,11 +57,21 @@ AGL.LightRenderer = class extends AGL.BatchRenderer {
   }
 
   _customResize() {
-    this._gl.uniform4f(this._locations.uS, this._width, this._height, 1 / this._width, 1 / this._height);
+    this._gl.uniform4f(
+      this._locations.uS,
+      this._width,
+      this._height,
+      1 / this._width,
+      1 / this._height
+    );
   }
 
   _uploadBuffers() {
-    this._extensionBuffer.upload(this._gl, this._enableBuffers, this._locations);
+    this._extensionBuffer.upload(
+      this._gl,
+      this._enableBuffers,
+      this._locations
+    );
     super._uploadBuffers();
   }
 
@@ -159,7 +179,11 @@ AGL.LightRenderer = class extends AGL.BatchRenderer {
           "ph=tc.g*vSC," +
           "pxDst=distance(vec3(tCnt,vHS),vec3(tCrd,ph))," +
           "dst=pxDst/vD," +
-          "vol=1.-(isl?dst:0.);" +
+          "vol=1.-(" +
+            "isl" +
+              "?dst" +
+              ":0." +
+          ");" +
 
         "if(!isl||dst<1.){" +
           "float shl=vD/vDt.y;" +

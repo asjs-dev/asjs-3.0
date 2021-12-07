@@ -1,3 +1,4 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 import "../data/props/agl.LightProps.js";
 import "./agl.BaseDrawable.js";
@@ -10,25 +11,25 @@ AGL.Light = class extends AGL.BaseDrawable {
 
     this.color.a = 0;
 
-    this._id    = id;
+    this._id = id;
     this._matId = id * 16;
     this._colId = this._matId + 8;
     this._datId = this._matId + 12;
     this._extId = id * 4;
 
-    this._lightData     = lightData;
+    this._lightData = lightData;
     this._extensionData = extensionData;
 
     this._castShadow =
-    this._gouraud    = true;
-
-    this.angle      = 0;
-    this.spotAngle  = 180 * AGL.Utils.THETA;
+    this._gouraud =
     this.castShadow =
-    this.gouraud    = true;
-    this.type       = AGL.Light.Type.SPOT;
-    this.precision  =
-    this.diffuse    = 1;
+    this.gouraud = true;
+
+    this.angle = 0;
+    this.spotAngle = 180 * AGL.Utils.THETA;
+    this.type = AGL.Light.Type.SPOT;
+    this.precision =
+    this.diffuse = 1;
   }
 
   get type() { return this._extensionData[this._extId]; }
@@ -47,7 +48,7 @@ AGL.Light = class extends AGL.BaseDrawable {
   }
 
   get precision() { return this._extensionData[this._extId + 3]; }
-  set precision(v) { this._extensionData[this._extId + 3] = max(1, v); }
+  set precision(v) { this._extensionData[this._extId + 3] = Math.max(1, v); }
 
   get angle() { return this._lightData[this._datId + 3]; }
   set angle(v) { this._lightData[this._datId + 3] = v; }
@@ -67,7 +68,9 @@ AGL.Light = class extends AGL.BaseDrawable {
       this._updateProps();
       this._updateColor();
 
-      lightData[datId]     = lightData[datId - 1] > 0 ? 1 : 0;
+      lightData[datId] = lightData[datId - 1] > 0
+        ? 1
+        : 0;
       lightData[datId + 1] = this.diffuse;
       lightData[datId + 2] = this.props.alpha;
 
@@ -85,14 +88,21 @@ AGL.Light = class extends AGL.BaseDrawable {
   }
 
   _updateAdditionalData() {
-    if (this.isOn() && this._currentAdditionalPropsUpdateId < this.propsUpdateId) {
+    if (
+      this.isOn() &&
+      this._currentAdditionalPropsUpdateId < this.propsUpdateId
+    ) {
       this._currentAdditionalPropsUpdateId = this.propsUpdateId;
       this._calcBounds();
     }
   }
 
   _calcCorners() {
-    AGL.Matrix3.calcCorners(this.matrixCache, this._corners, this.stage.renderer);
+    AGL.Matrix3.calcCorners(
+      this.matrixCache,
+      this._corners,
+      this.stage.renderer
+    );
 
     const corners = this._corners;
 
@@ -121,12 +131,12 @@ AGL.Light = class extends AGL.BaseDrawable {
     if (this._currentColorUpdateId < color.updateId) {
       this._currentColorUpdateId = color.updateId;
 
-      const lightData        = this._lightData;
+      const lightData = this._lightData;
       const parentColorCache = this._parent.colorCache;
 
       const colId = this._colId;
 
-      lightData[colId]     = parentColorCache[0] * color.r;
+      lightData[colId] = parentColorCache[0] * color.r;
       lightData[colId + 1] = parentColorCache[1] * color.g;
       lightData[colId + 2] = parentColorCache[2] * color.b;
       lightData[colId + 3] = parentColorCache[3] * color.a;
@@ -135,6 +145,6 @@ AGL.Light = class extends AGL.BaseDrawable {
 }
 
 AGL.Light.Type = {
-  SPOT    : 0,
+  SPOT : 0,
   AMBIENT : 1
 };

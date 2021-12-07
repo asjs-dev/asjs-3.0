@@ -1,4 +1,4 @@
-require("./NameSpace.js");
+import helpers from "./NameSpace.js";
 
 helpers.createPrototypeClass = function(parent, construct, body) {
   var _super = parent.prototype;

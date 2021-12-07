@@ -1,5 +1,5 @@
-require("./NameSpace.js");
-require("./typeIs.js");
+import helpers from "./NameSpace.js";
+import "./typeIs.js";
 
 helpers.clone = function(a) {
   if (helpers.typeIs(a, "object")) return a;

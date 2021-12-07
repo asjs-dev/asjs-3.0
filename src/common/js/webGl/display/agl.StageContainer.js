@@ -14,7 +14,5 @@ AGL.StageContainer = class extends AGL.Container {
 
   get parent() { return this._parent; }
 
-  _updatePremultipliedAlpha() {
-    this.premultipliedAlpha = this.props.alpha;
-  }
+  get premultipliedAlpha() { return this.props.alpha; }
 }

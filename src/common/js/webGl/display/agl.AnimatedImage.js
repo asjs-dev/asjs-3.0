@@ -1,3 +1,4 @@
+import helpers from "../../helpers/NameSpace.js";
 import "../NameSpace.js";
 import "./agl.Image.js";
 
@@ -6,9 +7,9 @@ AGL.AnimatedImage = class extends AGL.Image {
     super(texture);
 
     this.frameLength = 120;
-    this.frames      = [];
+    this.frames = [];
 
-    this.frame              =
+    this.frame =
     this._currentRenderTime = 0;
 
     this.updateAnimation;
@@ -29,7 +30,7 @@ AGL.AnimatedImage = class extends AGL.Image {
   }
 
   stop() {
-    this.updateAnimation = emptyFunction;
+    this.updateAnimation = helpers.emptyFunction;
   }
 
   play() {

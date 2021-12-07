@@ -1,7 +1,7 @@
-require("./NameSpace.js");
-require("./createClass.js");
-require("./destructObject.js");
-require("./emptyFunction.js");
+import helpers from "./NameSpace.js";
+import "./createClass.js";
+import "./destructObject.js";
+import "./emptyFunction.js";
 
 helpers.createClass(helpers, "BaseClass", Object, function(_scope, _super) {
   _scope.new       = helpers.emptyFunction;
