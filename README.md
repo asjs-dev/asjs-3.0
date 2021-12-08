@@ -4,7 +4,7 @@
 Try it: https://plnkr.co/edit/T8Ujtc?p=preview
 
 Examples:
-- http://budapestmakery.hu/videos/makery.html#lang=en
+- https://videos.makeryworld.com/
 
 ## UPDATE 06.10.19
 The class creation process has been changed. It requires the NameSpace property at the first parameter. The NameSpace value can be "this" or some variable. Examples below.
