@@ -120,12 +120,10 @@ class Application {
   }
 
   _destruct() {
-    if (!this._inited) {
-      cancelAnimationFrame(this._requestAnimationFrameId);
-      window.removeEventListener("beforeunload", this._onBeforeUnloadBound);
-      this._stageContainer.removeChild(this._context.canvas);
-      this._stage2DRenderer.destruct();
-    }
+    cancelAnimationFrame(this._requestAnimationFrameId);
+    window.removeEventListener("beforeunload", this._onBeforeUnloadBound);
+    this._stageContainer.removeChild(this._context.canvas);
+    this._stage2DRenderer.destruct();
   }
 
   _onBeforeUnload() {
@@ -229,13 +227,11 @@ class Application {
   }
 
   _destruct() {
-    if (!this._inited) {
-      cancelAnimationFrame(this._requestAnimationFrameId);
-      window.removeEventListener("beforeunload", this._onBeforeUnloadBound);
-      this._stageContainer.removeChild(this._context.canvas);
-      this._stage2DRenderer.destruct();
-      this._filterRenderer.destruct();
-    }
+    cancelAnimationFrame(this._requestAnimationFrameId);
+    window.removeEventListener("beforeunload", this._onBeforeUnloadBound);
+    this._stageContainer.removeChild(this._context.canvas);
+    this._stage2DRenderer.destruct();
+    this._filterRenderer.destruct();
   }
 
   _onBeforeUnload() {
