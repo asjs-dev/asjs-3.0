@@ -11,7 +11,7 @@ AGL.FPS = {
     this.delay = 0;
 
     this._then = Date.now();
-    this._targetMS = 1000 / (targetFPS || 60);
+    this._targetMS = 1e3 / (targetFPS || 60);
   },
   update : function() {
     this._frames++;
@@ -20,8 +20,8 @@ AGL.FPS = {
 
     this.delay = (now - this._then) / this._targetMS;
 
-    if (now >= this._prevTime + 1000 ) {
-      this.fps = (this._frames * 1000) / (now - this._prevTime);
+    if (now >= this._prevTime + 1e3 ) {
+      this.fps = (this._frames * 1e3) / (now - this._prevTime);
 
       this._prevTime = now;
       this._frames = 0;

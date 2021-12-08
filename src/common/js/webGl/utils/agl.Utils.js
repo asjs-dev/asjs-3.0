@@ -69,15 +69,14 @@ import "../NameSpace.js";
     "precision " + precision + " float;\n";
 
   AGL.Utils.initApplication = (callback) => {
-    const checkCanvas = (inited) => {
+    const checkCanvas = () => {
       if (document.readyState === "complete") {
-        document.removeEventListener("readystatechange", checkCanvasBound);
+        document.removeEventListener("readystatechange", checkCanvas);
         callback(AGL.Utils.INFO.isWebGl2Supported);
-      } else if (!inited)
-        document.addEventListener("readystatechange", checkCanvasBound);
+      } else
+        document.addEventListener("readystatechange", checkCanvas);
     };
 
-    const checkCanvasBound = checkCanvas.bind(this, true);
     checkCanvas();
   }
 

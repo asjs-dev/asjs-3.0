@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { arraySet } from "../agl.Helpers.js";
 import "../NameSpace.js";
 import "./agl.BaseFilter.js";
 
@@ -13,7 +13,7 @@ AGL.SaturateFilter = class extends AGL.BaseFilter {
     const x = (v * 2 / 3) + 1;
     const y = ((x - 1) * - .5);
 
-    helpers.arraySet(this.kernels, [
+    arraySet(this.kernels, [
       x, y, y, 0,
       y, x, y, 0,
       y, y, x, 0

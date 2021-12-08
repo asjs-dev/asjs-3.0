@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { removeFromArray } from "../agl.Helpers.js";
 import "../NameSpace.js";
 
 AGL.Context = class {
@@ -37,8 +37,8 @@ AGL.Context = class {
   useBlendMode(blendMode) {
     this._currentBlendMode = blendMode;
 
-    this.gl[blendMode.eqName].apply(this.gl, blendMode.eqs);
-    this.gl[blendMode.funcName].apply(this.gl, blendMode.funcs);
+    this.gl[blendMode.equationName].apply(this.gl, blendMode.equations);
+    this.gl[blendMode.functionName].apply(this.gl, blendMode.functions);
   }
 
   setBlendMode(blendMode, drawCallback) {
@@ -99,7 +99,7 @@ AGL.Context = class {
 
     this.textureIds.indexOf(textureId) < 0 && this.textureIds.push(textureId);
 
-    helpers.removeFromArray(this._emptyTextureSlots, textureId);
+    removeFromArray(this._emptyTextureSlots, textureId);
 
     return textureId;
   }

@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { removeFromArray } from "../agl.Helpers.js";
 import "../NameSpace.js";
 import "./agl.Item.js";
 
@@ -40,7 +40,7 @@ AGL.Container = class extends AGL.Item {
 
   removeChild(child) {
     if (child) {
-      helpers.removeFromArray(this.children, child);
+      removeFromArray(this.children, child);
       child.parent = null;
     }
   }
@@ -54,7 +54,7 @@ AGL.Container = class extends AGL.Item {
   }
 
   setChildIndex(child, index) {
-    helpers.removeFromArray(this.children, child);
+    removeFromArray(this.children, child);
     this.children.splice(index, 0, child);
   }
 

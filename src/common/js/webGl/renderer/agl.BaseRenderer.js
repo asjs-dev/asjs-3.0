@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { emptyFunction } from "../agl.Helpers.js";
 import "../NameSpace.js";
 import "../utils/agl.Context.js";
 import "../utils/agl.Buffer.js";
@@ -18,7 +18,7 @@ AGL.BaseRenderer = class {
 
     this._attachFramebufferAlias = this._attachFramebuffer;
 
-    this._clearBeforeRenderFunc = helpers.emptyFunction;
+    this._clearBeforeRenderFunc = emptyFunction;
 
     this.clearColor = new AGL.ColorProps();
 
@@ -87,7 +87,7 @@ AGL.BaseRenderer = class {
   set clearBeforeRender(v) {
     this._clearBeforeRenderFunc = v
       ? this._clear
-      : helpers.emptyFunction;
+      : emptyFunction;
   }
 
   setSize(width, height) {

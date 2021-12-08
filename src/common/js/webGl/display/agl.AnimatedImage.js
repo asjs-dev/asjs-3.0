@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { emptyFunction } from "../agl.Helpers.js";
 import "../NameSpace.js";
 import "./agl.Image.js";
 
@@ -30,7 +30,7 @@ AGL.AnimatedImage = class extends AGL.Image {
   }
 
   stop() {
-    this.updateAnimation = helpers.emptyFunction;
+    this.updateAnimation = emptyFunction;
   }
 
   play() {

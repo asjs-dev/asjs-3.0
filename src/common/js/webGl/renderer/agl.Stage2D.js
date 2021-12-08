@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { arraySet, emptyFunction } from "../agl.Helpers.js";
 import "../NameSpace.js";
 import "../display/agl.Item.js";
 import "../geom/agl.Matrix3.js";
@@ -21,7 +21,8 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
       "uWCl",
       "uWA"
     ]);
-    const maxBatchItems = options.maxBatchItems = options.maxBatchItems || 1e4;
+    const maxBatchItems =
+    options.maxBatchItems = options.maxBatchItems || 1e4;
 
     super(options);
 
@@ -30,7 +31,7 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     this._batchItems = 0;
 
     this._drawFunctionMap = {};
-    this._drawFunctionMap[AGL.Item.TYPE] = helpers.emptyFunction;
+    this._drawFunctionMap[AGL.Item.TYPE] = emptyFunction;
     this._drawFunctionMap[AGL.Image.TYPE] = this._drawImage.bind(this);
     this._drawFunctionMap[AGL.Container.TYPE] = this._drawContainer.bind(this);
 
@@ -104,8 +105,8 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     const twId  = this._batchItems * 12;
     const matId = this._batchItems * 16;
 
-    helpers.arraySet(this._dataBuffer.data, item.colorCache, twId);
-    helpers.arraySet(
+    arraySet(this._dataBuffer.data, item.colorCache, twId);
+    arraySet(
       this._dataBuffer.data,
       item.textureRepeatRandomCache,
       twId + 8
@@ -121,19 +122,19 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     );
     this._dataBuffer.data[twId + 7] = item.distortionProps.distortTexture;
 
-    helpers.arraySet(this._matrixBuffer.data, item.matrixCache, matId);
-    helpers.arraySet(
+    arraySet(this._matrixBuffer.data, item.matrixCache, matId);
+    arraySet(
       this._matrixBuffer.data,
       item.textureMatrixCache,
       matId + 6
     );
-    helpers.arraySet(
+    arraySet(
       this._matrixBuffer.data,
       item.textureCropCache,
       matId + 12
     );
 
-    helpers.arraySet(
+    arraySet(
       this._distortionBuffer.data,
       item.distortionPropsCache,
       this._batchItems * 8
@@ -254,14 +255,10 @@ AGL.Stage2D = class extends AGL.BatchRenderer {
     const useTint = options.useTint;
 
     const createGetTextureFunction = (maxTextureImageUnits) => {
-      let func =
-      "vec4 gtTexCl(float i,vec2 c){";
-
-        for (let i = 0; i < maxTextureImageUnits; ++i) func +=
-          "if(i<" + (i + 1) + ".)return texture(uTex[" + i + "],c);";
-
-        func +=
-        "return vec4(1);" +
+      let func = "vec4 gtTexCl(float i,vec2 c){";
+      for (let i = 0; i < maxTextureImageUnits; ++i)
+        func += "if(i<" + (i + 1) + ".)return texture(uTex[" + i + "],c);";
+      func += "return vec4(1);" +
       "}";
       return func;
     }

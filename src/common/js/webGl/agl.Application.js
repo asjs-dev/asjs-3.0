@@ -1,6 +1,4 @@
-import "../helpers/removeFromArray.js";
-import "../helpers/arraySet.js";
-import "../helpers/emptyFunction.js";
+import "./agl.Helpers.js";
 
 import "./NameSpace.js";
 

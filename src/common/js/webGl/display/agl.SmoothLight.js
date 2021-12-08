@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { emptyFunction } from "../agl.Helpers.js";
 import "../NameSpace.js";
 
 AGL.SmoothLight = class {
@@ -88,7 +88,7 @@ AGL.SmoothLight = class {
   }
 
   _resize() {
-    this._resizeFunc = helpers.emptyFunction;
+    this._resizeFunc = emptyFunction;
 
     const scaledWidth = this._width * this.lightRenderer.scale;
     const scaledHeight = this._height * this.lightRenderer.scale;

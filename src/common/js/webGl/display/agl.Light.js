@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { arraySet } from "../agl.Helpers.js";
 import "../NameSpace.js";
 import "../data/props/agl.LightProps.js";
 import "./agl.BaseDrawable.js";
@@ -122,7 +122,7 @@ AGL.Light = class extends AGL.BaseDrawable {
   _updateTransform(props, parent) {
     super._updateTransform(props, parent);
 
-    helpers.arraySet(this._lightData, this.matrixCache, this._matId);
+    arraySet(this._lightData, this.matrixCache, this._matId);
   }
 
   _updateColor() {

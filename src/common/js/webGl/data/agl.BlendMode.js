@@ -2,20 +2,20 @@ import "../NameSpace.js";
 import "../utils/agl.Utils.js";
 
 (() => {
-  const _createBlendMode = (funcs, eqs) => {
+  const _createBlendMode = (functions, equations) => {
     return {
-      funcName : "blendFunc" + (
-        funcs.length < 3
+      functionName : "blendFunc" + (
+        functions.length < 3
           ? ""
           : "Separate"
       ),
-      funcs : funcs,
-      eqName : "blendEquation" + (
-        !eqs || eqs.length < 2
+      functions : functions,
+      equationName : "blendEquation" + (
+        !equations || equations.length < 2
           ? ""
           : "Separate"
       ),
-      eqs : eqs || [AGL.Const.FUNC_ADD]
+      equations : equations || [AGL.Const.FUNC_ADD]
     };
   }
 

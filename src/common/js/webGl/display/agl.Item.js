@@ -1,4 +1,4 @@
-import helpers from "../../helpers/NameSpace.js";
+import { emptyFunction } from "../agl.Helpers.js";
 import "../NameSpace.js";
 import "../data/props/agl.ItemProps.js";
 import "../data/props/agl.ColorProps.js";
@@ -22,7 +22,7 @@ AGL.Item = class extends AGL.BaseItem {
     this._currentParentColorUpdateId =
     this._currentAdditionalPropsUpdateId = 0;
 
-    this.callback = helpers.emptyFunction;
+    this.callback = emptyFunction;
 
     this._bounds = AGL.Rect.create();
   }
@@ -44,7 +44,7 @@ AGL.Item = class extends AGL.BaseItem {
   }
 
   get callback() { return this._callback; }
-  set callback(v) { this._callback = v || helpers.emptyFunction; }
+  set callback(v) { this._callback = v || emptyFunction; }
 
   getBounds() {
     return this._bounds;
