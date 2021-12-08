@@ -1,6 +1,6 @@
 ![logo](https://github.com/asjs-dev/asjs-3.0/blob/master/src/common/js/webGl/logo.png?raw=true)
 
-A JavaScript framework for create 2D WebGL 2.0 things
+A JavaScript framework for creating 2D WebGL 2.0 things
 
 ### Demos:
 - https://codepen.io/iroshan/pen/rNMKbWv
