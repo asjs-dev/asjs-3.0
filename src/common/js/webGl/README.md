@@ -15,6 +15,7 @@ A JavaScript framework for create 2D WebGL 2.0 things
 * Element picker (can click on rendered items)
 * Image filters (Blur, Pixelate, Distortion, etc.)
     * https://github.com/asjs-dev/asjs-3.0/tree/master/src/common/js/webGl/filters
+* Video textures
 * and many other features...
 
 ### Minified version
