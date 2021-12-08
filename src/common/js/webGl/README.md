@@ -1,4 +1,5 @@
-# PILIS.JS (AGL) 3.0
+![logo](https://github.com/asjs-dev/asjs-3.0/blob/master/src/common/js/webGl/logo.png?raw=true)
+
 A JavaScript framework for create 2D WebGL 2.0 things
 
 ### Demos:
@@ -13,7 +14,7 @@ A JavaScript framework for create 2D WebGL 2.0 things
 * Dynamic 2.5D lights and shadows
 * Element picker (can click on rendered items)
 * Image filters (Blur, Pixelate, Distortion, etc.)
- * https://github.com/asjs-dev/asjs-3.0/tree/master/src/common/js/webGl/filters
+    * https://github.com/asjs-dev/asjs-3.0/tree/master/src/common/js/webGl/filters
 * and many other features...
 
 ### Minified version
